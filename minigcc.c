@@ -28,6 +28,16 @@ enum {
     T_RETURN,
     T_INT,
     T_CHAR,
+    T_VOID,
+    T_ENUM,
+    T_STATIC,
+    T_TYPEDEF,
+    T_STRUCT,
+    T_CONST,
+    T_FOR,
+    T_INC,
+    T_DEC,
+    T_ARROW,
     T_LE,
     T_GE,
     T_EQ,
@@ -49,6 +59,10 @@ typedef struct {
     int offset;
     int is_global;
     int size;
+    int pointed;  /* 0 = not a pointer, else the token type it points to */
+    int is_const;
+    int const_value;
+    int is_array;
 } Symbol;
 
 static Symbol symbols[MAX_SYMBOLS];
@@ -58,6 +72,46 @@ static int label_counter = 0;
 static int function_has_return = 0;
 static int emit_enabled = 1;
 static int max_func_stack = 0;
+static int assign_size = 8;
+static int expr_pointed = 0;
+
+#define MAX_STRUCT_MEMBERS 32
+static int struct_total_size = 0;
+static char struct_member_names[MAX_STRUCT_MEMBERS][MAX_IDENT_LEN];
+static int struct_member_offsets[MAX_STRUCT_MEMBERS];
+static int struct_member_sizes[MAX_STRUCT_MEMBERS];
+static int struct_member_count = 0;
+
+static void error(const char *msg);
+
+#define MAX_MACROS 256
+
+typedef struct {
+    char name[MAX_IDENT_LEN];
+    int value;
+} Macro;
+
+static Macro macros[MAX_MACROS];
+static int macro_count = 0;
+
+static int find_macro(const char *name) {
+    for (int i = 0; i < macro_count; i++) {
+        if (strcmp(macros[i].name, name) == 0)
+            return i;
+    }
+    return -1;
+}
+
+static void add_macro(const char *name, int value) {
+    if (macro_count >= MAX_MACROS)
+        error("too many macros");
+    Macro *m = &macros[macro_count++];
+    int nlen = strlen(name);
+    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+    memcpy(m->name, name, nlen);
+    m->name[nlen] = '\0';
+    m->value = value;
+}
 
 static void error(const char *msg) {
     fprintf(stderr, "Error at line %d, token '%s': %s\n", line, token, msg);
@@ -76,13 +130,56 @@ static void *safe_malloc(size_t size) {
 /* Lexer */
 static void next_token(void) {
     int c;
-    while (isspace(c = *input_ptr)) {
-        if (c == '\n') line++;
-        input_ptr++;
-    }
-    if (c == '\0') {
-        tok = T_EOF;
-        return;
+    for (;;) {
+        while (isspace(c = *input_ptr)) {
+            if (c == '\n') line++;
+            input_ptr++;
+        }
+        if (c == '\0') {
+            tok = T_EOF;
+            return;
+        }
+        /* Skip comments and preprocessor directives */
+        if (c == '/' && input_ptr[1] == '*') {
+            input_ptr += 2;
+            while (*input_ptr) {
+                if (*input_ptr == '*' && input_ptr[1] == '/') {
+                    input_ptr += 2;
+                    break;
+                }
+                if (*input_ptr == '\n') line++;
+                input_ptr++;
+            }
+            continue;
+        }
+        if (c == '/' && input_ptr[1] == '/') {
+            input_ptr += 2;
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            continue;
+        }
+        if (c == '#') {
+            input_ptr++;
+            while (isspace(*input_ptr)) { if (*input_ptr == '\n') line++; input_ptr++; }
+            if (strncmp(input_ptr, "define", 6) == 0) {
+                input_ptr += 6;
+                while (isspace(*input_ptr)) input_ptr++;
+                char mname[MAX_IDENT_LEN];
+                int mlen = 0;
+                while ((isalnum(*input_ptr) || *input_ptr == '_') && mlen < MAX_IDENT_LEN - 1)
+                    mname[mlen++] = *input_ptr++;
+                mname[mlen] = '\0';
+                while (isspace(*input_ptr)) input_ptr++;
+                int mval = 0;
+                if (isdigit(*input_ptr)) {
+                    while (isdigit(*input_ptr))
+                        mval = mval * 10 + (*input_ptr++ - '0');
+                }
+                add_macro(mname, mval);
+            }
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            continue;
+        }
+        break;
     }
 
     if (isalpha(c) || c == '_') {
@@ -99,7 +196,22 @@ static void next_token(void) {
         else if (strcmp(token, "return") == 0) tok = T_RETURN;
         else if (strcmp(token, "int") == 0)  tok = T_INT;
         else if (strcmp(token, "char") == 0) tok = T_CHAR;
-        else tok = T_ID;
+        else if (strcmp(token, "void") == 0) tok = T_VOID;
+        else if (strcmp(token, "enum") == 0) tok = T_ENUM;
+        else if (strcmp(token, "static") == 0) tok = T_STATIC;
+        else if (strcmp(token, "typedef") == 0) tok = T_TYPEDEF;
+        else if (strcmp(token, "struct") == 0) tok = T_STRUCT;
+        else if (strcmp(token, "const") == 0) tok = T_CONST;
+        else if (strcmp(token, "for") == 0) tok = T_FOR;
+        else {
+            int mi = find_macro(token);
+            if (mi >= 0) {
+                snprintf(token, MAX_TOKEN_LEN, "%d", macros[mi].value);
+                tok = T_NUM;
+            } else {
+                tok = T_ID;
+            }
+        }
         return;
     }
 
@@ -121,6 +233,9 @@ static void next_token(void) {
     if (c == '>' && input_ptr[1] == '=') { input_ptr += 2; tok = T_GE; strcpy(token, ">="); return; }
     if (c == '&' && input_ptr[1] == '&') { input_ptr += 2; tok = T_AND; strcpy(token, "&&"); return; }
     if (c == '|' && input_ptr[1] == '|') { input_ptr += 2; tok = T_OR; strcpy(token, "||"); return; }
+    if (c == '+' && input_ptr[1] == '+') { input_ptr += 2; tok = T_INC; strcpy(token, "++"); return; }
+    if (c == '-' && input_ptr[1] == '-') { input_ptr += 2; tok = T_DEC; strcpy(token, "--"); return; }
+    if (c == '-' && input_ptr[1] == '>') { input_ptr += 2; tok = T_ARROW; strcpy(token, "->"); return; }
 
     token[0] = c;
     token[1] = '\0';
@@ -156,7 +271,7 @@ static int find_symbol(const char *name) {
     return -1;
 }
 
-static void add_symbol(const char *name, int is_global, int size) {
+static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array) {
     if (symbol_count >= MAX_SYMBOLS)
         error("too many symbols");
     Symbol *s = &symbols[symbol_count];
@@ -164,6 +279,10 @@ static void add_symbol(const char *name, int is_global, int size) {
     s->name[MAX_IDENT_LEN - 1] = '\0';
     s->is_global = is_global;
     s->size = size;
+    s->pointed = pointed;
+    s->is_const = 0;
+    s->const_value = 0;
+    s->is_array = is_array;
     if (is_global) {
         s->offset = 0;
         emit("    .globl %s", name);
@@ -182,20 +301,72 @@ static void add_symbol(const char *name, int is_global, int size) {
 /* Parser forward declarations */
 static void expression(void);
 static void statement(void);
+static void parse_enum(void);
+static void skip_struct(void);
+static void skip_typedef(void);
 
 static void unary(void) {
     if (tok == T_NUM) {
         emit("    movq $%s, %%rax", token);
+        expr_pointed = 0;
         next_token();
     } else if (tok == T_ID) {
-        int idx = find_symbol(token);
-        if (idx < 0) error("undefined variable");
-        Symbol *s = &symbols[idx];
-        if (s->is_global)
-            emit("    movq %s(%%rip), %%rax", token);
-        else
-            emit("    movq %d(%%rbp), %%rax", s->offset);
+        char id_name[MAX_IDENT_LEN];
+        strcpy(id_name, token);
         next_token();
+        if (tok == '(') {
+            /* Function call */
+            next_token();
+            int argc = 0;
+            if (tok != ')') {
+                while (1) {
+                    expression();
+                    emit("    pushq %%rax");
+                    argc++;
+                    if (tok == ')') break;
+                    match(',');
+                }
+            }
+            match(')');
+            static const char *reg64[] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+            for (int i = 0; i < argc && i < 6; i++)
+                emit("    movq %d(%%rsp), %s", (argc - i - 1) * 8, reg64[i]);
+            if (argc > 6)
+                error("too many function arguments (max 6)");
+            if (argc > 0)
+                emit("    addq $%d, %%rsp", argc * 8);
+            emit("    xorl %%eax, %%eax");
+            emit("    call %s", id_name);
+            expr_pointed = 0;
+            } else {
+                int idx = find_symbol(id_name);
+                if (idx < 0) error("undefined variable");
+                Symbol *s = &symbols[idx];
+                if (s->is_const) {
+                    emit("    movq $%d, %%rax", s->const_value);
+                    expr_pointed = 0;
+                } else if (s->is_array || (s->pointed && s->size > 8)) {
+                    /* Array: emit address instead of value (decays to pointer) */
+                    if (s->is_global)
+                        emit("    leaq %s(%%rip), %%rax", id_name);
+                    else
+                        emit("    leaq %d(%%rbp), %%rax", s->offset);
+                    expr_pointed = s->size > 0 && s->size <= 8 ? 0 : (s->pointed ? s->pointed : T_INT);
+                } else {
+                expr_pointed = s->pointed;
+                if (s->size == 1) {
+                    if (s->is_global)
+                        emit("    movsbq %s(%%rip), %%rax", id_name);
+                    else
+                        emit("    movsbq %d(%%rbp), %%rax", s->offset);
+                } else {
+                    if (s->is_global)
+                        emit("    movq %s(%%rip), %%rax", id_name);
+                    else
+                        emit("    movq %d(%%rbp), %%rax", s->offset);
+                }
+            }
+        }
     } else if (tok == '(') {
         next_token();
         expression();
@@ -203,13 +374,17 @@ static void unary(void) {
     } else if (tok == '*') {
         next_token();
         unary();
-        emit("    movq (%%rax), %%rax");
+        if (expr_pointed == T_CHAR)
+            emit("    movsbq (%%rax), %%rax");
+        else
+            emit("    movq (%%rax), %%rax");
     } else if (tok == '&') {
         next_token();
         if (tok != T_ID) error("expected identifier after '&'");
         int idx = find_symbol(token);
         if (idx < 0) error("undefined variable");
         Symbol *s = &symbols[idx];
+        expr_pointed = (s->size == 1) ? T_CHAR : T_INT;
         if (s->is_global)
             emit("    leaq %s(%%rip), %%rax", token);
         else
@@ -225,6 +400,7 @@ static void lvalue_address(void) {
         int idx = find_symbol(token);
         if (idx < 0) error("undefined variable");
         Symbol *s = &symbols[idx];
+        assign_size = s->size;
         if (s->is_global)
             emit("    leaq %s(%%rip), %%rax", token);
         else
@@ -233,6 +409,7 @@ static void lvalue_address(void) {
     } else if (tok == '*') {
         next_token();
         unary();   /* pointer value in %rax */
+        assign_size = 8;
     } else {
         error("lvalue required");
     }
@@ -240,6 +417,70 @@ static void lvalue_address(void) {
 
 static void expr_prec(int min_prec) {
     unary();
+
+    /* Postfix operators: [subscript], .member, ->member */
+    while (tok == '[' || tok == '.' || tok == T_ARROW) {
+        if (tok == '[') {
+            next_token();
+            emit("    pushq %%rax");
+            expression();
+            emit("    popq %%rcx");
+            int elem_size = (expr_pointed == T_CHAR) ? 1 : 8;
+            if (elem_size > 1) emit("    imulq $%d, %%rax", elem_size);
+            emit("    addq %%rcx, %%rax");
+            if (expr_pointed == T_CHAR)
+                emit("    movsbq (%%rax), %%rax");
+            else
+                emit("    movq (%%rax), %%rax");
+            expr_pointed = 0;
+            match(']');
+        } else if (tok == '.') {
+            next_token();
+            int off = 0, msize = 8;
+            for (int i = 0; i < struct_member_count; i++) {
+                if (strcmp(token, struct_member_names[i]) == 0) {
+                    off = struct_member_offsets[i];
+                    msize = struct_member_sizes[i];
+                    break;
+                }
+            }
+            next_token();
+            if (off > 0) emit("    addq $%d, %%rax", off);
+            if (msize > 8) {
+                /* Array member: keep address (decays to pointer) */
+                expr_pointed = (msize > 0) ? T_INT : 0;
+            } else {
+                /* Scalar member: load value */
+                if (msize == 1)
+                    emit("    movsbq (%%rax), %%rax");
+                else
+                    emit("    movq (%%rax), %%rax");
+                expr_pointed = 0;
+            }
+        } else if (tok == T_ARROW) {
+            next_token();
+            int off = 0, msize = 8;
+            for (int i = 0; i < struct_member_count; i++) {
+                if (strcmp(token, struct_member_names[i]) == 0) {
+                    off = struct_member_offsets[i];
+                    msize = struct_member_sizes[i];
+                    break;
+                }
+            }
+            next_token();
+            if (off > 0) emit("    addq $%d, %%rax", off);
+            if (msize > 8) {
+                expr_pointed = (msize > 0) ? T_INT : 0;
+            } else {
+                if (msize == 1)
+                    emit("    movsbq (%%rax), %%rax");
+                else
+                    emit("    movq (%%rax), %%rax");
+                expr_pointed = 0;
+            }
+        }
+    }
+
     while (1) {
         int op = tok;
         int prec = 0;
@@ -351,7 +592,35 @@ static void assignment_expr(void) {
             emit("    pushq %%rax");
             assignment_expr();
             emit("    popq %%rcx");
-            emit("    movq %%rax, (%%rcx)");
+            if (assign_size == 1)
+                emit("    movb %%al, (%%rcx)");
+            else
+                emit("    movq %%rax, (%%rcx)");
+            return;
+        } else if (tok == T_INC || tok == T_DEC) {
+            int op = tok;
+            input_ptr = save_src;
+            line = save_line;
+            tok = saved_tok;
+            strcpy(token, saved_token);
+            lvalue_address();
+            next_token();
+            if (assign_size == 1)
+                emit("    movsbq (%%rax), %%rcx");
+            else
+                emit("    movq (%%rax), %%rcx");
+            if (op == T_INC) {
+                if (assign_size == 1)
+                    emit("    addb $1, (%%rax)");
+                else
+                    emit("    addq $1, (%%rax)");
+            } else {
+                if (assign_size == 1)
+                    emit("    subb $1, (%%rax)");
+                else
+                    emit("    subq $1, (%%rax)");
+            }
+            emit("    movq %%rcx, %%rax");
             return;
         } else {
             tok = saved_tok;
@@ -390,6 +659,120 @@ static void statement(void) {
         return;
     }
 
+    if (tok == T_FOR) {
+        next_token();
+        match('(');
+        /* init */
+        if (tok == T_INT || tok == T_CHAR) {
+            int type = tok;
+            next_token();
+            int is_ptr = 0;
+            while (tok == '*') { is_ptr = 1; next_token(); }
+            if (tok != T_ID) error("expected variable name");
+            char varname[MAX_IDENT_LEN];
+            int nlen = strlen(token);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(varname, token, nlen);
+            varname[nlen] = '\0';
+            next_token();
+            int vsize = is_ptr ? 8 : (type == T_INT ? 8 : 1);
+            add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0);
+            if (tok == '=') {
+                next_token();
+                expression();
+                /* Store init value to variable */
+                int si = find_symbol(varname);
+                Symbol *s = &symbols[si];
+                if (s->is_global)
+                    emit("    movq %%rax, %s(%%rip)", s->name);
+                else
+                    emit("    movq %%rax, %d(%%rbp)", s->offset);
+            }
+            match(';');
+        } else if (tok != ';') {
+            expression();
+            match(';');
+        } else {
+            match(';');
+        }
+
+        /* Save condition position (tok is already first cond token) */
+        char *cond_pos = input_ptr;
+        int cond_line_saved = line;
+        int cond_first_tok = tok;
+        char cond_first_tok_val[MAX_TOKEN_LEN];
+        strcpy(cond_first_tok_val, token);
+        int has_cond = (tok != ';');
+        if (has_cond) {
+            while (tok != ';') next_token();
+        }
+        match(';');
+
+        /* Save increment position (tok is already first inc token) */
+        char *inc_pos = input_ptr;
+        int inc_line_saved = line;
+        int inc_first_tok = tok;
+        char inc_first_tok_val[MAX_TOKEN_LEN];
+        strcpy(inc_first_tok_val, token);
+        int has_inc = (tok != ')');
+        if (has_inc) {
+            while (tok != ')') next_token();
+        }
+        match(')');
+
+        int l_body = label_counter++;
+        int l_inc = has_inc ? label_counter++ : 0;
+        int l_cond = label_counter++;
+        int l_end = label_counter++;
+
+        emit("    jmp .L%d", l_cond);
+        emit_label(l_body);
+
+        /* Body */
+        statement();
+
+        /* Save state after body (before re-parses modify input) */
+        char *after_body_pos = input_ptr;
+        int after_body_line = line;
+        int after_body_tok = tok;
+        char after_body_token[MAX_TOKEN_LEN];
+        strcpy(after_body_token, token);
+
+        /* Increment (re-parsed from saved position) */
+        if (has_inc) {
+            emit_label(l_inc);
+            input_ptr = inc_pos;
+            line = inc_line_saved;
+            tok = inc_first_tok;
+            strcpy(token, inc_first_tok_val);
+            assignment_expr();
+            emit("    jmp .L%d", l_cond);
+        }
+
+        /* Condition (re-parsed from saved position) */
+        emit_label(l_cond);
+        if (has_cond) {
+            input_ptr = cond_pos;
+            line = cond_line_saved;
+            tok = cond_first_tok;
+            strcpy(token, cond_first_tok_val);
+            expression();
+            emit("    cmpq $0, %%rax");
+            emit("    jne .L%d", l_body);
+        } else {
+            emit("    jmp .L%d", l_body);
+        }
+
+        emit_label(l_end);
+
+        /* Restore normal parsing position */
+        input_ptr = after_body_pos;
+        line = after_body_line;
+        tok = after_body_tok;
+        strcpy(token, after_body_token);
+        return;
+    }
+
     if (tok == T_WHILE) {
         next_token();
         match('(');
@@ -420,14 +803,51 @@ static void statement(void) {
         next_token();
         int saved_stack = stack_size;
         while (tok != '}' && tok != T_EOF) {
-            if (tok == T_INT || tok == T_CHAR) {
+            if (tok == T_STATIC) {
+                next_token();
+                continue;
+            } else if (tok == T_CONST) {
+                next_token();
+                continue;
+            } else if (tok == T_TYPEDEF) {
+                skip_typedef();
+            } else if (tok == T_STRUCT) {
+                next_token();
+                skip_struct();
+            } else if (tok == T_INT || tok == T_CHAR) {
                 int type = tok;
                 next_token();
+                int is_ptr = 0;
+                while (tok == '*') { is_ptr = 1; next_token(); }
                 if (tok != T_ID) error("expected variable name");
-                int size = (type == T_INT) ? 8 : 1;
-                add_symbol(token, 0, size);
+                char varname[MAX_IDENT_LEN];
+                int nlen = strlen(token);
+                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                memcpy(varname, token, nlen);
+                varname[nlen] = '\0';
                 next_token();
+                int size = is_ptr ? 8 : (type == T_INT ? 8 : 1);
+                int is_arr = 0;
+                while (tok == '[') {
+                    is_arr = 1;
+                    next_token();
+                    int cnt = 0;
+                    if (tok == T_NUM) {
+                        cnt = atoi(token);
+                        next_token();
+                    } else if (tok == T_ID) {
+                        int mi = find_macro(token);
+                        if (mi >= 0) cnt = macros[mi].value;
+                        else error("undefined macro");
+                        next_token();
+                    }
+                    match(']');
+                    size = size * (cnt > 0 ? cnt : 1);
+                }
+                add_symbol(varname, 0, size, is_ptr ? type : 0, is_arr);
                 match(';');
+            } else if (tok == T_ENUM) {
+                parse_enum();
             } else {
                 statement();
             }
@@ -448,15 +868,58 @@ static void statement(void) {
 
 static void parse_function(const char *name, int ret_type) {
     (void)ret_type;
+    int outer_stack = stack_size;
+    int saved_sym_count = symbol_count;
+    int saved_stack_outer = stack_size;
+
     match('(');
-    while (tok != ')') {
-        if (tok == T_INT || tok == T_CHAR) next_token();
-        if (tok == T_ID) next_token();
-        if (tok == ',') next_token();
+
+    /* Parse parameters */
+    char param_names[MAX_SYMBOLS][MAX_IDENT_LEN];
+    int param_count = 0;
+    if (tok == T_VOID) {
+        next_token();
+    } else {
+        while (tok != ')') {
+            if (tok == T_CONST) {
+                next_token();
+                continue;
+            } else if (tok == T_INT || tok == T_CHAR) {
+                int ptype = tok;
+                next_token();
+                int is_ptr = 0;
+                while (tok == '*') { is_ptr = 1; next_token(); }
+                if (tok != T_ID) error("expected parameter name");
+                int nlen = strlen(token);
+                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                memcpy(param_names[param_count], token, nlen);
+                param_names[param_count][nlen] = '\0';
+                int psize = is_ptr ? 8 : (ptype == T_INT ? 8 : 1);
+                add_symbol(token, 0, psize, is_ptr ? ptype : 0, 0);
+                param_count++;
+                next_token();
+                if (tok == ',') next_token();
+            } else if (tok == T_VOID) {
+                next_token();
+            } else {
+                error("invalid parameter type");
+            }
+        }
     }
     match(')');
 
+    /* Handle function prototypes (forward declarations) */
+    if (tok == ';') {
+        /* Remove parameter symbols added during prototype parsing */
+        symbol_count = saved_sym_count;
+        stack_size = saved_stack_outer;
+        next_token();
+        return;
+    }
+
     if (tok != '{') error("expected function body");
+
+    int param_stack = stack_size - outer_stack;
 
     /* First pass: compute stack size (no code emitted) */
     char *body_start = input_ptr;
@@ -467,13 +930,12 @@ static void parse_function(const char *name, int ret_type) {
     int saved_symbol_cnt = symbol_count;
 
     emit_enabled = 0;
-    int saved_stack = stack_size;
-    max_func_stack = 0;
-    stack_size = 0;
+    max_func_stack = param_stack;
+    stack_size = param_stack;
     function_has_return = 0;
     statement();
     int func_stack = max_func_stack;
-    stack_size = saved_stack;
+    stack_size = outer_stack + param_stack;
     emit_enabled = 1;
 
     /* Restore state for second pass */
@@ -491,36 +953,257 @@ static void parse_function(const char *name, int ret_type) {
     if (func_stack > 0)
         emit("    subq $%d, %%rsp", func_stack);
 
+    /* Save register parameters to stack */
+    {
+        static const char *param_regs[] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+        for (int i = 0; i < param_count; i++) {
+            int idx = find_symbol(param_names[i]);
+            if (idx < 0) error("parameter not found");
+            Symbol *s = &symbols[idx];
+            if (i < 6) {
+                emit("    movq %s, %d(%%rbp)", param_regs[i], s->offset);
+            } else {
+                int stack_off = 16 + (i - 6) * 8;
+                emit("    movq %d(%%rbp), %%rax", stack_off);
+                emit("    movq %%rax, %d(%%rbp)", s->offset);
+            }
+        }
+    }
+
     /* Second pass: emit code */
-    saved_stack = stack_size;
-    stack_size = 0;
+    stack_size = param_stack;
     function_has_return = 0;
     statement();
     if (!function_has_return) {
         emit("    leave");
         emit("    ret");
     }
-    stack_size = saved_stack;
+    stack_size = outer_stack;
+}
+
+static void parse_enum(void) {
+    next_token(); /* skip 'enum' */
+    if (tok == T_ID) {
+        next_token(); /* skip optional tag */
+    }
+    if (tok != '{') error("expected '{' after enum");
+    next_token();
+    int val = 0;
+    while (tok != '}') {
+        if (tok != T_ID) error("expected enumerator name");
+        if (symbol_count >= MAX_SYMBOLS) error("too many symbols");
+        Symbol *s = &symbols[symbol_count++];
+        {
+            int nlen = strlen(token);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(s->name, token, nlen);
+            s->name[nlen] = '\0';
+        }
+        s->is_const = 1;
+        s->is_global = 0;
+        s->size = 8;
+        s->pointed = 0;
+        next_token();
+        if (tok == '=') {
+            next_token();
+            if (tok != T_NUM) error("expected integer constant");
+            val = atoi(token);
+            next_token();
+        }
+        s->const_value = val;
+        val++;
+        if (tok == ',') next_token();
+    }
+    match('}');
+    match(';');
+}
+
+static void skip_struct(void) {
+    /* skip optional tag */
+    if (tok == T_ID) next_token();
+    if (tok != '{') error("expected '{' in struct");
+    next_token();
+
+    struct_total_size = 0;
+    struct_member_count = 0;
+
+    while (tok != '}') {
+        if (tok == T_INT || tok == T_CHAR) {
+            int ftype = tok;
+            next_token();
+            int is_ptr = 0;
+            while (tok == '*') { is_ptr = 1; next_token(); }
+            int fsize = is_ptr ? 8 : (ftype == T_CHAR ? 1 : 8);
+            while (tok != ';') {
+                if (tok == T_ID) {
+                    if (struct_member_count < MAX_STRUCT_MEMBERS) {
+                        int nlen = strlen(token);
+                        if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                        memcpy(struct_member_names[struct_member_count], token, nlen);
+                        struct_member_names[struct_member_count][nlen] = '\0';
+                        struct_member_offsets[struct_member_count] = struct_total_size;
+                        struct_member_sizes[struct_member_count] = fsize;
+                        struct_member_count++;
+                    }
+                    next_token();
+                    if (tok == '[') {
+                        next_token();
+                        int count = 1;
+                        if (tok == T_NUM) { count = atoi(token); next_token(); }
+                        match(']');
+                        struct_total_size += fsize * count;
+                        if (struct_member_count > 0)
+                            struct_member_sizes[struct_member_count - 1] = fsize * count;
+                    } else {
+                        struct_total_size += fsize;
+                    }
+                } else {
+                    next_token();
+                }
+            }
+            match(';');
+        } else if (tok == '}') {
+            break;
+        } else {
+            next_token();
+        }
+    }
+    match('}');
+}
+
+static void skip_typedef(void) {
+    next_token(); /* skip 'typedef' */
+    if (tok == T_STRUCT) {
+        next_token();
+        skip_struct();
+    } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
+        next_token();
+        while (tok == '*') next_token();
+        if (tok == T_ID) next_token();
+    }
+    /* skip to semicolon, recording the last identifier as the typedef name */
+    char last_name[MAX_IDENT_LEN] = "";
+    while (tok != ';' && tok != T_EOF) {
+        if (tok == T_ID) {
+            int nlen = strlen(token);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(last_name, token, nlen);
+            last_name[nlen] = '\0';
+        }
+        next_token();
+    }
+    if (last_name[0]) {
+        /* Store as constant (just a placeholder - size 8) */
+        if (symbol_count >= MAX_SYMBOLS) error("too many symbols");
+        Symbol *s = &symbols[symbol_count++];
+        int nlen = strlen(last_name);
+        if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+        memcpy(s->name, last_name, nlen);
+        s->name[nlen] = '\0';
+        s->is_const = 1;
+        s->is_global = 0;
+        s->size = 8;
+        s->pointed = 0;
+        s->const_value = 8;  /* just a marker */
+        /* If a struct was just parsed, store its size */
+        if (struct_total_size > 0)
+            s->const_value = struct_total_size;
+    }
+    match(';');
 }
 
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
-        if (tok == T_INT || tok == T_CHAR) {
+        if (tok == T_STATIC) {
+            next_token();
+            continue;
+        } else if (tok == T_CONST) {
+            next_token();
+            continue;
+        } else if (tok == T_TYPEDEF) {
+            skip_typedef();
+        } else if (tok == T_STRUCT) {
+            next_token();
+            skip_struct();
+        } else if (tok == T_ENUM) {
+            parse_enum();
+        } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
             int type = tok;
             next_token();
+            int is_ptr = 0;
+            while (tok == '*') { is_ptr = 1; next_token(); }
             if (tok != T_ID) error("expected identifier");
             char fname[MAX_IDENT_LEN];
-            strncpy(fname, token, MAX_IDENT_LEN - 1);
-            fname[MAX_IDENT_LEN - 1] = '\0';
+            int nlen = strlen(token);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(fname, token, nlen);
+            fname[nlen] = '\0';
             next_token();
             if (tok == '(') {
                 parse_function(fname, type);
             } else {
-                add_symbol(fname, 1, (type == T_INT) ? 8 : 1);
+                int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : 8);
+                int is_arr = 0;
+                while (tok == '[') {
+                    is_arr = 1;
+                    next_token();
+                    int cnt = 0;
+                    if (tok == T_NUM) {
+                        cnt = atoi(token);
+                        next_token();
+                    } else if (tok == T_ID) {
+                        int mi = find_macro(token);
+                        if (mi >= 0) cnt = macros[mi].value;
+                        else error("undefined macro");
+                        next_token();
+                    }
+                    match(']');
+                    gsize = gsize * (cnt > 0 ? cnt : 1);
+                }
+                add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr);
+                if (tok == '=') {
+                    while (tok != ';' && tok != T_EOF) next_token();
+                }
                 if (tok == ';') next_token();
                 else error("expected ';' or '(' after global");
             }
+        } else if (tok == T_ID) {
+            /* Fallback: treat unknown identifier as a type name (e.g. FILE) */
+            int type_size = 8;
+            int ti = find_symbol(token);
+            if (ti >= 0 && symbols[ti].is_const) type_size = symbols[ti].const_value;
+            next_token();
+            int is_ptr = 0;
+            while (tok == '*') { is_ptr = 1; next_token(); }
+            if (tok != T_ID) error("expected identifier");
+            char fname[MAX_IDENT_LEN];
+            int nlen = strlen(token);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(fname, token, nlen);
+            fname[nlen] = '\0';
+            next_token();
+            int gsize = is_ptr ? 8 : type_size;
+            int is_arr = 0;
+            while (tok == '[') {
+                is_arr = 1;
+                next_token();
+                int cnt = 0;
+                if (tok == T_NUM) {
+                    cnt = atoi(token);
+                    next_token();
+                } else if (tok == T_ID) {
+                    int mi = find_macro(token);
+                    if (mi >= 0) cnt = macros[mi].value;
+                    else error("undefined macro");
+                    next_token();
+                }
+                match(']');
+                gsize = gsize * (cnt > 0 ? cnt : 1);
+            }
+            add_symbol(fname, 1, gsize, 0, is_arr);
+            if (tok == ';') next_token();
+            else error("expected ';' or '(' after global");
         } else {
             error("global must be int or char");
         }
