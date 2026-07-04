@@ -9,8 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <stdarg.h>
+/*#include <ctype.h>*/
 #include <errno.h>
 
 #define MAX_TOKEN_LEN   64
@@ -159,70 +158,100 @@ static void *safe_malloc(size_t size) {
     return p;
 }
 
+static int my_isspace(int c) {
+    if (c == ' ') return 1;
+    if (c == '\t') return 1;
+    if (c == '\n') return 1;
+    if (c == '\r') return 1;
+    if (c == '\f') return 1;
+    if (c == '\v') return 1;
+    return 0;
+}
+
+static int my_isalpha(int c) {
+    if (c >= 'a' && c <= 'z') return 1;
+    if (c >= 'A' && c <= 'Z') return 1;
+    return 0;
+}
+
+static int my_isdigit(int c) {
+    if (c >= '0' && c <= '9') return 1;
+    return 0;
+}
+
+static int my_isalnum(int c) {
+    if (my_isalpha(c)) return 1;
+    if (my_isdigit(c)) return 1;
+    return 0;
+}
+
 /* Lexer */
 static void next_token(void) {
     int c;
-    for (;;) {
-        while (isspace(c = *input_ptr)) {
-            if (c == '\n') line++;
+    restart:
+    
+    c = *input_ptr;
+    while (my_isspace(c)) {
+        if (c == '\n') line++;
+        input_ptr++;
+        c = *input_ptr;
+    }
+    
+    if (c == '\0') {
+        tok = T_EOF;
+        return;
+    }
+    
+    /* Skip comments and preprocessor directives */
+    if (c == '/' && input_ptr[1] == '*') {
+        input_ptr += 2;
+        while (*input_ptr) {
+            if (*input_ptr == '*' && input_ptr[1] == '/') {
+                input_ptr += 2;
+                break;
+            }
+            if (*input_ptr == '\n') line++;
             input_ptr++;
         }
-        if (c == '\0') {
-            tok = T_EOF;
-            return;
-        }
-        /* Skip comments and preprocessor directives */
-        if (c == '/' && input_ptr[1] == '*') {
-            input_ptr += 2;
-            while (*input_ptr) {
-                if (*input_ptr == '*' && input_ptr[1] == '/') {
-                    input_ptr += 2;
-                    break;
-                }
-                if (*input_ptr == '\n') line++;
+        goto restart;
+    }
+    if (c == '/' && input_ptr[1] == '/') {
+        input_ptr += 2;
+        while (*input_ptr && *input_ptr != '\n') input_ptr++;
+        goto restart;
+    }
+    if (c == '#') {
+        input_ptr++;
+        while (my_isspace(*input_ptr)) { if (*input_ptr == '\n') line++; input_ptr++; }
+        if (strncmp(input_ptr, "define", 6) == 0) {
+            input_ptr += 6;
+            while (my_isspace(*input_ptr)) input_ptr++;
+            char mname[MAX_IDENT_LEN];
+            int mlen = 0;
+            while ((my_isalnum(*input_ptr) || *input_ptr == '_') && mlen < MAX_IDENT_LEN - 1) {
+                mname[mlen] = *input_ptr;
+                mlen++;
                 input_ptr++;
             }
-            continue;
-        }
-        if (c == '/' && input_ptr[1] == '/') {
-            input_ptr += 2;
-            while (*input_ptr && *input_ptr != '\n') input_ptr++;
-            continue;
-        }
-        if (c == '#') {
-            input_ptr++;
-            while (isspace(*input_ptr)) { if (*input_ptr == '\n') line++; input_ptr++; }
-            if (strncmp(input_ptr, "define", 6) == 0) {
-                input_ptr += 6;
-                while (isspace(*input_ptr)) input_ptr++;
-                char mname[MAX_IDENT_LEN];
-                int mlen = 0;
-                while ((isalnum(*input_ptr) || *input_ptr == '_') && mlen < MAX_IDENT_LEN - 1) {
-                    mname[mlen] = *input_ptr;
-                    mlen++;
+            mname[mlen] = '\0';
+            while (my_isspace(*input_ptr)) input_ptr++;
+            int mval = 0;
+            if (my_isdigit(*input_ptr)) {
+                while (my_isdigit(*input_ptr)) {
+                    mval = mval * 10 + (*input_ptr - '0');
                     input_ptr++;
                 }
-                mname[mlen] = '\0';
-                while (isspace(*input_ptr)) input_ptr++;
-                int mval = 0;
-                if (isdigit(*input_ptr)) {
-                    while (isdigit(*input_ptr)) {
-                        mval = mval * 10 + (*input_ptr - '0');
-                        input_ptr++;
-                    }
-                }
-                add_macro(mname, mval);
             }
-            while (*input_ptr && *input_ptr != '\n') input_ptr++;
-            continue;
+            add_macro(mname, mval);
         }
-        break;
+        while (*input_ptr && *input_ptr != '\n') input_ptr++;
+        goto restart;
     }
 
-    if (isalpha(c) || c == '_') {
+    if (my_isalpha(c) || c == '_') {
         char *p = token;
         int len = 0;
-        while ((isalnum(*input_ptr) || *input_ptr == '_') && len < MAX_TOKEN_LEN - 1) {
+        while ((my_isalnum(*input_ptr) || *input_ptr == '_') && len < MAX_TOKEN_LEN - 1) {
             *p = *input_ptr;
             p++;
             input_ptr++;
@@ -261,10 +290,10 @@ static void next_token(void) {
         return;
     }
 
-    if (isdigit(c)) {
+    if (my_isdigit(c)) {
         char *p = token;
         int len = 0;
-        while (isdigit(*input_ptr) && len < MAX_TOKEN_LEN - 1) {
+        while (my_isdigit(*input_ptr) && len < MAX_TOKEN_LEN - 1) {
             *p = *input_ptr;
             p++;
             input_ptr++;
@@ -347,12 +376,41 @@ static void match(int expected) {
     else error("unexpected token");
 }
 
-static void emit(const char *fmt, ...) {
+static void emit(const char *s) {
     if (!emit_enabled) return;
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(output, fmt, args);
-    va_end(args);
+    while (*s) {
+        if (*s == '%' && s[1] == '%') {
+            fputc('%', output);
+            s += 2;
+        } else {
+            fputc(*s, output);
+            s++;
+        }
+    }
+    fputc('\n', output);
+}
+
+static void emit_i(const char *fmt, int v) {
+    if (!emit_enabled) return;
+    fprintf(output, fmt, v);
+    fputc('\n', output);
+}
+
+static void emit_s(const char *fmt, const char *s) {
+    if (!emit_enabled) return;
+    fprintf(output, fmt, s);
+    fputc('\n', output);
+}
+
+static void emit_is(const char *fmt, int v, const char *s) {
+    if (!emit_enabled) return;
+    fprintf(output, fmt, v, s);
+    fputc('\n', output);
+}
+
+static void emit_si(const char *fmt, const char *s, int v) {
+    if (!emit_enabled) return;
+    fprintf(output, fmt, s, v);
     fputc('\n', output);
 }
 
@@ -387,10 +445,10 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     if (is_global) {
         s->offset = 0;
         emit("    .bss");
-        emit("    .globl %s", name);
-        emit("%s:", name);
+        emit_s("    .globl %s", name);
+        emit_s("%s:", name);
         if (size > 0)
-            emit("    .space %d", size);
+            emit_i("    .space %d", size);
         emit("    .text");
     } else {
         stack_size = (stack_size + size + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
@@ -413,7 +471,7 @@ static void skip_typedef(void);
 
 static void unary(void) {
     if (tok == T_NUM) {
-        emit("    movq $%s, %%rax", token);
+        emit_s("    movq $%s, %%rax", token);
         expr_pointed = 0;
         next_token();
     } else if (tok == T_ID) {
@@ -436,41 +494,41 @@ static void unary(void) {
             match(')');
             static const char *reg64[] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
             for (int i = 0; i < argc && i < 6; i++)
-                emit("    movq %d(%%rsp), %s", (argc - i - 1) * 8, reg64[i]);
+                emit_is("    movq %d(%%rsp), %s", (argc - i - 1) * 8, reg64[i]);
             if (argc > 6)
                 error("too many function arguments (max 6)");
             if (argc > 0)
-                emit("    addq $%d, %%rsp", argc * 8);
+                emit_i("    addq $%d, %%rsp", argc * 8);
             emit("    xorl %%eax, %%eax");
-            emit("    call %s", id_name);
+            emit_s("    call %s", id_name);
             expr_pointed = 0;
             } else {
                 int idx = find_symbol(id_name);
                 if (idx < 0) error("undefined variable");
                 Symbol *s = &symbols[idx];
                 if (s->is_const) {
-                    emit("    movq $%d, %%rax", s->const_value);
+                    emit_i("    movq $%d, %%rax", s->const_value);
                     expr_pointed = 0;
                 } else if (s->is_array || (s->pointed && s->size > 8)) {
                     /* Array: emit address instead of value (decays to pointer) */
                     current_elem_size = s->is_array ? s->elem_size : 8;
                     if (s->is_global)
-                        emit("    leaq %s(%%rip), %%rax", id_name);
+                        emit_s("    leaq %s(%%rip), %%rax", id_name);
                     else
-                        emit("    leaq %d(%%rbp), %%rax", s->offset);
+                        emit_i("    leaq %d(%%rbp), %%rax", s->offset);
                     expr_pointed = s->size > 0 && s->size <= 8 ? 0 : (s->pointed ? s->pointed : T_INT);
                 } else {
                 expr_pointed = s->pointed;
                 if (s->size == 1) {
                     if (s->is_global)
-                        emit("    movsbq %s(%%rip), %%rax", id_name);
+                        emit_s("    movsbq %s(%%rip), %%rax", id_name);
                     else
-                        emit("    movsbq %d(%%rbp), %%rax", s->offset);
+                        emit_i("    movsbq %d(%%rbp), %%rax", s->offset);
                 } else {
                     if (s->is_global)
-                        emit("    movq %s(%%rip), %%rax", id_name);
+                        emit_s("    movq %s(%%rip), %%rax", id_name);
                     else
-                        emit("    movq %d(%%rbp), %%rax", s->offset);
+                        emit_i("    movq %d(%%rbp), %%rax", s->offset);
                 }
             }
         }
@@ -523,9 +581,9 @@ static void unary(void) {
         current_elem_size = s->is_array ? s->elem_size : 0;
         no_postfix_deref = 1;
         if (s->is_global)
-            emit("    leaq %s(%%rip), %%rax", token);
+            emit_s("    leaq %s(%%rip), %%rax", token);
         else
-            emit("    leaq %d(%%rbp), %%rax", s->offset);
+            emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
     } else if (tok == T_STRING) {
         int lbl = str_label_counter++;
@@ -534,7 +592,7 @@ static void unary(void) {
             strcpy(string_pool[string_count], token);
             string_count++;
         }
-        emit("    leaq .Lstr%d(%%rip), %%rax", lbl);
+        emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
         expr_pointed = T_CHAR;
         next_token();
     } else if (tok == '-') {
@@ -577,14 +635,14 @@ static void lvalue_address(void) {
             need_ptr_value = 0;
         if (need_ptr_value) {
             if (s->is_global)
-                emit("    movq %s(%%rip), %%rax", s->name);
+                emit_s("    movq %s(%%rip), %%rax", s->name);
             else
-                emit("    movq %d(%%rbp), %%rax", s->offset);
+                emit_i("    movq %d(%%rbp), %%rax", s->offset);
         } else {
             if (s->is_global)
-                emit("    leaq %s(%%rip), %%rax", s->name);
+                emit_s("    leaq %s(%%rip), %%rax", s->name);
             else
-                emit("    leaq %d(%%rbp), %%rax", s->offset);
+                emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         }
         handle_postfix(1);
     } else if (tok == '*') {
@@ -612,7 +670,7 @@ static void handle_postfix(int is_lvalue) {
             emit("    popq %%rcx");
             int elem_size = current_elem_size;
             if (elem_size == 0) elem_size = (expr_pointed == T_CHAR) ? 1 : 8;
-            if (elem_size > 1) emit("    imulq $%d, %%rax", elem_size);
+            if (elem_size > 1) emit_i("    imulq $%d, %%rax", elem_size);
             emit("    addq %%rcx, %%rax");
             current_elem_size = elem_size;
             assign_size = elem_size;
@@ -636,7 +694,7 @@ static void handle_postfix(int is_lvalue) {
                 }
             }
             next_token();
-            if (off > 0) emit("    addq $%d, %%rax", off);
+            if (off > 0) emit_i("    addq $%d, %%rax", off);
             assign_size = msize;
             current_elem_size = mesize;
             if (is_lvalue) {
@@ -664,7 +722,7 @@ static void handle_postfix(int is_lvalue) {
                 }
             }
             next_token();
-            if (off > 0) emit("    addq $%d, %%rax", off);
+            if (off > 0) emit_i("    addq $%d, %%rax", off);
             assign_size = msize;
             current_elem_size = mesize;
             if (is_lvalue) {
@@ -711,9 +769,9 @@ static void expr_prec(int min_prec) {
             int l_false = label_counter++;
             int l_end = label_counter++;
             emit("    cmpq $0, %%rax");
-            emit("    je .L%d", l_false);
+            emit_i("    je .L%d", l_false);
             expression();
-            emit("    jmp .L%d", l_end);
+            emit_i("    jmp .L%d", l_end);
             emit_label(l_false);
             match(':');
             expression();
@@ -1097,11 +1155,11 @@ static void statement(void) {
         int l1 = label_counter++;
         int l2 = label_counter++;
         emit("    cmpq $0, %%rax");
-        emit("    je .L%d", l1);
+        emit_i("    je .L%d", l1);
         statement();
         if (tok == T_ELSE) {
             next_token();
-            emit("    jmp .L%d", l2);
+            emit_i("    jmp .L%d", l2);
             emit_label(l1);
             statement();
             emit_label(l2);
@@ -1136,9 +1194,9 @@ static void statement(void) {
                 int si = find_symbol(varname);
                 Symbol *s = &symbols[si];
                 if (s->is_global)
-                    emit("    movq %%rax, %s(%%rip)", s->name);
+                    emit_s("    movq %%rax, %s(%%rip)", s->name);
                 else
-                    emit("    movq %%rax, %d(%%rbp)", s->offset);
+                    emit_i("    movq %%rax, %d(%%rbp)", s->offset);
             }
             match(';');
         } else if (tok != ';') {
@@ -1178,7 +1236,7 @@ static void statement(void) {
         int l_end = label_counter++;
         int l_cont = has_inc ? l_inc : l_cond;
 
-        emit("    jmp .L%d", l_cond);
+        emit_i("    jmp .L%d", l_cond);
         emit_label(l_body);
 
         /* Body */
@@ -1213,7 +1271,7 @@ static void statement(void) {
             tok = inc_first_tok;
             strcpy(token, inc_first_tok_val);
             assignment_expr();
-            emit("    jmp .L%d", l_cond);
+            emit_i("    jmp .L%d", l_cond);
         }
 
         /* Condition (re-parsed from saved position) */
@@ -1225,9 +1283,9 @@ static void statement(void) {
             strcpy(token, cond_first_tok_val);
             expression();
             emit("    cmpq $0, %%rax");
-            emit("    jne .L%d", l_body);
+            emit_i("    jne .L%d", l_body);
         } else {
-            emit("    jmp .L%d", l_body);
+            emit_i("    jmp .L%d", l_body);
         }
 
         emit_label(l_end);
@@ -1257,9 +1315,9 @@ static void statement(void) {
         assignment_expr();
         match(')');
         emit("    cmpq $0, %%rax");
-        emit("    je .L%d", l2);
+        emit_i("    je .L%d", l2);
         statement();
-        emit("    jmp .L%d", l1);
+        emit_i("    jmp .L%d", l1);
         emit_label(l2);
         continue_target = saved_cont;
         continue_target_valid = saved_cont_valid;
@@ -1277,7 +1335,7 @@ static void statement(void) {
         int end_label = label_counter++;
 
         emit("    pushq %%rax");
-        emit("    jmp .L%d", dispatch_label);
+        emit_i("    jmp .L%d", dispatch_label);
 
         /* Save outer break state */
         int saved_break_target = break_target;
@@ -1316,17 +1374,17 @@ static void statement(void) {
         match('}');
 
         /* Emit fall-through guard: any case without break goes to end */
-        emit("    jmp .L%d", end_label);
+        emit_i("    jmp .L%d", end_label);
 
         /* Emit dispatch */
         emit_label(dispatch_label);
         emit("    movq (%%rsp), %%rax");
         for (int i = 0; i < switch_case_count; i++) {
-            emit("    cmpq $%d, %%rax", switch_case_values[i]);
-            emit("    je .L%d", switch_case_labels[i]);
+            emit_i("    cmpq $%d, %%rax", switch_case_values[i]);
+            emit_i("    je .L%d", switch_case_labels[i]);
         }
         if (switch_has_default)
-            emit("    jmp .L%d", switch_default_label);
+            emit_i("    jmp .L%d", switch_default_label);
         emit_label(end_label);
         emit("    addq $8, %%rsp");
 
@@ -1343,7 +1401,7 @@ static void statement(void) {
         next_token();
         match(';');
         if (break_target_valid)
-            emit("    jmp .L%d", break_target);
+            emit_i("    jmp .L%d", break_target);
         return;
     }
 
@@ -1351,14 +1409,14 @@ static void statement(void) {
         next_token();
         match(';');
         if (continue_target_valid)
-            emit("    jmp .L%d", continue_target);
+            emit_i("    jmp .L%d", continue_target);
         return;
     }
 
     if (tok == T_GOTO) {
         next_token();
         if (tok != T_ID) error("expected label name");
-        emit("    jmp %s", token);
+        emit_s("    jmp %s", token);
         next_token();
         match(';');
         return;
@@ -1399,7 +1457,7 @@ static void statement(void) {
                     const char *p = input_ptr;
                     while (*p && (*p == ' ' || *p == '\t')) p++;
                     if (*p == ':') {
-                        emit("%s:", token);
+                        emit_s("%s:", token);
                         next_token();
                         next_token();
                         continue;
@@ -1449,9 +1507,9 @@ static void statement(void) {
                             Symbol *s = &symbols[si];
                             int off = s->offset + elem_idx * elem_size;
                             if (elem_size == 1)
-                                emit("    movb %%al, %d(%%rbp)", off);
+                                emit_i("    movb %%al, %d(%%rbp)", off);
                             else
-                                emit("    movq %%rax, %d(%%rbp)", off);
+                                emit_i("    movq %%rax, %d(%%rbp)", off);
                             if (tok == ',') next_token();
                             elem_idx++;
                         }
@@ -1473,9 +1531,9 @@ static void statement(void) {
                         int si = find_symbol(varname);
                         Symbol *s = &symbols[si];
                         if (s->is_global)
-                            emit("    movq %%rax, %s(%%rip)", s->name);
+                            emit_s("    movq %%rax, %s(%%rip)", s->name);
                         else
-                            emit("    movq %%rax, %d(%%rbp)", s->offset);
+                            emit_i("    movq %%rax, %d(%%rbp)", s->offset);
                     }
                 }
                 if (tok == ',') {
@@ -1527,9 +1585,9 @@ static void statement(void) {
                             Symbol *s = &symbols[si];
                             int off = s->offset + elem_idx * elem_size;
                             if (elem_size == 1)
-                                emit("    movb %%al, %d(%%rbp)", off);
+                                emit_i("    movb %%al, %d(%%rbp)", off);
                             else
-                                emit("    movq %%rax, %d(%%rbp)", off);
+                                emit_i("    movq %%rax, %d(%%rbp)", off);
                             if (tok == ',') next_token();
                             elem_idx++;
                         }
@@ -1551,9 +1609,9 @@ static void statement(void) {
                         int si = find_symbol(varname);
                         Symbol *s = &symbols[si];
                         if (s->is_global)
-                            emit("    movq %%rax, %s(%%rip)", s->name);
+                            emit_s("    movq %%rax, %s(%%rip)", s->name);
                         else
-                            emit("    movq %%rax, %d(%%rbp)", s->offset);
+                            emit_i("    movq %%rax, %d(%%rbp)", s->offset);
                     }
                 }
                 if (tok == ',') {
@@ -1709,12 +1767,12 @@ static void parse_function(const char *name, int ret_type) {
     strcpy(token, body_token);
 
     /* Emit function prologue */
-    emit("    .globl %s", name);
-    emit("%s:", name);
+    emit_s("    .globl %s", name);
+    emit_s("%s:", name);
     emit("    pushq %%rbp");
     emit("    movq %%rsp, %%rbp");
     if (func_stack > 0)
-        emit("    subq $%d, %%rsp", func_stack);
+        emit_i("    subq $%d, %%rsp", func_stack);
 
     /* Save register parameters to stack */
     {
@@ -1724,11 +1782,11 @@ static void parse_function(const char *name, int ret_type) {
             if (idx < 0) error("parameter not found");
             Symbol *s = &symbols[idx];
             if (i < 6) {
-                emit("    movq %s, %d(%%rbp)", param_regs[i], s->offset);
+                emit_si("    movq %s, %d(%%rbp)", param_regs[i], s->offset);
             } else {
                 int stack_off = 16 + (i - 6) * 8;
-                emit("    movq %d(%%rbp), %%rax", stack_off);
-                emit("    movq %%rax, %d(%%rbp)", s->offset);
+                emit_i("    movq %d(%%rbp), %%rax", stack_off);
+                emit_i("    movq %%rax, %d(%%rbp)", s->offset);
             }
         }
     }
