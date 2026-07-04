@@ -44,6 +44,10 @@ enum {
     T_NE,
     T_AND,
     T_OR,
+    T_SWITCH,
+    T_CASE,
+    T_DEFAULT,
+    T_BREAK,
     T_EOF
 };
 
@@ -63,6 +67,7 @@ typedef struct {
     int is_const;
     int const_value;
     int is_array;
+    int elem_size; /* element size for arrays (0 for non-arrays) */
 } Symbol;
 
 static Symbol symbols[MAX_SYMBOLS];
@@ -74,6 +79,16 @@ static int emit_enabled = 1;
 static int max_func_stack = 0;
 static int assign_size = 8;
 static int expr_pointed = 0;
+static int current_elem_size = 0;
+
+#define MAX_CASES_PER_SWITCH 256
+static int switch_case_values[MAX_CASES_PER_SWITCH];
+static int switch_case_labels[MAX_CASES_PER_SWITCH];
+static int switch_case_count = 0;
+static int switch_has_default = 0;
+static int switch_default_label = 0;
+static int break_target = 0;
+static int break_target_valid = 0;
 
 #define MAX_STRUCT_MEMBERS 32
 static int struct_total_size = 0;
@@ -203,6 +218,10 @@ static void next_token(void) {
         else if (strcmp(token, "struct") == 0) tok = T_STRUCT;
         else if (strcmp(token, "const") == 0) tok = T_CONST;
         else if (strcmp(token, "for") == 0) tok = T_FOR;
+        else if (strcmp(token, "switch") == 0) tok = T_SWITCH;
+        else if (strcmp(token, "case") == 0) tok = T_CASE;
+        else if (strcmp(token, "default") == 0) tok = T_DEFAULT;
+        else if (strcmp(token, "break") == 0) tok = T_BREAK;
         else {
             int mi = find_macro(token);
             if (mi >= 0) {
@@ -271,7 +290,7 @@ static int find_symbol(const char *name) {
     return -1;
 }
 
-static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array) {
+static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int elem_size) {
     if (symbol_count >= MAX_SYMBOLS)
         error("too many symbols");
     Symbol *s = &symbols[symbol_count];
@@ -283,12 +302,15 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     s->is_const = 0;
     s->const_value = 0;
     s->is_array = is_array;
+    s->elem_size = elem_size;
     if (is_global) {
         s->offset = 0;
+        emit("    .bss");
         emit("    .globl %s", name);
         emit("%s:", name);
         if (size > 0)
             emit("    .space %d", size);
+        emit("    .text");
     } else {
         stack_size = (stack_size + size + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
         s->offset = -stack_size;
@@ -301,6 +323,8 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
 /* Parser forward declarations */
 static void expression(void);
 static void statement(void);
+static void lvalue_address(void);
+static void handle_postfix(int is_lvalue);
 static void parse_enum(void);
 static void skip_struct(void);
 static void skip_typedef(void);
@@ -347,6 +371,7 @@ static void unary(void) {
                     expr_pointed = 0;
                 } else if (s->is_array || (s->pointed && s->size > 8)) {
                     /* Array: emit address instead of value (decays to pointer) */
+                    current_elem_size = s->is_array ? s->elem_size : 8;
                     if (s->is_global)
                         emit("    leaq %s(%%rip), %%rax", id_name);
                     else
@@ -390,6 +415,10 @@ static void unary(void) {
         else
             emit("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
+    } else if (tok == '-') {
+        next_token();
+        unary();
+        emit("    negq %%rax");
     } else {
         error("invalid primary expression");
     }
@@ -401,38 +430,49 @@ static void lvalue_address(void) {
         if (idx < 0) error("undefined variable");
         Symbol *s = &symbols[idx];
         assign_size = s->size;
+        if (s->is_array || (s->pointed && s->size > 8)) {
+            current_elem_size = s->is_array ? s->elem_size : 8;
+            expr_pointed = s->pointed ? s->pointed : T_INT;
+        } else {
+            current_elem_size = 0;
+            expr_pointed = s->pointed;
+        }
         if (s->is_global)
             emit("    leaq %s(%%rip), %%rax", token);
         else
             emit("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
+        handle_postfix(1);
     } else if (tok == '*') {
         next_token();
-        unary();   /* pointer value in %rax */
-        assign_size = 8;
+        unary();
+        handle_postfix(1);
+        if (assign_size == 0) assign_size = (expr_pointed == T_CHAR) ? 1 : 8;
     } else {
         error("lvalue required");
     }
 }
 
-static void expr_prec(int min_prec) {
-    unary();
-
-    /* Postfix operators: [subscript], .member, ->member */
+static void handle_postfix(int is_lvalue) {
     while (tok == '[' || tok == '.' || tok == T_ARROW) {
         if (tok == '[') {
             next_token();
             emit("    pushq %%rax");
             expression();
             emit("    popq %%rcx");
-            int elem_size = (expr_pointed == T_CHAR) ? 1 : 8;
+            int elem_size = current_elem_size;
+            if (elem_size == 0) elem_size = (expr_pointed == T_CHAR) ? 1 : 8;
             if (elem_size > 1) emit("    imulq $%d, %%rax", elem_size);
             emit("    addq %%rcx, %%rax");
-            if (expr_pointed == T_CHAR)
-                emit("    movsbq (%%rax), %%rax");
-            else
-                emit("    movq (%%rax), %%rax");
-            expr_pointed = 0;
+            current_elem_size = elem_size;
+            assign_size = elem_size;
+            if (!is_lvalue && elem_size <= 8) {
+                if (expr_pointed == T_CHAR)
+                    emit("    movsbq (%%rax), %%rax");
+                else
+                    emit("    movq (%%rax), %%rax");
+                expr_pointed = 0;
+            }
             match(']');
         } else if (tok == '.') {
             next_token();
@@ -446,18 +486,23 @@ static void expr_prec(int min_prec) {
             }
             next_token();
             if (off > 0) emit("    addq $%d, %%rax", off);
-            if (msize > 8) {
-                /* Array member: keep address (decays to pointer) */
-                expr_pointed = (msize > 0) ? T_INT : 0;
+            assign_size = msize;
+            current_elem_size = msize;
+            if (is_lvalue) {
+                expr_pointed = (msize > 8) ? T_INT : 0;
             } else {
-                /* Scalar member: load value */
-                if (msize == 1)
-                    emit("    movsbq (%%rax), %%rax");
-                else
-                    emit("    movq (%%rax), %%rax");
-                expr_pointed = 0;
+                if (msize > 8) {
+                    expr_pointed = (msize > 0) ? T_INT : 0;
+                } else {
+                    if (msize == 1)
+                        emit("    movsbq (%%rax), %%rax");
+                    else
+                        emit("    movq (%%rax), %%rax");
+                    expr_pointed = 0;
+                }
             }
         } else if (tok == T_ARROW) {
+            if (is_lvalue) emit("    movq (%%rax), %%rax");
             next_token();
             int off = 0, msize = 8;
             for (int i = 0; i < struct_member_count; i++) {
@@ -469,17 +514,30 @@ static void expr_prec(int min_prec) {
             }
             next_token();
             if (off > 0) emit("    addq $%d, %%rax", off);
-            if (msize > 8) {
-                expr_pointed = (msize > 0) ? T_INT : 0;
+            assign_size = msize;
+            current_elem_size = msize;
+            if (is_lvalue) {
+                expr_pointed = (msize > 8) ? T_INT : 0;
             } else {
-                if (msize == 1)
-                    emit("    movsbq (%%rax), %%rax");
-                else
-                    emit("    movq (%%rax), %%rax");
-                expr_pointed = 0;
+                if (msize > 8) {
+                    expr_pointed = (msize > 0) ? T_INT : 0;
+                } else {
+                    if (msize == 1)
+                        emit("    movsbq (%%rax), %%rax");
+                    else
+                        emit("    movq (%%rax), %%rax");
+                    expr_pointed = 0;
+                }
             }
         }
     }
+}
+
+static void expr_prec(int min_prec) {
+    unary();
+
+    /* Postfix operators: [subscript], .member, ->member */
+    handle_postfix(0);
 
     while (1) {
         int op = tok;
@@ -581,7 +639,40 @@ static void assignment_expr(void) {
 
     if (tok == T_ID) {
         next_token();
-        if (tok == '=') {
+
+        /* Peek ahead through postfix operators to detect =, ++, -- */
+        char *peek_ptr = input_ptr;
+        int peek_line = line;
+        int peek_tok = tok;
+        char peek_token[MAX_TOKEN_LEN];
+        strcpy(peek_token, token);
+
+        int assign_type = 0; /* 0=none, 1='=', 2=T_INC, 3=T_DEC */
+        while (tok == '[' || tok == '.' || tok == T_ARROW || tok == '(') {
+            if (tok == '(') {
+                int depth = 1;
+                while (depth > 0 && tok != T_EOF) { next_token(); if (tok == '(') depth++; else if (tok == ')') depth--; }
+                next_token();
+            } else if (tok == '[') {
+                int depth = 1;
+                while (depth > 0 && tok != T_EOF) { next_token(); if (tok == '[') depth++; else if (tok == ']') depth--; }
+                next_token();
+            } else {
+                next_token(); /* . or ->: skip member name */
+                next_token(); /* read token after member name */
+            }
+        }
+        if (tok == '=') assign_type = 1;
+        else if (tok == T_INC) assign_type = 2;
+        else if (tok == T_DEC) assign_type = 3;
+
+        /* Restore to state after T_ID */
+        input_ptr = peek_ptr;
+        line = peek_line;
+        tok = peek_tok;
+        strcpy(token, peek_token);
+
+        if (assign_type == 1) {
             tok = saved_tok;
             strcpy(token, saved_token);
             input_ptr = save_src;
@@ -597,14 +688,13 @@ static void assignment_expr(void) {
             else
                 emit("    movq %%rax, (%%rcx)");
             return;
-        } else if (tok == T_INC || tok == T_DEC) {
-            int op = tok;
+        } else if (assign_type != 0) {
+            int op = tok == T_INC ? T_INC : T_DEC;
             input_ptr = save_src;
             line = save_line;
             tok = saved_tok;
             strcpy(token, saved_token);
             lvalue_address();
-            next_token();
             if (assign_size == 1)
                 emit("    movsbq (%%rax), %%rcx");
             else
@@ -676,7 +766,7 @@ static void statement(void) {
             varname[nlen] = '\0';
             next_token();
             int vsize = is_ptr ? 8 : (type == T_INT ? 8 : 1);
-            add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0);
+            add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0, 0);
             if (tok == '=') {
                 next_token();
                 expression();
@@ -789,6 +879,85 @@ static void statement(void) {
         return;
     }
 
+    if (tok == T_SWITCH) {
+        next_token();
+        match('(');
+        expression();
+        match(')');
+        int dispatch_label = label_counter++;
+        int end_label = label_counter++;
+
+        emit("    pushq %%rax");
+        emit("    jmp .L%d", dispatch_label);
+
+        /* Save outer break state */
+        int saved_break_target = break_target;
+        int saved_break_valid = break_target_valid;
+        int saved_case_count = switch_case_count;
+        int saved_has_default = switch_has_default;
+        int saved_default_label = switch_default_label;
+        break_target = end_label;
+        break_target_valid = 1;
+        switch_case_count = 0;
+        switch_has_default = 0;
+        switch_default_label = 0;
+
+        match('{');
+        while (tok != '}' && tok != T_EOF) {
+            if (tok == T_CASE) {
+                next_token();
+                int val = atoi(token);
+                next_token();
+                match(':');
+                int lbl = label_counter++;
+                switch_case_values[switch_case_count] = val;
+                switch_case_labels[switch_case_count] = lbl;
+                switch_case_count++;
+                emit_label(lbl);
+            } else if (tok == T_DEFAULT) {
+                next_token();
+                match(':');
+                switch_has_default = 1;
+                switch_default_label = label_counter++;
+                emit_label(switch_default_label);
+            } else {
+                statement();
+            }
+        }
+        match('}');
+
+        /* Emit fall-through guard: any case without break goes to end */
+        emit("    jmp .L%d", end_label);
+
+        /* Emit dispatch */
+        emit_label(dispatch_label);
+        emit("    movq (%%rsp), %%rax");
+        for (int i = 0; i < switch_case_count; i++) {
+            emit("    cmpq $%d, %%rax", switch_case_values[i]);
+            emit("    je .L%d", switch_case_labels[i]);
+        }
+        if (switch_has_default)
+            emit("    jmp .L%d", switch_default_label);
+        emit_label(end_label);
+        emit("    addq $8, %%rsp");
+
+        /* Restore outer break state */
+        break_target = saved_break_target;
+        break_target_valid = saved_break_valid;
+        switch_case_count = saved_case_count;
+        switch_has_default = saved_has_default;
+        switch_default_label = saved_default_label;
+        return;
+    }
+
+    if (tok == T_BREAK) {
+        next_token();
+        match(';');
+        if (break_target_valid)
+            emit("    jmp .L%d", break_target);
+        return;
+    }
+
     if (tok == T_RETURN) {
         function_has_return = 1;
         next_token();
@@ -828,6 +997,7 @@ static void statement(void) {
                 next_token();
                 int size = is_ptr ? 8 : (type == T_INT ? 8 : 1);
                 int is_arr = 0;
+                int elem_size = size;
                 while (tok == '[') {
                     is_arr = 1;
                     next_token();
@@ -844,7 +1014,7 @@ static void statement(void) {
                     match(']');
                     size = size * (cnt > 0 ? cnt : 1);
                 }
-                add_symbol(varname, 0, size, is_ptr ? type : 0, is_arr);
+                add_symbol(varname, 0, size, is_ptr ? type : 0, is_arr, elem_size);
                 match(';');
             } else if (tok == T_ENUM) {
                 parse_enum();
@@ -895,7 +1065,7 @@ static void parse_function(const char *name, int ret_type) {
                 memcpy(param_names[param_count], token, nlen);
                 param_names[param_count][nlen] = '\0';
                 int psize = is_ptr ? 8 : (ptype == T_INT ? 8 : 1);
-                add_symbol(token, 0, psize, is_ptr ? ptype : 0, 0);
+                add_symbol(token, 0, psize, is_ptr ? ptype : 0, 0, 0);
                 param_count++;
                 next_token();
                 if (tok == ',') next_token();
@@ -1145,6 +1315,7 @@ static void parse_program(void) {
             } else {
                 int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : 8);
                 int is_arr = 0;
+                int elem_size = gsize;
                 while (tok == '[') {
                     is_arr = 1;
                     next_token();
@@ -1161,7 +1332,7 @@ static void parse_program(void) {
                     match(']');
                     gsize = gsize * (cnt > 0 ? cnt : 1);
                 }
-                add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr);
+                add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr, elem_size);
                 if (tok == '=') {
                     while (tok != ';' && tok != T_EOF) next_token();
                 }
@@ -1185,6 +1356,7 @@ static void parse_program(void) {
             next_token();
             int gsize = is_ptr ? 8 : type_size;
             int is_arr = 0;
+            int elem_size = gsize;
             while (tok == '[') {
                 is_arr = 1;
                 next_token();
@@ -1201,7 +1373,7 @@ static void parse_program(void) {
                 match(']');
                 gsize = gsize * (cnt > 0 ? cnt : 1);
             }
-            add_symbol(fname, 1, gsize, 0, is_arr);
+            add_symbol(fname, 1, gsize, 0, is_arr, elem_size);
             if (tok == ';') next_token();
             else error("expected ';' or '(' after global");
         } else {
