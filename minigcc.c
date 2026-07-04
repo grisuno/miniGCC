@@ -586,13 +586,18 @@ static void unary(void) {
             emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
     } else if (tok == T_STRING) {
-        int lbl = str_label_counter++;
-        if (string_count < MAX_STRINGS) {
-            string_pool[string_count] = malloc(strlen(token) + 1);
-            strcpy(string_pool[string_count], token);
-            string_count++;
+        /* FIX: solo asignar etiqueta y pool cuando emit_enabled, evita
+           duplicacion durante la primera pasada de parse_function */
+        int lbl = str_label_counter;
+        if (emit_enabled) {
+            str_label_counter++;
+            if (string_count < MAX_STRINGS) {
+                string_pool[string_count] = malloc(strlen(token) + 1);
+                strcpy(string_pool[string_count], token);
+                string_count++;
+            }
+            emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
         }
-        emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
         expr_pointed = T_CHAR;
         next_token();
     } else if (tok == '-') {
@@ -796,13 +801,14 @@ static void expr_prec(int min_prec) {
                 emit("    imulq %%rcx, %%rax");  /* rax = right * left */
                 break;
             case '/':
-                /* left / right: dividend in %rax (left), divisor in %rcx (right) */
-                emit("    movq %%rcx, %%rax");   /* left -> rax */
+                /* FIX: left (rcx) / right (rax). xchg pone left en rax, right en rcx */
+                emit("    xchgq %%rax, %%rcx");
                 emit("    cqto");                /* sign-extend rax to rdx:rax */
                 emit("    idivq %%rcx");         /* divide rdx:rax by rcx (right) */
                 break;
             case '%':
-                emit("    movq %%rcx, %%rax");   /* left -> rax */
+                /* FIX: left (rcx) % right (rax). xchg pone left en rax, right en rcx */
+                emit("    xchgq %%rax, %%rcx");
                 emit("    cqto");
                 emit("    idivq %%rcx");         /* quotient in rax, remainder in rdx */
                 emit("    movq %%rdx, %%rax");   /* remainder -> rax */
@@ -1173,9 +1179,16 @@ static void statement(void) {
         next_token();
         match('(');
         /* init */
+        /* FIX: manejar unsigned/signed en init del for */
+        if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+            next_token();
+            while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
+        }
         if (tok == T_INT || tok == T_CHAR) {
             int type = tok;
             next_token();
+            /* FIX: saltar 'long' extra */
+            while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
             int is_ptr = 0;
             while (tok == '*') { is_ptr = 1; next_token(); }
             if (tok != T_ID) error("expected variable name");
@@ -1544,6 +1557,8 @@ static void statement(void) {
             } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
                 int type = tok;
                 next_token();
+                /* FIX: saltar 'long' extra para 'long long', 'long int', etc. */
+                while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
                 restart_int:
                 int is_ptr = 0;
                 while (tok == '*') { is_ptr = 1; next_token(); }
@@ -1679,9 +1694,18 @@ static void parse_function(const char *name, int ret_type) {
             if (tok == T_CONST) {
                 next_token();
                 continue;
-        } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
+            }
+            /* FIX: manejar unsigned/signed en parametros */
+            if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+                next_token();
+                while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
+                /* cae al manejo de T_INT/T_CHAR */
+            }
+            if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
                 int ptype = tok;
                 next_token();
+                /* FIX: saltar 'long' extra */
+                while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
                 int is_ptr = 0;
                 int ptr_count = 0;
                 while (tok == '*') { is_ptr = 1; ptr_count++; next_token(); }
@@ -1696,8 +1720,6 @@ static void parse_function(const char *name, int ret_type) {
                 param_count++;
                 next_token();
                 if (tok == ',') next_token();
-            } else if (tok == T_VOID) {
-                next_token();
             } else if (tok == '.') {
                 /* Variadic ... */
                 next_token();
@@ -1942,6 +1964,12 @@ static void skip_typedef(void) {
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
+        /* FIX: manejar calificadores unsigned/signed a nivel global */
+        if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+            next_token();
+            while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
+            /* cae al manejo de tipos */
+        }
         if (tok == T_STATIC) {
             next_token();
             continue;
@@ -1958,6 +1986,8 @@ static void parse_program(void) {
         } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
             int type = tok;
             next_token();
+            /* FIX: saltar 'long' extra para 'long long', 'long int', etc. */
+            while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
             int is_ptr = 0;
             while (tok == '*') { is_ptr = 1; next_token(); }
             if (tok != T_ID) error("expected identifier");
@@ -2134,7 +2164,7 @@ int main(int argc, char **argv) {
     }
 
     emit("    .globl _start");
-    emit("_start:");
+/*  emit("_start:");
     emit("    movq (%%rsp), %%rdi");
     emit("    leaq 8(%%rsp), %%rsi");
     emit("    leaq 16(%%rsp,%%rdi,8), %%rdx");
@@ -2142,7 +2172,7 @@ int main(int argc, char **argv) {
     emit("    movq %%rax, %%rdi");
     emit("    movq $60, %%rax");
     emit("    syscall");
-
+*/
     free(source_start);
     return EXIT_SUCCESS;
 }
