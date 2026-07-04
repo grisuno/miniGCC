@@ -16,7 +16,7 @@
 #define MAX_SYMBOLS     2048
 #define MAX_IDENT_LEN   32
 #define MAX_SOURCE_SIZE 1048576
-#define STACK_ALIGN     8
+#define STACK_ALIGN     16
 
 enum {
     T_NUM = 256,
@@ -98,7 +98,7 @@ static int continue_target = 0;
 static int continue_target_valid = 0;
 
 static int str_label_counter = 0;
-
+static int peek_mode = 0;
 #define MAX_STRINGS 2048
 static char *string_pool[MAX_STRINGS];
 static int string_count = 0;
@@ -337,6 +337,9 @@ static void next_token(void) {
             switch (*input_ptr) {
                 case 'n': ch = '\n'; break;
                 case 't': ch = '\t'; break;
+                case 'r': ch = '\r'; break;
+                case 'f': ch = '\f'; break;
+                case 'v': ch = '\v'; break;
                 case '0': ch = '\0'; break;
                 case '\\': ch = '\\'; break;
                 case '\'': ch = '\''; break;
@@ -377,7 +380,7 @@ static void match(int expected) {
 }
 
 static void emit(const char *s) {
-    if (!emit_enabled) return;
+    if (!emit_enabled || peek_mode) return;
     while (*s) {
         if (*s == '%' && s[1] == '%') {
             fputc('%', output);
@@ -391,31 +394,31 @@ static void emit(const char *s) {
 }
 
 static void emit_i(const char *fmt, int v) {
-    if (!emit_enabled) return;
+    if (!emit_enabled || peek_mode) return;
     fprintf(output, fmt, v);
     fputc('\n', output);
 }
 
 static void emit_s(const char *fmt, const char *s) {
-    if (!emit_enabled) return;
+    if (!emit_enabled || peek_mode) return;
     fprintf(output, fmt, s);
     fputc('\n', output);
 }
 
 static void emit_is(const char *fmt, int v, const char *s) {
-    if (!emit_enabled) return;
+    if (!emit_enabled || peek_mode) return;
     fprintf(output, fmt, v, s);
     fputc('\n', output);
 }
 
 static void emit_si(const char *fmt, const char *s, int v) {
-    if (!emit_enabled) return;
+    if (!emit_enabled || peek_mode) return;
     fprintf(output, fmt, s, v);
     fputc('\n', output);
 }
 
 static void emit_label(int label) {
-    if (emit_enabled)
+    if (emit_enabled && !peek_mode)
         fprintf(output, ".L%d:\n", label);
 }
 
@@ -499,25 +502,33 @@ static void unary(void) {
                 error("too many function arguments (max 6)");
             if (argc > 0)
                 emit_i("    addq $%d, %%rsp", argc * 8);
+            
+            /* Alineación dinámica de pila a 16 bytes antes de call (ABI x86-64).
+               Doble push del rsp original: quede donde quede rsp tras el andq,
+               el valor guardado siempre está en 8(%rsp) después del call. */
+            emit("    pushq %%rsp");
+            emit("    pushq (%%rsp)");
+            emit("    andq $-16, %%rsp");
             emit("    xorl %%eax, %%eax");
             emit_s("    call %s", id_name);
+            emit("    movq 8(%%rsp), %%rsp");
+            
             expr_pointed = 0;
+        } else {
+            int idx = find_symbol(id_name);
+            if (idx < 0) error("undefined variable");
+            Symbol *s = &symbols[idx];
+            if (s->is_const) {
+                emit_i("    movq $%d, %%rax", s->const_value);
+                expr_pointed = 0;
+            } else if (s->is_array || (s->pointed && s->size > 8)) {
+                current_elem_size = s->is_array ? s->elem_size : 8;
+                if (s->is_global)
+                    emit_s("    leaq %s(%%rip), %%rax", id_name);
+                else
+                    emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                expr_pointed = s->size > 0 && s->size <= 8 ? 0 : (s->pointed ? s->pointed : T_INT);
             } else {
-                int idx = find_symbol(id_name);
-                if (idx < 0) error("undefined variable");
-                Symbol *s = &symbols[idx];
-                if (s->is_const) {
-                    emit_i("    movq $%d, %%rax", s->const_value);
-                    expr_pointed = 0;
-                } else if (s->is_array || (s->pointed && s->size > 8)) {
-                    /* Array: emit address instead of value (decays to pointer) */
-                    current_elem_size = s->is_array ? s->elem_size : 8;
-                    if (s->is_global)
-                        emit_s("    leaq %s(%%rip), %%rax", id_name);
-                    else
-                        emit_i("    leaq %d(%%rbp), %%rax", s->offset);
-                    expr_pointed = s->size > 0 && s->size <= 8 ? 0 : (s->pointed ? s->pointed : T_INT);
-                } else {
                 expr_pointed = s->pointed;
                 if (s->size == 1) {
                     if (s->is_global)
@@ -533,7 +544,6 @@ static void unary(void) {
             }
         }
     } else if (tok == '(') {
-        /* Check for type cast: (type)expr */
         char *cast_save = input_ptr;
         int cast_line = line;
         next_token();
@@ -553,9 +563,8 @@ static void unary(void) {
             if (!is_cast) tok = saved;
         }
         if (is_cast) {
-            next_token(); /* consume ')' */
+            next_token();
             unary();
-            /* For char cast, sign-extend; for int/typedef no-op */
         } else {
             input_ptr = cast_save;
             line = cast_line;
@@ -586,33 +595,31 @@ static void unary(void) {
             emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
     } else if (tok == T_STRING) {
-        /* FIX: solo asignar etiqueta y pool cuando emit_enabled, evita
-           duplicacion durante la primera pasada de parse_function */
-        int lbl = str_label_counter;
-        if (emit_enabled) {
-            str_label_counter++;
-            if (string_count < MAX_STRINGS) {
-                string_pool[string_count] = malloc(strlen(token) + 1);
-                strcpy(string_pool[string_count], token);
-                string_count++;
-            }
-            emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
+        int lbl = str_label_counter++;
+        if (string_count < MAX_STRINGS) {
+            string_pool[string_count] = malloc(strlen(token) + 1);
+            strcpy(string_pool[string_count], token);
+            string_count++;
         }
+        emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
         expr_pointed = T_CHAR;
         next_token();
     } else if (tok == '-') {
         next_token();
         unary();
+        handle_postfix(0);
         emit("    negq %%rax");
     } else if (tok == '!') {
         next_token();
         unary();
+        handle_postfix(0);
         emit("    testq %%rax, %%rax");
         emit("    sete %%al");
         emit("    movzbq %%al, %%rax");
     } else if (tok == '~') {
         next_token();
         unary();
+        handle_postfix(0);
         emit("    notq %%rax");
     } else {
         error("invalid primary expression");
@@ -749,8 +756,6 @@ static void handle_postfix(int is_lvalue) {
 
 static void expr_prec(int min_prec) {
     unary();
-
-    /* Postfix operators: [subscript], .member, ->member */
     handle_postfix(0);
     no_postfix_deref = 0;
 
@@ -784,37 +789,30 @@ static void expr_prec(int min_prec) {
             continue;
         }
 
-        emit("    pushq %%rax");      /* save left operand */
-        expr_prec(prec + 1);          /* right operand in %rax */
-        emit("    popq %%rcx");       /* left operand in %rcx, right in %rax */
+        emit("    pushq %%rax");
+        expr_prec(prec + 1);
+        emit("    popq %%rcx");
 
         switch (op) {
-            case '+':
-                emit("    addq %%rcx, %%rax");   /* rax = right + left */
-                break;
+            case '+': emit("    addq %%rcx, %%rax"); break;
             case '-':
-                /* left (rcx) - right (rax) */
                 emit("    subq %%rax, %%rcx");
                 emit("    movq %%rcx, %%rax");
                 break;
-            case '*':
-                emit("    imulq %%rcx, %%rax");  /* rax = right * left */
-                break;
+            case '*': emit("    imulq %%rcx, %%rax"); break;
             case '/':
-                /* FIX: left (rcx) / right (rax). xchg pone left en rax, right en rcx */
-                emit("    xchgq %%rax, %%rcx");
-                emit("    cqto");                /* sign-extend rax to rdx:rax */
-                emit("    idivq %%rcx");         /* divide rdx:rax by rcx (right) */
+                emit("    movq %%rcx, %%rax");
+                emit("    cqto");
+                emit("    idivq %%rcx");
                 break;
             case '%':
-                /* FIX: left (rcx) % right (rax). xchg pone left en rax, right en rcx */
-                emit("    xchgq %%rax, %%rcx");
+                emit("    movq %%rcx, %%rax");
                 emit("    cqto");
-                emit("    idivq %%rcx");         /* quotient in rax, remainder in rdx */
-                emit("    movq %%rdx, %%rax");   /* remainder -> rax */
+                emit("    idivq %%rcx");
+                emit("    movq %%rdx, %%rax");
                 break;
             case T_EQ:
-                emit("    cmpq %%rax, %%rcx");   /* compare left and right */
+                emit("    cmpq %%rax, %%rcx");
                 emit("    sete %%al");
                 emit("    movzbq %%al, %%rax");
                 break;
@@ -843,23 +841,26 @@ static void expr_prec(int min_prec) {
                 emit("    setge %%al");
                 emit("    movzbq %%al, %%rax");
                 break;
-            case '&':
-                emit("    andq %%rcx, %%rax");
-                break;
-            case '^':
-                emit("    xorq %%rcx, %%rax");
-                break;
-            case '|':
-                emit("    orq %%rcx, %%rax");
-                break;
+            case '&': emit("    andq %%rcx, %%rax"); break;
+            case '^': emit("    xorq %%rcx, %%rax"); break;
+            case '|': emit("    orq %%rcx, %%rax"); break;
             case T_AND:
-                emit("    andq %%rcx, %%rax");
+                emit("    cmpq $0, %%rcx");
+                emit("    setne %%cl");
+                emit("    cmpq $0, %%rax");
+                emit("    setne %%al");
+                emit("    andb %%cl, %%al");
+                emit("    movzbq %%al, %%rax");
                 break;
             case T_OR:
-                emit("    orq %%rcx, %%rax");
+                emit("    cmpq $0, %%rcx");
+                emit("    setne %%cl");
+                emit("    cmpq $0, %%rax");
+                emit("    setne %%al");
+                emit("    orb %%cl, %%al");
+                emit("    movzbq %%al, %%rax");
                 break;
-            default:
-                error("unknown binary operator");
+            default: error("unknown binary operator");
         }
     }
 }
@@ -914,15 +915,13 @@ static void assignment_expr(void) {
 
     if (tok == T_ID) {
         next_token();
-
-        /* Peek ahead through postfix operators to detect =, ++, -- */
         char *peek_ptr = input_ptr;
         int peek_line = line;
         int peek_tok = tok;
         char peek_token[MAX_TOKEN_LEN];
         strcpy(peek_token, token);
 
-        int assign_type = 0; /* 0=none, 1='=', 2=T_INC, 3=T_DEC */
+        int assign_type = 0;
         while (tok == '[' || tok == '.' || tok == T_ARROW || tok == '(') {
             if (tok == '(') {
                 int depth = 1;
@@ -933,8 +932,8 @@ static void assignment_expr(void) {
                 while (depth > 0 && tok != T_EOF) { next_token(); if (tok == '[') depth++; else if (tok == ']') depth--; }
                 next_token();
             } else {
-                next_token(); /* . or ->: skip member name */
-                next_token(); /* read token after member name */
+                next_token();
+                next_token();
             }
         }
         if (tok == '=') assign_type = 1;
@@ -944,121 +943,54 @@ static void assignment_expr(void) {
         else if (tok == T_SUB_ASSIGN) assign_type = 5;
         else assign_type = 0;
 
-        /* Restore to state after T_ID */
         input_ptr = peek_ptr;
         line = peek_line;
         tok = peek_tok;
         strcpy(token, peek_token);
 
         if (assign_type == 1) {
-            tok = saved_tok;
-            strcpy(token, saved_token);
-            input_ptr = save_src;
-            line = save_line;
-
-            lvalue_address();
-            match('=');
-            emit("    pushq %%rax");
-            assignment_expr();
-            emit("    popq %%rcx");
-            if (assign_size == 1)
-                emit("    movb %%al, (%%rcx)");
-            else
-                emit("    movq %%rax, (%%rcx)");
+            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            lvalue_address(); match('='); emit("    pushq %%rax"); assignment_expr(); emit("    popq %%rcx");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type == 4) {
-            /* += */
-            tok = saved_tok;
-            strcpy(token, saved_token);
-            input_ptr = save_src;
-            line = save_line;
-            lvalue_address();
-            emit("    pushq %%rax");
-            if (assign_size == 1)
-                emit("    movsbq (%%rax), %%rax");
-            else
-                emit("    movq (%%rax), %%rax");
-            emit("    pushq %%rax");
-            next_token(); /* consume += */
-            assignment_expr();
-            emit("    popq %%rcx");
-            if (assign_size == 1) {
-                emit("    addq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movb %%al, (%%rcx)");
-            } else {
-                emit("    addq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movq %%rax, (%%rcx)");
-            }
+            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            lvalue_address(); emit("    pushq %%rax");
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else emit("    movq (%%rax), %%rax");
+            emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
+            if (assign_size == 1) { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type == 5) {
-            tok = saved_tok;
-            strcpy(token, saved_token);
-            input_ptr = save_src;
-            line = save_line;
-            lvalue_address();
-            emit("    pushq %%rax");
-            if (assign_size == 1)
-                emit("    movsbq (%%rax), %%rax");
-            else
-                emit("    movq (%%rax), %%rax");
-            emit("    pushq %%rax");
-            next_token(); /* consume -= */
-            assignment_expr();
-            emit("    popq %%rcx");
-            if (assign_size == 1) {
-                emit("    subq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movb %%al, (%%rcx)");
-            } else {
-                emit("    subq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movq %%rax, (%%rcx)");
-            }
+            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            lvalue_address(); emit("    pushq %%rax");
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else emit("    movq (%%rax), %%rax");
+            emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
+            if (assign_size == 1) { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type != 0) {
             int op = tok == T_INC ? T_INC : T_DEC;
-            input_ptr = save_src;
-            line = save_line;
-            tok = saved_tok;
-            strcpy(token, saved_token);
+            input_ptr = save_src; line = save_line; tok = saved_tok; strcpy(token, saved_token);
             lvalue_address();
-            if (assign_size == 1)
-                emit("    movsbq (%%rax), %%rcx");
-            else
-                emit("    movq (%%rax), %%rcx");
-            if (op == T_INC) {
-                if (assign_size == 1)
-                    emit("    addb $1, (%%rax)");
-                else
-                    emit("    addq $1, (%%rax)");
-            } else {
-                if (assign_size == 1)
-                    emit("    subb $1, (%%rax)");
-                else
-                    emit("    subq $1, (%%rax)");
-            }
-            emit("    movq %%rcx, %%rax");
-            next_token();
-            return;
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rcx"); else emit("    movq (%%rax), %%rcx");
+            if (op == T_INC) { if (assign_size == 1) emit("    addb $1, (%%rax)"); else emit("    addq $1, (%%rax)"); }
+            else { if (assign_size == 1) emit("    subb $1, (%%rax)"); else emit("    subq $1, (%%rax)"); }
+            emit("    movq %%rcx, %%rax"); next_token(); return;
         } else {
-            tok = saved_tok;
-            strcpy(token, saved_token);
-            input_ptr = save_src;
-            line = save_line;
-            expression();
-            return;
+            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            expression(); return;
         }
     } else {
-        /* tok == '*' — could be dereference lvalue like *p = expr */
         char *peek_ptr = input_ptr;
         int peek_line = line;
         int peek_tok = tok;
         char peek_token[MAX_TOKEN_LEN];
         strcpy(peek_token, token);
 
+        peek_mode = 1;
         expression();
+        peek_mode = 0;
 
         int assign_type = 0;
         if (tok == '=') assign_type = 1;
@@ -1067,87 +999,34 @@ static void assignment_expr(void) {
         else if (tok == T_ADD_ASSIGN) assign_type = 4;
         else if (tok == T_SUB_ASSIGN) assign_type = 5;
 
-        input_ptr = peek_ptr;
-        line = peek_line;
-        tok = peek_tok;
-        strcpy(token, peek_token);
+        input_ptr = peek_ptr; line = peek_line; tok = peek_tok; strcpy(token, peek_token);
 
         if (assign_type == 1) {
-            lvalue_address();
-            match('=');
-            emit("    pushq %%rax");
-            assignment_expr();
-            emit("    popq %%rcx");
-            if (assign_size == 1)
-                emit("    movb %%al, (%%rcx)");
-            else
-                emit("    movq %%rax, (%%rcx)");
+            lvalue_address(); match('='); emit("    pushq %%rax"); assignment_expr(); emit("    popq %%rcx");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type == 4) {
-            lvalue_address();
-            emit("    pushq %%rax");
-            if (assign_size == 1)
-                emit("    movsbq (%%rax), %%rax");
-            else
-                emit("    movq (%%rax), %%rax");
-            emit("    pushq %%rax");
-            next_token();
-            assignment_expr();
-            emit("    popq %%rcx");
-            if (assign_size == 1) {
-                emit("    addq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movb %%al, (%%rcx)");
-            } else {
-                emit("    addq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movq %%rax, (%%rcx)");
-            }
+            lvalue_address(); emit("    pushq %%rax");
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else emit("    movq (%%rax), %%rax");
+            emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
+            if (assign_size == 1) { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type == 5) {
-            lvalue_address();
-            emit("    pushq %%rax");
-            if (assign_size == 1)
-                emit("    movsbq (%%rax), %%rax");
-            else
-                emit("    movq (%%rax), %%rax");
-            emit("    pushq %%rax");
-            next_token();
-            assignment_expr();
-            emit("    popq %%rcx");
-            if (assign_size == 1) {
-                emit("    subq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movb %%al, (%%rcx)");
-            } else {
-                emit("    subq %%rcx, %%rax");
-                emit("    popq %%rcx");
-                emit("    movq %%rax, (%%rcx)");
-            }
+            lvalue_address(); emit("    pushq %%rax");
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else emit("    movq (%%rax), %%rax");
+            emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
+            if (assign_size == 1) { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type != 0) {
             lvalue_address();
-            if (assign_size == 1)
-                emit("    movsbq (%%rax), %%rcx");
-            else
-                emit("    movq (%%rax), %%rcx");
-            if (assign_type == T_INC) {
-                if (assign_size == 1)
-                    emit("    addb $1, (%%rax)");
-                else
-                    emit("    addq $1, (%%rax)");
-            } else {
-                if (assign_size == 1)
-                    emit("    subb $1, (%%rax)");
-                else
-                    emit("    subq $1, (%%rax)");
-            }
-            emit("    movq %%rcx, %%rax");
-            next_token();
-            return;
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rcx"); else emit("    movq (%%rax), %%rcx");
+            if (assign_type == T_INC) { if (assign_size == 1) emit("    addb $1, (%%rax)"); else emit("    addq $1, (%%rax)"); }
+            else { if (assign_size == 1) emit("    subb $1, (%%rax)"); else emit("    subq $1, (%%rax)"); }
+            emit("    movq %%rcx, %%rax"); next_token(); return;
         } else {
-            expression();
-            return;
+            expression(); return;
         }
     }
 }
@@ -1339,7 +1218,7 @@ static void statement(void) {
         return;
     }
 
-    if (tok == T_SWITCH) {
+        if (tok == T_SWITCH) {
         next_token();
         match('(');
         expression();
@@ -1348,9 +1227,9 @@ static void statement(void) {
         int end_label = label_counter++;
 
         emit("    pushq %%rax");
+        emit("    pushq $0"); /* Mantiene alineación de pila de 16 bytes */
         emit_i("    jmp .L%d", dispatch_label);
 
-        /* Save outer break state */
         int saved_break_target = break_target;
         int saved_break_valid = break_target_valid;
         int saved_case_count = switch_case_count;
@@ -1386,12 +1265,10 @@ static void statement(void) {
         }
         match('}');
 
-        /* Emit fall-through guard: any case without break goes to end */
         emit_i("    jmp .L%d", end_label);
 
-        /* Emit dispatch */
         emit_label(dispatch_label);
-        emit("    movq (%%rsp), %%rax");
+        emit("    movq 8(%%rsp), %%rax"); /* Leer el valor original saltando el padding */
         for (int i = 0; i < switch_case_count; i++) {
             emit_i("    cmpq $%d, %%rax", switch_case_values[i]);
             emit_i("    je .L%d", switch_case_labels[i]);
@@ -1399,9 +1276,8 @@ static void statement(void) {
         if (switch_has_default)
             emit_i("    jmp .L%d", switch_default_label);
         emit_label(end_label);
-        emit("    addq $8, %%rsp");
+        emit("    addq $16, %%rsp"); /* Restaurar pila (8 bytes del valor + 8 bytes de padding) */
 
-        /* Restore outer break state */
         break_target = saved_break_target;
         break_target_valid = saved_break_valid;
         switch_case_count = saved_case_count;
@@ -1684,76 +1560,55 @@ static void parse_function(const char *name, int ret_type) {
 
     match('(');
 
-    /* Parse parameters */
     char param_names[MAX_SYMBOLS][MAX_IDENT_LEN];
     int param_count = 0;
     if (tok == T_VOID) {
         next_token();
     } else {
         while (tok != ')') {
-            if (tok == T_CONST) {
-                next_token();
-                continue;
-            }
-            /* FIX: manejar unsigned/signed en parametros */
+            if (tok == T_CONST) { next_token(); continue; }
             if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
                 next_token();
                 while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
-                /* cae al manejo de T_INT/T_CHAR */
             }
-            if (tok == T_INT || tok == T_CHAR || tok == T_VOID) {
-                int ptype = tok;
+            if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_ID) {
+                int ptype = (tok == T_ID) ? T_INT : tok;
+                if (tok == T_ID) {
+                    int ti = find_symbol(token);
+                    if (ti >= 0 && symbols[ti].is_const) ptype = T_INT;
+                }
                 next_token();
-                /* FIX: saltar 'long' extra */
                 while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
-                int is_ptr = 0;
-                int ptr_count = 0;
-                while (tok == '*') { is_ptr = 1; ptr_count++; next_token(); }
+                int nstars = 0;
+                while (tok == '*') { nstars = nstars + 1; next_token(); }
+                int is_ptr = nstars > 0;
                 if (tok != T_ID) error("expected parameter name");
                 int nlen = strlen(token);
                 if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
                 memcpy(param_names[param_count], token, nlen);
                 param_names[param_count][nlen] = '\0';
                 int psize = is_ptr ? 8 : (ptype == T_CHAR ? 1 : 8);
-                int pointed_type = is_ptr ? (ptr_count > 1 ? T_INT : ptype) : 0;
+                /* tipo tras UNA desreferencia: char* apunta a char (movsbq,
+                   stride 1); char** y demas apuntan a otro puntero (8 bytes,
+                   convencion T_INT) */
+                int pointed_type = 0;
+                if (nstars == 1) pointed_type = ptype;
+                else if (nstars > 1) pointed_type = T_INT;
                 add_symbol(token, 0, psize, pointed_type, 0, 0);
                 param_count++;
                 next_token();
                 if (tok == ',') next_token();
             } else if (tok == '.') {
-                /* Variadic ... */
-                next_token();
-                if (tok == '.') next_token();
-                if (tok == '.') next_token();
+                next_token(); if (tok == '.') next_token(); if (tok == '.') next_token();
                 break;
-            } else if (tok == T_ID) {
-                /* Typedef type (e.g., size_t) */
-                int ti = find_symbol(token);
-                if (ti < 0 || !symbols[ti].is_const) error("invalid parameter type");
-                int psize = symbols[ti].const_value;
-                next_token();
-                int is_ptr = 0;
-                while (tok == '*') { is_ptr = 1; next_token(); }
-                if (tok != T_ID) error("expected parameter name");
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(param_names[param_count], token, nlen);
-                param_names[param_count][nlen] = '\0';
-                if (is_ptr) psize = 8;
-                add_symbol(token, 0, psize, is_ptr ? T_INT : 0, 0, 0);
-                param_count++;
-                next_token();
-                if (tok == ',') next_token();
             } else {
-                error("invalid parameter type");
+                next_token();
             }
         }
     }
     match(')');
 
-    /* Handle function prototypes (forward declarations) */
     if (tok == ';') {
-        /* Remove parameter symbols added during prototype parsing */
         symbol_count = saved_sym_count;
         stack_size = saved_stack_outer;
         next_token();
@@ -1764,7 +1619,7 @@ static void parse_function(const char *name, int ret_type) {
 
     int param_stack = stack_size - outer_stack;
 
-    /* First pass: compute stack size (no code emitted) */
+    /* Primera pasada: calcular stack size correctamente */
     char *body_start = input_ptr;
     int body_line = line;
     int body_tok = tok;
@@ -1776,19 +1631,20 @@ static void parse_function(const char *name, int ret_type) {
     max_func_stack = param_stack;
     stack_size = param_stack;
     function_has_return = 0;
-    statement();
-    int func_stack = max_func_stack;
-    stack_size = outer_stack + param_stack;
-    emit_enabled = 1;
 
-    /* Restore state for second pass */
+    statement();  /* primera pasada completa */
+
+    int func_stack = (max_func_stack + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
+
+    /* Restaurar estado exacto */
     symbol_count = saved_symbol_cnt;
     input_ptr = body_start;
     line = body_line;
     tok = body_tok;
     strcpy(token, body_token);
+    emit_enabled = 1;
 
-    /* Emit function prologue */
+    /* Prologue real */
     emit_s("    .globl %s", name);
     emit_s("%s:", name);
     emit("    pushq %%rbp");
@@ -1796,31 +1652,27 @@ static void parse_function(const char *name, int ret_type) {
     if (func_stack > 0)
         emit_i("    subq $%d, %%rsp", func_stack);
 
-    /* Save register parameters to stack */
-    {
-        static const char *param_regs[] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
-        for (int i = 0; i < param_count; i++) {
-            int idx = find_symbol(param_names[i]);
-            if (idx < 0) error("parameter not found");
+    /* Guardar parámetros de registros */
+    static const char *param_regs[] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
+    for (int i = 0; i < param_count && i < 6; i++) {
+        int idx = find_symbol(param_names[i]);
+        if (idx >= 0) {
             Symbol *s = &symbols[idx];
-            if (i < 6) {
-                emit_si("    movq %s, %d(%%rbp)", param_regs[i], s->offset);
-            } else {
-                int stack_off = 16 + (i - 6) * 8;
-                emit_i("    movq %d(%%rbp), %%rax", stack_off);
-                emit_i("    movq %%rax, %d(%%rbp)", s->offset);
-            }
+            emit_si("    movq %s, %d(%%rbp)", param_regs[i], s->offset);
         }
     }
 
-    /* Second pass: emit code */
+    /* Segunda pasada: generar código */
     stack_size = param_stack;
     function_has_return = 0;
     statement();
-    if (!function_has_return) {
-        emit("    leave");
-        emit("    ret");
-    }
+
+    /* Epílogo incondicional: un return en alguna rama no garantiza que el
+       último camino del cuerpo retorne; sin esto la ejecución cae en la
+       siguiente función. Si el cuerpo ya retornó, esto es código muerto. */
+    emit("    leave");
+    emit("    ret");
+
     stack_size = outer_stack;
 }
 
@@ -1869,8 +1721,11 @@ static void skip_struct(void) {
     if (tok != '{') error("expected '{' in struct");
     next_token();
 
+    /* struct_member_count NO se resetea: los miembros de todos los structs
+       se acumulan en una sola tabla global para que los accesos a miembros
+       de structs definidos antes sigan resolviendo su offset correcto.
+       (Los offsets son por-struct porque struct_total_size si se resetea.) */
     struct_total_size = 0;
-    struct_member_count = 0;
 
     while (tok != '}') {
         if (tok == T_INT || tok == T_CHAR) {
