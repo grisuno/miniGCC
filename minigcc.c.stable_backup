@@ -73,21 +73,10 @@ typedef struct {
     int is_array;
     int elem_size; /* element size for arrays (0 for non-arrays); row size for 2D */
     int elem_size2; /* base element size for 2D arrays (0 for 1D/non-arrays) */
-    int next_hash; /* next symbol in same hash bucket (-1 = end) */
 } Symbol;
 
 static Symbol symbols[MAX_SYMBOLS];
 static int symbol_count = 0;
-
-/* Hash table for O(1) symbol lookup */
-#define HASH_TABLE_SIZE 512
-static int hash_table[HASH_TABLE_SIZE];
-
-#define MAX_SCOPE_DEPTH 256
-static int scope_stack_sym[MAX_SCOPE_DEPTH];
-static int scope_stack_stk[MAX_SCOPE_DEPTH];
-static int scope_depth = 0;
-
 static int stack_size = 0;
 static int label_counter = 0;
 static int function_has_return = 0;
@@ -130,7 +119,6 @@ static int struct_member_elem_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_count = 0;
 
 static void error(const char *msg);
-static void truncate_symbols(int start_idx);
 
 #define MAX_MACROS 256
 
@@ -189,11 +177,7 @@ static void restore_parser_state(ParserState *state) {
     current_elem_size = state->current_elem_size;
     current_elem_size2 = state->current_elem_size2;
     no_postfix_deref = state->no_postfix_deref;
-    /* Clean up hash table entries for symbols added since the saved state */
-    if (state->symbol_count < symbol_count)
-        truncate_symbols(state->symbol_count);
-    else
-        symbol_count = state->symbol_count;
+    symbol_count = state->symbol_count;
     stack_size = state->stack_size;
     function_has_return = state->function_has_return;
     emit_enabled = state->emit_enabled;
@@ -252,69 +236,6 @@ static void *safe_malloc(size_t size) {
         exit(EXIT_FAILURE);
     }
     return p;
-}
-
-/* Must produce identical results under gcc (32-bit int) and under the
-   compiler's own model (64-bit int), so avoid multiplication overflow. */
-static int hash_name(const char *name) {
-    int h = 0;
-    while (*name) {
-        h = h + *name;
-        name++;
-    }
-    if (h < 0) h = -h;
-    return h % HASH_TABLE_SIZE;
-}
-
-static void hash_init(void) {
-    for (int i = 0; i < HASH_TABLE_SIZE; i++)
-        hash_table[i] = -1;
-}
-
-static void push_scope(void) {
-    if (scope_depth >= MAX_SCOPE_DEPTH)
-        error("scope depth exceeded");
-    scope_stack_sym[scope_depth] = symbol_count;
-    scope_stack_stk[scope_depth] = stack_size;
-    scope_depth++;
-}
-
-static void pop_scope(void) {
-    if (scope_depth <= 0)
-        error("scope underflow");
-    scope_depth--;
-    int old_count = scope_stack_sym[scope_depth];
-    stack_size = scope_stack_stk[scope_depth];
-    for (int i = old_count; i < symbol_count; i++) {
-        int h = hash_name(symbols[i].name);
-        int *p = &hash_table[h];
-        while (*p >= 0) {
-            if (*p == i) {
-                *p = symbols[i].next_hash;
-                break;
-            }
-            p = &symbols[*p].next_hash;
-        }
-    }
-    symbol_count = old_count;
-}
-
-/* Remove all symbols from start_idx onward from the hash table and
-   truncate symbol_count. Does NOT touch the scope stack (needed for
-   the two-pass function body parsing pattern). */
-static void truncate_symbols(int start_idx) {
-    for (int i = start_idx; i < symbol_count; i++) {
-        int h = hash_name(symbols[i].name);
-        int *p = &hash_table[h];
-        while (*p >= 0) {
-            if (*p == i) {
-                *p = symbols[i].next_hash;
-                break;
-            }
-            p = &symbols[*p].next_hash;
-        }
-    }
-    symbol_count = start_idx;
 }
 
 static int my_isspace(int c) {
@@ -587,12 +508,9 @@ static void emit_label(int label) {
 
 /* Symbol table */
 static int find_symbol(const char *name) {
-    int h = hash_name(name);
-    int i = hash_table[h];
-    while (i >= 0) {
+    for (int i = symbol_count - 1; i >= 0; i--) {
         if (strcmp(symbols[i].name, name) == 0)
             return i;
-        i = symbols[i].next_hash;
     }
     return -1;
 }
@@ -612,7 +530,6 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     s->is_array = is_array;
     s->elem_size = elem_size;
     s->elem_size2 = 0;
-    s->next_hash = -1;
     if (is_global) {
         s->offset = 0;
         emit("    .bss");
@@ -627,9 +544,6 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
         if (stack_size > max_func_stack)
             max_func_stack = stack_size;
     }
-    int h = hash_name(name);
-    s->next_hash = hash_table[h];
-    hash_table[h] = symbol_count;
     symbol_count++;
 }
 
@@ -1354,7 +1268,8 @@ static void statement(void) {
     if (tok == T_FOR) {
         next_token();
         match('(');
-        push_scope();
+        int saved_stack = stack_size;
+        int saved_sym_count = symbol_count;
         
         /* init */
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
@@ -1528,7 +1443,8 @@ static void statement(void) {
         emit_label(l_end);
 
         input_ptr = after_body_pos; line = after_body_line; tok = after_body_tok; strcpy(token, after_body_token);
-        pop_scope();
+        stack_size = saved_stack;
+        symbol_count = saved_sym_count;
         return;
     }
 
@@ -1665,7 +1581,8 @@ static void statement(void) {
 
     if (tok == '{') {
         next_token();
-        push_scope();
+        int saved_stack = stack_size;
+        int saved_sym_count = symbol_count;
         while (tok != '}' && tok != T_EOF) {
             if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
                 next_token();
@@ -1881,7 +1798,8 @@ static void statement(void) {
             }
         }
         match('}');
-        pop_scope();
+        stack_size = saved_stack;
+        symbol_count = saved_sym_count;
         return;
     }
 
@@ -1919,7 +1837,8 @@ static void statement(void) {
 static void parse_function(const char *name, int ret_type) {
     (void)ret_type;
     int outer_stack = stack_size;
-    push_scope();
+    int saved_sym_count = symbol_count;
+    int saved_stack_outer = stack_size;
 
     match('(');
 
@@ -1972,7 +1891,8 @@ static void parse_function(const char *name, int ret_type) {
     match(')');
 
     if (tok == ';') {
-        pop_scope();
+        symbol_count = saved_sym_count;
+        stack_size = saved_stack_outer;
         next_token();
         return;
     }
@@ -1999,7 +1919,7 @@ static void parse_function(const char *name, int ret_type) {
     int func_stack = (max_func_stack + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
     if (func_stack < 64) func_stack = 64; // Margen de seguridad para pushes de argumentos
     /* Restaurar estado exacto */
-    truncate_symbols(saved_symbol_cnt);
+    symbol_count = saved_symbol_cnt;
     input_ptr = body_start;
     line = body_line;
     tok = body_tok;
@@ -2043,7 +1963,7 @@ static void parse_function(const char *name, int ret_type) {
     emit("    leave");
     emit("    ret");
 
-    pop_scope();
+    stack_size = outer_stack;
 }
 
 static void parse_enum(void) {
@@ -2070,15 +1990,7 @@ static void parse_enum(void) {
         s->is_global = 0;
         s->size = 8;
         s->pointed = 0;
-        s->is_array = 0;
-        s->elem_size = 0;
         s->elem_size2 = 0;
-        s->next_hash = -1;
-        {
-            int h = hash_name(s->name);
-            s->next_hash = hash_table[h];
-            hash_table[h] = symbol_count - 1;
-        }
         next_token();
         if (tok == '=') {
             next_token();
@@ -2187,19 +2099,11 @@ static void skip_typedef(void) {
         s->is_global = 0;
         s->size = 8;
         s->pointed = 0;
-        s->is_array = 0;
-        s->elem_size = 0;
         s->elem_size2 = 0;
-        s->next_hash = -1;
         s->const_value = 8;  /* just a marker */
         /* If a struct was just parsed, store its size */
         if (struct_total_size > 0)
             s->const_value = struct_total_size;
-        {
-            int h = hash_name(last_name);
-            s->next_hash = hash_table[h];
-            hash_table[h] = symbol_count - 1;
-        }
     }
     match(';');
 }
@@ -2363,7 +2267,6 @@ int main(int argc, char **argv) {
     emit_enabled = 1;
     line = 1;
     assign_size = 8;
-    hash_init();
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s source.c > output.s\n", argv[0]);
@@ -2429,12 +2332,6 @@ int main(int argc, char **argv) {
             s->is_array = 0;
             s->elem_size = 0;
             s->elem_size2 = 0;
-            s->next_hash = -1;
-            {
-                int h = hash_name(gname);
-                s->next_hash = hash_table[h];
-                hash_table[h] = symbol_count - 1;
-            }
             i++;
         }
     }
