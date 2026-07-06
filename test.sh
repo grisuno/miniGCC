@@ -13,3 +13,7 @@ gcc -no-pie minigccg3.o -o minigccg3
 
 # Check if the compiler has stabilized (outputs should be identical)
 diff minigccg3.s minigccg4.s
+
+# Testing
+./minigccg3 test.c
+./minigccg3 test_for.c
