@@ -1,3 +1,6 @@
+# Cleaning env
+rm -rf *.s *.o minigcc minigccg2 minigccg3 minigccg3
+
 # Generation 1
 gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c
 
