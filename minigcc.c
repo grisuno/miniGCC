@@ -111,7 +111,6 @@ static int continue_target = 0;
 static int continue_target_valid = 0;
 
 static int str_label_counter = 0;
-static int peek_mode = 0;
 #define MAX_STRINGS 2048
 static char *string_pool[MAX_STRINGS];
 static int string_count = 0;
@@ -153,7 +152,6 @@ typedef struct {
     int break_target_valid;
     int continue_target;
     int continue_target_valid;
-    int peek_mode;
     int struct_total_size;
     int struct_member_count;
     int macro_count;
@@ -177,7 +175,6 @@ static void save_parser_state(ParserState *state) {
     state->break_target_valid = break_target_valid;
     state->continue_target = continue_target;
     state->continue_target_valid = continue_target_valid;
-    state->peek_mode = peek_mode;
     state->struct_total_size = struct_total_size;
     state->struct_member_count = struct_member_count;
     state->macro_count = macro_count;
@@ -205,7 +202,6 @@ static void restore_parser_state(ParserState *state) {
     break_target_valid = state->break_target_valid;
     continue_target = state->continue_target;
     continue_target_valid = state->continue_target_valid;
-    peek_mode = state->peek_mode;
     struct_total_size = state->struct_total_size;
     struct_member_count = state->struct_member_count;
     macro_count = state->macro_count;
@@ -543,7 +539,7 @@ static void match(int expected) {
 }
 
 static void emit(const char *s) {
-    if (!emit_enabled || peek_mode) return;
+    if (!emit_enabled) return;
     while (*s) {
         if (*s == '%' && s[1] == '%') {
             fputc('%', output);
@@ -557,31 +553,31 @@ static void emit(const char *s) {
 }
 
 static void emit_i(const char *fmt, int v) {
-    if (!emit_enabled || peek_mode) return;
+    if (!emit_enabled) return;
     fprintf(output, fmt, v);
     fputc('\n', output);
 }
 
 static void emit_s(const char *fmt, const char *s) {
-    if (!emit_enabled || peek_mode) return;
+    if (!emit_enabled) return;
     fprintf(output, fmt, s);
     fputc('\n', output);
 }
 
 static void emit_is(const char *fmt, int v, const char *s) {
-    if (!emit_enabled || peek_mode) return;
+    if (!emit_enabled) return;
     fprintf(output, fmt, v, s);
     fputc('\n', output);
 }
 
 static void emit_si(const char *fmt, const char *s, int v) {
-    if (!emit_enabled || peek_mode) return;
+    if (!emit_enabled) return;
     fprintf(output, fmt, s, v);
     fputc('\n', output);
 }
 
 static void emit_label(int label) {
-    if (emit_enabled && !peek_mode)
+    if (emit_enabled)
         fprintf(output, ".L%d:\n", label);
 }
 
@@ -1272,9 +1268,10 @@ static void assignment_expr(void) {
         int saved_current_elem_size2 = current_elem_size2;
         int saved_no_postfix_deref = no_postfix_deref;
 
-        peek_mode = 1;
+        int saved_emit = emit_enabled;
+        emit_enabled = 0;
         conditional_expr(); 
-        peek_mode = 0;
+        emit_enabled = saved_emit;
 
         /* Restaurar estado global de tipos */
         assign_size = saved_assign_size;
@@ -1318,7 +1315,7 @@ static void assignment_expr(void) {
         } else if (assign_type != 0) {
             lvalue_address();
             if (assign_size == 1) emit("    movsbq (%%rax), %%rcx"); else emit("    movq (%%rax), %%rcx");
-            if (assign_type == T_INC) { if (assign_size == 1) emit("    addb $1, (%%rax)"); else emit("    addq $1, (%%rax)"); }
+            if (assign_type == 2) { if (assign_size == 1) emit("    addb $1, (%%rax)"); else emit("    addq $1, (%%rax)"); }
             else { if (assign_size == 1) emit("    subb $1, (%%rax)"); else emit("    subq $1, (%%rax)"); }
             emit("    movq %%rcx, %%rax"); next_token(); return;
         } else {
