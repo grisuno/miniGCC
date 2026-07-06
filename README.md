@@ -117,6 +117,12 @@ echo $?   # Should print 12
 
 ---
 
+## Wiki
+
+- [https://deepwiki.com/grisuno/miniGCC](https://deepwiki.com/grisuno/miniGCC)
+
+---
+
 **Signed:** *grisun0*
 
 *LazyOwn RedTeam*
