@@ -1,3 +1,6 @@
+# Generation 1
+gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c
+
 # Generation 2: Compile minigcc.c using the Gen 1 binary
 ./minigcc minigcc.c > minigccg2.s
 as minigccg2.s -o minigccg2.o
