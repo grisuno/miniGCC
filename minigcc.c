@@ -2316,14 +2316,6 @@ static void parse_function(const char *name, int ret_type) {
     emit_s("%s:", name);
     emit("    pushq %%rbp");
     emit("    movq %%rsp, %%rbp");
-    if (func_stack > 0)
-        emit_i("    subq $%d, %%rsp", func_stack);
-    //if (func_stack < 64) func_stack = 64; // Margen de seguridad
-    //func_stack = (func_stack + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1); // Alineación estricta
-    
-    if (func_stack > 0)
-        emit_i("    subq $%d, %%rsp", func_stack);
-        
     int safe_stack = (func_stack + 16 + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
     if (safe_stack > 0)
         emit_i("    subq $%d, %%rsp", safe_stack);
