@@ -1,5 +1,7 @@
 # MiniGCC - A Minimal Self-Hosting C Compiler for x86-64 Linux
 
+<img width="627" height="551" alt="logo" src="https://github.com/user-attachments/assets/54792e08-5349-4def-a767-2838d7cefd8f" />
+
 ![Shell Script](https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white) [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y2Z73AV)
