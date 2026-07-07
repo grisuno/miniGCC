@@ -22,6 +22,7 @@ MiniGCC is an educational, **self-hosting** C compiler that translates a subset 
 - Function parameter support is partially implemented; only the first 6 parameters in registers are supported (no stack spill handling yet).
 - No support for `float`, `double`, `long long`, or `struct` member access beyond basic layout.
 - No standard library linkage; programs must use only built-in types and direct system calls or custom definitions.
+- The compiler uses 8-byte `int` internally but `skip_struct` treats `int` as 4 bytes (matching GCC's x86-64 ABI). This means `int` struct fields are sign-extended on load (`movslq`) to match the compiler's 64-bit integer model.
 
 ## Building the Bootstrap (Generation 1)
 The compiler itself is a single C file that can be bootstrapped using any standard C compiler:
@@ -33,7 +34,7 @@ gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c
 
 ## Bootstrapping & Self-Hosting Verification
 
-To verify the compiler's self-hosting stability, you can run it through a 3-generation compilation cycle to ensure the generated assembly reaches a fixed point (identical binary output):
+To verify the compiler's self-hosting stability, run it through a 3-generation compilation cycle. The generated assembly should reach a fixed point (identical binary output):
 
 ```bash
 # Generation 2: Compile minigcc.c using the Gen 1 binary
@@ -55,6 +56,8 @@ diff minigccg3.s minigccg4.s
 ```
 
 *If `diff` returns no output, the compiler has successfully achieved perfect self-hosting stability.*
+
+> **Note:** The current version has been verified to bootstrap correctly — `g3.s` and `g4.s` are identical.
 
 ## Usage
 
