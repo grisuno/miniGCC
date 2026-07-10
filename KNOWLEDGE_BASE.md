@@ -8,65 +8,65 @@
 ## Structural Knowledge Map
 ```mermaid
 graph TD
-    classDef module fill:#1e1e1e,stroke:#ff6666,stroke-width:2px,color:#fff;
-    classDef class fill:#2d2d2d,stroke:#4ec9b0,stroke-width:2px,color:#fff;
-    classDef function fill:#333,stroke:#dcdcaa,stroke-width:1px,color:#dcdcaa;
-    classDef external fill:#111,stroke:#666,stroke-dasharray: 5 5,color:#aaa;
+    classDef mod fill:#1e1e1e,stroke:#ff6666,stroke-width:2px,color:#fff;
+    classDef cls fill:#2d2d2d,stroke:#4ec9b0,stroke-width:2px,color:#fff;
+    classDef fn fill:#333,stroke:#dcdcaa,stroke-width:1px,color:#dcdcaa;
+    classDef ext fill:#111,stroke:#666,stroke-dasharray: 5 5,color:#aaa;
     minigcc_c["minigcc.c (c)"]
-    class minigcc_c module;
+    class minigcc_c mod;
     minigcc_c_save_parser_state["save_parser_state"]
-    class minigcc_c_save_parser_state function;
+    class minigcc_c_save_parser_state fn;
     minigcc_c --> minigcc_c_save_parser_state
     minigcc_c_restore_parser_state["restore_parser_state"]
-    class minigcc_c_restore_parser_state function;
+    class minigcc_c_restore_parser_state fn;
     minigcc_c --> minigcc_c_restore_parser_state
     minigcc_c_find_macro["find_macro"]
-    class minigcc_c_find_macro function;
+    class minigcc_c_find_macro fn;
     minigcc_c --> minigcc_c_find_macro
     minigcc_c_add_macro["add_macro"]
-    class minigcc_c_add_macro function;
+    class minigcc_c_add_macro fn;
     minigcc_c --> minigcc_c_add_macro
     minigcc_c_error["error"]
-    class minigcc_c_error function;
+    class minigcc_c_error fn;
     minigcc_c --> minigcc_c_error
     minigcc_c_safe_malloc["safe_malloc"]
-    class minigcc_c_safe_malloc function;
+    class minigcc_c_safe_malloc fn;
     minigcc_c --> minigcc_c_safe_malloc
     minigcc_c_hash_name["hash_name"]
-    class minigcc_c_hash_name function;
+    class minigcc_c_hash_name fn;
     minigcc_c --> minigcc_c_hash_name
     minigcc_c_hash_init["hash_init"]
-    class minigcc_c_hash_init function;
+    class minigcc_c_hash_init fn;
     minigcc_c --> minigcc_c_hash_init
     minigcc_c_push_scope["push_scope"]
-    class minigcc_c_push_scope function;
+    class minigcc_c_push_scope fn;
     minigcc_c --> minigcc_c_push_scope
     minigcc_c_pop_scope["pop_scope"]
-    class minigcc_c_pop_scope function;
+    class minigcc_c_pop_scope fn;
     minigcc_c --> minigcc_c_pop_scope
     test_c["test.c (c)"]
-    class test_c module;
+    class test_c mod;
     test_c_main["main"]
-    class test_c_main function;
+    class test_c_main fn;
     test_c --> test_c_main
     test_sh["test.sh (sh)"]
-    class test_sh module;
+    class test_sh mod;
     test_for_c["test_for.c (c)"]
-    class test_for_c module;
+    class test_for_c mod;
     test_for_c_main["main"]
-    class test_for_c_main function;
+    class test_for_c_main fn;
     test_for_c --> test_for_c_main
     ext_stdio_h["stdio.h"]
-    class ext_stdio_h external;
+    class ext_stdio_h ext;
     minigcc_c -.->|imports| ext_stdio_h
     ext_stdlib_h["stdlib.h"]
-    class ext_stdlib_h external;
+    class ext_stdlib_h ext;
     minigcc_c -.->|imports| ext_stdlib_h
     ext_string_h["string.h"]
-    class ext_string_h external;
+    class ext_string_h ext;
     minigcc_c -.->|imports| ext_string_h
     ext_errno_h["errno.h"]
-    class ext_errno_h external;
+    class ext_errno_h ext;
     minigcc_c -.->|imports| ext_errno_h
     test_for_c -.->|imports| ext_stdio_h
 ```
@@ -77,7 +77,7 @@ graph TD
 
 ### C (3 files)
 
-#### 📄 `minigcc.c`
+#### `minigcc.c`
 **Path:** `minigcc.c`
 
 **Functions:**
@@ -91,12 +91,12 @@ graph TD
 - `hash_init` (line 280)
 - `push_scope` (line 285)
 - `pop_scope` (line 293)
-- `truncate_symbols` (line 323) - *Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (needed for the two-pass function body parsing pattern).*
+- `truncate_symbols` (line 323) - *Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (needed for the two-pass fun...*
 - `my_isspace` (line 341)
 - `my_isalpha` (line 351)
 - `my_isdigit` (line 357)
 - `my_isalnum` (line 362)
-- `next_token` (line 370) - *}  static int my_isdigit(int c) { if (c >= '0' && c <= '9') return 1; return 0; }  static int my_isalnum(int c) { if (my_isalpha(c)) return 1; if (my_isdigit(c)) return 1; return 0; }  /* Lexer*
+- `next_token` (line 370) - *}  static int my_isdigit(int c) { if (c >= '0' && c <= '9') return 1; return 0; }  static int my_isalnum(int c) { if (my_isalpha(c)) return 1; if (...*
 - `match` (line 598)
 - `emit` (line 603)
 - `emit_i` (line 617)
@@ -104,10 +104,10 @@ graph TD
 - `emit_is` (line 629)
 - `emit_si` (line 635)
 - `emit_label` (line 641)
-- `find_symbol` (line 648) - *}  static void emit_si(const char *fmt, const char *s, int v) { if (!emit_enabled) return; fprintf(output, fmt, s, v); fputc('\n', output); }  static void emit_label(int label) { if (emit_enabled) fprintf(output, ".L%d:\n", label); }  /* Symbol table*
+- `find_symbol` (line 648) - *}  static void emit_si(const char *fmt, const char *s, int v) { if (!emit_enabled) return; fprintf(output, fmt, s, v); fputc('\n', output); }  stat...*
 - `add_symbol` (line 658)
-- `arg_reg` (line 708) - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace-initialized local arrays correctly (they overlap adjacent locals).*
-- `libc_global_name` (line 718) - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace-initialized local arrays correctly (they overlap adjacent locals). static const char *arg_reg(int i) { if (i == 0) return "%rdi"; if (i == 1) return "%rsi"; if (i == 2) return "%rdx"; if (i == 3) return "%rcx"; if (i == 4) return "%r8"; return "%r9"; }  /* Predefined libc global symbol names, indexed; returns NULL past the end.*
+- `arg_reg` (line 708) - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace...*
+- `libc_global_name` (line 718) - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace...*
 - `unary` (line 730)
 - `lvalue_address` (line 937)
 - `handle_postfix` (line 986)
@@ -147,13 +147,13 @@ graph TD
 - `MAX_STRUCT_MEMBERS` (line 133)
 - `MAX_MACROS` (line 143)
 
-#### 📄 `test.c`
+#### `test.c`
 **Path:** `test.c`
 
 **Functions:**
 - `main` (line 1)
 
-#### 📄 `test_for.c`
+#### `test_for.c`
 **Path:** `test_for.c`
 
 **Functions:**
@@ -161,7 +161,7 @@ graph TD
 
 ### SH (1 files)
 
-#### 📄 `test.sh`
+#### `test.sh`
 **Path:** `test.sh`
 
 *No symbols extracted*
