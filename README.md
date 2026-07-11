@@ -25,6 +25,7 @@ Fully capable of compiling its own source code to reach complete technical sover
 - `if` / `else`
 - `while` loops
 - `for` loops (including complex increment expressions)
+- `do`/`while` loops
 - `switch` / `case` / `default`
 - `break` and `continue`
 - `goto` and labels
@@ -42,6 +43,7 @@ Fully capable of compiling its own source code to reach complete technical sover
 - Pointer dereference: `*ptr`
 - Address-of: `&var`
 - Comma operator
+- `sizeof` operator (expressions and type-names)
 
 ### Functions
 - Function definitions and calls
@@ -49,10 +51,16 @@ Fully capable of compiling its own source code to reach complete technical sover
 - Recursive functions supported
 - Proper stack alignment (16-byte) per ABI
 
+### Storage Class & Linkage
+- `static` variables (local file scope)
+- `extern` declarations (no assembly emission, link-time resolution)
+- Global variables (`.bss` section, `.globl` exported)
+
 ### Other Features
 - String literals and character constants
-- Escape sequences in strings (`\n`, `\t`, `\\`, `\"`)
+- Full escape sequences in strings and chars (`\n`, `\t`, `\r`, `\f`, `\v`, `\a`, `\b`, `\0`, `\\`, `\"`, `\'`, `\xNN`, octal `\NNN`)
 - Simple macro definitions via `#define`
+- Conditional compilation: `#ifdef`, `#ifndef`, `#if`, `#else`, `#endif`
 - File inclusion via `#include` (supports both `<>` and `""` styles)
 - Global and local variable allocation
 - Floating-point arithmetic (single and double precision)
@@ -60,18 +68,18 @@ Fully capable of compiling its own source code to reach complete technical sover
 - Two-pass compilation for accurate stack size calculation
 - Hash table-based symbol table for O(1) lookups
 - Scope management with proper symbol cleanup
+- Standalone ELF executables with `_start` entry point (weak symbol, does not conflict with crt1.o)
 
 ## Limitations
 
 - Function calls limited to 6 arguments (no stack spill handling)
-- No support for `long long`, `long double`, or bitfields
-- No variadic functions (no `...` parameter support)
+- No support for `long long`, `short`, `long double`, or bitfields
+- No variadic functions (no `...` parameter support, `printf`/`scanf` must be externally linked)
 - No standard library linkage; programs must use only built-in types and direct system calls
-- The compiler uses 8-byte `int` internally but `skip_struct` treats `int` as 4 bytes (matching GCC's x86-64 ABI). This means `int` struct fields are sign-extended on load (`movslq`) to match the compiler's 64-bit integer model
-- Limited preprocessor: only `#define` with numeric values and `#include` are supported (no `#ifdef`, no `#ifndef`, no macros with arguments)
+- The compiler uses 8-byte `int` internally but `skip_struct` treats `int` as 4 bytes (matching GCC's x86-64 ABI)
+- No hex (0x) / octal (0) integer literal parsing in self-hosted mode (planned, blocked by codegen bug in bootstrap)
 - No function pointers
-- No `sizeof` operator
-- No unions
+- No unions (parsed but members accumulate in global struct table)
 
 ## Building the Bootstrap (Generation 1)
 
@@ -109,6 +117,8 @@ diff minigccg3.s minigccg4.s
 
 ## Usage
 
+### Option 1: Link with GCC (standard)
+
 1. **Compile a C source file to assembly:**
 ```bash
 ./minigccg3 source.c > output.s
@@ -129,25 +139,35 @@ gcc -no-pie output.o -o output
 ./output
 ```
 
+### Option 2: Standalone ELF (no external crt)
+
+The compiler now emits a `.weak _start` entry point for standalone executables:
+
+```bash
+./minigccg3 source.c > output.s
+as output.s -o output.o
+ld output.o -o output
+./output
+```
+
 ## Example
 
 Given `test.c`:
 
 ```c
-int main() {
+int main(void) {
     int a = 10;
     int b = 2;
     return a + b;
 }
 ```
 
-Build and run using the self-hosted compiler:
-
+Build and run:
 ```bash
 ./minigccg3 test.c > test.s
 as test.s -o test.o
-gcc -no-pie test.o -o testgcc
-./testgcc
+ld test.o -o test
+./test
 echo $?   # Should print 12
 ```
 
@@ -159,8 +179,11 @@ echo $?   # Should print 12
 - Floating-point operations use the SSE instruction set (`movss`, `movsd`, `addss`, `addsd`, etc.)
 - The compiler performs a two-pass analysis: the first pass calculates stack sizes, the second pass generates code
 - Global variables are emitted to `.bss` section (zero-initialized)
+- `extern` declarations are recognized but do not emit assembly directives (linker resolves them)
 - String literals are stored in `.rodata` section
 - The symbol table uses open hashing with a 512-bucket table for O(1) average-case lookups
+- The `_start` entry point is emitted as a `.weak` symbol — `gcc` linking uses crt1.o's `_start`, `ld` linking uses the compiler's `_start`
+- Bounds-checked string operations prevent buffer overflows in all string copy paths
 
 ---
 

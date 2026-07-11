@@ -321,6 +321,32 @@ static long safe_strtoll(const char *s) {
     return neg ? -result : result;
 }
 
+static long parse_int_literal(const char *s) {
+    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X') && s[2] != '\0') {
+        const char *p = s + 2;
+        long val = 0;
+        while (*p) {
+            char c = *p;
+            if (c >= '0' && c <= '9') val = (val << 4) | (c - '0');
+            else if (c >= 'a' && c <= 'f') val = (val << 4) | (c - 'a' + 10);
+            else if (c >= 'A' && c <= 'F') val = (val << 4) | (c - 'A' + 10);
+            else break;
+            p++;
+        }
+        return val;
+    }
+    if (s[0] == '0' && s[1] >= '0' && s[1] <= '7') {
+        const char *p = s + 1;
+        long val = 0;
+        while (*p >= '0' && *p <= '7') {
+            val = (val << 3) | (*p - '0');
+            p++;
+        }
+        return val;
+    }
+    return safe_strtoll(s);
+}
+
 static int is_file_processed(const char *path) {
     int i = 0;
     while (i < processed_count) {
@@ -772,7 +798,22 @@ static void next_token(void) {
         char *p = token;
         int len = 0;
         int is_float = 0;
-        if (my_isdigit(c)) {
+        int is_hex = 0;
+        int is_oct = 0;
+        if (c == '0' && (input_ptr[1] == 'x' || input_ptr[1] == 'X')) {
+            is_hex = 1;
+            *p = '0'; p++; input_ptr++; len++;
+            *p = 'x'; p++; input_ptr++; len++;
+            while ((my_isdigit(*input_ptr) || (*input_ptr >= 'a' && *input_ptr <= 'f') || (*input_ptr >= 'A' && *input_ptr <= 'F')) && len < MAX_TOKEN_LEN - 1) {
+                *p = *input_ptr; p++; input_ptr++; len++;
+            }
+        } else if (c == '0' && my_isdigit(input_ptr[1])) {
+            is_oct = 1;
+            *p = *input_ptr; p++; input_ptr++; len++;
+            while (*input_ptr >= '0' && *input_ptr <= '7' && len < MAX_TOKEN_LEN - 1) {
+                *p = *input_ptr; p++; input_ptr++; len++;
+            }
+        } else if (my_isdigit(c)) {
             while (my_isdigit(*input_ptr) && len < MAX_TOKEN_LEN - 1) {
                 *p = *input_ptr; p++; input_ptr++; len++;
             }
@@ -812,6 +853,10 @@ static void next_token(void) {
             safe_strcpy(float_const_str[float_const_count], token, MAX_TOKEN_LEN);
             float_const_count++;
         } else {
+            if (is_hex || is_oct) {
+                long val = parse_int_literal(token);
+                snprintf(token, MAX_TOKEN_LEN, "%ld", val);
+            }
             tok = T_NUM;
         }
         return;
@@ -2983,14 +3028,12 @@ static void skip_typedef(void) {
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
+        /* FIX: manejar calificadores unsigned/signed a nivel global */
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
             unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
             while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
-        }
-        if (tok == T_EXTERN) {
-            extern_flag = 1;
-            next_token();
+            /* cae al manejo de tipos */
         }
         if (tok == T_STATIC) {
             static_flag = 1;
