@@ -57,6 +57,11 @@ enum {
     T_FLOAT,
     T_DOUBLE,
     T_FLOAT_NUM,
+    T_DO,
+    T_SIZEOF,
+    T_SHL,
+    T_SHR,
+    T_UNION,
     T_EOF
 };
 
@@ -84,15 +89,17 @@ typedef struct {
     char name[MAX_IDENT_LEN];
     int offset;
     int is_global;
+    int is_static;
     int size;
-    int pointed;  /* 0 = not a pointer, else the token type it points to */
+    int pointed;
     int is_const;
     int const_value;
     int is_array;
-    int elem_size; /* element size for arrays (0 for non-arrays); row size for 2D */
-    int elem_size2; /* base element size for 2D arrays (0 for 1D/non-arrays) */
-    int var_type; /* 0=int, T_CHAR=char, T_FLOAT=float, T_DOUBLE=double */
-    int next_hash; /* next symbol in same hash bucket (-1 = end) */
+    int elem_size;
+    int elem_size2;
+    int var_type;
+    int is_unsigned;
+    int next_hash;
 } Symbol;
 
 static Symbol symbols[MAX_SYMBOLS];
@@ -117,7 +124,10 @@ static int expr_pointed = 0;
 static int current_elem_size = 0;
 static int current_elem_size2 = 0;
 static int no_postfix_deref = 0;
-static int expr_type = 0; /* 0=int, T_CHAR=char, T_FLOAT=float, T_DOUBLE=double */
+static int expr_type = 0;
+static int static_flag = 0;
+static int unsigned_type = 0;
+static int const_flag = 0;
 
 #define MAX_FLOAT_CONSTS 2048
 static char float_const_str[MAX_FLOAT_CONSTS][MAX_TOKEN_LEN];
@@ -152,6 +162,11 @@ static int struct_member_offsets[MAX_STRUCT_MEMBERS];
 static int struct_member_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_elem_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_count = 0;
+
+#define MAX_IF_NESTING 64
+#define CONST_VAR_FLAG 0x10000
+static int if_nest[MAX_IF_NESTING];
+static int if_depth = 0;
 
 static void error(const char *msg);
 static void truncate_symbols(int start_idx);
@@ -487,12 +502,34 @@ static int my_isalnum(int c) {
 static void next_token(void) {
     int c;
     restart:
-    
+
     c = *input_ptr;
     while (my_isspace(c)) {
         if (c == '\n') line++;
         input_ptr++;
         c = *input_ptr;
+    }
+
+    if (if_depth > 0 && if_nest[if_depth - 1]) {
+        while (if_depth > 0 && if_nest[if_depth - 1] && *input_ptr) {
+            while (*input_ptr && *input_ptr != '#') {
+                if (*input_ptr == '\n') line++;
+                input_ptr++;
+            }
+            if (*input_ptr == '\0') break;
+            input_ptr++;
+            while (my_isspace(*input_ptr)) { if (*input_ptr == '\n') line++; input_ptr++; }
+            if (strncmp(input_ptr, "ifdef", 5) == 0 || strncmp(input_ptr, "ifndef", 6) == 0 || strncmp(input_ptr, "if", 2) == 0) {
+                if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
+                if_nest[if_depth++] = 1;
+            } else if (strncmp(input_ptr, "else", 4) == 0 && (input_ptr[4] == '\0' || my_isspace(input_ptr[4]))) {
+                if_nest[if_depth - 1] = !if_nest[if_depth - 1];
+            } else if (strncmp(input_ptr, "endif", 5) == 0) {
+                if (if_depth > 0) if_depth--;
+            }
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+        }
+        goto restart;
     }
     
     if (c == '\0') {
@@ -542,7 +579,7 @@ static void next_token(void) {
                 input_ptr++;
             }
             mname[mlen] = '\0';
-            while (my_isspace(*input_ptr)) input_ptr++;
+            while (*input_ptr == ' ' || *input_ptr == '\t') input_ptr++;
             int mval = 0;
             int has_val = 0;
             if (my_isdigit(*input_ptr)) {
@@ -610,6 +647,50 @@ static void next_token(void) {
                     fprintf(stderr, "Warning: could not find included file: %s\n", inc_path);
                 }
             }
+        } else if (strncmp(input_ptr, "ifdef", 5) == 0) {
+            input_ptr += 5;
+            while (my_isspace(*input_ptr)) input_ptr++;
+            char mname[MAX_IDENT_LEN]; int mlen = 0;
+            while ((my_isalnum(*input_ptr) || *input_ptr == '_') && mlen < MAX_IDENT_LEN - 1) {
+                mname[mlen++] = *input_ptr++;
+            }
+            mname[mlen] = '\0';
+            if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
+            if_nest[if_depth++] = (find_macro(mname) < 0);
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            goto restart;
+        } else if (strncmp(input_ptr, "ifndef", 6) == 0) {
+            input_ptr += 6;
+            while (my_isspace(*input_ptr)) input_ptr++;
+            char mname[MAX_IDENT_LEN]; int mlen = 0;
+            while ((my_isalnum(*input_ptr) || *input_ptr == '_') && mlen < MAX_IDENT_LEN - 1) {
+                mname[mlen++] = *input_ptr++;
+            }
+            mname[mlen] = '\0';
+            if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
+            if_nest[if_depth++] = (find_macro(mname) >= 0);
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            goto restart;
+        } else if (strncmp(input_ptr, "if", 2) == 0) {
+            input_ptr += 2;
+            while (my_isspace(*input_ptr)) input_ptr++;
+            int val = 0;
+            if (*input_ptr == '0') { val = 0; input_ptr++; }
+            else if (*input_ptr == '1') { val = 1; input_ptr++; }
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
+            if_nest[if_depth++] = !val;
+            goto restart;
+        } else if (strncmp(input_ptr, "else", 4) == 0 && (input_ptr[4] == '\0' || my_isspace(input_ptr[4]))) {
+            if (if_depth == 0) error("#else without #if");
+            if_nest[if_depth - 1] = !if_nest[if_depth - 1];
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            goto restart;
+        } else if (strncmp(input_ptr, "endif", 5) == 0) {
+            if (if_depth == 0) error("#endif without #if");
+            if_depth--;
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            goto restart;
         }
         while (*input_ptr && *input_ptr != '\n') input_ptr++;
         goto restart;
@@ -647,6 +728,9 @@ static void next_token(void) {
         else if (strcmp(token, "goto") == 0) tok = T_GOTO;
         else if (strcmp(token, "float") == 0) tok = T_FLOAT;
         else if (strcmp(token, "double") == 0) tok = T_DOUBLE;
+        else if (strcmp(token, "do") == 0) tok = T_DO;
+        else if (strcmp(token, "sizeof") == 0) tok = T_SIZEOF;
+        else if (strcmp(token, "union") == 0) tok = T_UNION;
         else {
             int mi = find_macro(token);
             if (mi >= 0) {
@@ -760,6 +844,8 @@ static void next_token(void) {
         return;
     }
 
+    if (c == '<' && input_ptr[1] == '<') { input_ptr += 2; tok = T_SHL; strcpy(token, "<<"); return; }
+    if (c == '>' && input_ptr[1] == '>') { input_ptr += 2; tok = T_SHR; strcpy(token, ">>"); return; }
     if (c == '=' && input_ptr[1] == '=') { input_ptr += 2; tok = T_EQ; strcpy(token, "=="); return; }
     if (c == '!' && input_ptr[1] == '=') { input_ptr += 2; tok = T_NE; strcpy(token, "!="); return; }
     if (c == '<' && input_ptr[1] == '=') { input_ptr += 2; tok = T_LE; strcpy(token, "<="); return; }
@@ -846,9 +932,14 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     strncpy(d, name, MAX_IDENT_LEN - 1);
     d[MAX_IDENT_LEN - 1] = '\0';
     s->is_global = is_global;
+    s->is_static = static_flag;
+    static_flag = 0;
+    s->is_unsigned = unsigned_type;
+    unsigned_type = 0;
     s->size = size;
     s->pointed = pointed;
     s->is_const = 0;
+    const_flag = 0;
     s->const_value = 0;
     s->is_array = is_array;
     s->elem_size = elem_size;
@@ -858,7 +949,8 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     if (is_global) {
         s->offset = 0;
         emit("    .bss");
-        emit_s("    .globl %s", name);
+        if (!s->is_static)
+            emit_s("    .globl %s", name);
         emit_s("%s:", name);
         if (size > 0)
             emit_i("    .space %d", size);
@@ -1112,6 +1204,42 @@ static void unary(void) {
         unary();
         handle_postfix(0);
         emit("    notq %%rax");
+    } else if (tok == T_SIZEOF) {
+        next_token();
+        int sz = 0;
+        int need_paren = 0;
+        if (tok == '(') { need_paren = 1; next_token(); }
+        if (tok == T_CHAR) { sz = 1; next_token(); }
+        else if (tok == T_FLOAT) { sz = 4; next_token(); }
+        else if (tok == T_DOUBLE) { sz = 8; next_token(); }
+        else if (tok == T_INT || tok == T_VOID) { sz = 8; next_token(); }
+        else if (tok == T_STRUCT || tok == T_UNION) {
+            next_token();
+            if (tok == T_ID) {
+                int ti = find_symbol(token);
+                if (ti >= 0 && symbols[ti].is_const && symbols[ti].size == 0)
+                    sz = symbols[ti].const_value;
+                next_token();
+            }
+        } else if (tok == T_ID) {
+            int idx = find_symbol(token);
+            if (idx >= 0) sz = symbols[idx].size;
+            else error("sizeof: undefined variable");
+            next_token();
+        } else {
+            int old_emit = emit_enabled;
+            emit_enabled = 0;
+            unary();
+            handle_postfix(0);
+            emit_enabled = old_emit;
+            if (expr_type == T_CHAR) sz = 1;
+            else if (expr_type == T_FLOAT) sz = 4;
+            else sz = 8;
+        }
+        while (tok == '*') { sz = 8; next_token(); }
+        if (need_paren) match(')');
+        emit_i("    movq $%d, %%rax", sz);
+        expr_pointed = 0;
     } else {
         error("invalid primary expression");
     }
@@ -1425,8 +1553,25 @@ static void additive_expr(void) {
     }
 }
 
-static void relational_expr(void) {
+static void shift_expr(void) {
     additive_expr();
+    while (tok == T_SHL || tok == T_SHR) {
+        int op = tok;
+        next_token();
+        emit("    pushq %%rax");
+        shift_expr();
+        emit("    popq %%rcx");
+        if (op == T_SHL)
+            emit("    salq %%cl, %%rax");
+        else
+            emit("    sarq %%cl, %%rax");
+        expr_pointed = 0;
+        expr_type = 0;
+    }
+}
+
+static void relational_expr(void) {
+    shift_expr();
     while (tok == '<' || tok == T_LE || tok == '>' || tok == T_GE) {
         int op = tok;
         next_token();
@@ -1811,7 +1956,9 @@ static void statement(void) {
         push_scope();
         
         /* init */
+        if (tok == T_CONST) { next_token(); }
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+            unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
             while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
         }
@@ -1997,6 +2144,36 @@ static void statement(void) {
         return;
     }
 
+    if (tok == T_DO) {
+        next_token();
+        int l_body = label_counter++;
+        int l_end = label_counter++;
+        int saved_cont = continue_target;
+        int saved_cont_valid = continue_target_valid;
+        int saved_break = break_target;
+        int saved_break_valid = break_target_valid;
+        continue_target = l_body;
+        continue_target_valid = 1;
+        break_target = l_end;
+        break_target_valid = 1;
+        emit_label(l_body);
+        statement();
+        if (tok != T_WHILE) error("expected 'while' after do body");
+        next_token();
+        match('(');
+        assignment_expr();
+        match(')');
+        match(';');
+        emit("    cmpq $0, %%rax");
+        emit_i("    jne .L%d", l_body);
+        emit_label(l_end);
+        continue_target = saved_cont;
+        continue_target_valid = saved_cont_valid;
+        break_target = saved_break;
+        break_target_valid = saved_break_valid;
+        return;
+    }
+
     if (tok == T_WHILE) {
         next_token();
         match('(');
@@ -2133,7 +2310,9 @@ static void statement(void) {
         push_scope();
         while (tok != '}' && tok != T_EOF) {
             if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+                unsigned_type = (strcmp(token, "unsigned") == 0);
                 next_token();
+                while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
                 /* fall through to type handling with next token */
             }
             if (tok == T_STATIC) {
@@ -2144,7 +2323,7 @@ static void statement(void) {
                 continue;
             } else if (tok == T_TYPEDEF) {
                 skip_typedef();
-            } else if (tok == T_STRUCT) {
+            } else if (tok == T_STRUCT || tok == T_UNION) {
                 next_token();
                 skip_struct();
             } else if (tok == T_ID) {
@@ -2416,6 +2595,7 @@ static void parse_function(const char *name, int ret_type) {
         while (tok != ')' && tok != T_EOF) {
             if (tok == T_CONST) { next_token(); continue; }
             if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+                unsigned_type = (strcmp(token, "unsigned") == 0);
                 next_token();
                 while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
             }
@@ -2696,19 +2876,21 @@ static void parse_program(void) {
     while (tok != T_EOF) {
         /* FIX: manejar calificadores unsigned/signed a nivel global */
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+            unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
             while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
             /* cae al manejo de tipos */
         }
         if (tok == T_STATIC) {
+            static_flag = 1;
             next_token();
-            continue;
-        } else if (tok == T_CONST) {
+        }
+        if (tok == T_CONST) {
             next_token();
             continue;
         } else if (tok == T_TYPEDEF) {
             skip_typedef();
-        } else if (tok == T_STRUCT) {
+        } else if (tok == T_STRUCT || tok == T_UNION) {
             next_token();
             skip_struct();
         } else if (tok == T_ENUM) {
@@ -2934,7 +3116,7 @@ int main(int argc, char **argv) {
             s->is_array = 0;
             s->elem_size = 0;
             s->elem_size2 = 0;
-            s->var_type = 0;
+    s->var_type = const_flag ? CONST_VAR_FLAG : 0;
             s->next_hash = -1;
             {
                 int h = hash_name(gname);

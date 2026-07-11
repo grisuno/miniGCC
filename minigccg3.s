@@ -1,247 +1,218 @@
     .section .text
     .bss
-    .globl input_ptr
 input_ptr:
     .space 8
     .text
     .bss
-    .globl source_start
 source_start:
     .space 8
     .text
     .bss
-    .globl token
 token:
     .space 256
     .text
     .bss
-    .globl tok
 tok:
     .space 8
     .text
     .bss
-    .globl line
 line:
     .space 8
     .text
     .bss
-    .globl output
 output:
     .space 8
     .text
     .bss
-    .globl ctx_stack
 ctx_stack:
     .space 1792
     .text
     .bss
-    .globl ctx_top
 ctx_top:
     .space 8
     .text
     .bss
-    .globl current_file
 current_file:
     .space 8
     .text
     .bss
-    .globl processed_files
 processed_files:
     .space 2048
     .text
     .bss
-    .globl processed_count
 processed_count:
     .space 8
     .text
     .bss
-    .globl symbols
 symbols:
-    .space 155648
+    .space 172032
     .text
     .bss
-    .globl symbol_count
 symbol_count:
     .space 8
     .text
     .bss
-    .globl hash_table
 hash_table:
     .space 4096
     .text
     .bss
-    .globl scope_stack_sym
 scope_stack_sym:
     .space 2048
     .text
     .bss
-    .globl scope_stack_stk
 scope_stack_stk:
     .space 2048
     .text
     .bss
-    .globl scope_depth
 scope_depth:
     .space 8
     .text
     .bss
-    .globl stack_size
 stack_size:
     .space 8
     .text
     .bss
-    .globl label_counter
 label_counter:
     .space 8
     .text
     .bss
-    .globl function_has_return
 function_has_return:
     .space 8
     .text
     .bss
-    .globl emit_enabled
 emit_enabled:
     .space 8
     .text
     .bss
-    .globl max_func_stack
 max_func_stack:
     .space 8
     .text
     .bss
-    .globl assign_size
 assign_size:
     .space 8
     .text
     .bss
-    .globl expr_pointed
 expr_pointed:
     .space 8
     .text
     .bss
-    .globl current_elem_size
 current_elem_size:
     .space 8
     .text
     .bss
-    .globl current_elem_size2
 current_elem_size2:
     .space 8
     .text
     .bss
-    .globl no_postfix_deref
 no_postfix_deref:
     .space 8
     .text
     .bss
-    .globl expr_type
 expr_type:
     .space 8
     .text
     .bss
-    .globl float_const_str
+static_flag:
+    .space 8
+    .text
+    .bss
+unsigned_type:
+    .space 8
+    .text
+    .bss
+const_flag:
+    .space 8
+    .text
+    .bss
 float_const_str:
     .space 524288
     .text
     .bss
-    .globl float_const_is_float
 float_const_is_float:
     .space 16384
     .text
     .bss
-    .globl float_const_count
 float_const_count:
     .space 8
     .text
     .bss
-    .globl switch_case_values
 switch_case_values:
     .space 2048
     .text
     .bss
-    .globl switch_case_labels
 switch_case_labels:
     .space 2048
     .text
     .bss
-    .globl switch_case_count
 switch_case_count:
     .space 8
     .text
     .bss
-    .globl switch_has_default
 switch_has_default:
     .space 8
     .text
     .bss
-    .globl switch_default_label
 switch_default_label:
     .space 8
     .text
     .bss
-    .globl break_target
 break_target:
     .space 8
     .text
     .bss
-    .globl break_target_valid
 break_target_valid:
     .space 8
     .text
     .bss
-    .globl continue_target
 continue_target:
     .space 8
     .text
     .bss
-    .globl continue_target_valid
 continue_target_valid:
     .space 8
     .text
     .bss
-    .globl str_label_counter
 str_label_counter:
     .space 8
     .text
     .bss
-    .globl string_pool
 string_pool:
     .space 16384
     .text
     .bss
-    .globl string_count
 string_count:
     .space 8
     .text
     .bss
-    .globl struct_total_size
 struct_total_size:
     .space 8
     .text
     .bss
-    .globl struct_member_names
 struct_member_names:
     .space 8192
     .text
     .bss
-    .globl struct_member_offsets
 struct_member_offsets:
     .space 2048
     .text
     .bss
-    .globl struct_member_sizes
 struct_member_sizes:
     .space 2048
     .text
     .bss
-    .globl struct_member_elem_sizes
 struct_member_elem_sizes:
     .space 2048
     .text
     .bss
-    .globl struct_member_count
 struct_member_count:
+    .space 8
+    .text
+    .bss
+if_nest:
+    .space 512
+    .text
+    .bss
+if_depth:
     .space 8
     .text
     .bss
@@ -577,7 +548,6 @@ restore_parser_state:
     leave
     ret
     .bss
-    .globl macros
 macros:
     .space 9216
     .text
@@ -2062,7 +2032,7 @@ pop_scope:
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -2101,9 +2071,9 @@ pop_scope:
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
@@ -2131,9 +2101,9 @@ pop_scope:
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     pushq %rax
     movq -32(%rbp), %rax
@@ -2147,17 +2117,17 @@ pop_scope:
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     pushq %rax
     leaq symbols(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movl %eax, (%rcx)
@@ -2169,9 +2139,9 @@ pop_scope:
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
@@ -2215,7 +2185,7 @@ truncate_symbols:
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -2254,9 +2224,9 @@ truncate_symbols:
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
@@ -2284,9 +2254,9 @@ truncate_symbols:
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     pushq %rax
     movq -32(%rbp), %rax
@@ -2300,17 +2270,17 @@ truncate_symbols:
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     pushq %rax
     leaq symbols(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movl %eax, (%rcx)
@@ -2322,9 +2292,9 @@ truncate_symbols:
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
@@ -2609,7 +2579,7 @@ restart:
     movsbq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L583:
+.L725:
     movq -16(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -2622,7 +2592,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L584
+    je .L726
     movq -16(%rbp), %rax
     pushq %rax
     movq $10, %rax
@@ -2631,12 +2601,12 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L585
+    je .L727
     leaq line(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L585:
+.L727:
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -2647,8 +2617,476 @@ restart:
     movsbq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L583
-.L584:
+    jmp .L725
+.L726:
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setg %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L729
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    movq (%rax), %rax
+    testq %rax, %rax
+    je .L729
+    movl $1, %eax
+    jmp .L730
+.L729:
+    xorl %eax, %eax
+.L730:
+    cmpq $0, %rax
+    je .L731
+.L733:
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setg %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L735
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    movq (%rax), %rax
+    testq %rax, %rax
+    je .L735
+    movl $1, %eax
+    jmp .L736
+.L735:
+    xorl %eax, %eax
+.L736:
+    testq %rax, %rax
+    je .L737
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L737
+    movl $1, %eax
+    jmp .L738
+.L737:
+    xorl %eax, %eax
+.L738:
+    cmpq $0, %rax
+    je .L734
+.L739:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L743
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $35, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L743
+    movl $1, %eax
+    jmp .L744
+.L743:
+    xorl %eax, %eax
+.L744:
+    cmpq $0, %rax
+    je .L740
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L745
+    leaq line(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+.L745:
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L739
+.L740:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L747
+    jmp .L734
+.L747:
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+.L749:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isspace
+    movq %r12, %rsp
+    popq %r12
+    cmpq $0, %rax
+    je .L750
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L751
+    leaq line(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+.L751:
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L749
+.L750:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr83(%rip), %rax
+    pushq %rax
+    movq $5, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L753
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr84(%rip), %rax
+    pushq %rax
+    movq $6, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L753
+    xorl %eax, %eax
+    jmp .L754
+.L753:
+    movl $1, %eax
+.L754:
+    testq %rax, %rax
+    jne .L755
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr85(%rip), %rax
+    pushq %rax
+    movq $2, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L755
+    xorl %eax, %eax
+    jmp .L756
+.L755:
+    movl $1, %eax
+.L756:
+    cmpq $0, %rax
+    je .L757
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $64, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L759
+    leaq .Lstr86(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L759:
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    leaq if_depth(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L758
+.L757:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr87(%rip), %rax
+    pushq %rax
+    movq $4, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L761
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    movq $4, %rax
+    popq %rcx
+    addq %rcx, %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L763
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    movq $4, %rax
+    popq %rcx
+    addq %rcx, %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isspace
+    movq %r12, %rsp
+    popq %r12
+    testq %rax, %rax
+    jne .L763
+    xorl %eax, %eax
+    jmp .L764
+.L763:
+    movl $1, %eax
+.L764:
+    testq %rax, %rax
+    je .L761
+    movl $1, %eax
+    jmp .L762
+.L761:
+    xorl %eax, %eax
+.L762:
+    cmpq $0, %rax
+    je .L765
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    pushq %rax
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    movq (%rax), %rax
+    testq %rax, %rax
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L766
+.L765:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr88(%rip), %rax
+    pushq %rax
+    movq $5, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L767
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setg %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L769
+    leaq if_depth(%rip), %rax
+    movq (%rax), %rcx
+    subq $1, (%rax)
+    movq %rcx, %rax
+.L769:
+.L767:
+.L766:
+.L758:
+.L771:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L775
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L775
+    movl $1, %eax
+    jmp .L776
+.L775:
+    xorl %eax, %eax
+.L776:
+    cmpq $0, %rax
+    je .L772
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L771
+.L772:
+    jmp .L733
+.L734:
+    jmp restart
+.L731:
     movq -16(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -2657,7 +3095,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L587
+    je .L777
     movq ctx_top(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -2666,7 +3104,7 @@ restart:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L589
+    je .L779
     movq source_start(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -2741,15 +3179,15 @@ restart:
     popq %rcx
     movq %rax, (%rcx)
     jmp restart
-.L589:
+.L779:
     leaq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     movq %rax, (%rcx)
     leave
     ret
-.L587:
+.L777:
     movq -16(%rbp), %rax
     pushq %rax
     movq $47, %rax
@@ -2758,7 +3196,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L591
+    je .L781
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -2772,14 +3210,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L591
+    je .L781
     movl $1, %eax
-    jmp .L592
-.L591:
+    jmp .L782
+.L781:
     xorl %eax, %eax
-.L592:
+.L782:
     cmpq $0, %rax
-    je .L593
+    je .L783
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -2789,11 +3227,11 @@ restart:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L595:
+.L785:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     cmpq $0, %rax
-    je .L596
+    je .L786
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -2803,7 +3241,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L599
+    je .L789
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -2817,14 +3255,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L599
+    je .L789
     movl $1, %eax
-    jmp .L600
-.L599:
+    jmp .L790
+.L789:
     xorl %eax, %eax
-.L600:
+.L790:
     cmpq $0, %rax
-    je .L601
+    je .L791
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -2834,8 +3272,8 @@ restart:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L596
-.L601:
+    jmp .L786
+.L791:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -2845,20 +3283,20 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L603
+    je .L793
     leaq line(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L603:
+.L793:
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L595
-.L596:
+    jmp .L785
+.L786:
     jmp restart
-.L593:
+.L783:
     movq -16(%rbp), %rax
     pushq %rax
     movq $47, %rax
@@ -2867,7 +3305,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L605
+    je .L795
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -2881,14 +3319,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L605
+    je .L795
     movl $1, %eax
-    jmp .L606
-.L605:
+    jmp .L796
+.L795:
     xorl %eax, %eax
-.L606:
+.L796:
     cmpq $0, %rax
-    je .L607
+    je .L797
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -2898,11 +3336,11 @@ restart:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L609:
+.L799:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L613
+    je .L803
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -2912,22 +3350,22 @@ restart:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L613
+    je .L803
     movl $1, %eax
-    jmp .L614
-.L613:
+    jmp .L804
+.L803:
     xorl %eax, %eax
-.L614:
+.L804:
     cmpq $0, %rax
-    je .L610
+    je .L800
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L609
-.L610:
+    jmp .L799
+.L800:
     jmp restart
-.L607:
+.L797:
     movq -16(%rbp), %rax
     pushq %rax
     movq $35, %rax
@@ -2936,12 +3374,12 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L615
+    je .L805
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L617:
+.L807:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -2955,7 +3393,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L618
+    je .L808
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -2965,21 +3403,21 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L619
+    je .L809
     leaq line(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L619:
+.L809:
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L617
-.L618:
+    jmp .L807
+.L808:
     movq input_ptr(%rip), %rax
     pushq %rax
-    leaq .Lstr62(%rip), %rax
+    leaq .Lstr89(%rip), %rax
     pushq %rax
     movq $6, %rax
     pushq %rax
@@ -3001,7 +3439,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L621
+    je .L811
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -3011,7 +3449,7 @@ restart:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L623:
+.L813:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3025,16 +3463,16 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L624
+    je .L814
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L623
-.L624:
+    jmp .L813
+.L814:
     movq $0, %rax
     movq %rax, -64(%rbp)
-.L625:
+.L815:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3048,7 +3486,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    jne .L627
+    jne .L817
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3058,14 +3496,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L627
+    jne .L817
     xorl %eax, %eax
-    jmp .L628
-.L627:
+    jmp .L818
+.L817:
     movl $1, %eax
-.L628:
+.L818:
     testq %rax, %rax
-    je .L629
+    je .L819
     movq -64(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -3079,14 +3517,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L629
+    je .L819
     movl $1, %eax
-    jmp .L630
-.L629:
+    jmp .L820
+.L819:
     xorl %eax, %eax
-.L630:
+.L820:
     cmpq $0, %rax
-    je .L626
+    je .L816
     leaq -48(%rbp), %rax
     pushq %rax
     movq -64(%rbp), %rax
@@ -3105,8 +3543,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L625
-.L626:
+    jmp .L815
+.L816:
     leaq -48(%rbp), %rax
     pushq %rax
     movq -64(%rbp), %rax
@@ -3116,27 +3554,40 @@ restart:
     movq $0, %rax
     popq %rcx
     movb %al, (%rcx)
-.L631:
+.L821:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
+    movq $32, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L825
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $9, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L825
     xorl %eax, %eax
-    call my_isspace
-    movq %r12, %rsp
-    popq %r12
+    jmp .L826
+.L825:
+    movl $1, %eax
+.L826:
     cmpq $0, %rax
-    je .L632
+    je .L822
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L631
-.L632:
+    jmp .L821
+.L822:
     movq $0, %rax
     movq %rax, -80(%rbp)
     movq $0, %rax
@@ -3154,13 +3605,13 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L633
+    je .L827
     leaq -96(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L635:
+.L829:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3174,7 +3625,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L636
+    je .L830
     leaq -80(%rbp), %rax
     pushq %rax
     movq -80(%rbp), %rax
@@ -3198,12 +3649,12 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L635
-.L636:
-.L633:
+    jmp .L829
+.L830:
+.L827:
     movq -96(%rbp), %rax
     testq %rax, %rax
-    jne .L637
+    jne .L831
     movq -64(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -3212,14 +3663,14 @@ restart:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L637
+    jne .L831
     xorl %eax, %eax
-    jmp .L638
-.L637:
+    jmp .L832
+.L831:
     movl $1, %eax
-.L638:
+.L832:
     cmpq $0, %rax
-    je .L639
+    je .L833
     leaq -48(%rbp), %rax
     pushq %rax
     movq -80(%rbp), %rax
@@ -3234,12 +3685,12 @@ restart:
     call add_macro
     movq %r12, %rsp
     popq %r12
-.L639:
-    jmp .L622
-.L621:
+.L833:
+    jmp .L812
+.L811:
     movq input_ptr(%rip), %rax
     pushq %rax
-    leaq .Lstr63(%rip), %rax
+    leaq .Lstr90(%rip), %rax
     pushq %rax
     movq $7, %rax
     pushq %rax
@@ -3261,7 +3712,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L641
+    je .L835
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -3271,7 +3722,7 @@ restart:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L643:
+.L837:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3285,13 +3736,13 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L644
+    je .L838
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L643
-.L644:
+    jmp .L837
+.L838:
     movq $0, %rax
     movq %rax, -544(%rbp)
     movq $0, %rax
@@ -3305,7 +3756,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L645
+    je .L839
     leaq -560(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -3315,11 +3766,11 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L647:
+.L841:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L653
+    je .L847
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3329,14 +3780,14 @@ restart:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L653
+    je .L847
     movl $1, %eax
-    jmp .L654
-.L653:
+    jmp .L848
+.L847:
     xorl %eax, %eax
-.L654:
+.L848:
     testq %rax, %rax
-    je .L655
+    je .L849
     movq -544(%rbp), %rax
     pushq %rax
     movq $511, %rax
@@ -3345,14 +3796,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L655
+    je .L849
     movl $1, %eax
-    jmp .L656
-.L655:
+    jmp .L850
+.L849:
     xorl %eax, %eax
-.L656:
+.L850:
     cmpq $0, %rax
-    je .L648
+    je .L842
     leaq -528(%rbp), %rax
     pushq %rax
     leaq -544(%rbp), %rax
@@ -3370,8 +3821,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L647
-.L648:
+    jmp .L841
+.L842:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3381,14 +3832,14 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L657
+    je .L851
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L657:
-    jmp .L646
-.L645:
+.L851:
+    jmp .L840
+.L839:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3398,16 +3849,16 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L659
+    je .L853
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L661:
+.L855:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L667
+    je .L861
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3417,14 +3868,14 @@ restart:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L667
+    je .L861
     movl $1, %eax
-    jmp .L668
-.L667:
+    jmp .L862
+.L861:
     xorl %eax, %eax
-.L668:
+.L862:
     testq %rax, %rax
-    je .L669
+    je .L863
     movq -544(%rbp), %rax
     pushq %rax
     movq $511, %rax
@@ -3433,14 +3884,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L669
+    je .L863
     movl $1, %eax
-    jmp .L670
-.L669:
+    jmp .L864
+.L863:
     xorl %eax, %eax
-.L670:
+.L864:
     cmpq $0, %rax
-    je .L662
+    je .L856
     leaq -528(%rbp), %rax
     pushq %rax
     leaq -544(%rbp), %rax
@@ -3458,8 +3909,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L661
-.L662:
+    jmp .L855
+.L856:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3469,14 +3920,14 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L671
+    je .L865
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L671:
-.L659:
-.L646:
+.L865:
+.L853:
+.L840:
     leaq -528(%rbp), %rax
     pushq %rax
     movq -544(%rbp), %rax
@@ -3486,11 +3937,11 @@ restart:
     movq $0, %rax
     popq %rcx
     movb %al, (%rcx)
-.L673:
+.L867:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L677
+    je .L871
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3500,23 +3951,23 @@ restart:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L677
+    je .L871
     movl $1, %eax
-    jmp .L678
-.L677:
+    jmp .L872
+.L871:
     xorl %eax, %eax
-.L678:
+.L872:
     cmpq $0, %rax
-    je .L674
+    je .L868
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L673
-.L674:
+    jmp .L867
+.L868:
     movq -560(%rbp), %rax
     testq %rax, %rax
-    je .L679
+    je .L873
     movq -544(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -3525,14 +3976,14 @@ restart:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L679
+    je .L873
     movl $1, %eax
-    jmp .L680
-.L679:
+    jmp .L874
+.L873:
     xorl %eax, %eax
-.L680:
+.L874:
     cmpq $0, %rax
-    je .L681
+    je .L875
     leaq -528(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -3547,7 +3998,7 @@ restart:
     movq %rax, -576(%rbp)
     movq -576(%rbp), %rax
     cmpq $0, %rax
-    je .L683
+    je .L877
     movq -576(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -3563,7 +4014,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L685
+    je .L879
     movq -576(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -3589,7 +4040,7 @@ restart:
     movq %rax, -592(%rbp)
     movq -592(%rbp), %rax
     cmpq $0, %rax
-    je .L687
+    je .L881
     movq ctx_top(%rip), %rax
     pushq %rax
     movq $64, %rax
@@ -3598,8 +4049,8 @@ restart:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L689
-    leaq .Lstr64(%rip), %rax
+    je .L883
+    leaq .Lstr91(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -3610,7 +4061,7 @@ restart:
     call error
     movq %r12, %rsp
     popq %r12
-.L689:
+.L883:
     leaq ctx_stack(%rip), %rax
     pushq %rax
     movq ctx_top(%rip), %rax
@@ -3679,11 +4130,11 @@ restart:
     popq %rcx
     movq %rax, (%rcx)
     jmp restart
-    jmp .L688
-.L687:
+    jmp .L882
+.L881:
     movq stderr(%rip), %rax
     pushq %rax
-    leaq .Lstr65(%rip), %rax
+    leaq .Lstr92(%rip), %rax
     pushq %rax
     leaq -528(%rbp), %rax
     pushq %rax
@@ -3709,9 +4160,9 @@ restart:
     call free
     movq %r12, %rsp
     popq %r12
-.L688:
-    jmp .L686
-.L685:
+.L882:
+    jmp .L880
+.L879:
     movq -576(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -3723,12 +4174,12 @@ restart:
     call free
     movq %r12, %rsp
     popq %r12
-.L686:
-    jmp .L684
-.L683:
+.L880:
+    jmp .L878
+.L877:
     movq stderr(%rip), %rax
     pushq %rax
-    leaq .Lstr66(%rip), %rax
+    leaq .Lstr93(%rip), %rax
     pushq %rax
     leaq -528(%rbp), %rax
     pushq %rax
@@ -3743,74 +4194,68 @@ restart:
     call fprintf
     movq %r12, %rsp
     popq %r12
-.L684:
-.L681:
-.L641:
-.L622:
-.L691:
+.L878:
+.L875:
+    jmp .L836
+.L835:
     movq input_ptr(%rip), %rax
-    movsbq (%rax), %rax
-    testq %rax, %rax
-    je .L695
-    movq input_ptr(%rip), %rax
-    movsbq (%rax), %rax
     pushq %rax
-    movq $10, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    setne %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    je .L695
-    movl $1, %eax
-    jmp .L696
-.L695:
-    xorl %eax, %eax
-.L696:
-    cmpq $0, %rax
-    je .L692
-    leaq input_ptr(%rip), %rax
-    movq (%rax), %rcx
-    addq $1, (%rax)
-    movq %rcx, %rax
-    jmp .L691
-.L692:
-    jmp restart
-.L615:
-    movq -16(%rbp), %rax
+    leaq .Lstr94(%rip), %rax
     pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
+    movq $5, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
     xorl %eax, %eax
-    call my_isalpha
+    call strncmp
     movq %r12, %rsp
     popq %r12
-    testq %rax, %rax
-    jne .L697
-    movq -16(%rbp), %rax
     pushq %rax
-    movq $95, %rax
+    movq $0, %rax
     popq %rcx
     cmpq %rax, %rcx
     sete %al
     movzbq %al, %rax
-    testq %rax, %rax
-    jne .L697
-    xorl %eax, %eax
-    jmp .L698
-.L697:
-    movl $1, %eax
-.L698:
     cmpq $0, %rax
-    je .L699
-    leaq token(%rip), %rax
-    movq %rax, -32(%rbp)
+    je .L885
+    leaq input_ptr(%rip), %rax
+    pushq %rax
+    movq (%rax), %rax
+    pushq %rax
+    movq $5, %rax
+    popq %rcx
+    addq %rcx, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L887:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isspace
+    movq %r12, %rsp
+    popq %r12
+    cmpq $0, %rax
+    je .L888
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L887
+.L888:
     movq $0, %rax
-    movq %rax, -48(%rbp)
-.L701:
+    movq %rax, -64(%rbp)
+.L889:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3824,7 +4269,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    jne .L703
+    jne .L891
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -3834,14 +4279,859 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L703
+    jne .L891
     xorl %eax, %eax
-    jmp .L704
-.L703:
+    jmp .L892
+.L891:
     movl $1, %eax
-.L704:
+.L892:
     testq %rax, %rax
-    je .L705
+    je .L893
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $32, %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setl %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L893
+    movl $1, %eax
+    jmp .L894
+.L893:
+    xorl %eax, %eax
+.L894:
+    cmpq $0, %rax
+    je .L890
+    leaq -48(%rbp), %rax
+    pushq %rax
+    leaq -64(%rbp), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    addq %rcx, %rax
+    pushq %rax
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rcx
+    addb $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    movb %al, (%rcx)
+    jmp .L889
+.L890:
+    leaq -48(%rbp), %rax
+    pushq %rax
+    movq -64(%rbp), %rax
+    popq %rcx
+    addq %rcx, %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movb %al, (%rcx)
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $64, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L895
+    leaq .Lstr95(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L895:
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    leaq if_depth(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    pushq %rax
+    leaq -48(%rbp), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call find_macro
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setl %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L897:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L901
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L901
+    movl $1, %eax
+    jmp .L902
+.L901:
+    xorl %eax, %eax
+.L902:
+    cmpq $0, %rax
+    je .L898
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L897
+.L898:
+    jmp restart
+    jmp .L886
+.L885:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr96(%rip), %rax
+    pushq %rax
+    movq $6, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L903
+    leaq input_ptr(%rip), %rax
+    pushq %rax
+    movq (%rax), %rax
+    pushq %rax
+    movq $6, %rax
+    popq %rcx
+    addq %rcx, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L905:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isspace
+    movq %r12, %rsp
+    popq %r12
+    cmpq $0, %rax
+    je .L906
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L905
+.L906:
+    movq $0, %rax
+    movq %rax, -64(%rbp)
+.L907:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isalnum
+    movq %r12, %rsp
+    popq %r12
+    testq %rax, %rax
+    jne .L909
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $95, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L909
+    xorl %eax, %eax
+    jmp .L910
+.L909:
+    movl $1, %eax
+.L910:
+    testq %rax, %rax
+    je .L911
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $32, %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setl %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L911
+    movl $1, %eax
+    jmp .L912
+.L911:
+    xorl %eax, %eax
+.L912:
+    cmpq $0, %rax
+    je .L908
+    leaq -48(%rbp), %rax
+    pushq %rax
+    leaq -64(%rbp), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    addq %rcx, %rax
+    pushq %rax
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rcx
+    addb $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    movb %al, (%rcx)
+    jmp .L907
+.L908:
+    leaq -48(%rbp), %rax
+    pushq %rax
+    movq -64(%rbp), %rax
+    popq %rcx
+    addq %rcx, %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movb %al, (%rcx)
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $64, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L913
+    leaq .Lstr97(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L913:
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    leaq if_depth(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    pushq %rax
+    leaq -48(%rbp), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call find_macro
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L915:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L919
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L919
+    movl $1, %eax
+    jmp .L920
+.L919:
+    xorl %eax, %eax
+.L920:
+    cmpq $0, %rax
+    je .L916
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L915
+.L916:
+    jmp restart
+    jmp .L904
+.L903:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr98(%rip), %rax
+    pushq %rax
+    movq $2, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L921
+    leaq input_ptr(%rip), %rax
+    pushq %rax
+    movq (%rax), %rax
+    pushq %rax
+    movq $2, %rax
+    popq %rcx
+    addq %rcx, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L923:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isspace
+    movq %r12, %rsp
+    popq %r12
+    cmpq $0, %rax
+    je .L924
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L923
+.L924:
+    movq $0, %rax
+    movq %rax, -32(%rbp)
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $48, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L925
+    leaq -32(%rbp), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L926
+.L925:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $49, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L927
+    leaq -32(%rbp), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+.L927:
+.L926:
+.L929:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L933
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L933
+    movl $1, %eax
+    jmp .L934
+.L933:
+    xorl %eax, %eax
+.L934:
+    cmpq $0, %rax
+    je .L930
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L929
+.L930:
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $64, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L935
+    leaq .Lstr99(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L935:
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    leaq if_depth(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    pushq %rax
+    movq -32(%rbp), %rax
+    testq %rax, %rax
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp restart
+    jmp .L922
+.L921:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr100(%rip), %rax
+    pushq %rax
+    movq $4, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L937
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    movq $4, %rax
+    popq %rcx
+    addq %rcx, %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L939
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    movq $4, %rax
+    popq %rcx
+    addq %rcx, %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isspace
+    movq %r12, %rsp
+    popq %r12
+    testq %rax, %rax
+    jne .L939
+    xorl %eax, %eax
+    jmp .L940
+.L939:
+    movl $1, %eax
+.L940:
+    testq %rax, %rax
+    je .L937
+    movl $1, %eax
+    jmp .L938
+.L937:
+    xorl %eax, %eax
+.L938:
+    cmpq $0, %rax
+    je .L941
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L943
+    leaq .Lstr101(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L943:
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    pushq %rax
+    leaq if_nest(%rip), %rax
+    pushq %rax
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    subq %rax, %rcx
+    movq %rcx, %rax
+    popq %rcx
+    imulq $8, %rax
+    addq %rcx, %rax
+    movq (%rax), %rax
+    testq %rax, %rax
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L945:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L949
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L949
+    movl $1, %eax
+    jmp .L950
+.L949:
+    xorl %eax, %eax
+.L950:
+    cmpq $0, %rax
+    je .L946
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L945
+.L946:
+    jmp restart
+    jmp .L942
+.L941:
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    leaq .Lstr102(%rip), %rax
+    pushq %rax
+    movq $5, %rax
+    pushq %rax
+    movq 16(%rsp), %rdi
+    movq 8(%rsp), %rsi
+    movq 0(%rsp), %rdx
+    addq $24, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strncmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L951
+    movq if_depth(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L953
+    leaq .Lstr103(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L953:
+    leaq if_depth(%rip), %rax
+    movq (%rax), %rcx
+    subq $1, (%rax)
+    movq %rcx, %rax
+.L955:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L959
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L959
+    movl $1, %eax
+    jmp .L960
+.L959:
+    xorl %eax, %eax
+.L960:
+    cmpq $0, %rax
+    je .L956
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L955
+.L956:
+    jmp restart
+.L951:
+.L942:
+.L922:
+.L904:
+.L886:
+.L836:
+.L812:
+.L961:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    testq %rax, %rax
+    je .L965
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $10, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L965
+    movl $1, %eax
+    jmp .L966
+.L965:
+    xorl %eax, %eax
+.L966:
+    cmpq $0, %rax
+    je .L962
+    leaq input_ptr(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    jmp .L961
+.L962:
+    jmp restart
+.L805:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isalpha
+    movq %r12, %rsp
+    popq %r12
+    testq %rax, %rax
+    jne .L967
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $95, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L967
+    xorl %eax, %eax
+    jmp .L968
+.L967:
+    movl $1, %eax
+.L968:
+    cmpq $0, %rax
+    je .L969
+    leaq token(%rip), %rax
+    movq %rax, -32(%rbp)
+    movq $0, %rax
+    movq %rax, -48(%rbp)
+.L971:
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call my_isalnum
+    movq %r12, %rsp
+    popq %r12
+    testq %rax, %rax
+    jne .L973
+    movq input_ptr(%rip), %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $95, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L973
+    xorl %eax, %eax
+    jmp .L974
+.L973:
+    movl $1, %eax
+.L974:
+    testq %rax, %rax
+    je .L975
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -3855,14 +5145,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L705
+    je .L975
     movl $1, %eax
-    jmp .L706
-.L705:
+    jmp .L976
+.L975:
     xorl %eax, %eax
-.L706:
+.L976:
     cmpq $0, %rax
-    je .L702
+    je .L972
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -3881,8 +5171,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L701
-.L702:
+    jmp .L971
+.L972:
     movq -32(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -3890,7 +5180,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr67(%rip), %rax
+    leaq .Lstr104(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -3909,17 +5199,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L707
+    je .L977
     leaq tok(%rip), %rax
     pushq %rax
     movq $258, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L708
-.L707:
+    jmp .L978
+.L977:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr68(%rip), %rax
+    leaq .Lstr105(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -3938,17 +5228,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L709
+    je .L979
     leaq tok(%rip), %rax
     pushq %rax
     movq $259, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L710
-.L709:
+    jmp .L980
+.L979:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr69(%rip), %rax
+    leaq .Lstr106(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -3967,17 +5257,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L711
+    je .L981
     leaq tok(%rip), %rax
     pushq %rax
     movq $260, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L712
-.L711:
+    jmp .L982
+.L981:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr70(%rip), %rax
+    leaq .Lstr107(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -3996,17 +5286,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L713
+    je .L983
     leaq tok(%rip), %rax
     pushq %rax
     movq $261, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L714
-.L713:
+    jmp .L984
+.L983:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr71(%rip), %rax
+    leaq .Lstr108(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4025,17 +5315,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L715
+    je .L985
     leaq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L716
-.L715:
+    jmp .L986
+.L985:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr72(%rip), %rax
+    leaq .Lstr109(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4054,17 +5344,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L717
+    je .L987
     leaq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L718
-.L717:
+    jmp .L988
+.L987:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr73(%rip), %rax
+    leaq .Lstr110(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4083,17 +5373,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L719
+    je .L989
     leaq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L720
-.L719:
+    jmp .L990
+.L989:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr74(%rip), %rax
+    leaq .Lstr111(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4112,17 +5402,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L721
+    je .L991
     leaq tok(%rip), %rax
     pushq %rax
     movq $264, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L722
-.L721:
+    jmp .L992
+.L991:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr75(%rip), %rax
+    leaq .Lstr112(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4141,17 +5431,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L723
+    je .L993
     leaq tok(%rip), %rax
     pushq %rax
     movq $265, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L724
-.L723:
+    jmp .L994
+.L993:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr76(%rip), %rax
+    leaq .Lstr113(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4170,17 +5460,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L725
+    je .L995
     leaq tok(%rip), %rax
     pushq %rax
     movq $266, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L726
-.L725:
+    jmp .L996
+.L995:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr77(%rip), %rax
+    leaq .Lstr114(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4199,17 +5489,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L727
+    je .L997
     leaq tok(%rip), %rax
     pushq %rax
     movq $267, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L728
-.L727:
+    jmp .L998
+.L997:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr78(%rip), %rax
+    leaq .Lstr115(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4228,17 +5518,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L729
+    je .L999
     leaq tok(%rip), %rax
     pushq %rax
     movq $268, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L730
-.L729:
+    jmp .L1000
+.L999:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr79(%rip), %rax
+    leaq .Lstr116(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4257,17 +5547,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L731
+    je .L1001
     leaq tok(%rip), %rax
     pushq %rax
     movq $269, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L732
-.L731:
+    jmp .L1002
+.L1001:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr80(%rip), %rax
+    leaq .Lstr117(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4286,17 +5576,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L733
+    je .L1003
     leaq tok(%rip), %rax
     pushq %rax
     movq $270, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L734
-.L733:
+    jmp .L1004
+.L1003:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr81(%rip), %rax
+    leaq .Lstr118(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4315,17 +5605,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L735
+    je .L1005
     leaq tok(%rip), %rax
     pushq %rax
     movq $280, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L736
-.L735:
+    jmp .L1006
+.L1005:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr82(%rip), %rax
+    leaq .Lstr119(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4344,17 +5634,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L737
+    je .L1007
     leaq tok(%rip), %rax
     pushq %rax
     movq $281, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L738
-.L737:
+    jmp .L1008
+.L1007:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr83(%rip), %rax
+    leaq .Lstr120(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4373,17 +5663,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L739
+    je .L1009
     leaq tok(%rip), %rax
     pushq %rax
     movq $282, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L740
-.L739:
+    jmp .L1010
+.L1009:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr84(%rip), %rax
+    leaq .Lstr121(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4402,17 +5692,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L741
+    je .L1011
     leaq tok(%rip), %rax
     pushq %rax
     movq $283, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L742
-.L741:
+    jmp .L1012
+.L1011:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr85(%rip), %rax
+    leaq .Lstr122(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4431,17 +5721,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L743
+    je .L1013
     leaq tok(%rip), %rax
     pushq %rax
     movq $284, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L744
-.L743:
+    jmp .L1014
+.L1013:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr86(%rip), %rax
+    leaq .Lstr123(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4460,17 +5750,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L745
+    je .L1015
     leaq tok(%rip), %rax
     pushq %rax
     movq $288, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L746
-.L745:
+    jmp .L1016
+.L1015:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr87(%rip), %rax
+    leaq .Lstr124(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4489,17 +5779,17 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L747
+    je .L1017
     leaq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L748
-.L747:
+    jmp .L1018
+.L1017:
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr88(%rip), %rax
+    leaq .Lstr125(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -4518,14 +5808,101 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L749
+    je .L1019
     leaq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L750
-.L749:
+    jmp .L1020
+.L1019:
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr126(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1021
+    leaq tok(%rip), %rax
+    pushq %rax
+    movq $292, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1022
+.L1021:
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr127(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1023
+    leaq tok(%rip), %rax
+    pushq %rax
+    movq $293, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1024
+.L1023:
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr128(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1025
+    leaq tok(%rip), %rax
+    pushq %rax
+    movq $296, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1026
+.L1025:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -4546,12 +5923,12 @@ restart:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L751
+    je .L1027
     leaq token(%rip), %rax
     pushq %rax
     movq $256, %rax
     pushq %rax
-    leaq .Lstr89(%rip), %rax
+    leaq .Lstr129(%rip), %rax
     pushq %rax
     leaq macros(%rip), %rax
     pushq %rax
@@ -4579,39 +5956,42 @@ restart:
     movq $256, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L752
-.L751:
+    jmp .L1028
+.L1027:
     leaq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L752:
-.L750:
-.L748:
-.L746:
-.L744:
-.L742:
-.L740:
-.L738:
-.L736:
-.L734:
-.L732:
-.L730:
-.L728:
-.L726:
-.L724:
-.L722:
-.L720:
-.L718:
-.L716:
-.L714:
-.L712:
-.L710:
-.L708:
+.L1028:
+.L1026:
+.L1024:
+.L1022:
+.L1020:
+.L1018:
+.L1016:
+.L1014:
+.L1012:
+.L1010:
+.L1008:
+.L1006:
+.L1004:
+.L1002:
+.L1000:
+.L998:
+.L996:
+.L994:
+.L992:
+.L990:
+.L988:
+.L986:
+.L984:
+.L982:
+.L980:
+.L978:
     leave
     ret
-.L699:
+.L969:
     movq -16(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -4624,7 +6004,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    jne .L753
+    jne .L1029
     movq -16(%rbp), %rax
     pushq %rax
     movq $46, %rax
@@ -4633,7 +6013,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L755
+    je .L1031
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -4651,21 +6031,21 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    je .L755
+    je .L1031
     movl $1, %eax
-    jmp .L756
-.L755:
+    jmp .L1032
+.L1031:
     xorl %eax, %eax
-.L756:
+.L1032:
     testq %rax, %rax
-    jne .L753
+    jne .L1029
     xorl %eax, %eax
-    jmp .L754
-.L753:
+    jmp .L1030
+.L1029:
     movl $1, %eax
-.L754:
+.L1030:
     cmpq $0, %rax
-    je .L757
+    je .L1033
     leaq token(%rip), %rax
     movq %rax, -32(%rbp)
     movq $0, %rax
@@ -4684,8 +6064,8 @@ restart:
     movq %r12, %rsp
     popq %r12
     cmpq $0, %rax
-    je .L759
-.L761:
+    je .L1035
+.L1037:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -4699,7 +6079,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    je .L763
+    je .L1039
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -4713,14 +6093,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L763
+    je .L1039
     movl $1, %eax
-    jmp .L764
-.L763:
+    jmp .L1040
+.L1039:
     xorl %eax, %eax
-.L764:
+.L1040:
     cmpq $0, %rax
-    je .L762
+    je .L1038
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -4739,9 +6119,9 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L761
-.L762:
-.L759:
+    jmp .L1037
+.L1038:
+.L1035:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -4751,7 +6131,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L767
+    je .L1043
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -4765,14 +6145,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L767
+    je .L1043
     movl $1, %eax
-    jmp .L768
-.L767:
+    jmp .L1044
+.L1043:
     xorl %eax, %eax
-.L768:
+.L1044:
     cmpq $0, %rax
-    je .L769
+    je .L1045
     leaq -64(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -4795,7 +6175,7 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L771:
+.L1047:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -4809,7 +6189,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    je .L773
+    je .L1049
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -4823,14 +6203,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L773
+    je .L1049
     movl $1, %eax
-    jmp .L774
-.L773:
+    jmp .L1050
+.L1049:
     xorl %eax, %eax
-.L774:
+.L1050:
     cmpq $0, %rax
-    je .L772
+    je .L1048
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -4849,9 +6229,9 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L771
-.L772:
-.L769:
+    jmp .L1047
+.L1048:
+.L1045:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -4861,7 +6241,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L777
+    jne .L1053
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -4871,14 +6251,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L777
+    jne .L1053
     xorl %eax, %eax
-    jmp .L778
-.L777:
+    jmp .L1054
+.L1053:
     movl $1, %eax
-.L778:
+.L1054:
     testq %rax, %rax
-    je .L779
+    je .L1055
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -4892,14 +6272,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L779
+    je .L1055
     movl $1, %eax
-    jmp .L780
-.L779:
+    jmp .L1056
+.L1055:
     xorl %eax, %eax
-.L780:
+.L1056:
     cmpq $0, %rax
-    je .L781
+    je .L1057
     leaq -64(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -4932,7 +6312,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L785
+    jne .L1061
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -4942,14 +6322,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L785
+    jne .L1061
     xorl %eax, %eax
-    jmp .L786
-.L785:
+    jmp .L1062
+.L1061:
     movl $1, %eax
-.L786:
+.L1062:
     testq %rax, %rax
-    je .L787
+    je .L1063
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -4963,14 +6343,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L787
+    je .L1063
     movl $1, %eax
-    jmp .L788
-.L787:
+    jmp .L1064
+.L1063:
     xorl %eax, %eax
-.L788:
+.L1064:
     cmpq $0, %rax
-    je .L789
+    je .L1065
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -4989,8 +6369,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L789:
-.L791:
+.L1065:
+.L1067:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5004,7 +6384,7 @@ restart:
     movq %r12, %rsp
     popq %r12
     testq %rax, %rax
-    je .L793
+    je .L1069
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -5018,14 +6398,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L793
+    je .L1069
     movl $1, %eax
-    jmp .L794
-.L793:
+    jmp .L1070
+.L1069:
     xorl %eax, %eax
-.L794:
+.L1070:
     cmpq $0, %rax
-    je .L792
+    je .L1068
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -5044,9 +6424,9 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L791
-.L792:
-.L781:
+    jmp .L1067
+.L1068:
+.L1057:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5056,7 +6436,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L801
+    jne .L1077
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5066,14 +6446,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L801
+    jne .L1077
     xorl %eax, %eax
-    jmp .L802
-.L801:
+    jmp .L1078
+.L1077:
     movl $1, %eax
-.L802:
+.L1078:
     testq %rax, %rax
-    jne .L803
+    jne .L1079
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5083,14 +6463,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L803
+    jne .L1079
     xorl %eax, %eax
-    jmp .L804
-.L803:
+    jmp .L1080
+.L1079:
     movl $1, %eax
-.L804:
+.L1080:
     testq %rax, %rax
-    jne .L805
+    jne .L1081
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5100,14 +6480,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L805
+    jne .L1081
     xorl %eax, %eax
-    jmp .L806
-.L805:
+    jmp .L1082
+.L1081:
     movl $1, %eax
-.L806:
+.L1082:
     testq %rax, %rax
-    je .L807
+    je .L1083
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -5121,14 +6501,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L807
+    je .L1083
     movl $1, %eax
-    jmp .L808
-.L807:
+    jmp .L1084
+.L1083:
     xorl %eax, %eax
-.L808:
+.L1084:
     cmpq $0, %rax
-    je .L809
+    je .L1085
     leaq -64(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -5180,7 +6560,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L811
+    jne .L1087
     movq -80(%rbp), %rax
     pushq %rax
     movq $70, %rax
@@ -5189,19 +6569,19 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L811
+    jne .L1087
     xorl %eax, %eax
-    jmp .L812
-.L811:
+    jmp .L1088
+.L1087:
     movl $1, %eax
-.L812:
+.L1088:
     testq %rax, %rax
-    je .L813
+    je .L1089
     movq $1, %rax
-    jmp .L814
-.L813:
+    jmp .L1090
+.L1089:
     movq $0, %rax
-.L814:
+.L1090:
     popq %rcx
     movq %rax, (%rcx)
     leaq float_const_str(%rip), %rax
@@ -5229,7 +6609,7 @@ restart:
     movq %rcx, %rax
     leave
     ret
-.L809:
+.L1085:
     movq -32(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -5237,7 +6617,7 @@ restart:
     movq %rax, (%rcx)
     movq -64(%rbp), %rax
     cmpq $0, %rax
-    je .L815
+    je .L1091
     leaq tok(%rip), %rax
     pushq %rax
     movq $291, %rax
@@ -5276,17 +6656,17 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L816
-.L815:
+    jmp .L1092
+.L1091:
     leaq tok(%rip), %rax
     pushq %rax
     movq $256, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L816:
+.L1092:
     leave
     ret
-.L757:
+.L1033:
     movq -16(%rbp), %rax
     pushq %rax
     movq $34, %rax
@@ -5295,7 +6675,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L817
+    je .L1093
     leaq token(%rip), %rax
     movq %rax, -32(%rbp)
     movq $0, %rax
@@ -5304,11 +6684,11 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L819:
+.L1095:
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L825
+    je .L1101
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5318,14 +6698,14 @@ restart:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L825
+    je .L1101
     movl $1, %eax
-    jmp .L826
-.L825:
+    jmp .L1102
+.L1101:
     xorl %eax, %eax
-.L826:
+.L1102:
     testq %rax, %rax
-    je .L827
+    je .L1103
     movq -48(%rbp), %rax
     pushq %rax
     movq $256, %rax
@@ -5339,14 +6719,14 @@ restart:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L827
+    je .L1103
     movl $1, %eax
-    jmp .L828
-.L827:
+    jmp .L1104
+.L1103:
     xorl %eax, %eax
-.L828:
+.L1104:
     cmpq $0, %rax
-    je .L820
+    je .L1096
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -5356,7 +6736,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L831
+    je .L1107
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5364,14 +6744,14 @@ restart:
     addq %rcx, %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L831
+    je .L1107
     movl $1, %eax
-    jmp .L832
-.L831:
+    jmp .L1108
+.L1107:
     xorl %eax, %eax
-.L832:
+.L1108:
     cmpq $0, %rax
-    je .L833
+    je .L1109
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5385,7 +6765,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L835
+    je .L1111
     movq -32(%rbp), %rax
     pushq %rax
     movq $10, %rax
@@ -5408,8 +6788,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L836
-.L835:
+    jmp .L1112
+.L1111:
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5423,7 +6803,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L837
+    je .L1113
     movq -32(%rbp), %rax
     pushq %rax
     movq $9, %rax
@@ -5446,8 +6826,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L838
-.L837:
+    jmp .L1114
+.L1113:
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5461,7 +6841,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L839
+    je .L1115
     movq -32(%rbp), %rax
     pushq %rax
     movq $92, %rax
@@ -5484,8 +6864,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L840
-.L839:
+    jmp .L1116
+.L1115:
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5499,7 +6879,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L841
+    je .L1117
     movq -32(%rbp), %rax
     pushq %rax
     movq $34, %rax
@@ -5522,8 +6902,8 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L842
-.L841:
+    jmp .L1118
+.L1117:
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -5561,12 +6941,12 @@ restart:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L842:
-.L840:
-.L838:
-.L836:
-    jmp .L834
-.L833:
+.L1118:
+.L1116:
+.L1114:
+.L1112:
+    jmp .L1110
+.L1109:
     movq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
@@ -5585,9 +6965,9 @@ restart:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L834:
-    jmp .L819
-.L820:
+.L1110:
+    jmp .L1095
+.L1096:
     movq -32(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -5602,14 +6982,14 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L843
+    je .L1119
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L844
-.L843:
-    leaq .Lstr90(%rip), %rax
+    jmp .L1120
+.L1119:
+    leaq .Lstr130(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -5620,7 +7000,7 @@ restart:
     call error
     movq %r12, %rsp
     popq %r12
-.L844:
+.L1120:
     leaq tok(%rip), %rax
     pushq %rax
     movq $285, %rax
@@ -5628,7 +7008,7 @@ restart:
     movq %rax, (%rcx)
     leave
     ret
-.L817:
+.L1093:
     movq -16(%rbp), %rax
     pushq %rax
     movq $39, %rax
@@ -5637,7 +7017,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L845
+    je .L1121
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -5651,7 +7031,7 @@ restart:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L847
+    je .L1123
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -5660,102 +7040,102 @@ restart:
     movsbq (%rax), %rax
     pushq %rax
     pushq $0
-    jmp .L849
-.L851:
+    jmp .L1125
+.L1127:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $10, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L852:
+    jmp .L1126
+.L1128:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $9, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L853:
+    jmp .L1126
+.L1129:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $13, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L854:
+    jmp .L1126
+.L1130:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $12, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L855:
+    jmp .L1126
+.L1131:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $11, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L856:
+    jmp .L1126
+.L1132:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L857:
+    jmp .L1126
+.L1133:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $92, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L858:
+    jmp .L1126
+.L1134:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $39, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-.L859:
+    jmp .L1126
+.L1135:
     leaq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L850
-    jmp .L850
-.L849:
+    jmp .L1126
+    jmp .L1126
+.L1125:
     movq 8(%rsp), %rax
     cmpq $110, %rax
-    je .L851
+    je .L1127
     cmpq $116, %rax
-    je .L852
+    je .L1128
     cmpq $114, %rax
-    je .L853
+    je .L1129
     cmpq $102, %rax
-    je .L854
+    je .L1130
     cmpq $118, %rax
-    je .L855
+    je .L1131
     cmpq $48, %rax
-    je .L856
+    je .L1132
     cmpq $92, %rax
-    je .L857
+    je .L1133
     cmpq $39, %rax
-    je .L858
-    jmp .L859
-.L850:
+    je .L1134
+    jmp .L1135
+.L1126:
     addq $16, %rsp
-    jmp .L848
-.L847:
+    jmp .L1124
+.L1123:
     leaq -32(%rbp), %rax
     pushq %rax
     movq input_ptr(%rip), %rax
     movsbq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L848:
+.L1124:
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -5769,8 +7149,8 @@ restart:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L860
-    leaq .Lstr91(%rip), %rax
+    je .L1136
+    leaq .Lstr131(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -5781,7 +7161,7 @@ restart:
     call error
     movq %r12, %rsp
     popq %r12
-.L860:
+.L1136:
     leaq input_ptr(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -5790,7 +7170,7 @@ restart:
     pushq %rax
     movq $256, %rax
     pushq %rax
-    leaq .Lstr92(%rip), %rax
+    leaq .Lstr132(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -5813,7 +7193,129 @@ restart:
     movq %rax, (%rcx)
     leave
     ret
-.L845:
+.L1121:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $60, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L1138
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    addq %rcx, %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $60, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L1138
+    movl $1, %eax
+    jmp .L1139
+.L1138:
+    xorl %eax, %eax
+.L1139:
+    cmpq $0, %rax
+    je .L1140
+    leaq input_ptr(%rip), %rax
+    pushq %rax
+    movq (%rax), %rax
+    pushq %rax
+    movq $2, %rax
+    popq %rcx
+    addq %rcx, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq tok(%rip), %rax
+    pushq %rax
+    movq $294, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr133(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcpy
+    movq %r12, %rsp
+    popq %r12
+    leave
+    ret
+.L1140:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $62, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L1142
+    movq input_ptr(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    addq %rcx, %rax
+    movsbq (%rax), %rax
+    pushq %rax
+    movq $62, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L1142
+    movl $1, %eax
+    jmp .L1143
+.L1142:
+    xorl %eax, %eax
+.L1143:
+    cmpq $0, %rax
+    je .L1144
+    leaq input_ptr(%rip), %rax
+    pushq %rax
+    movq (%rax), %rax
+    pushq %rax
+    movq $2, %rax
+    popq %rcx
+    addq %rcx, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq tok(%rip), %rax
+    pushq %rax
+    movq $295, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr134(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcpy
+    movq %r12, %rsp
+    popq %r12
+    leave
+    ret
+.L1144:
     movq -16(%rbp), %rax
     pushq %rax
     movq $61, %rax
@@ -5822,7 +7324,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L862
+    je .L1146
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5836,14 +7338,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L862
+    je .L1146
     movl $1, %eax
-    jmp .L863
-.L862:
+    jmp .L1147
+.L1146:
     xorl %eax, %eax
-.L863:
+.L1147:
     cmpq $0, %rax
-    je .L864
+    je .L1148
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -5860,7 +7362,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr93(%rip), %rax
+    leaq .Lstr135(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -5874,7 +7376,7 @@ restart:
     popq %r12
     leave
     ret
-.L864:
+.L1148:
     movq -16(%rbp), %rax
     pushq %rax
     movq $33, %rax
@@ -5883,7 +7385,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L866
+    je .L1150
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5897,14 +7399,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L866
+    je .L1150
     movl $1, %eax
-    jmp .L867
-.L866:
+    jmp .L1151
+.L1150:
     xorl %eax, %eax
-.L867:
+.L1151:
     cmpq $0, %rax
-    je .L868
+    je .L1152
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -5921,7 +7423,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr94(%rip), %rax
+    leaq .Lstr136(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -5935,7 +7437,7 @@ restart:
     popq %r12
     leave
     ret
-.L868:
+.L1152:
     movq -16(%rbp), %rax
     pushq %rax
     movq $60, %rax
@@ -5944,7 +7446,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L870
+    je .L1154
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -5958,14 +7460,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L870
+    je .L1154
     movl $1, %eax
-    jmp .L871
-.L870:
+    jmp .L1155
+.L1154:
     xorl %eax, %eax
-.L871:
+.L1155:
     cmpq $0, %rax
-    je .L872
+    je .L1156
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -5982,7 +7484,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr95(%rip), %rax
+    leaq .Lstr137(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -5996,7 +7498,7 @@ restart:
     popq %r12
     leave
     ret
-.L872:
+.L1156:
     movq -16(%rbp), %rax
     pushq %rax
     movq $62, %rax
@@ -6005,7 +7507,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L874
+    je .L1158
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6019,14 +7521,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L874
+    je .L1158
     movl $1, %eax
-    jmp .L875
-.L874:
+    jmp .L1159
+.L1158:
     xorl %eax, %eax
-.L875:
+.L1159:
     cmpq $0, %rax
-    je .L876
+    je .L1160
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6043,7 +7545,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr96(%rip), %rax
+    leaq .Lstr138(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6057,7 +7559,7 @@ restart:
     popq %r12
     leave
     ret
-.L876:
+.L1160:
     movq -16(%rbp), %rax
     pushq %rax
     movq $38, %rax
@@ -6066,7 +7568,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L878
+    je .L1162
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6080,14 +7582,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L878
+    je .L1162
     movl $1, %eax
-    jmp .L879
-.L878:
+    jmp .L1163
+.L1162:
     xorl %eax, %eax
-.L879:
+.L1163:
     cmpq $0, %rax
-    je .L880
+    je .L1164
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6104,7 +7606,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr97(%rip), %rax
+    leaq .Lstr139(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6118,7 +7620,7 @@ restart:
     popq %r12
     leave
     ret
-.L880:
+.L1164:
     movq -16(%rbp), %rax
     pushq %rax
     movq $124, %rax
@@ -6127,7 +7629,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L882
+    je .L1166
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6141,14 +7643,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L882
+    je .L1166
     movl $1, %eax
-    jmp .L883
-.L882:
+    jmp .L1167
+.L1166:
     xorl %eax, %eax
-.L883:
+.L1167:
     cmpq $0, %rax
-    je .L884
+    je .L1168
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6165,7 +7667,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr98(%rip), %rax
+    leaq .Lstr140(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6179,7 +7681,7 @@ restart:
     popq %r12
     leave
     ret
-.L884:
+.L1168:
     movq -16(%rbp), %rax
     pushq %rax
     movq $43, %rax
@@ -6188,7 +7690,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L886
+    je .L1170
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6202,14 +7704,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L886
+    je .L1170
     movl $1, %eax
-    jmp .L887
-.L886:
+    jmp .L1171
+.L1170:
     xorl %eax, %eax
-.L887:
+.L1171:
     cmpq $0, %rax
-    je .L888
+    je .L1172
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6226,7 +7728,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr99(%rip), %rax
+    leaq .Lstr141(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6240,7 +7742,7 @@ restart:
     popq %r12
     leave
     ret
-.L888:
+.L1172:
     movq -16(%rbp), %rax
     pushq %rax
     movq $43, %rax
@@ -6249,7 +7751,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L890
+    je .L1174
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6263,14 +7765,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L890
+    je .L1174
     movl $1, %eax
-    jmp .L891
-.L890:
+    jmp .L1175
+.L1174:
     xorl %eax, %eax
-.L891:
+.L1175:
     cmpq $0, %rax
-    je .L892
+    je .L1176
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6287,7 +7789,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr100(%rip), %rax
+    leaq .Lstr142(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6301,7 +7803,7 @@ restart:
     popq %r12
     leave
     ret
-.L892:
+.L1176:
     movq -16(%rbp), %rax
     pushq %rax
     movq $45, %rax
@@ -6310,7 +7812,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L894
+    je .L1178
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6324,14 +7826,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L894
+    je .L1178
     movl $1, %eax
-    jmp .L895
-.L894:
+    jmp .L1179
+.L1178:
     xorl %eax, %eax
-.L895:
+.L1179:
     cmpq $0, %rax
-    je .L896
+    je .L1180
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6348,7 +7850,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr101(%rip), %rax
+    leaq .Lstr143(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6362,7 +7864,7 @@ restart:
     popq %r12
     leave
     ret
-.L896:
+.L1180:
     movq -16(%rbp), %rax
     pushq %rax
     movq $45, %rax
@@ -6371,7 +7873,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L898
+    je .L1182
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6385,14 +7887,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L898
+    je .L1182
     movl $1, %eax
-    jmp .L899
-.L898:
+    jmp .L1183
+.L1182:
     xorl %eax, %eax
-.L899:
+.L1183:
     cmpq $0, %rax
-    je .L900
+    je .L1184
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6409,7 +7911,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr102(%rip), %rax
+    leaq .Lstr144(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6423,7 +7925,7 @@ restart:
     popq %r12
     leave
     ret
-.L900:
+.L1184:
     movq -16(%rbp), %rax
     pushq %rax
     movq $45, %rax
@@ -6432,7 +7934,7 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L902
+    je .L1186
     movq input_ptr(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -6446,14 +7948,14 @@ restart:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L902
+    je .L1186
     movl $1, %eax
-    jmp .L903
-.L902:
+    jmp .L1187
+.L1186:
     xorl %eax, %eax
-.L903:
+.L1187:
     cmpq $0, %rax
-    je .L904
+    je .L1188
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -6470,7 +7972,7 @@ restart:
     movq %rax, (%rcx)
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr103(%rip), %rax
+    leaq .Lstr145(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -6484,7 +7986,7 @@ restart:
     popq %r12
     leave
     ret
-.L904:
+.L1188:
     leaq token(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -6528,7 +8030,7 @@ match:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L908
+    je .L1192
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -6536,9 +8038,9 @@ match:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L909
-.L908:
-    leaq .Lstr105(%rip), %rax
+    jmp .L1193
+.L1192:
+    leaq .Lstr147(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -6549,7 +8051,7 @@ match:
     call error
     movq %r12, %rsp
     popq %r12
-.L909:
+.L1193:
     leave
     ret
     .globl emit
@@ -6563,15 +8065,15 @@ emit:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L920
+    je .L1204
     leave
     ret
-.L920:
-.L922:
+.L1204:
+.L1206:
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     cmpq $0, %rax
-    je .L923
+    je .L1207
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -6581,7 +8083,7 @@ emit:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L926
+    je .L1210
     movq -16(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -6595,14 +8097,14 @@ emit:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L926
+    je .L1210
     movl $1, %eax
-    jmp .L927
-.L926:
+    jmp .L1211
+.L1210:
     xorl %eax, %eax
-.L927:
+.L1211:
     cmpq $0, %rax
-    je .L928
+    je .L1212
     movq $37, %rax
     pushq %rax
     movq output(%rip), %rax
@@ -6626,8 +8128,8 @@ emit:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L929
-.L928:
+    jmp .L1213
+.L1212:
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -6647,9 +8149,9 @@ emit:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L929:
-    jmp .L922
-.L923:
+.L1213:
+    jmp .L1206
+.L1207:
     movq $10, %rax
     pushq %rax
     movq output(%rip), %rax
@@ -6678,10 +8180,10 @@ emit_i:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L932
+    je .L1216
     leave
     ret
-.L932:
+.L1216:
     movq output(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -6727,10 +8229,10 @@ emit_s:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L936
+    je .L1220
     leave
     ret
-.L936:
+.L1220:
     movq output(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -6777,10 +8279,10 @@ emit_is:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L940
+    je .L1224
     leave
     ret
-.L940:
+.L1224:
     movq output(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -6830,10 +8332,10 @@ emit_si:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L944
+    je .L1228
     leave
     ret
-.L944:
+.L1228:
     movq output(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -6878,10 +8380,10 @@ emit_label:
     movq %rdi, -16(%rbp)
     movq emit_enabled(%rip), %rax
     cmpq $0, %rax
-    je .L948
+    je .L1232
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr107(%rip), %rax
+    leaq .Lstr149(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -6896,7 +8398,7 @@ emit_label:
     call fprintf
     movq %r12, %rsp
     popq %r12
-.L948:
+.L1232:
     leave
     ret
     .globl find_symbol
@@ -6925,7 +8427,7 @@ find_symbol:
     addq %rcx, %rax
     movq (%rax), %rax
     movq %rax, -48(%rbp)
-.L954:
+.L1238:
     movq -48(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -6934,12 +8436,12 @@ find_symbol:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L955
+    je .L1239
     leaq symbols(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -6961,25 +8463,25 @@ find_symbol:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L956
+    je .L1240
     movq -48(%rbp), %rax
     leave
     ret
-.L956:
+.L1240:
     leaq -48(%rbp), %rax
     pushq %rax
     leaq symbols(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $72, %rax
+    addq $80, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L954
-.L955:
+    jmp .L1238
+.L1239:
     movq $1, %rax
     negq %rax
     leave
@@ -7005,8 +8507,8 @@ add_symbol:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L966
-    leaq .Lstr114(%rip), %rax
+    je .L1252
+    leaq .Lstr156(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7017,12 +8519,12 @@ add_symbol:
     call error
     movq %r12, %rsp
     popq %r12
-.L966:
+.L1252:
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -112(%rbp)
     movq -112(%rbp), %rax
@@ -7072,19 +8574,35 @@ add_symbol:
     movq -112(%rbp), %rax
     addq $40, %rax
     pushq %rax
-    movq -48(%rbp), %rax
+    movq static_flag(%rip), %rax
     popq %rcx
     movl %eax, (%rcx)
+    leaq static_flag(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    movq -112(%rbp), %rax
+    addq $76, %rax
+    pushq %rax
+    movq unsigned_type(%rip), %rax
+    popq %rcx
+    movl %eax, (%rcx)
+    leaq unsigned_type(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     movq -112(%rbp), %rax
     addq $44, %rax
     pushq %rax
-    movq -64(%rbp), %rax
+    movq -48(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -112(%rbp), %rax
     addq $48, %rax
     pushq %rax
-    movq $0, %rax
+    movq -64(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -112(%rbp), %rax
@@ -7093,22 +8611,27 @@ add_symbol:
     movq $0, %rax
     popq %rcx
     movl %eax, (%rcx)
+    leaq const_flag(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     movq -112(%rbp), %rax
     addq $56, %rax
     pushq %rax
-    movq -80(%rbp), %rax
+    movq $0, %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -112(%rbp), %rax
     addq $60, %rax
     pushq %rax
-    movq -96(%rbp), %rax
+    movq -80(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -112(%rbp), %rax
     addq $64, %rax
     pushq %rax
-    movq $0, %rax
+    movq -96(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -112(%rbp), %rax
@@ -7120,20 +8643,26 @@ add_symbol:
     movq -112(%rbp), %rax
     addq $72, %rax
     pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movl %eax, (%rcx)
+    movq -112(%rbp), %rax
+    addq $80, %rax
+    pushq %rax
     movq $1, %rax
     negq %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -32(%rbp), %rax
     cmpq $0, %rax
-    je .L968
+    je .L1254
     movq -112(%rbp), %rax
     addq $32, %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movl %eax, (%rcx)
-    leaq .Lstr115(%rip), %rax
+    leaq .Lstr157(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7144,7 +8673,15 @@ add_symbol:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr116(%rip), %rax
+    movq -112(%rbp), %rax
+    addq $40, %rax
+    movslq (%rax), %rax
+    testq %rax, %rax
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1256
+    leaq .Lstr158(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -7158,7 +8695,8 @@ add_symbol:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr117(%rip), %rax
+.L1256:
+    leaq .Lstr159(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -7180,8 +8718,8 @@ add_symbol:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L970
-    leaq .Lstr118(%rip), %rax
+    je .L1258
+    leaq .Lstr160(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
     pushq %rax
@@ -7195,8 +8733,8 @@ add_symbol:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L970:
-    leaq .Lstr119(%rip), %rax
+.L1258:
+    leaq .Lstr161(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7207,8 +8745,8 @@ add_symbol:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L969
-.L968:
+    jmp .L1255
+.L1254:
     leaq stack_size(%rip), %rax
     pushq %rax
     movq stack_size(%rip), %rax
@@ -7252,14 +8790,14 @@ add_symbol:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L972
+    je .L1260
     leaq max_func_stack(%rip), %rax
     pushq %rax
     movq stack_size(%rip), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L972:
-.L969:
+.L1260:
+.L1255:
     movq -16(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -7273,7 +8811,7 @@ add_symbol:
     popq %r12
     movq %rax, -144(%rbp)
     movq -112(%rbp), %rax
-    addq $72, %rax
+    addq $80, %rax
     pushq %rax
     leaq hash_table(%rip), %rax
     pushq %rax
@@ -7314,11 +8852,11 @@ arg_reg:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L984
-    leaq .Lstr126(%rip), %rax
+    je .L1272
+    leaq .Lstr168(%rip), %rax
     leave
     ret
-.L984:
+.L1272:
     movq -16(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -7327,11 +8865,11 @@ arg_reg:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L986
-    leaq .Lstr127(%rip), %rax
+    je .L1274
+    leaq .Lstr169(%rip), %rax
     leave
     ret
-.L986:
+.L1274:
     movq -16(%rbp), %rax
     pushq %rax
     movq $2, %rax
@@ -7340,11 +8878,11 @@ arg_reg:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L988
-    leaq .Lstr128(%rip), %rax
+    je .L1276
+    leaq .Lstr170(%rip), %rax
     leave
     ret
-.L988:
+.L1276:
     movq -16(%rbp), %rax
     pushq %rax
     movq $3, %rax
@@ -7353,11 +8891,11 @@ arg_reg:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L990
-    leaq .Lstr129(%rip), %rax
+    je .L1278
+    leaq .Lstr171(%rip), %rax
     leave
     ret
-.L990:
+.L1278:
     movq -16(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -7366,12 +8904,12 @@ arg_reg:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L992
-    leaq .Lstr130(%rip), %rax
+    je .L1280
+    leaq .Lstr172(%rip), %rax
     leave
     ret
-.L992:
-    leaq .Lstr131(%rip), %rax
+.L1280:
+    leaq .Lstr173(%rip), %rax
     leave
     ret
     leave
@@ -7390,11 +8928,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1012
-    leaq .Lstr141(%rip), %rax
+    je .L1300
+    leaq .Lstr183(%rip), %rax
     leave
     ret
-.L1012:
+.L1300:
     movq -16(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -7403,11 +8941,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1014
-    leaq .Lstr142(%rip), %rax
+    je .L1302
+    leaq .Lstr184(%rip), %rax
     leave
     ret
-.L1014:
+.L1302:
     movq -16(%rbp), %rax
     pushq %rax
     movq $2, %rax
@@ -7416,11 +8954,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1016
-    leaq .Lstr143(%rip), %rax
+    je .L1304
+    leaq .Lstr185(%rip), %rax
     leave
     ret
-.L1016:
+.L1304:
     movq -16(%rbp), %rax
     pushq %rax
     movq $3, %rax
@@ -7429,11 +8967,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1018
-    leaq .Lstr144(%rip), %rax
+    je .L1306
+    leaq .Lstr186(%rip), %rax
     leave
     ret
-.L1018:
+.L1306:
     movq -16(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -7442,11 +8980,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1020
-    leaq .Lstr145(%rip), %rax
+    je .L1308
+    leaq .Lstr187(%rip), %rax
     leave
     ret
-.L1020:
+.L1308:
     movq -16(%rbp), %rax
     pushq %rax
     movq $5, %rax
@@ -7455,11 +8993,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1022
-    leaq .Lstr146(%rip), %rax
+    je .L1310
+    leaq .Lstr188(%rip), %rax
     leave
     ret
-.L1022:
+.L1310:
     movq -16(%rbp), %rax
     pushq %rax
     movq $6, %rax
@@ -7468,11 +9006,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1024
-    leaq .Lstr147(%rip), %rax
+    je .L1312
+    leaq .Lstr189(%rip), %rax
     leave
     ret
-.L1024:
+.L1312:
     movq -16(%rbp), %rax
     pushq %rax
     movq $7, %rax
@@ -7481,11 +9019,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1026
-    leaq .Lstr148(%rip), %rax
+    je .L1314
+    leaq .Lstr190(%rip), %rax
     leave
     ret
-.L1026:
+.L1314:
     movq -16(%rbp), %rax
     pushq %rax
     movq $8, %rax
@@ -7494,11 +9032,11 @@ libc_global_name:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1028
-    leaq .Lstr149(%rip), %rax
+    je .L1316
+    leaq .Lstr191(%rip), %rax
     leave
     ret
-.L1028:
+.L1316:
     movq $0, %rax
     leave
     ret
@@ -7517,8 +9055,8 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1160
-    leaq .Lstr194(%rip), %rax
+    je .L1486
+    leaq .Lstr238(%rip), %rax
     pushq %rax
     leaq token(%rip), %rax
     pushq %rax
@@ -7549,8 +9087,8 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L1161
-.L1160:
+    jmp .L1487
+.L1486:
     movq tok(%rip), %rax
     pushq %rax
     movq $291, %rax
@@ -7559,7 +9097,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1162
+    je .L1488
     movq float_const_count(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -7575,7 +9113,7 @@ unary:
     addq %rcx, %rax
     movq (%rax), %rax
     movq %rax, -32(%rbp)
-    leaq .Lstr195(%rip), %rax
+    leaq .Lstr239(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -7591,8 +9129,8 @@ unary:
     popq %r12
     movq -32(%rbp), %rax
     cmpq $0, %rax
-    je .L1164
-    leaq .Lstr196(%rip), %rax
+    je .L1490
+    leaq .Lstr240(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7603,7 +9141,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr197(%rip), %rax
+    leaq .Lstr241(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7619,9 +9157,9 @@ unary:
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1165
-.L1164:
-    leaq .Lstr198(%rip), %rax
+    jmp .L1491
+.L1490:
+    leaq .Lstr242(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7632,7 +9170,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr199(%rip), %rax
+    leaq .Lstr243(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7648,7 +9186,7 @@ unary:
     movq $290, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1165:
+.L1491:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -7661,8 +9199,8 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L1163
-.L1162:
+    jmp .L1489
+.L1488:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -7671,7 +9209,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1166
+    je .L1492
     leaq -32(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -7701,7 +9239,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1168
+    je .L1494
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -7719,11 +9257,11 @@ unary:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1170
-.L1172:
+    je .L1496
+.L1498:
     movq $1, %rax
     cmpq $0, %rax
-    je .L1173
+    je .L1499
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -7731,7 +9269,7 @@ unary:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr200(%rip), %rax
+    leaq .Lstr244(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7754,9 +9292,9 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1174
-    jmp .L1173
-.L1174:
+    je .L1500
+    jmp .L1499
+.L1500:
     movq $44, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -7768,9 +9306,9 @@ unary:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L1172
-.L1173:
-.L1170:
+    jmp .L1498
+.L1499:
+.L1496:
     movq $41, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -7784,9 +9322,9 @@ unary:
     popq %r12
     movq $0, %rax
     movq %rax, -64(%rbp)
-    jmp .L1178
-.L1176:
-    leaq .Lstr201(%rip), %rax
+    jmp .L1504
+.L1502:
+    leaq .Lstr245(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
     pushq %rax
@@ -7827,13 +9365,13 @@ unary:
     call emit_is
     movq %r12, %rsp
     popq %r12
-.L1177:
+.L1503:
     leaq -64(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L1178
-.L1178:
+    jmp .L1504
+.L1504:
     movq -64(%rbp), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -7842,7 +9380,7 @@ unary:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1180
+    je .L1506
     movq -64(%rbp), %rax
     pushq %rax
     movq $6, %rax
@@ -7851,15 +9389,15 @@ unary:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1180
+    je .L1506
     movl $1, %eax
-    jmp .L1181
-.L1180:
+    jmp .L1507
+.L1506:
     xorl %eax, %eax
-.L1181:
+.L1507:
     cmpq $0, %rax
-    jne .L1176
-.L1179:
+    jne .L1502
+.L1505:
     movq -48(%rbp), %rax
     pushq %rax
     movq $6, %rax
@@ -7868,8 +9406,8 @@ unary:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1182
-    leaq .Lstr202(%rip), %rax
+    je .L1508
+    leaq .Lstr246(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7880,7 +9418,7 @@ unary:
     call error
     movq %r12, %rsp
     popq %r12
-.L1182:
+.L1508:
     movq -48(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -7889,8 +9427,8 @@ unary:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1184
-    leaq .Lstr203(%rip), %rax
+    je .L1510
+    leaq .Lstr247(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
     pushq %rax
@@ -7908,8 +9446,8 @@ unary:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1184:
-    leaq .Lstr204(%rip), %rax
+.L1510:
+    leaq .Lstr248(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7920,7 +9458,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr205(%rip), %rax
+    leaq .Lstr249(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7931,7 +9469,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr206(%rip), %rax
+    leaq .Lstr250(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7942,7 +9480,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr207(%rip), %rax
+    leaq .Lstr251(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7953,7 +9491,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr208(%rip), %rax
+    leaq .Lstr252(%rip), %rax
     pushq %rax
     leaq -32(%rbp), %rax
     pushq %rax
@@ -7967,7 +9505,7 @@ unary:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr209(%rip), %rax
+    leaq .Lstr253(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7978,7 +9516,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr210(%rip), %rax
+    leaq .Lstr254(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -7994,8 +9532,8 @@ unary:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1169
-.L1168:
+    jmp .L1495
+.L1494:
     leaq -32(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -8016,8 +9554,8 @@ unary:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1186
-    leaq .Lstr211(%rip), %rax
+    je .L1512
+    leaq .Lstr255(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8028,26 +9566,26 @@ unary:
     call error
     movq %r12, %rsp
     popq %r12
-.L1186:
+.L1512:
     leaq symbols(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -64(%rbp)
     movq -64(%rbp), %rax
-    addq $48, %rax
+    addq $52, %rax
     movslq (%rax), %rax
     movq %rax, -80(%rbp)
     movq -80(%rbp), %rax
     cmpq $0, %rax
-    je .L1188
+    je .L1514
     movq -64(%rbp), %rax
-    addq $52, %rax
+    addq $56, %rax
     movslq (%rax), %rax
     movq %rax, -96(%rbp)
-    leaq .Lstr212(%rip), %rax
+    leaq .Lstr256(%rip), %rax
     pushq %rax
     movq -96(%rbp), %rax
     pushq %rax
@@ -8066,20 +9604,20 @@ unary:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1189
-.L1188:
+    jmp .L1515
+.L1514:
     movq -64(%rbp), %rax
-    addq $56, %rax
+    addq $60, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    jne .L1190
+    jne .L1516
+    movq -64(%rbp), %rax
+    addq $48, %rax
+    movslq (%rax), %rax
+    testq %rax, %rax
+    je .L1518
     movq -64(%rbp), %rax
     addq $44, %rax
-    movslq (%rax), %rax
-    testq %rax, %rax
-    je .L1192
-    movq -64(%rbp), %rax
-    addq $40, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $8, %rax
@@ -8088,50 +9626,50 @@ unary:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1192
+    je .L1518
     movl $1, %eax
-    jmp .L1193
-.L1192:
+    jmp .L1519
+.L1518:
     xorl %eax, %eax
-.L1193:
+.L1519:
     testq %rax, %rax
-    jne .L1190
+    jne .L1516
     xorl %eax, %eax
-    jmp .L1191
-.L1190:
+    jmp .L1517
+.L1516:
     movl $1, %eax
-.L1191:
+.L1517:
     cmpq $0, %rax
-    je .L1194
+    je .L1520
     movq -64(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     movq %rax, -96(%rbp)
     movq -64(%rbp), %rax
-    addq $56, %rax
+    addq $60, %rax
     movslq (%rax), %rax
     movq %rax, -112(%rbp)
     movq -112(%rbp), %rax
     testq %rax, %rax
-    je .L1196
-    movq -64(%rbp), %rax
-    addq $60, %rax
-    movslq (%rax), %rax
-    jmp .L1197
-.L1196:
-    movq $8, %rax
-.L1197:
-    movq %rax, -128(%rbp)
-    movq -112(%rbp), %rax
-    testq %rax, %rax
-    je .L1198
+    je .L1522
     movq -64(%rbp), %rax
     addq $64, %rax
     movslq (%rax), %rax
-    jmp .L1199
-.L1198:
+    jmp .L1523
+.L1522:
+    movq $8, %rax
+.L1523:
+    movq %rax, -128(%rbp)
+    movq -112(%rbp), %rax
+    testq %rax, %rax
+    je .L1524
+    movq -64(%rbp), %rax
+    addq $68, %rax
+    movslq (%rax), %rax
+    jmp .L1525
+.L1524:
     movq $0, %rax
-.L1199:
+.L1525:
     movq %rax, -144(%rbp)
     leaq current_elem_size(%rip), %rax
     pushq %rax
@@ -8145,8 +9683,8 @@ unary:
     movq %rax, (%rcx)
     movq -96(%rbp), %rax
     cmpq $0, %rax
-    je .L1200
-    leaq .Lstr213(%rip), %rax
+    je .L1526
+    leaq .Lstr257(%rip), %rax
     pushq %rax
     leaq -32(%rbp), %rax
     pushq %rax
@@ -8160,9 +9698,9 @@ unary:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1201
-.L1200:
-    leaq .Lstr214(%rip), %rax
+    jmp .L1527
+.L1526:
+    leaq .Lstr258(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
     addq $32, %rax
@@ -8178,11 +9716,11 @@ unary:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1201:
+.L1527:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $0, %rax
@@ -8191,9 +9729,9 @@ unary:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1202
+    je .L1528
     movq -64(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $8, %rax
@@ -8202,50 +9740,50 @@ unary:
     setle %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1202
+    je .L1528
     movl $1, %eax
-    jmp .L1203
-.L1202:
+    jmp .L1529
+.L1528:
     xorl %eax, %eax
-.L1203:
+.L1529:
     testq %rax, %rax
-    je .L1204
+    je .L1530
     movq $0, %rax
-    jmp .L1205
-.L1204:
+    jmp .L1531
+.L1530:
     movq -64(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L1206
+    je .L1532
     movq -64(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
-    jmp .L1207
-.L1206:
+    jmp .L1533
+.L1532:
     movq $262, %rax
-.L1207:
-.L1205:
+.L1533:
+.L1531:
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1195
-.L1194:
+    jmp .L1521
+.L1520:
     movq -64(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     movq %rax, -96(%rbp)
     movq -64(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     movq %rax, -112(%rbp)
     movq -64(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     movq %rax, -128(%rbp)
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
@@ -8255,14 +9793,14 @@ unary:
     popq %rcx
     movq %rax, (%rcx)
     movq -64(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L1208
+    je .L1534
     leaq current_elem_size(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $263, %rax
@@ -8271,22 +9809,22 @@ unary:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1210
+    je .L1536
     movq $1, %rax
-    jmp .L1211
-.L1210:
+    jmp .L1537
+.L1536:
     movq $8, %rax
-.L1211:
+.L1537:
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1209
-.L1208:
+    jmp .L1535
+.L1534:
     leaq current_elem_size(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1209:
+.L1535:
     leaq expr_type(%rip), %rax
     pushq %rax
     movq -128(%rbp), %rax
@@ -8300,11 +9838,11 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1212
+    je .L1538
     movq -96(%rbp), %rax
     cmpq $0, %rax
-    je .L1214
-    leaq .Lstr215(%rip), %rax
+    je .L1540
+    leaq .Lstr259(%rip), %rax
     pushq %rax
     leaq -32(%rbp), %rax
     pushq %rax
@@ -8318,9 +9856,9 @@ unary:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1215
-.L1214:
-    leaq .Lstr216(%rip), %rax
+    jmp .L1541
+.L1540:
+    leaq .Lstr260(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
     addq $32, %rax
@@ -8336,9 +9874,9 @@ unary:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1215:
-    jmp .L1213
-.L1212:
+.L1541:
+    jmp .L1539
+.L1538:
     movq -112(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -8347,11 +9885,11 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1216
+    je .L1542
     movq -96(%rbp), %rax
     cmpq $0, %rax
-    je .L1218
-    leaq .Lstr217(%rip), %rax
+    je .L1544
+    leaq .Lstr261(%rip), %rax
     pushq %rax
     leaq -32(%rbp), %rax
     pushq %rax
@@ -8365,9 +9903,9 @@ unary:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1219
-.L1218:
-    leaq .Lstr218(%rip), %rax
+    jmp .L1545
+.L1544:
+    leaq .Lstr262(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
     addq $32, %rax
@@ -8383,13 +9921,13 @@ unary:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1219:
-    jmp .L1217
-.L1216:
+.L1545:
+    jmp .L1543
+.L1542:
     movq -96(%rbp), %rax
     cmpq $0, %rax
-    je .L1220
-    leaq .Lstr219(%rip), %rax
+    je .L1546
+    leaq .Lstr263(%rip), %rax
     pushq %rax
     leaq -32(%rbp), %rax
     pushq %rax
@@ -8403,9 +9941,9 @@ unary:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1221
-.L1220:
-    leaq .Lstr220(%rip), %rax
+    jmp .L1547
+.L1546:
+    leaq .Lstr264(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
     addq $32, %rax
@@ -8421,14 +9959,14 @@ unary:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1221:
-.L1217:
-.L1213:
-.L1195:
-.L1189:
-.L1169:
-    jmp .L1167
-.L1166:
+.L1547:
+.L1543:
+.L1539:
+.L1521:
+.L1515:
+.L1495:
+    jmp .L1493
+.L1492:
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -8437,7 +9975,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1222
+    je .L1548
     movq input_ptr(%rip), %rax
     movq %rax, -16(%rbp)
     movq line(%rip), %rax
@@ -8459,7 +9997,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1224
+    je .L1550
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -8480,24 +10018,24 @@ unary:
     setge %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1226
+    je .L1552
     leaq symbols(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $48, %rax
+    addq $52, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L1226
+    je .L1552
     movl $1, %eax
-    jmp .L1227
-.L1226:
+    jmp .L1553
+.L1552:
     xorl %eax, %eax
-.L1227:
+.L1553:
     cmpq $0, %rax
-    je .L1228
+    je .L1554
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -8505,7 +10043,7 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L1230:
+.L1556:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -8514,7 +10052,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1231
+    je .L1557
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -8522,8 +10060,8 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L1230
-.L1231:
+    jmp .L1556
+.L1557:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -8532,16 +10070,16 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1232
+    je .L1558
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1232:
-.L1228:
-    jmp .L1225
-.L1224:
+.L1558:
+.L1554:
+    jmp .L1551
+.L1550:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -8550,7 +10088,7 @@ unary:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1234
+    jne .L1560
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -8559,14 +10097,14 @@ unary:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1234
+    jne .L1560
     xorl %eax, %eax
-    jmp .L1235
-.L1234:
+    jmp .L1561
+.L1560:
     movl $1, %eax
-.L1235:
+.L1561:
     testq %rax, %rax
-    jne .L1236
+    jne .L1562
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -8575,14 +10113,14 @@ unary:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1236
+    jne .L1562
     xorl %eax, %eax
-    jmp .L1237
-.L1236:
+    jmp .L1563
+.L1562:
     movl $1, %eax
-.L1237:
+.L1563:
     testq %rax, %rax
-    jne .L1238
+    jne .L1564
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -8591,14 +10129,14 @@ unary:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1238
+    jne .L1564
     xorl %eax, %eax
-    jmp .L1239
-.L1238:
+    jmp .L1565
+.L1564:
     movl $1, %eax
-.L1239:
+.L1565:
     cmpq $0, %rax
-    je .L1240
+    je .L1566
     movq tok(%rip), %rax
     movq %rax, -64(%rbp)
     pushq %r12
@@ -8608,7 +10146,7 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L1242:
+.L1568:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -8617,7 +10155,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1243
+    je .L1569
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -8625,8 +10163,8 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L1242
-.L1243:
+    jmp .L1568
+.L1569:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -8635,30 +10173,30 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1244
+    je .L1570
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1244:
+.L1570:
     movq -48(%rbp), %rax
     testq %rax, %rax
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1246
+    je .L1572
     leaq tok(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1246:
-.L1240:
-.L1225:
+.L1572:
+.L1566:
+.L1551:
     movq -48(%rbp), %rax
     cmpq $0, %rax
-    je .L1248
+    je .L1574
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -8673,8 +10211,8 @@ unary:
     call unary
     movq %r12, %rsp
     popq %r12
-    jmp .L1249
-.L1248:
+    jmp .L1575
+.L1574:
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -8715,9 +10253,9 @@ unary:
     call match
     movq %r12, %rsp
     popq %r12
-.L1249:
-    jmp .L1223
-.L1222:
+.L1575:
+    jmp .L1549
+.L1548:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -8726,7 +10264,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1250
+    je .L1576
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -8749,8 +10287,8 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1252
-    leaq .Lstr221(%rip), %rax
+    je .L1578
+    leaq .Lstr265(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8761,8 +10299,8 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1253
-.L1252:
+    jmp .L1579
+.L1578:
     movq expr_pointed(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -8771,8 +10309,8 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1254
-    leaq .Lstr222(%rip), %rax
+    je .L1580
+    leaq .Lstr266(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8788,8 +10326,8 @@ unary:
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1255
-.L1254:
+    jmp .L1581
+.L1580:
     movq expr_pointed(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -8798,8 +10336,8 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1256
-    leaq .Lstr223(%rip), %rax
+    je .L1582
+    leaq .Lstr267(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8815,9 +10353,9 @@ unary:
     movq $290, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1257
-.L1256:
-    leaq .Lstr224(%rip), %rax
+    jmp .L1583
+.L1582:
+    leaq .Lstr268(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8828,11 +10366,11 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1257:
-.L1255:
-.L1253:
-    jmp .L1251
-.L1250:
+.L1583:
+.L1581:
+.L1579:
+    jmp .L1577
+.L1576:
     movq tok(%rip), %rax
     pushq %rax
     movq $38, %rax
@@ -8841,7 +10379,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1258
+    je .L1584
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -8857,8 +10395,8 @@ unary:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1260
-    leaq .Lstr225(%rip), %rax
+    je .L1586
+    leaq .Lstr269(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8869,7 +10407,7 @@ unary:
     call error
     movq %r12, %rsp
     popq %r12
-.L1260:
+.L1586:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -8890,8 +10428,8 @@ unary:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1262
-    leaq .Lstr226(%rip), %rax
+    je .L1588
+    leaq .Lstr270(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -8902,16 +10440,16 @@ unary:
     call error
     movq %r12, %rsp
     popq %r12
-.L1262:
+.L1588:
     leaq symbols(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -32(%rbp)
     movq -32(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $263, %rax
@@ -8920,16 +10458,16 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1264
+    je .L1590
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $263, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1265
-.L1264:
+    jmp .L1591
+.L1590:
     movq -32(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -8938,16 +10476,16 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1266
+    je .L1592
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1267
-.L1266:
+    jmp .L1593
+.L1592:
     movq -32(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $290, %rax
@@ -8956,52 +10494,52 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1268
+    je .L1594
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $290, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1269
-.L1268:
+    jmp .L1595
+.L1594:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $262, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1269:
-.L1267:
-.L1265:
+.L1595:
+.L1593:
+.L1591:
     leaq current_elem_size(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
-    addq $56, %rax
-    movslq (%rax), %rax
-    testq %rax, %rax
-    je .L1270
-    movq -32(%rbp), %rax
     addq $60, %rax
     movslq (%rax), %rax
-    jmp .L1271
-.L1270:
+    testq %rax, %rax
+    je .L1596
+    movq -32(%rbp), %rax
+    addq $64, %rax
+    movslq (%rax), %rax
+    jmp .L1597
+.L1596:
     movq $0, %rax
-.L1271:
+.L1597:
     popq %rcx
     movq %rax, (%rcx)
     leaq current_elem_size2(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
-    addq $56, %rax
+    addq $60, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L1272
+    je .L1598
     movq -32(%rbp), %rax
-    addq $64, %rax
+    addq $68, %rax
     movslq (%rax), %rax
-    jmp .L1273
-.L1272:
+    jmp .L1599
+.L1598:
     movq $0, %rax
-.L1273:
+.L1599:
     popq %rcx
     movq %rax, (%rcx)
     leaq no_postfix_deref(%rip), %rax
@@ -9013,8 +10551,8 @@ unary:
     addq $36, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L1274
-    leaq .Lstr227(%rip), %rax
+    je .L1600
+    leaq .Lstr271(%rip), %rax
     pushq %rax
     leaq token(%rip), %rax
     pushq %rax
@@ -9028,9 +10566,9 @@ unary:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1275
-.L1274:
-    leaq .Lstr228(%rip), %rax
+    jmp .L1601
+.L1600:
+    leaq .Lstr272(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     addq $32, %rax
@@ -9046,7 +10584,7 @@ unary:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1275:
+.L1601:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -9054,8 +10592,8 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L1259
-.L1258:
+    jmp .L1585
+.L1584:
     movq tok(%rip), %rax
     pushq %rax
     movq $285, %rax
@@ -9064,7 +10602,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1276
+    je .L1602
     leaq str_label_counter(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -9078,7 +10616,7 @@ unary:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1278
+    je .L1604
     leaq string_pool(%rip), %rax
     pushq %rax
     movq string_count(%rip), %rax
@@ -9137,8 +10675,8 @@ unary:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L1278:
-    leaq .Lstr229(%rip), %rax
+.L1604:
+    leaq .Lstr273(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -9164,8 +10702,8 @@ unary:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L1277
-.L1276:
+    jmp .L1603
+.L1602:
     movq tok(%rip), %rax
     pushq %rax
     movq $45, %rax
@@ -9174,7 +10712,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1280
+    je .L1606
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -9208,8 +10746,8 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1282
-    leaq .Lstr230(%rip), %rax
+    je .L1608
+    leaq .Lstr274(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9220,8 +10758,8 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1283
-.L1282:
+    jmp .L1609
+.L1608:
     movq expr_type(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -9230,8 +10768,8 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1284
-    leaq .Lstr231(%rip), %rax
+    je .L1610
+    leaq .Lstr275(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9242,9 +10780,9 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1285
-.L1284:
-    leaq .Lstr232(%rip), %rax
+    jmp .L1611
+.L1610:
+    leaq .Lstr276(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9255,10 +10793,10 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1285:
-.L1283:
-    jmp .L1281
-.L1280:
+.L1611:
+.L1609:
+    jmp .L1607
+.L1606:
     movq tok(%rip), %rax
     pushq %rax
     movq $33, %rax
@@ -9267,7 +10805,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1286
+    je .L1612
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -9293,7 +10831,7 @@ unary:
     call handle_postfix
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr233(%rip), %rax
+    leaq .Lstr277(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9304,7 +10842,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr234(%rip), %rax
+    leaq .Lstr278(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9315,7 +10853,7 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr235(%rip), %rax
+    leaq .Lstr279(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9326,8 +10864,8 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1287
-.L1286:
+    jmp .L1613
+.L1612:
     movq tok(%rip), %rax
     pushq %rax
     movq $126, %rax
@@ -9336,7 +10874,7 @@ unary:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1288
+    je .L1614
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -9362,7 +10900,7 @@ unary:
     call handle_postfix
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr236(%rip), %rax
+    leaq .Lstr280(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9373,9 +10911,328 @@ unary:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1289
-.L1288:
-    leaq .Lstr237(%rip), %rax
+    jmp .L1615
+.L1614:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $293, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1616
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    movq $0, %rax
+    movq %rax, -16(%rbp)
+    movq $0, %rax
+    movq %rax, -32(%rbp)
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $40, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1618
+    leaq -32(%rbp), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+.L1618:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $263, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1620
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1621
+.L1620:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1622
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $4, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1623
+.L1622:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1624
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $8, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1625
+.L1624:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $262, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1626
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $264, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1626
+    xorl %eax, %eax
+    jmp .L1627
+.L1626:
+    movl $1, %eax
+.L1627:
+    cmpq $0, %rax
+    je .L1628
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $8, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1629
+.L1628:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $268, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1630
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $296, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1630
+    xorl %eax, %eax
+    jmp .L1631
+.L1630:
+    movl $1, %eax
+.L1631:
+    cmpq $0, %rax
+    je .L1632
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $257, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1634
+    leaq token(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call find_symbol
+    movq %r12, %rsp
+    popq %r12
+    movq %rax, -48(%rbp)
+    movq -48(%rbp), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L1636
+    leaq symbols(%rip), %rax
+    pushq %rax
+    movq -48(%rbp), %rax
+    popq %rcx
+    imulq $84, %rax
+    addq %rcx, %rax
+    addq $52, %rax
+    movslq (%rax), %rax
+    testq %rax, %rax
+    je .L1636
+    movl $1, %eax
+    jmp .L1637
+.L1636:
+    xorl %eax, %eax
+.L1637:
+    testq %rax, %rax
+    je .L1638
+    leaq symbols(%rip), %rax
+    pushq %rax
+    movq -48(%rbp), %rax
+    popq %rcx
+    imulq $84, %rax
+    addq %rcx, %rax
+    addq $44, %rax
+    movslq (%rax), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L1638
+    movl $1, %eax
+    jmp .L1639
+.L1638:
+    xorl %eax, %eax
+.L1639:
+    cmpq $0, %rax
+    je .L1640
+    leaq -16(%rbp), %rax
+    pushq %rax
+    leaq symbols(%rip), %rax
+    pushq %rax
+    movq -48(%rbp), %rax
+    popq %rcx
+    imulq $84, %rax
+    addq %rcx, %rax
+    addq $56, %rax
+    movslq (%rax), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L1640:
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+.L1634:
+    jmp .L1633
+.L1632:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $257, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1642
+    leaq token(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call find_symbol
+    movq %r12, %rsp
+    popq %r12
+    movq %rax, -48(%rbp)
+    movq -48(%rbp), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setge %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1644
+    leaq -16(%rbp), %rax
+    pushq %rax
+    leaq symbols(%rip), %rax
+    pushq %rax
+    movq -48(%rbp), %rax
+    popq %rcx
+    imulq $84, %rax
+    addq %rcx, %rax
+    addq $44, %rax
+    movslq (%rax), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1645
+.L1644:
+    leaq .Lstr281(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9386,16 +11243,173 @@ unary:
     call error
     movq %r12, %rsp
     popq %r12
-.L1289:
-.L1287:
-.L1281:
-.L1277:
-.L1259:
-.L1251:
-.L1223:
-.L1167:
-.L1163:
-.L1161:
+.L1645:
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1643
+.L1642:
+    movq emit_enabled(%rip), %rax
+    movq %rax, -48(%rbp)
+    leaq emit_enabled(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call unary
+    movq %r12, %rsp
+    popq %r12
+    movq $0, %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call handle_postfix
+    movq %r12, %rsp
+    popq %r12
+    leaq emit_enabled(%rip), %rax
+    pushq %rax
+    movq -48(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    movq expr_type(%rip), %rax
+    pushq %rax
+    movq $263, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1646
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1647
+.L1646:
+    movq expr_type(%rip), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1648
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $4, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1649
+.L1648:
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $8, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L1649:
+.L1647:
+.L1643:
+.L1633:
+.L1629:
+.L1625:
+.L1623:
+.L1621:
+.L1650:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $42, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1651
+    leaq -16(%rbp), %rax
+    pushq %rax
+    movq $8, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1650
+.L1651:
+    movq -32(%rbp), %rax
+    cmpq $0, %rax
+    je .L1652
+    movq $41, %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call match
+    movq %r12, %rsp
+    popq %r12
+.L1652:
+    leaq .Lstr282(%rip), %rax
+    pushq %rax
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit_i
+    movq %r12, %rsp
+    popq %r12
+    leaq expr_pointed(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1617
+.L1616:
+    leaq .Lstr283(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L1617:
+.L1615:
+.L1613:
+.L1607:
+.L1603:
+.L1585:
+.L1577:
+.L1549:
+.L1493:
+.L1489:
+.L1487:
     leave
     ret
     .globl lvalue_address
@@ -9416,7 +11430,7 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1338
+    je .L1702
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -9437,8 +11451,8 @@ lvalue_address:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1340
-    leaq .Lstr244(%rip), %rax
+    je .L1704
+    leaq .Lstr290(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9449,33 +11463,33 @@ lvalue_address:
     call error
     movq %r12, %rsp
     popq %r12
-.L1340:
+.L1704:
     leaq symbols(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -32(%rbp)
     leaq assign_size(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
     movq -32(%rbp), %rax
-    addq $56, %rax
+    addq $60, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    jne .L1342
+    jne .L1706
+    movq -32(%rbp), %rax
+    addq $48, %rax
+    movslq (%rax), %rax
+    testq %rax, %rax
+    je .L1708
     movq -32(%rbp), %rax
     addq $44, %rax
-    movslq (%rax), %rax
-    testq %rax, %rax
-    je .L1344
-    movq -32(%rbp), %rax
-    addq $40, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $8, %rax
@@ -9484,71 +11498,71 @@ lvalue_address:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1344
+    je .L1708
     movl $1, %eax
-    jmp .L1345
-.L1344:
+    jmp .L1709
+.L1708:
     xorl %eax, %eax
-.L1345:
+.L1709:
     testq %rax, %rax
-    jne .L1342
+    jne .L1706
     xorl %eax, %eax
-    jmp .L1343
-.L1342:
+    jmp .L1707
+.L1706:
     movl $1, %eax
-.L1343:
+.L1707:
     cmpq $0, %rax
-    je .L1346
+    je .L1710
     leaq current_elem_size(%rip), %rax
     pushq %rax
-    movq -32(%rbp), %rax
-    addq $56, %rax
-    movslq (%rax), %rax
-    testq %rax, %rax
-    je .L1348
     movq -32(%rbp), %rax
     addq $60, %rax
     movslq (%rax), %rax
-    jmp .L1349
-.L1348:
-    movq $8, %rax
-.L1349:
-    popq %rcx
-    movq %rax, (%rcx)
-    leaq current_elem_size2(%rip), %rax
-    pushq %rax
-    movq -32(%rbp), %rax
-    addq $56, %rax
-    movslq (%rax), %rax
     testq %rax, %rax
-    je .L1350
+    je .L1712
     movq -32(%rbp), %rax
     addq $64, %rax
     movslq (%rax), %rax
-    jmp .L1351
-.L1350:
+    jmp .L1713
+.L1712:
+    movq $8, %rax
+.L1713:
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq current_elem_size2(%rip), %rax
+    pushq %rax
+    movq -32(%rbp), %rax
+    addq $60, %rax
+    movslq (%rax), %rax
+    testq %rax, %rax
+    je .L1714
+    movq -32(%rbp), %rax
+    addq $68, %rax
+    movslq (%rax), %rax
+    jmp .L1715
+.L1714:
     movq $0, %rax
-.L1351:
+.L1715:
     popq %rcx
     movq %rax, (%rcx)
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L1352
+    je .L1716
     movq -32(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
-    jmp .L1353
-.L1352:
+    jmp .L1717
+.L1716:
     movq $262, %rax
-.L1353:
+.L1717:
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1347
-.L1346:
+    jmp .L1711
+.L1710:
     leaq current_elem_size2(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -9557,19 +11571,19 @@ lvalue_address:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
     movq -32(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L1354
+    je .L1718
     leaq current_elem_size(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $263, %rax
@@ -9578,30 +11592,30 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1356
+    je .L1720
     movq $1, %rax
-    jmp .L1357
-.L1356:
+    jmp .L1721
+.L1720:
     movq $8, %rax
-.L1357:
+.L1721:
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1355
-.L1354:
+    jmp .L1719
+.L1718:
     leaq current_elem_size(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1355:
-.L1347:
+.L1719:
+.L1711:
     movq -32(%rbp), %rax
-    addq $44, %rax
+    addq $48, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L1358
+    je .L1722
     movq -32(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $8, %rax
@@ -9610,12 +11624,12 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1358
+    je .L1722
     movl $1, %eax
-    jmp .L1359
-.L1358:
+    jmp .L1723
+.L1722:
     xorl %eax, %eax
-.L1359:
+.L1723:
     movq %rax, -48(%rbp)
     pushq %r12
     movq %rsp, %r12
@@ -9626,7 +11640,7 @@ lvalue_address:
     popq %r12
     movq -48(%rbp), %rax
     testq %rax, %rax
-    je .L1360
+    je .L1724
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -9635,7 +11649,7 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1362
+    jne .L1726
     movq tok(%rip), %rax
     pushq %rax
     movq $46, %rax
@@ -9644,14 +11658,14 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1362
+    jne .L1726
     xorl %eax, %eax
-    jmp .L1363
-.L1362:
+    jmp .L1727
+.L1726:
     movl $1, %eax
-.L1363:
+.L1727:
     testq %rax, %rax
-    jne .L1364
+    jne .L1728
     movq tok(%rip), %rax
     pushq %rax
     movq $273, %rax
@@ -9660,14 +11674,14 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1364
+    jne .L1728
     xorl %eax, %eax
-    jmp .L1365
-.L1364:
+    jmp .L1729
+.L1728:
     movl $1, %eax
-.L1365:
+.L1729:
     testq %rax, %rax
-    jne .L1366
+    jne .L1730
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -9676,47 +11690,47 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1366
+    jne .L1730
     xorl %eax, %eax
-    jmp .L1367
-.L1366:
+    jmp .L1731
+.L1730:
     movl $1, %eax
-.L1367:
+.L1731:
     testq %rax, %rax
-    je .L1360
+    je .L1724
     movl $1, %eax
-    jmp .L1361
-.L1360:
+    jmp .L1725
+.L1724:
     xorl %eax, %eax
-.L1361:
+.L1725:
     cmpq $0, %rax
-    je .L1368
+    je .L1732
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1369
-.L1368:
+    jmp .L1733
+.L1732:
     movq -48(%rbp), %rax
     cmpq $0, %rax
-    je .L1370
+    je .L1734
     leaq -48(%rbp), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1370:
-.L1369:
+.L1734:
+.L1733:
     movq -48(%rbp), %rax
     cmpq $0, %rax
-    je .L1372
+    je .L1736
     movq -32(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L1374
-    leaq .Lstr245(%rip), %rax
+    je .L1738
+    leaq .Lstr291(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -9730,9 +11744,9 @@ lvalue_address:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1375
-.L1374:
-    leaq .Lstr246(%rip), %rax
+    jmp .L1739
+.L1738:
+    leaq .Lstr292(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     addq $32, %rax
@@ -9748,15 +11762,15 @@ lvalue_address:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1375:
-    jmp .L1373
-.L1372:
+.L1739:
+    jmp .L1737
+.L1736:
     movq -32(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L1376
-    leaq .Lstr247(%rip), %rax
+    je .L1740
+    leaq .Lstr293(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -9770,9 +11784,9 @@ lvalue_address:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L1377
-.L1376:
-    leaq .Lstr248(%rip), %rax
+    jmp .L1741
+.L1740:
+    leaq .Lstr294(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     addq $32, %rax
@@ -9788,8 +11802,8 @@ lvalue_address:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1377:
-.L1373:
+.L1741:
+.L1737:
     movq $1, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -9801,8 +11815,8 @@ lvalue_address:
     call handle_postfix
     movq %r12, %rsp
     popq %r12
-    jmp .L1339
-.L1338:
+    jmp .L1703
+.L1702:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -9811,7 +11825,7 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1378
+    je .L1742
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -9845,7 +11859,7 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1380
+    je .L1744
     movq expr_pointed(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -9854,14 +11868,14 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1382
+    je .L1746
     leaq assign_size(%rip), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1383
-.L1382:
+    jmp .L1747
+.L1746:
     movq expr_pointed(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -9870,25 +11884,25 @@ lvalue_address:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1384
+    je .L1748
     leaq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1385
-.L1384:
+    jmp .L1749
+.L1748:
     leaq assign_size(%rip), %rax
     pushq %rax
     movq $8, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1385:
-.L1383:
-.L1380:
-    jmp .L1379
-.L1378:
-    leaq .Lstr249(%rip), %rax
+.L1749:
+.L1747:
+.L1744:
+    jmp .L1743
+.L1742:
+    leaq .Lstr295(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -9899,8 +11913,8 @@ lvalue_address:
     call error
     movq %r12, %rsp
     popq %r12
-.L1379:
-.L1339:
+.L1743:
+.L1703:
     leave
     ret
     .globl handle_postfix
@@ -9909,7 +11923,7 @@ handle_postfix:
     movq %rsp, %rbp
     subq $128, %rsp
     movq %rdi, -16(%rbp)
-.L1468:
+.L1832:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -9918,7 +11932,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1470
+    jne .L1834
     movq tok(%rip), %rax
     pushq %rax
     movq $46, %rax
@@ -9927,14 +11941,14 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1470
+    jne .L1834
     xorl %eax, %eax
-    jmp .L1471
-.L1470:
+    jmp .L1835
+.L1834:
     movl $1, %eax
-.L1471:
+.L1835:
     testq %rax, %rax
-    jne .L1472
+    jne .L1836
     movq tok(%rip), %rax
     pushq %rax
     movq $273, %rax
@@ -9943,14 +11957,14 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1472
+    jne .L1836
     xorl %eax, %eax
-    jmp .L1473
-.L1472:
+    jmp .L1837
+.L1836:
     movl $1, %eax
-.L1473:
+.L1837:
     cmpq $0, %rax
-    je .L1469
+    je .L1833
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -9959,7 +11973,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1474
+    je .L1838
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -9967,7 +11981,7 @@ handle_postfix:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr265(%rip), %rax
+    leaq .Lstr311(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10020,7 +12034,7 @@ handle_postfix:
     movq -96(%rbp), %rax
     popq %rcx
     movq %rax, (%rcx)
-    leaq .Lstr266(%rip), %rax
+    leaq .Lstr312(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10041,7 +12055,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1476
+    je .L1840
     leaq -112(%rbp), %rax
     pushq %rax
     movq expr_pointed(%rip), %rax
@@ -10052,15 +12066,15 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1478
+    je .L1842
     movq $1, %rax
-    jmp .L1479
-.L1478:
+    jmp .L1843
+.L1842:
     movq $8, %rax
-.L1479:
+.L1843:
     popq %rcx
     movq %rax, (%rcx)
-.L1476:
+.L1840:
     movq -112(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -10069,8 +12083,8 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1480
-    leaq .Lstr267(%rip), %rax
+    je .L1844
+    leaq .Lstr313(%rip), %rax
     pushq %rax
     movq -112(%rbp), %rax
     pushq %rax
@@ -10084,8 +12098,8 @@ handle_postfix:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1480:
-    leaq .Lstr268(%rip), %rax
+.L1844:
+    leaq .Lstr314(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10114,7 +12128,7 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1482
+    je .L1846
     leaq current_elem_size(%rip), %rax
     pushq %rax
     movq current_elem_size2(%rip), %rax
@@ -10130,27 +12144,27 @@ handle_postfix:
     movq current_elem_size(%rip), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1483
-.L1482:
+    jmp .L1847
+.L1846:
     movq -16(%rbp), %rax
     testq %rax, %rax
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1484
+    je .L1848
     movq no_postfix_deref(%rip), %rax
     testq %rax, %rax
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1484
+    je .L1848
     movl $1, %eax
-    jmp .L1485
-.L1484:
+    jmp .L1849
+.L1848:
     xorl %eax, %eax
-.L1485:
+.L1849:
     testq %rax, %rax
-    je .L1486
+    je .L1850
     movq -112(%rbp), %rax
     pushq %rax
     movq $8, %rax
@@ -10159,14 +12173,14 @@ handle_postfix:
     setle %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1486
+    je .L1850
     movl $1, %eax
-    jmp .L1487
-.L1486:
+    jmp .L1851
+.L1850:
     xorl %eax, %eax
-.L1487:
+.L1851:
     cmpq $0, %rax
-    je .L1488
+    je .L1852
     movq -112(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -10175,8 +12189,8 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1490
-    leaq .Lstr269(%rip), %rax
+    je .L1854
+    leaq .Lstr315(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10187,8 +12201,8 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1491
-.L1490:
+    jmp .L1855
+.L1854:
     movq -112(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -10197,8 +12211,8 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1492
-    leaq .Lstr270(%rip), %rax
+    je .L1856
+    leaq .Lstr316(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10209,9 +12223,9 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1493
-.L1492:
-    leaq .Lstr271(%rip), %rax
+    jmp .L1857
+.L1856:
+    leaq .Lstr317(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10222,15 +12236,15 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1493:
-.L1491:
+.L1857:
+.L1855:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1488:
-.L1483:
+.L1852:
+.L1847:
     movq $93, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -10242,8 +12256,8 @@ handle_postfix:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L1475
-.L1474:
+    jmp .L1839
+.L1838:
     movq tok(%rip), %rax
     pushq %rax
     movq $46, %rax
@@ -10252,7 +12266,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1494
+    je .L1858
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -10268,8 +12282,8 @@ handle_postfix:
     movq %rax, -64(%rbp)
     movq $0, %rax
     movq %rax, -80(%rbp)
-    jmp .L1498
-.L1496:
+    jmp .L1862
+.L1860:
     leaq token(%rip), %rax
     pushq %rax
     leaq struct_member_names(%rip), %rax
@@ -10296,7 +12310,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1500
+    je .L1864
     leaq -32(%rbp), %rax
     pushq %rax
     leaq struct_member_offsets(%rip), %rax
@@ -10330,15 +12344,15 @@ handle_postfix:
     movq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1499
-.L1500:
-.L1497:
+    jmp .L1863
+.L1864:
+.L1861:
     leaq -80(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L1498
-.L1498:
+    jmp .L1862
+.L1862:
     movq -80(%rbp), %rax
     pushq %rax
     movq struct_member_count(%rip), %rax
@@ -10347,8 +12361,8 @@ handle_postfix:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    jne .L1496
-.L1499:
+    jne .L1860
+.L1863:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -10364,8 +12378,8 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1502
-    leaq .Lstr272(%rip), %rax
+    je .L1866
+    leaq .Lstr318(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -10379,7 +12393,7 @@ handle_postfix:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1502:
+.L1866:
     leaq assign_size(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -10397,17 +12411,17 @@ handle_postfix:
     movq %rax, (%rcx)
     movq -16(%rbp), %rax
     testq %rax, %rax
-    jne .L1504
+    jne .L1868
     movq no_postfix_deref(%rip), %rax
     testq %rax, %rax
-    jne .L1504
+    jne .L1868
     xorl %eax, %eax
-    jmp .L1505
-.L1504:
+    jmp .L1869
+.L1868:
     movl $1, %eax
-.L1505:
+.L1869:
     cmpq $0, %rax
-    je .L1506
+    je .L1870
     movq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -10416,14 +12430,14 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1508
+    je .L1872
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $263, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1509
-.L1508:
+    jmp .L1873
+.L1872:
     movq -48(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -10432,14 +12446,14 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1510
+    je .L1874
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1511
-.L1510:
+    jmp .L1875
+.L1874:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -10450,18 +12464,18 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1512
+    je .L1876
     movq $262, %rax
-    jmp .L1513
-.L1512:
+    jmp .L1877
+.L1876:
     movq $0, %rax
-.L1513:
+.L1877:
     popq %rcx
     movq %rax, (%rcx)
-.L1511:
-.L1509:
-    jmp .L1507
-.L1506:
+.L1875:
+.L1873:
+    jmp .L1871
+.L1870:
     movq -48(%rbp), %rax
     pushq %rax
     movq $8, %rax
@@ -10470,7 +12484,7 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1514
+    je .L1878
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -10481,16 +12495,16 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1516
+    je .L1880
     movq $262, %rax
-    jmp .L1517
-.L1516:
+    jmp .L1881
+.L1880:
     movq $0, %rax
-.L1517:
+.L1881:
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1515
-.L1514:
+    jmp .L1879
+.L1878:
     movq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -10499,8 +12513,8 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1518
-    leaq .Lstr273(%rip), %rax
+    je .L1882
+    leaq .Lstr319(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10511,8 +12525,8 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1519
-.L1518:
+    jmp .L1883
+.L1882:
     movq -48(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -10521,8 +12535,8 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1520
-    leaq .Lstr274(%rip), %rax
+    je .L1884
+    leaq .Lstr320(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10533,9 +12547,9 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1521
-.L1520:
-    leaq .Lstr275(%rip), %rax
+    jmp .L1885
+.L1884:
+    leaq .Lstr321(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10546,17 +12560,17 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1521:
-.L1519:
+.L1885:
+.L1883:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1515:
-.L1507:
-    jmp .L1495
-.L1494:
+.L1879:
+.L1871:
+    jmp .L1859
+.L1858:
     movq tok(%rip), %rax
     pushq %rax
     movq $273, %rax
@@ -10565,7 +12579,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1522
+    je .L1886
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -10581,8 +12595,8 @@ handle_postfix:
     movq %rax, -64(%rbp)
     movq $0, %rax
     movq %rax, -80(%rbp)
-    jmp .L1526
-.L1524:
+    jmp .L1890
+.L1888:
     leaq token(%rip), %rax
     pushq %rax
     leaq struct_member_names(%rip), %rax
@@ -10609,7 +12623,7 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1528
+    je .L1892
     leaq -32(%rbp), %rax
     pushq %rax
     leaq struct_member_offsets(%rip), %rax
@@ -10643,15 +12657,15 @@ handle_postfix:
     movq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1527
-.L1528:
-.L1525:
+    jmp .L1891
+.L1892:
+.L1889:
     leaq -80(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L1526
-.L1526:
+    jmp .L1890
+.L1890:
     movq -80(%rbp), %rax
     pushq %rax
     movq struct_member_count(%rip), %rax
@@ -10660,8 +12674,8 @@ handle_postfix:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    jne .L1524
-.L1527:
+    jne .L1888
+.L1891:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -10677,8 +12691,8 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1530
-    leaq .Lstr276(%rip), %rax
+    je .L1894
+    leaq .Lstr322(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -10692,7 +12706,7 @@ handle_postfix:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L1530:
+.L1894:
     leaq assign_size(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -10710,17 +12724,17 @@ handle_postfix:
     movq %rax, (%rcx)
     movq -16(%rbp), %rax
     testq %rax, %rax
-    jne .L1532
+    jne .L1896
     movq no_postfix_deref(%rip), %rax
     testq %rax, %rax
-    jne .L1532
+    jne .L1896
     xorl %eax, %eax
-    jmp .L1533
-.L1532:
+    jmp .L1897
+.L1896:
     movl $1, %eax
-.L1533:
+.L1897:
     cmpq $0, %rax
-    je .L1534
+    je .L1898
     movq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -10729,14 +12743,14 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1536
+    je .L1900
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $263, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1537
-.L1536:
+    jmp .L1901
+.L1900:
     movq -48(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -10745,14 +12759,14 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1538
+    je .L1902
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1539
-.L1538:
+    jmp .L1903
+.L1902:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -10763,18 +12777,18 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1540
+    je .L1904
     movq $262, %rax
-    jmp .L1541
-.L1540:
+    jmp .L1905
+.L1904:
     movq $0, %rax
-.L1541:
+.L1905:
     popq %rcx
     movq %rax, (%rcx)
-.L1539:
-.L1537:
-    jmp .L1535
-.L1534:
+.L1903:
+.L1901:
+    jmp .L1899
+.L1898:
     movq -48(%rbp), %rax
     pushq %rax
     movq $8, %rax
@@ -10783,7 +12797,7 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1542
+    je .L1906
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -10794,16 +12808,16 @@ handle_postfix:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L1544
+    je .L1908
     movq $262, %rax
-    jmp .L1545
-.L1544:
+    jmp .L1909
+.L1908:
     movq $0, %rax
-.L1545:
+.L1909:
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1543
-.L1542:
+    jmp .L1907
+.L1906:
     movq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -10812,8 +12826,8 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1546
-    leaq .Lstr277(%rip), %rax
+    je .L1910
+    leaq .Lstr323(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10824,8 +12838,8 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1547
-.L1546:
+    jmp .L1911
+.L1910:
     movq -48(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -10834,8 +12848,8 @@ handle_postfix:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1548
-    leaq .Lstr278(%rip), %rax
+    je .L1912
+    leaq .Lstr324(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10846,9 +12860,9 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1549
-.L1548:
-    leaq .Lstr279(%rip), %rax
+    jmp .L1913
+.L1912:
+    leaq .Lstr325(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10859,20 +12873,20 @@ handle_postfix:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1549:
-.L1547:
+.L1913:
+.L1911:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1543:
-.L1535:
-.L1522:
-.L1495:
-.L1475:
-    jmp .L1468
-.L1469:
+.L1907:
+.L1899:
+.L1886:
+.L1859:
+.L1839:
+    jmp .L1832
+.L1833:
     leaq no_postfix_deref(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -10917,7 +12931,7 @@ multiplicative_expr:
     call unary_expr
     movq %r12, %rsp
     popq %r12
-.L1590:
+.L1954:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -10926,7 +12940,7 @@ multiplicative_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1592
+    jne .L1956
     movq tok(%rip), %rax
     pushq %rax
     movq $47, %rax
@@ -10935,14 +12949,14 @@ multiplicative_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1592
+    jne .L1956
     xorl %eax, %eax
-    jmp .L1593
-.L1592:
+    jmp .L1957
+.L1956:
     movl $1, %eax
-.L1593:
+.L1957:
     testq %rax, %rax
-    jne .L1594
+    jne .L1958
     movq tok(%rip), %rax
     pushq %rax
     movq $37, %rax
@@ -10951,14 +12965,14 @@ multiplicative_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1594
+    jne .L1958
     xorl %eax, %eax
-    jmp .L1595
-.L1594:
+    jmp .L1959
+.L1958:
     movl $1, %eax
-.L1595:
+.L1959:
     cmpq $0, %rax
-    je .L1591
+    je .L1955
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     pushq %r12
@@ -10968,7 +12982,7 @@ multiplicative_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr308(%rip), %rax
+    leaq .Lstr354(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -10990,590 +13004,6 @@ multiplicative_expr:
     popq %r12
     movq expr_type(%rip), %rax
     movq %rax, -48(%rbp)
-    leaq .Lstr309(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    movq -48(%rbp), %rax
-    movq %rax, -64(%rbp)
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1596
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1596
-    xorl %eax, %eax
-    jmp .L1597
-.L1596:
-    movl $1, %eax
-.L1597:
-    cmpq $0, %rax
-    je .L1598
-    leaq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    movq %rax, (%rcx)
-    jmp .L1599
-.L1598:
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1600
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1600
-    xorl %eax, %eax
-    jmp .L1601
-.L1600:
-    movl $1, %eax
-.L1601:
-    cmpq $0, %rax
-    je .L1602
-    leaq -64(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    movq %rax, (%rcx)
-.L1602:
-.L1599:
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1604
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1604
-    xorl %eax, %eax
-    jmp .L1605
-.L1604:
-    movl $1, %eax
-.L1605:
-    cmpq $0, %rax
-    je .L1606
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1608
-    leaq .Lstr310(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1609
-.L1608:
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1610
-    leaq .Lstr311(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1611
-.L1610:
-    leaq .Lstr312(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1612
-    leaq .Lstr313(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1613
-.L1612:
-    leaq .Lstr314(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-.L1613:
-.L1611:
-.L1609:
-    movq -48(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1614
-    leaq .Lstr315(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1615
-.L1614:
-    movq -48(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1616
-    leaq .Lstr316(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1617
-.L1616:
-    leaq .Lstr317(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1618
-    leaq .Lstr318(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1619
-.L1618:
-    leaq .Lstr319(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-.L1619:
-.L1617:
-.L1615:
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1620
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $42, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1622
-    leaq .Lstr320(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1623
-.L1622:
-    leaq .Lstr321(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-.L1623:
-    leaq .Lstr322(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1621
-.L1620:
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $42, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1624
-    leaq .Lstr323(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1625
-.L1624:
-    leaq .Lstr324(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-.L1625:
-    leaq .Lstr325(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-.L1621:
-    jmp .L1607
-.L1606:
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $37, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1626
-    leaq .Lstr326(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr327(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr328(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr329(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr330(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1627
-.L1626:
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $42, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1628
-    leaq .Lstr331(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    jmp .L1629
-.L1628:
-    leaq .Lstr332(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr333(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr334(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-    leaq .Lstr335(%rip), %rax
-    pushq %rax
-    movq 0(%rsp), %rdi
-    addq $8, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call emit
-    movq %r12, %rsp
-    popq %r12
-.L1629:
-.L1627:
-.L1607:
-    leaq expr_type(%rip), %rax
-    pushq %rax
-    movq -64(%rbp), %rax
-    popq %rcx
-    movq %rax, (%rcx)
-    leaq expr_pointed(%rip), %rax
-    pushq %rax
-    movq $0, %rax
-    popq %rcx
-    movq %rax, (%rcx)
-    jmp .L1590
-.L1591:
-    leave
-    ret
-    .globl additive_expr
-additive_expr:
-    pushq %rbp
-    movq %rsp, %rbp
-    subq $80, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call multiplicative_expr
-    movq %r12, %rsp
-    popq %r12
-.L1666:
-    movq tok(%rip), %rax
-    pushq %rax
-    movq $43, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1668
-    movq tok(%rip), %rax
-    pushq %rax
-    movq $45, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1668
-    xorl %eax, %eax
-    jmp .L1669
-.L1668:
-    movl $1, %eax
-.L1669:
-    cmpq $0, %rax
-    je .L1667
-    movq tok(%rip), %rax
-    movq %rax, -16(%rbp)
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call next_token
-    movq %r12, %rsp
-    popq %r12
     leaq .Lstr355(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11585,17 +13015,106 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    movq expr_type(%rip), %rax
-    movq %rax, -32(%rbp)
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
+    movq -48(%rbp), %rax
+    movq %rax, -64(%rbp)
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1960
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1960
     xorl %eax, %eax
-    call multiplicative_expr
-    movq %r12, %rsp
-    popq %r12
-    movq expr_type(%rip), %rax
-    movq %rax, -48(%rbp)
+    jmp .L1961
+.L1960:
+    movl $1, %eax
+.L1961:
+    cmpq $0, %rax
+    je .L1962
+    leaq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L1963
+.L1962:
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1964
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1964
+    xorl %eax, %eax
+    jmp .L1965
+.L1964:
+    movl $1, %eax
+.L1965:
+    cmpq $0, %rax
+    je .L1966
+    leaq -64(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L1966:
+.L1963:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1968
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L1968
+    xorl %eax, %eax
+    jmp .L1969
+.L1968:
+    movl $1, %eax
+.L1969:
+    cmpq $0, %rax
+    je .L1970
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1972
     leaq .Lstr356(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11607,8 +13126,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    movq -48(%rbp), %rax
-    movq %rax, -64(%rbp)
+    jmp .L1973
+.L1972:
     movq -32(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -11616,97 +13135,8 @@ additive_expr:
     cmpq %rax, %rcx
     sete %al
     movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1670
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1670
-    xorl %eax, %eax
-    jmp .L1671
-.L1670:
-    movl $1, %eax
-.L1671:
     cmpq $0, %rax
-    je .L1672
-    leaq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    movq %rax, (%rcx)
-    jmp .L1673
-.L1672:
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1674
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1674
-    xorl %eax, %eax
-    jmp .L1675
-.L1674:
-    movl $1, %eax
-.L1675:
-    cmpq $0, %rax
-    je .L1676
-    leaq -64(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    movq %rax, (%rcx)
-.L1676:
-.L1673:
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1678
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L1678
-    xorl %eax, %eax
-    jmp .L1679
-.L1678:
-    movl $1, %eax
-.L1679:
-    cmpq $0, %rax
-    je .L1680
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $289, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1682
+    je .L1974
     leaq .Lstr357(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11718,17 +13148,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1683
-.L1682:
-    movq -32(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1684
+    jmp .L1975
+.L1974:
     leaq .Lstr358(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11740,8 +13161,6 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1685
-.L1684:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -11750,7 +13169,7 @@ additive_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1686
+    je .L1976
     leaq .Lstr359(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11762,8 +13181,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1687
-.L1686:
+    jmp .L1977
+.L1976:
     leaq .Lstr360(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11775,9 +13194,9 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1687:
-.L1685:
-.L1683:
+.L1977:
+.L1975:
+.L1973:
     movq -48(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -11786,7 +13205,7 @@ additive_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1688
+    je .L1978
     leaq .Lstr361(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11798,8 +13217,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1689
-.L1688:
+    jmp .L1979
+.L1978:
     movq -48(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -11808,7 +13227,7 @@ additive_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1690
+    je .L1980
     leaq .Lstr362(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11820,17 +13239,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1691
-.L1690:
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1692
+    jmp .L1981
+.L1980:
     leaq .Lstr363(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11842,8 +13252,15 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1693
-.L1692:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1982
     leaq .Lstr364(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11855,27 +13272,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1693:
-.L1691:
-.L1689:
-    movq -64(%rbp), %rax
-    pushq %rax
-    movq $290, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1694
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $43, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1696
+    jmp .L1983
+.L1982:
     leaq .Lstr365(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11887,8 +13285,27 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1697
-.L1696:
+.L1983:
+.L1981:
+.L1979:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1984
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $42, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1986
     leaq .Lstr366(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11900,7 +13317,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1697:
+    jmp .L1987
+.L1986:
     leaq .Lstr367(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11912,17 +13330,7 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1695
-.L1694:
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $43, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1698
+.L1987:
     leaq .Lstr368(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11934,8 +13342,17 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1699
-.L1698:
+    jmp .L1985
+.L1984:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $42, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1988
     leaq .Lstr369(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11947,7 +13364,8 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1699:
+    jmp .L1989
+.L1988:
     leaq .Lstr370(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11959,18 +13377,7 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1695:
-    jmp .L1681
-.L1680:
-    movq -16(%rbp), %rax
-    pushq %rax
-    movq $43, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    cmpq $0, %rax
-    je .L1700
+.L1989:
     leaq .Lstr371(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -11982,8 +13389,18 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1701
-.L1700:
+.L1985:
+    jmp .L1971
+.L1970:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $37, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1990
     leaq .Lstr372(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -12006,8 +13423,110 @@ additive_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1701:
-.L1681:
+    leaq .Lstr374(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr375(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr376(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1991
+.L1990:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $42, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L1992
+    leaq .Lstr377(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L1993
+.L1992:
+    leaq .Lstr378(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr379(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr380(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr381(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L1993:
+.L1991:
+.L1971:
     leaq expr_type(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
@@ -12018,8 +13537,627 @@ additive_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1666
-.L1667:
+    jmp .L1954
+.L1955:
+    leave
+    ret
+    .globl additive_expr
+additive_expr:
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $80, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call multiplicative_expr
+    movq %r12, %rsp
+    popq %r12
+.L2030:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $43, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2032
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $45, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2032
+    xorl %eax, %eax
+    jmp .L2033
+.L2032:
+    movl $1, %eax
+.L2033:
+    cmpq $0, %rax
+    je .L2031
+    movq tok(%rip), %rax
+    movq %rax, -16(%rbp)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr401(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    movq expr_type(%rip), %rax
+    movq %rax, -32(%rbp)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call multiplicative_expr
+    movq %r12, %rsp
+    popq %r12
+    movq expr_type(%rip), %rax
+    movq %rax, -48(%rbp)
+    leaq .Lstr402(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    movq -48(%rbp), %rax
+    movq %rax, -64(%rbp)
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2034
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2034
+    xorl %eax, %eax
+    jmp .L2035
+.L2034:
+    movl $1, %eax
+.L2035:
+    cmpq $0, %rax
+    je .L2036
+    leaq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L2037
+.L2036:
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2038
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2038
+    xorl %eax, %eax
+    jmp .L2039
+.L2038:
+    movl $1, %eax
+.L2039:
+    cmpq $0, %rax
+    je .L2040
+    leaq -64(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+.L2040:
+.L2037:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2042
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2042
+    xorl %eax, %eax
+    jmp .L2043
+.L2042:
+    movl $1, %eax
+.L2043:
+    cmpq $0, %rax
+    je .L2044
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2046
+    leaq .Lstr403(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2047
+.L2046:
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2048
+    leaq .Lstr404(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2049
+.L2048:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2050
+    leaq .Lstr405(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2051
+.L2050:
+    leaq .Lstr406(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2051:
+.L2049:
+.L2047:
+    movq -48(%rbp), %rax
+    pushq %rax
+    movq $289, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2052
+    leaq .Lstr407(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2053
+.L2052:
+    movq -48(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2054
+    leaq .Lstr408(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2055
+.L2054:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2056
+    leaq .Lstr409(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2057
+.L2056:
+    leaq .Lstr410(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2057:
+.L2055:
+.L2053:
+    movq -64(%rbp), %rax
+    pushq %rax
+    movq $290, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2058
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $43, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2060
+    leaq .Lstr411(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2061
+.L2060:
+    leaq .Lstr412(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2061:
+    leaq .Lstr413(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2059
+.L2058:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $43, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2062
+    leaq .Lstr414(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2063
+.L2062:
+    leaq .Lstr415(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2063:
+    leaq .Lstr416(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2059:
+    jmp .L2045
+.L2044:
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $43, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2064
+    leaq .Lstr417(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2065
+.L2064:
+    leaq .Lstr418(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr419(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2065:
+.L2045:
+    leaq expr_type(%rip), %rax
+    pushq %rax
+    movq -64(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq expr_pointed(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L2030
+.L2031:
+    leave
+    ret
+    .globl shift_expr
+shift_expr:
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $80, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call additive_expr
+    movq %r12, %rsp
+    popq %r12
+.L2072:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $294, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2074
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $295, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L2074
+    xorl %eax, %eax
+    jmp .L2075
+.L2074:
+    movl $1, %eax
+.L2075:
+    cmpq $0, %rax
+    je .L2073
+    movq tok(%rip), %rax
+    movq %rax, -16(%rbp)
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr424(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call shift_expr
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr425(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq $294, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2076
+    leaq .Lstr426(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    jmp .L2077
+.L2076:
+    leaq .Lstr427(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+.L2077:
+    leaq expr_pointed(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq expr_type(%rip), %rax
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    jmp .L2072
+.L2073:
     leave
     ret
     .globl relational_expr
@@ -12031,10 +14169,10 @@ relational_expr:
     movq %rsp, %r12
     andq $-16, %rsp
     xorl %eax, %eax
-    call additive_expr
+    call shift_expr
     movq %r12, %rsp
     popq %r12
-.L1748:
+.L2124:
     movq tok(%rip), %rax
     pushq %rax
     movq $60, %rax
@@ -12043,7 +14181,7 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1750
+    jne .L2126
     movq tok(%rip), %rax
     pushq %rax
     movq $274, %rax
@@ -12052,14 +14190,14 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1750
+    jne .L2126
     xorl %eax, %eax
-    jmp .L1751
-.L1750:
+    jmp .L2127
+.L2126:
     movl $1, %eax
-.L1751:
+.L2127:
     testq %rax, %rax
-    jne .L1752
+    jne .L2128
     movq tok(%rip), %rax
     pushq %rax
     movq $62, %rax
@@ -12068,14 +14206,14 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1752
+    jne .L2128
     xorl %eax, %eax
-    jmp .L1753
-.L1752:
+    jmp .L2129
+.L2128:
     movl $1, %eax
-.L1753:
+.L2129:
     testq %rax, %rax
-    jne .L1754
+    jne .L2130
     movq tok(%rip), %rax
     pushq %rax
     movq $275, %rax
@@ -12084,14 +14222,14 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1754
+    jne .L2130
     xorl %eax, %eax
-    jmp .L1755
-.L1754:
+    jmp .L2131
+.L2130:
     movl $1, %eax
-.L1755:
+.L2131:
     cmpq $0, %rax
-    je .L1749
+    je .L2125
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     pushq %r12
@@ -12101,7 +14239,7 @@ relational_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr397(%rip), %rax
+    leaq .Lstr451(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12123,7 +14261,7 @@ relational_expr:
     popq %r12
     movq expr_type(%rip), %rax
     movq %rax, -48(%rbp)
-    leaq .Lstr398(%rip), %rax
+    leaq .Lstr452(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12144,7 +14282,7 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1756
+    jne .L2132
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12153,21 +14291,21 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1756
+    jne .L2132
     xorl %eax, %eax
-    jmp .L1757
-.L1756:
+    jmp .L2133
+.L2132:
     movl $1, %eax
-.L1757:
+.L2133:
     cmpq $0, %rax
-    je .L1758
+    je .L2134
     leaq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1759
-.L1758:
+    jmp .L2135
+.L2134:
     movq -32(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12176,7 +14314,7 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1760
+    jne .L2136
     movq -64(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12185,21 +14323,21 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1760
+    jne .L2136
     xorl %eax, %eax
-    jmp .L1761
-.L1760:
+    jmp .L2137
+.L2136:
     movl $1, %eax
-.L1761:
+.L2137:
     cmpq $0, %rax
-    je .L1762
+    je .L2138
     leaq -64(%rbp), %rax
     pushq %rax
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1762:
-.L1759:
+.L2138:
+.L2135:
     movq -64(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12208,7 +14346,7 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1764
+    jne .L2140
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12217,14 +14355,14 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1764
+    jne .L2140
     xorl %eax, %eax
-    jmp .L1765
-.L1764:
+    jmp .L2141
+.L2140:
     movl $1, %eax
-.L1765:
+.L2141:
     cmpq $0, %rax
-    je .L1766
+    je .L2142
     movq -32(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12233,8 +14371,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1768
-    leaq .Lstr399(%rip), %rax
+    je .L2144
+    leaq .Lstr453(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12245,8 +14383,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1769
-.L1768:
+    jmp .L2145
+.L2144:
     movq -32(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12255,8 +14393,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1770
-    leaq .Lstr400(%rip), %rax
+    je .L2146
+    leaq .Lstr454(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12267,8 +14405,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1771
-.L1770:
+    jmp .L2147
+.L2146:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12277,8 +14415,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1772
-    leaq .Lstr401(%rip), %rax
+    je .L2148
+    leaq .Lstr455(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12289,9 +14427,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1773
-.L1772:
-    leaq .Lstr402(%rip), %rax
+    jmp .L2149
+.L2148:
+    leaq .Lstr456(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12302,9 +14440,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1773:
-.L1771:
-.L1769:
+.L2149:
+.L2147:
+.L2145:
     movq -48(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12313,8 +14451,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1774
-    leaq .Lstr403(%rip), %rax
+    je .L2150
+    leaq .Lstr457(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12325,8 +14463,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1775
-.L1774:
+    jmp .L2151
+.L2150:
     movq -48(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12335,8 +14473,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1776
-    leaq .Lstr404(%rip), %rax
+    je .L2152
+    leaq .Lstr458(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12347,8 +14485,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1777
-.L1776:
+    jmp .L2153
+.L2152:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12357,8 +14495,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1778
-    leaq .Lstr405(%rip), %rax
+    je .L2154
+    leaq .Lstr459(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12369,9 +14507,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1779
-.L1778:
-    leaq .Lstr406(%rip), %rax
+    jmp .L2155
+.L2154:
+    leaq .Lstr460(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12382,9 +14520,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1779:
-.L1777:
-.L1775:
+.L2155:
+.L2153:
+.L2151:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12393,8 +14531,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1780
-    leaq .Lstr407(%rip), %rax
+    je .L2156
+    leaq .Lstr461(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12405,9 +14543,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1781
-.L1780:
-    leaq .Lstr408(%rip), %rax
+    jmp .L2157
+.L2156:
+    leaq .Lstr462(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12418,7 +14556,7 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1781:
+.L2157:
     movq -16(%rbp), %rax
     pushq %rax
     movq $60, %rax
@@ -12427,8 +14565,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1782
-    leaq .Lstr409(%rip), %rax
+    je .L2158
+    leaq .Lstr463(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12439,8 +14577,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1783
-.L1782:
+    jmp .L2159
+.L2158:
     movq -16(%rbp), %rax
     pushq %rax
     movq $274, %rax
@@ -12449,8 +14587,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1784
-    leaq .Lstr410(%rip), %rax
+    je .L2160
+    leaq .Lstr464(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12461,8 +14599,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1785
-.L1784:
+    jmp .L2161
+.L2160:
     movq -16(%rbp), %rax
     pushq %rax
     movq $62, %rax
@@ -12471,8 +14609,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1786
-    leaq .Lstr411(%rip), %rax
+    je .L2162
+    leaq .Lstr465(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12483,9 +14621,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1787
-.L1786:
-    leaq .Lstr412(%rip), %rax
+    jmp .L2163
+.L2162:
+    leaq .Lstr466(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12496,10 +14634,10 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1787:
-.L1785:
-.L1783:
-    leaq .Lstr413(%rip), %rax
+.L2163:
+.L2161:
+.L2159:
+    leaq .Lstr467(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12510,9 +14648,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1767
-.L1766:
-    leaq .Lstr414(%rip), %rax
+    jmp .L2143
+.L2142:
+    leaq .Lstr468(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12531,8 +14669,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1788
-    leaq .Lstr415(%rip), %rax
+    je .L2164
+    leaq .Lstr469(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12543,8 +14681,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1789
-.L1788:
+    jmp .L2165
+.L2164:
     movq -16(%rbp), %rax
     pushq %rax
     movq $274, %rax
@@ -12553,8 +14691,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1790
-    leaq .Lstr416(%rip), %rax
+    je .L2166
+    leaq .Lstr470(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12565,8 +14703,8 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1791
-.L1790:
+    jmp .L2167
+.L2166:
     movq -16(%rbp), %rax
     pushq %rax
     movq $62, %rax
@@ -12575,8 +14713,8 @@ relational_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1792
-    leaq .Lstr417(%rip), %rax
+    je .L2168
+    leaq .Lstr471(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12587,9 +14725,9 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1793
-.L1792:
-    leaq .Lstr418(%rip), %rax
+    jmp .L2169
+.L2168:
+    leaq .Lstr472(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12600,10 +14738,10 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1793:
-.L1791:
-.L1789:
-    leaq .Lstr419(%rip), %rax
+.L2169:
+.L2167:
+.L2165:
+    leaq .Lstr473(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12614,14 +14752,14 @@ relational_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1767:
+.L2143:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1748
-.L1749:
+    jmp .L2124
+.L2125:
     leave
     ret
     .globl equality_expr
@@ -12636,7 +14774,7 @@ equality_expr:
     call relational_expr
     movq %r12, %rsp
     popq %r12
-.L1828:
+.L2204:
     movq tok(%rip), %rax
     pushq %rax
     movq $276, %rax
@@ -12645,7 +14783,7 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1830
+    jne .L2206
     movq tok(%rip), %rax
     pushq %rax
     movq $277, %rax
@@ -12654,14 +14792,14 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1830
+    jne .L2206
     xorl %eax, %eax
-    jmp .L1831
-.L1830:
+    jmp .L2207
+.L2206:
     movl $1, %eax
-.L1831:
+.L2207:
     cmpq $0, %rax
-    je .L1829
+    je .L2205
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     pushq %r12
@@ -12671,7 +14809,7 @@ equality_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr439(%rip), %rax
+    leaq .Lstr493(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12693,7 +14831,7 @@ equality_expr:
     popq %r12
     movq expr_type(%rip), %rax
     movq %rax, -48(%rbp)
-    leaq .Lstr440(%rip), %rax
+    leaq .Lstr494(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12714,7 +14852,7 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1832
+    jne .L2208
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12723,21 +14861,21 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1832
+    jne .L2208
     xorl %eax, %eax
-    jmp .L1833
-.L1832:
+    jmp .L2209
+.L2208:
     movl $1, %eax
-.L1833:
+.L2209:
     cmpq $0, %rax
-    je .L1834
+    je .L2210
     leaq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1835
-.L1834:
+    jmp .L2211
+.L2210:
     movq -32(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12746,7 +14884,7 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1836
+    jne .L2212
     movq -64(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12755,21 +14893,21 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1836
+    jne .L2212
     xorl %eax, %eax
-    jmp .L1837
-.L1836:
+    jmp .L2213
+.L2212:
     movl $1, %eax
-.L1837:
+.L2213:
     cmpq $0, %rax
-    je .L1838
+    je .L2214
     leaq -64(%rbp), %rax
     pushq %rax
     movq $289, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1838:
-.L1835:
+.L2214:
+.L2211:
     movq -64(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12778,7 +14916,7 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1840
+    jne .L2216
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12787,14 +14925,14 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L1840
+    jne .L2216
     xorl %eax, %eax
-    jmp .L1841
-.L1840:
+    jmp .L2217
+.L2216:
     movl $1, %eax
-.L1841:
+.L2217:
     cmpq $0, %rax
-    je .L1842
+    je .L2218
     movq -32(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12803,8 +14941,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1844
-    leaq .Lstr441(%rip), %rax
+    je .L2220
+    leaq .Lstr495(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12815,8 +14953,8 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1845
-.L1844:
+    jmp .L2221
+.L2220:
     movq -32(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12825,8 +14963,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1846
-    leaq .Lstr442(%rip), %rax
+    je .L2222
+    leaq .Lstr496(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12837,8 +14975,8 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1847
-.L1846:
+    jmp .L2223
+.L2222:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12847,8 +14985,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1848
-    leaq .Lstr443(%rip), %rax
+    je .L2224
+    leaq .Lstr497(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12859,9 +14997,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1849
-.L1848:
-    leaq .Lstr444(%rip), %rax
+    jmp .L2225
+.L2224:
+    leaq .Lstr498(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12872,9 +15010,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1849:
-.L1847:
-.L1845:
+.L2225:
+.L2223:
+.L2221:
     movq -48(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -12883,8 +15021,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1850
-    leaq .Lstr445(%rip), %rax
+    je .L2226
+    leaq .Lstr499(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12895,8 +15033,8 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1851
-.L1850:
+    jmp .L2227
+.L2226:
     movq -48(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12905,8 +15043,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1852
-    leaq .Lstr446(%rip), %rax
+    je .L2228
+    leaq .Lstr500(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12917,8 +15055,8 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1853
-.L1852:
+    jmp .L2229
+.L2228:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12927,8 +15065,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1854
-    leaq .Lstr447(%rip), %rax
+    je .L2230
+    leaq .Lstr501(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12939,9 +15077,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1855
-.L1854:
-    leaq .Lstr448(%rip), %rax
+    jmp .L2231
+.L2230:
+    leaq .Lstr502(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12952,9 +15090,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1855:
-.L1853:
-.L1851:
+.L2231:
+.L2229:
+.L2227:
     movq -64(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -12963,8 +15101,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1856
-    leaq .Lstr449(%rip), %rax
+    je .L2232
+    leaq .Lstr503(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12975,9 +15113,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1857
-.L1856:
-    leaq .Lstr450(%rip), %rax
+    jmp .L2233
+.L2232:
+    leaq .Lstr504(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -12988,7 +15126,7 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1857:
+.L2233:
     movq -16(%rbp), %rax
     pushq %rax
     movq $276, %rax
@@ -12997,8 +15135,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1858
-    leaq .Lstr451(%rip), %rax
+    je .L2234
+    leaq .Lstr505(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13009,9 +15147,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1859
-.L1858:
-    leaq .Lstr452(%rip), %rax
+    jmp .L2235
+.L2234:
+    leaq .Lstr506(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13022,8 +15160,8 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1859:
-    leaq .Lstr453(%rip), %rax
+.L2235:
+    leaq .Lstr507(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13034,9 +15172,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1843
-.L1842:
-    leaq .Lstr454(%rip), %rax
+    jmp .L2219
+.L2218:
+    leaq .Lstr508(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13055,8 +15193,8 @@ equality_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1860
-    leaq .Lstr455(%rip), %rax
+    je .L2236
+    leaq .Lstr509(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13067,9 +15205,9 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L1861
-.L1860:
-    leaq .Lstr456(%rip), %rax
+    jmp .L2237
+.L2236:
+    leaq .Lstr510(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13080,8 +15218,8 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1861:
-    leaq .Lstr457(%rip), %rax
+.L2237:
+    leaq .Lstr511(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13092,14 +15230,14 @@ equality_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L1843:
+.L2219:
     leaq expr_pointed(%rip), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1828
-.L1829:
+    jmp .L2204
+.L2205:
     leave
     ret
     .globl bitwise_and_expr
@@ -13114,7 +15252,7 @@ bitwise_and_expr:
     call equality_expr
     movq %r12, %rsp
     popq %r12
-.L1864:
+.L2240:
     movq tok(%rip), %rax
     pushq %rax
     movq $38, %rax
@@ -13123,7 +15261,7 @@ bitwise_and_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1865
+    je .L2241
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13131,7 +15269,7 @@ bitwise_and_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr461(%rip), %rax
+    leaq .Lstr515(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13149,7 +15287,7 @@ bitwise_and_expr:
     call equality_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr462(%rip), %rax
+    leaq .Lstr516(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13160,7 +15298,7 @@ bitwise_and_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr463(%rip), %rax
+    leaq .Lstr517(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13176,8 +15314,8 @@ bitwise_and_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1864
-.L1865:
+    jmp .L2240
+.L2241:
     leave
     ret
     .globl bitwise_xor_expr
@@ -13192,7 +15330,7 @@ bitwise_xor_expr:
     call bitwise_and_expr
     movq %r12, %rsp
     popq %r12
-.L1868:
+.L2244:
     movq tok(%rip), %rax
     pushq %rax
     movq $94, %rax
@@ -13201,7 +15339,7 @@ bitwise_xor_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1869
+    je .L2245
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13209,7 +15347,7 @@ bitwise_xor_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr467(%rip), %rax
+    leaq .Lstr521(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13227,7 +15365,7 @@ bitwise_xor_expr:
     call bitwise_and_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr468(%rip), %rax
+    leaq .Lstr522(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13238,7 +15376,7 @@ bitwise_xor_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr469(%rip), %rax
+    leaq .Lstr523(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13254,8 +15392,8 @@ bitwise_xor_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1868
-.L1869:
+    jmp .L2244
+.L2245:
     leave
     ret
     .globl bitwise_or_expr
@@ -13270,7 +15408,7 @@ bitwise_or_expr:
     call bitwise_xor_expr
     movq %r12, %rsp
     popq %r12
-.L1872:
+.L2248:
     movq tok(%rip), %rax
     pushq %rax
     movq $124, %rax
@@ -13279,7 +15417,7 @@ bitwise_or_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1873
+    je .L2249
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13287,7 +15425,7 @@ bitwise_or_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr473(%rip), %rax
+    leaq .Lstr527(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13305,7 +15443,7 @@ bitwise_or_expr:
     call bitwise_xor_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr474(%rip), %rax
+    leaq .Lstr528(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13316,7 +15454,7 @@ bitwise_or_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr475(%rip), %rax
+    leaq .Lstr529(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13332,8 +15470,8 @@ bitwise_or_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1872
-.L1873:
+    jmp .L2248
+.L2249:
     leave
     ret
     .globl logical_and_expr
@@ -13348,7 +15486,7 @@ logical_and_expr:
     call bitwise_or_expr
     movq %r12, %rsp
     popq %r12
-.L1876:
+.L2252:
     movq tok(%rip), %rax
     pushq %rax
     movq $278, %rax
@@ -13357,7 +15495,7 @@ logical_and_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1877
+    je .L2253
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13375,7 +15513,7 @@ logical_and_expr:
     addq $1, (%rax)
     movq %rcx, %rax
     movq %rax, -32(%rbp)
-    leaq .Lstr483(%rip), %rax
+    leaq .Lstr537(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13386,7 +15524,7 @@ logical_and_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr484(%rip), %rax
+    leaq .Lstr538(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -13407,7 +15545,7 @@ logical_and_expr:
     call bitwise_or_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr485(%rip), %rax
+    leaq .Lstr539(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13418,7 +15556,7 @@ logical_and_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr486(%rip), %rax
+    leaq .Lstr540(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -13432,7 +15570,7 @@ logical_and_expr:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr487(%rip), %rax
+    leaq .Lstr541(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13443,7 +15581,7 @@ logical_and_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr488(%rip), %rax
+    leaq .Lstr542(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -13468,7 +15606,7 @@ logical_and_expr:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr489(%rip), %rax
+    leaq .Lstr543(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13495,8 +15633,8 @@ logical_and_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1876
-.L1877:
+    jmp .L2252
+.L2253:
     leave
     ret
     .globl logical_or_expr
@@ -13511,7 +15649,7 @@ logical_or_expr:
     call logical_and_expr
     movq %r12, %rsp
     popq %r12
-.L1880:
+.L2256:
     movq tok(%rip), %rax
     pushq %rax
     movq $279, %rax
@@ -13520,7 +15658,7 @@ logical_or_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1881
+    je .L2257
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13538,7 +15676,7 @@ logical_or_expr:
     addq $1, (%rax)
     movq %rcx, %rax
     movq %rax, -32(%rbp)
-    leaq .Lstr497(%rip), %rax
+    leaq .Lstr551(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13549,7 +15687,7 @@ logical_or_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr498(%rip), %rax
+    leaq .Lstr552(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -13570,7 +15708,7 @@ logical_or_expr:
     call logical_and_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr499(%rip), %rax
+    leaq .Lstr553(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13581,7 +15719,7 @@ logical_or_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr500(%rip), %rax
+    leaq .Lstr554(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -13595,7 +15733,7 @@ logical_or_expr:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr501(%rip), %rax
+    leaq .Lstr555(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13606,7 +15744,7 @@ logical_or_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr502(%rip), %rax
+    leaq .Lstr556(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -13631,7 +15769,7 @@ logical_or_expr:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr503(%rip), %rax
+    leaq .Lstr557(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13658,8 +15796,8 @@ logical_or_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L1880
-.L1881:
+    jmp .L2256
+.L2257:
     leave
     ret
     .globl conditional_expr
@@ -13682,7 +15820,7 @@ conditional_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L1884
+    je .L2260
     leaq label_counter(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
@@ -13700,7 +15838,7 @@ conditional_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr507(%rip), %rax
+    leaq .Lstr561(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -13711,7 +15849,7 @@ conditional_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr508(%rip), %rax
+    leaq .Lstr562(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -13732,7 +15870,7 @@ conditional_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr509(%rip), %rax
+    leaq .Lstr563(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -13791,7 +15929,7 @@ conditional_expr:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L1884:
+.L2260:
     leave
     ret
     .globl assignment_expr
@@ -13827,7 +15965,7 @@ assignment_expr:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2026
+    je .L2402
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -13836,14 +15974,14 @@ assignment_expr:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2026
+    je .L2402
     movl $1, %eax
-    jmp .L2027
-.L2026:
+    jmp .L2403
+.L2402:
     xorl %eax, %eax
-.L2027:
+.L2403:
     cmpq $0, %rax
-    je .L2028
+    je .L2404
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13853,7 +15991,7 @@ assignment_expr:
     popq %r12
     leave
     ret
-.L2028:
+.L2404:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -13862,7 +16000,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2030
+    je .L2406
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -13892,7 +16030,7 @@ assignment_expr:
     popq %r12
     movq $0, %rax
     movq %rax, -624(%rbp)
-.L2032:
+.L2408:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -13901,7 +16039,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2034
+    jne .L2410
     movq tok(%rip), %rax
     pushq %rax
     movq $46, %rax
@@ -13910,14 +16048,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2034
+    jne .L2410
     xorl %eax, %eax
-    jmp .L2035
-.L2034:
+    jmp .L2411
+.L2410:
     movl $1, %eax
-.L2035:
+.L2411:
     testq %rax, %rax
-    jne .L2036
+    jne .L2412
     movq tok(%rip), %rax
     pushq %rax
     movq $273, %rax
@@ -13926,14 +16064,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2036
+    jne .L2412
     xorl %eax, %eax
-    jmp .L2037
-.L2036:
+    jmp .L2413
+.L2412:
     movl $1, %eax
-.L2037:
+.L2413:
     testq %rax, %rax
-    jne .L2038
+    jne .L2414
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -13942,14 +16080,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2038
+    jne .L2414
     xorl %eax, %eax
-    jmp .L2039
-.L2038:
+    jmp .L2415
+.L2414:
     movl $1, %eax
-.L2039:
+.L2415:
     cmpq $0, %rax
-    je .L2033
+    je .L2409
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -13958,10 +16096,10 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2040
+    je .L2416
     movq $1, %rax
     movq %rax, -640(%rbp)
-.L2042:
+.L2418:
     movq -640(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -13970,23 +16108,23 @@ assignment_expr:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2044
+    je .L2420
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2044
+    je .L2420
     movl $1, %eax
-    jmp .L2045
-.L2044:
+    jmp .L2421
+.L2420:
     xorl %eax, %eax
-.L2045:
+.L2421:
     cmpq $0, %rax
-    je .L2043
+    je .L2419
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -14002,13 +16140,13 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2046
+    je .L2422
     leaq -640(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2047
-.L2046:
+    jmp .L2423
+.L2422:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -14017,15 +16155,15 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2048
+    je .L2424
     leaq -640(%rbp), %rax
     movq (%rax), %rcx
     subq $1, (%rax)
     movq %rcx, %rax
-.L2048:
-.L2047:
-    jmp .L2042
-.L2043:
+.L2424:
+.L2423:
+    jmp .L2418
+.L2419:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -14033,8 +16171,8 @@ assignment_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2041
-.L2040:
+    jmp .L2417
+.L2416:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -14043,10 +16181,10 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2050
+    je .L2426
     movq $1, %rax
     movq %rax, -640(%rbp)
-.L2052:
+.L2428:
     movq -640(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -14055,23 +16193,23 @@ assignment_expr:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2054
+    je .L2430
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2054
+    je .L2430
     movl $1, %eax
-    jmp .L2055
-.L2054:
+    jmp .L2431
+.L2430:
     xorl %eax, %eax
-.L2055:
+.L2431:
     cmpq $0, %rax
-    je .L2053
+    je .L2429
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -14087,13 +16225,13 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2056
+    je .L2432
     leaq -640(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2057
-.L2056:
+    jmp .L2433
+.L2432:
     movq tok(%rip), %rax
     pushq %rax
     movq $93, %rax
@@ -14102,15 +16240,15 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2058
+    je .L2434
     leaq -640(%rbp), %rax
     movq (%rax), %rcx
     subq $1, (%rax)
     movq %rcx, %rax
-.L2058:
-.L2057:
-    jmp .L2052
-.L2053:
+.L2434:
+.L2433:
+    jmp .L2428
+.L2429:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -14118,8 +16256,8 @@ assignment_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2051
-.L2050:
+    jmp .L2427
+.L2426:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -14134,10 +16272,10 @@ assignment_expr:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2051:
-.L2041:
-    jmp .L2032
-.L2033:
+.L2427:
+.L2417:
+    jmp .L2408
+.L2409:
     movq tok(%rip), %rax
     pushq %rax
     movq $61, %rax
@@ -14146,14 +16284,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2060
+    je .L2436
     leaq -624(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2061
-.L2060:
+    jmp .L2437
+.L2436:
     movq tok(%rip), %rax
     pushq %rax
     movq $271, %rax
@@ -14162,14 +16300,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2062
+    je .L2438
     leaq -624(%rbp), %rax
     pushq %rax
     movq $2, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2063
-.L2062:
+    jmp .L2439
+.L2438:
     movq tok(%rip), %rax
     pushq %rax
     movq $272, %rax
@@ -14178,14 +16316,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2064
+    je .L2440
     leaq -624(%rbp), %rax
     pushq %rax
     movq $3, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2065
-.L2064:
+    jmp .L2441
+.L2440:
     movq tok(%rip), %rax
     pushq %rax
     movq $286, %rax
@@ -14194,14 +16332,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2066
+    je .L2442
     leaq -624(%rbp), %rax
     pushq %rax
     movq $4, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2067
-.L2066:
+    jmp .L2443
+.L2442:
     movq tok(%rip), %rax
     pushq %rax
     movq $287, %rax
@@ -14210,24 +16348,24 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2068
+    je .L2444
     leaq -624(%rbp), %rax
     pushq %rax
     movq $5, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2069
-.L2068:
+    jmp .L2445
+.L2444:
     leaq -624(%rbp), %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2069:
-.L2067:
-.L2065:
-.L2063:
-.L2061:
+.L2445:
+.L2443:
+.L2441:
+.L2439:
+.L2437:
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq -320(%rbp), %rax
@@ -14265,7 +16403,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2070
+    je .L2446
     leaq tok(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -14313,7 +16451,7 @@ assignment_expr:
     call match
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr600(%rip), %rax
+    leaq .Lstr654(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14333,7 +16471,7 @@ assignment_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr601(%rip), %rax
+    leaq .Lstr655(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14357,8 +16495,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2072
-    leaq .Lstr602(%rip), %rax
+    je .L2448
+    leaq .Lstr656(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14369,8 +16507,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2073
-.L2072:
+    jmp .L2449
+.L2448:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -14379,8 +16517,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2074
-    leaq .Lstr603(%rip), %rax
+    je .L2450
+    leaq .Lstr657(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14391,9 +16529,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2075
-.L2074:
-    leaq .Lstr604(%rip), %rax
+    jmp .L2451
+.L2450:
+    leaq .Lstr658(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14404,12 +16542,12 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2075:
-.L2073:
+.L2451:
+.L2449:
     leave
     ret
-    jmp .L2071
-.L2070:
+    jmp .L2447
+.L2446:
     movq -624(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -14418,7 +16556,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2076
+    je .L2452
     leaq tok(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -14455,7 +16593,7 @@ assignment_expr:
     call lvalue_address
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr605(%rip), %rax
+    leaq .Lstr659(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14474,8 +16612,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2078
-    leaq .Lstr606(%rip), %rax
+    je .L2454
+    leaq .Lstr660(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14486,8 +16624,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2079
-.L2078:
+    jmp .L2455
+.L2454:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -14496,8 +16634,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2080
-    leaq .Lstr607(%rip), %rax
+    je .L2456
+    leaq .Lstr661(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14508,9 +16646,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2081
-.L2080:
-    leaq .Lstr608(%rip), %rax
+    jmp .L2457
+.L2456:
+    leaq .Lstr662(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14521,9 +16659,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2081:
-.L2079:
-    leaq .Lstr609(%rip), %rax
+.L2457:
+.L2455:
+    leaq .Lstr663(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14548,7 +16686,7 @@ assignment_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr610(%rip), %rax
+    leaq .Lstr664(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14567,8 +16705,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2082
-    leaq .Lstr611(%rip), %rax
+    je .L2458
+    leaq .Lstr665(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14579,7 +16717,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr612(%rip), %rax
+    leaq .Lstr666(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14590,7 +16728,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr613(%rip), %rax
+    leaq .Lstr667(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14601,8 +16739,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2083
-.L2082:
+    jmp .L2459
+.L2458:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -14611,8 +16749,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2084
-    leaq .Lstr614(%rip), %rax
+    je .L2460
+    leaq .Lstr668(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14623,7 +16761,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr615(%rip), %rax
+    leaq .Lstr669(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14634,7 +16772,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr616(%rip), %rax
+    leaq .Lstr670(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14645,9 +16783,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2085
-.L2084:
-    leaq .Lstr617(%rip), %rax
+    jmp .L2461
+.L2460:
+    leaq .Lstr671(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14658,7 +16796,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr618(%rip), %rax
+    leaq .Lstr672(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14669,7 +16807,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr619(%rip), %rax
+    leaq .Lstr673(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14680,12 +16818,12 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2085:
-.L2083:
+.L2461:
+.L2459:
     leave
     ret
-    jmp .L2077
-.L2076:
+    jmp .L2453
+.L2452:
     movq -624(%rbp), %rax
     pushq %rax
     movq $5, %rax
@@ -14694,7 +16832,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2086
+    je .L2462
     leaq tok(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -14731,7 +16869,7 @@ assignment_expr:
     call lvalue_address
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr620(%rip), %rax
+    leaq .Lstr674(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14750,8 +16888,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2088
-    leaq .Lstr621(%rip), %rax
+    je .L2464
+    leaq .Lstr675(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14762,8 +16900,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2089
-.L2088:
+    jmp .L2465
+.L2464:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -14772,8 +16910,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2090
-    leaq .Lstr622(%rip), %rax
+    je .L2466
+    leaq .Lstr676(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14784,9 +16922,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2091
-.L2090:
-    leaq .Lstr623(%rip), %rax
+    jmp .L2467
+.L2466:
+    leaq .Lstr677(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14797,9 +16935,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2091:
-.L2089:
-    leaq .Lstr624(%rip), %rax
+.L2467:
+.L2465:
+    leaq .Lstr678(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14824,7 +16962,7 @@ assignment_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr625(%rip), %rax
+    leaq .Lstr679(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14843,8 +16981,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2092
-    leaq .Lstr626(%rip), %rax
+    je .L2468
+    leaq .Lstr680(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14855,7 +16993,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr627(%rip), %rax
+    leaq .Lstr681(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14866,7 +17004,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr628(%rip), %rax
+    leaq .Lstr682(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14877,8 +17015,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2093
-.L2092:
+    jmp .L2469
+.L2468:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -14887,8 +17025,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2094
-    leaq .Lstr629(%rip), %rax
+    je .L2470
+    leaq .Lstr683(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14899,7 +17037,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr630(%rip), %rax
+    leaq .Lstr684(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14910,7 +17048,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr631(%rip), %rax
+    leaq .Lstr685(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14921,9 +17059,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2095
-.L2094:
-    leaq .Lstr632(%rip), %rax
+    jmp .L2471
+.L2470:
+    leaq .Lstr686(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14934,7 +17072,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr633(%rip), %rax
+    leaq .Lstr687(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14945,7 +17083,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr634(%rip), %rax
+    leaq .Lstr688(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -14956,12 +17094,12 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2095:
-.L2093:
+.L2471:
+.L2469:
     leave
     ret
-    jmp .L2087
-.L2086:
+    jmp .L2463
+.L2462:
     movq -624(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -14970,7 +17108,7 @@ assignment_expr:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2096
+    je .L2472
     movq tok(%rip), %rax
     pushq %rax
     movq $271, %rax
@@ -14979,12 +17117,12 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2098
+    je .L2474
     movq $271, %rax
-    jmp .L2099
-.L2098:
+    jmp .L2475
+.L2474:
     movq $272, %rax
-.L2099:
+.L2475:
     movq %rax, -640(%rbp)
     leaq input_ptr(%rip), %rax
     pushq %rax
@@ -15030,8 +17168,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2100
-    leaq .Lstr635(%rip), %rax
+    je .L2476
+    leaq .Lstr689(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15042,8 +17180,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2101
-.L2100:
+    jmp .L2477
+.L2476:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15052,8 +17190,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2102
-    leaq .Lstr636(%rip), %rax
+    je .L2478
+    leaq .Lstr690(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15064,9 +17202,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2103
-.L2102:
-    leaq .Lstr637(%rip), %rax
+    jmp .L2479
+.L2478:
+    leaq .Lstr691(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15077,8 +17215,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2103:
-.L2101:
+.L2479:
+.L2477:
     movq -640(%rbp), %rax
     pushq %rax
     movq $271, %rax
@@ -15087,7 +17225,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2104
+    je .L2480
     movq assign_size(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -15096,8 +17234,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2106
-    leaq .Lstr638(%rip), %rax
+    je .L2482
+    leaq .Lstr692(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15108,8 +17246,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2107
-.L2106:
+    jmp .L2483
+.L2482:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15118,8 +17256,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2108
-    leaq .Lstr639(%rip), %rax
+    je .L2484
+    leaq .Lstr693(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15130,9 +17268,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2109
-.L2108:
-    leaq .Lstr640(%rip), %rax
+    jmp .L2485
+.L2484:
+    leaq .Lstr694(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15143,10 +17281,10 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2109:
-.L2107:
-    jmp .L2105
-.L2104:
+.L2485:
+.L2483:
+    jmp .L2481
+.L2480:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -15155,8 +17293,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2110
-    leaq .Lstr641(%rip), %rax
+    je .L2486
+    leaq .Lstr695(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15167,8 +17305,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2111
-.L2110:
+    jmp .L2487
+.L2486:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15177,8 +17315,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2112
-    leaq .Lstr642(%rip), %rax
+    je .L2488
+    leaq .Lstr696(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15189,9 +17327,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2113
-.L2112:
-    leaq .Lstr643(%rip), %rax
+    jmp .L2489
+.L2488:
+    leaq .Lstr697(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15202,10 +17340,10 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2113:
-.L2111:
-.L2105:
-    leaq .Lstr644(%rip), %rax
+.L2489:
+.L2487:
+.L2481:
+    leaq .Lstr698(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15225,8 +17363,8 @@ assignment_expr:
     popq %r12
     leave
     ret
-    jmp .L2097
-.L2096:
+    jmp .L2473
+.L2472:
     leaq tok(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -15265,12 +17403,12 @@ assignment_expr:
     popq %r12
     leave
     ret
-.L2097:
-.L2087:
-.L2077:
-.L2071:
-    jmp .L2031
-.L2030:
+.L2473:
+.L2463:
+.L2453:
+.L2447:
+    jmp .L2407
+.L2406:
     movq input_ptr(%rip), %rax
     movq %rax, -320(%rbp)
     movq line(%rip), %rax
@@ -15355,14 +17493,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2114
+    je .L2490
     leaq -720(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2115
-.L2114:
+    jmp .L2491
+.L2490:
     movq tok(%rip), %rax
     pushq %rax
     movq $271, %rax
@@ -15371,14 +17509,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2116
+    je .L2492
     leaq -720(%rbp), %rax
     pushq %rax
     movq $2, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2117
-.L2116:
+    jmp .L2493
+.L2492:
     movq tok(%rip), %rax
     pushq %rax
     movq $272, %rax
@@ -15387,14 +17525,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2118
+    je .L2494
     leaq -720(%rbp), %rax
     pushq %rax
     movq $3, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2119
-.L2118:
+    jmp .L2495
+.L2494:
     movq tok(%rip), %rax
     pushq %rax
     movq $286, %rax
@@ -15403,14 +17541,14 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2120
+    je .L2496
     leaq -720(%rbp), %rax
     pushq %rax
     movq $4, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2121
-.L2120:
+    jmp .L2497
+.L2496:
     movq tok(%rip), %rax
     pushq %rax
     movq $287, %rax
@@ -15419,17 +17557,17 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2122
+    je .L2498
     leaq -720(%rbp), %rax
     pushq %rax
     movq $5, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2122:
-.L2121:
-.L2119:
-.L2117:
-.L2115:
+.L2498:
+.L2497:
+.L2495:
+.L2493:
+.L2491:
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq -320(%rbp), %rax
@@ -15467,7 +17605,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2124
+    je .L2500
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -15486,7 +17624,7 @@ assignment_expr:
     call match
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr645(%rip), %rax
+    leaq .Lstr699(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15506,7 +17644,7 @@ assignment_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr646(%rip), %rax
+    leaq .Lstr700(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15530,8 +17668,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2126
-    leaq .Lstr647(%rip), %rax
+    je .L2502
+    leaq .Lstr701(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15542,8 +17680,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2127
-.L2126:
+    jmp .L2503
+.L2502:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15552,8 +17690,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2128
-    leaq .Lstr648(%rip), %rax
+    je .L2504
+    leaq .Lstr702(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15564,9 +17702,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2129
-.L2128:
-    leaq .Lstr649(%rip), %rax
+    jmp .L2505
+.L2504:
+    leaq .Lstr703(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15577,12 +17715,12 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2129:
-.L2127:
+.L2505:
+.L2503:
     leave
     ret
-    jmp .L2125
-.L2124:
+    jmp .L2501
+.L2500:
     movq -720(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -15591,7 +17729,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2130
+    je .L2506
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -15599,7 +17737,7 @@ assignment_expr:
     call lvalue_address
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr650(%rip), %rax
+    leaq .Lstr704(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15618,8 +17756,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2132
-    leaq .Lstr651(%rip), %rax
+    je .L2508
+    leaq .Lstr705(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15630,8 +17768,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2133
-.L2132:
+    jmp .L2509
+.L2508:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15640,8 +17778,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2134
-    leaq .Lstr652(%rip), %rax
+    je .L2510
+    leaq .Lstr706(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15652,9 +17790,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2135
-.L2134:
-    leaq .Lstr653(%rip), %rax
+    jmp .L2511
+.L2510:
+    leaq .Lstr707(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15665,9 +17803,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2135:
-.L2133:
-    leaq .Lstr654(%rip), %rax
+.L2511:
+.L2509:
+    leaq .Lstr708(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15692,7 +17830,7 @@ assignment_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr655(%rip), %rax
+    leaq .Lstr709(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15711,8 +17849,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2136
-    leaq .Lstr656(%rip), %rax
+    je .L2512
+    leaq .Lstr710(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15723,7 +17861,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr657(%rip), %rax
+    leaq .Lstr711(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15734,7 +17872,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr658(%rip), %rax
+    leaq .Lstr712(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15745,8 +17883,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2137
-.L2136:
+    jmp .L2513
+.L2512:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15755,8 +17893,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2138
-    leaq .Lstr659(%rip), %rax
+    je .L2514
+    leaq .Lstr713(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15767,7 +17905,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr660(%rip), %rax
+    leaq .Lstr714(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15778,7 +17916,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr661(%rip), %rax
+    leaq .Lstr715(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15789,9 +17927,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2139
-.L2138:
-    leaq .Lstr662(%rip), %rax
+    jmp .L2515
+.L2514:
+    leaq .Lstr716(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15802,7 +17940,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr663(%rip), %rax
+    leaq .Lstr717(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15813,7 +17951,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr664(%rip), %rax
+    leaq .Lstr718(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15824,12 +17962,12 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2139:
-.L2137:
+.L2515:
+.L2513:
     leave
     ret
-    jmp .L2131
-.L2130:
+    jmp .L2507
+.L2506:
     movq -720(%rbp), %rax
     pushq %rax
     movq $5, %rax
@@ -15838,7 +17976,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2140
+    je .L2516
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -15846,7 +17984,7 @@ assignment_expr:
     call lvalue_address
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr665(%rip), %rax
+    leaq .Lstr719(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15865,8 +18003,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2142
-    leaq .Lstr666(%rip), %rax
+    je .L2518
+    leaq .Lstr720(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15877,8 +18015,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2143
-.L2142:
+    jmp .L2519
+.L2518:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -15887,8 +18025,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2144
-    leaq .Lstr667(%rip), %rax
+    je .L2520
+    leaq .Lstr721(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15899,9 +18037,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2145
-.L2144:
-    leaq .Lstr668(%rip), %rax
+    jmp .L2521
+.L2520:
+    leaq .Lstr722(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15912,9 +18050,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2145:
-.L2143:
-    leaq .Lstr669(%rip), %rax
+.L2521:
+.L2519:
+    leaq .Lstr723(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15939,7 +18077,7 @@ assignment_expr:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr670(%rip), %rax
+    leaq .Lstr724(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15958,8 +18096,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2146
-    leaq .Lstr671(%rip), %rax
+    je .L2522
+    leaq .Lstr725(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15970,7 +18108,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr672(%rip), %rax
+    leaq .Lstr726(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15981,7 +18119,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr673(%rip), %rax
+    leaq .Lstr727(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -15992,8 +18130,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2147
-.L2146:
+    jmp .L2523
+.L2522:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -16002,8 +18140,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2148
-    leaq .Lstr674(%rip), %rax
+    je .L2524
+    leaq .Lstr728(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16014,7 +18152,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr675(%rip), %rax
+    leaq .Lstr729(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16025,7 +18163,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr676(%rip), %rax
+    leaq .Lstr730(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16036,9 +18174,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2149
-.L2148:
-    leaq .Lstr677(%rip), %rax
+    jmp .L2525
+.L2524:
+    leaq .Lstr731(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16049,7 +18187,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr678(%rip), %rax
+    leaq .Lstr732(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16060,7 +18198,7 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr679(%rip), %rax
+    leaq .Lstr733(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16071,12 +18209,12 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2149:
-.L2147:
+.L2525:
+.L2523:
     leave
     ret
-    jmp .L2141
-.L2140:
+    jmp .L2517
+.L2516:
     movq -720(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -16085,7 +18223,7 @@ assignment_expr:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2150
+    je .L2526
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16101,8 +18239,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2152
-    leaq .Lstr680(%rip), %rax
+    je .L2528
+    leaq .Lstr734(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16113,8 +18251,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2153
-.L2152:
+    jmp .L2529
+.L2528:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -16123,8 +18261,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2154
-    leaq .Lstr681(%rip), %rax
+    je .L2530
+    leaq .Lstr735(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16135,9 +18273,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2155
-.L2154:
-    leaq .Lstr682(%rip), %rax
+    jmp .L2531
+.L2530:
+    leaq .Lstr736(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16148,8 +18286,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2155:
-.L2153:
+.L2531:
+.L2529:
     movq -720(%rbp), %rax
     pushq %rax
     movq $2, %rax
@@ -16158,7 +18296,7 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2156
+    je .L2532
     movq assign_size(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -16167,8 +18305,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2158
-    leaq .Lstr683(%rip), %rax
+    je .L2534
+    leaq .Lstr737(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16179,8 +18317,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2159
-.L2158:
+    jmp .L2535
+.L2534:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -16189,8 +18327,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2160
-    leaq .Lstr684(%rip), %rax
+    je .L2536
+    leaq .Lstr738(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16201,9 +18339,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2161
-.L2160:
-    leaq .Lstr685(%rip), %rax
+    jmp .L2537
+.L2536:
+    leaq .Lstr739(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16214,10 +18352,10 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2161:
-.L2159:
-    jmp .L2157
-.L2156:
+.L2537:
+.L2535:
+    jmp .L2533
+.L2532:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -16226,8 +18364,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2162
-    leaq .Lstr686(%rip), %rax
+    je .L2538
+    leaq .Lstr740(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16238,8 +18376,8 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2163
-.L2162:
+    jmp .L2539
+.L2538:
     movq assign_size(%rip), %rax
     pushq %rax
     movq $4, %rax
@@ -16248,8 +18386,8 @@ assignment_expr:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2164
-    leaq .Lstr687(%rip), %rax
+    je .L2540
+    leaq .Lstr741(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16260,9 +18398,9 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-    jmp .L2165
-.L2164:
-    leaq .Lstr688(%rip), %rax
+    jmp .L2541
+.L2540:
+    leaq .Lstr742(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16273,10 +18411,10 @@ assignment_expr:
     call emit
     movq %r12, %rsp
     popq %r12
-.L2165:
-.L2163:
-.L2157:
-    leaq .Lstr689(%rip), %rax
+.L2541:
+.L2539:
+.L2533:
+    leaq .Lstr743(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16296,8 +18434,8 @@ assignment_expr:
     popq %r12
     leave
     ret
-    jmp .L2151
-.L2150:
+    jmp .L2527
+.L2526:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16307,11 +18445,11 @@ assignment_expr:
     popq %r12
     leave
     ret
-.L2151:
-.L2141:
-.L2131:
-.L2125:
-.L2031:
+.L2527:
+.L2517:
+.L2507:
+.L2501:
+.L2407:
     leave
     ret
     .globl statement
@@ -16327,7 +18465,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2504
+    je .L2894
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16374,7 +18512,7 @@ statement:
     addq $1, (%rax)
     movq %rcx, %rax
     movq %rax, -32(%rbp)
-    leaq .Lstr750(%rip), %rax
+    leaq .Lstr811(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16385,7 +18523,7 @@ statement:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr751(%rip), %rax
+    leaq .Lstr812(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -16414,7 +18552,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2506
+    je .L2896
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16422,7 +18560,7 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr752(%rip), %rax
+    leaq .Lstr813(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -16465,8 +18603,8 @@ statement:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    jmp .L2507
-.L2506:
+    jmp .L2897
+.L2896:
     movq -16(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -16478,10 +18616,10 @@ statement:
     call emit_label
     movq %r12, %rsp
     popq %r12
-.L2507:
+.L2897:
     leave
     ret
-.L2504:
+.L2894:
     movq tok(%rip), %rax
     pushq %rax
     movq $270, %rax
@@ -16490,7 +18628,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2508
+    je .L2898
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16518,16 +18656,33 @@ statement:
     popq %r12
     movq tok(%rip), %rax
     pushq %rax
+    movq $269, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L2900
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+.L2900:
+    movq tok(%rip), %rax
+    pushq %rax
     movq $257, %rax
     popq %rcx
     cmpq %rax, %rcx
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2510
+    je .L2902
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr753(%rip), %rax
+    leaq .Lstr814(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -16546,10 +18701,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2512
+    jne .L2904
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr754(%rip), %rax
+    leaq .Lstr815(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -16568,21 +18723,45 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2512
+    jne .L2904
     xorl %eax, %eax
-    jmp .L2513
-.L2512:
+    jmp .L2905
+.L2904:
     movl $1, %eax
-.L2513:
+.L2905:
     testq %rax, %rax
-    je .L2510
+    je .L2902
     movl $1, %eax
-    jmp .L2511
-.L2510:
+    jmp .L2903
+.L2902:
     xorl %eax, %eax
-.L2511:
+.L2903:
     cmpq $0, %rax
-    je .L2514
+    je .L2906
+    leaq unsigned_type(%rip), %rax
+    pushq %rax
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr816(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16590,7 +18769,7 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2516:
+.L2908:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -16599,10 +18778,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2518
+    je .L2910
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr755(%rip), %rax
+    leaq .Lstr817(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -16621,10 +18800,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2520
+    jne .L2912
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr756(%rip), %rax
+    leaq .Lstr818(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -16643,21 +18822,21 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2520
+    jne .L2912
     xorl %eax, %eax
-    jmp .L2521
-.L2520:
+    jmp .L2913
+.L2912:
     movl $1, %eax
-.L2521:
+.L2913:
     testq %rax, %rax
-    je .L2518
+    je .L2910
     movl $1, %eax
-    jmp .L2519
-.L2518:
+    jmp .L2911
+.L2910:
     xorl %eax, %eax
-.L2519:
+.L2911:
     cmpq $0, %rax
-    je .L2517
+    je .L2909
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16665,9 +18844,9 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2516
-.L2517:
-.L2514:
+    jmp .L2908
+.L2909:
+.L2906:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -16676,7 +18855,7 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2522
+    jne .L2914
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -16685,14 +18864,14 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2522
+    jne .L2914
     xorl %eax, %eax
-    jmp .L2523
-.L2522:
+    jmp .L2915
+.L2914:
     movl $1, %eax
-.L2523:
+.L2915:
     testq %rax, %rax
-    jne .L2524
+    jne .L2916
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -16701,14 +18880,14 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2524
+    jne .L2916
     xorl %eax, %eax
-    jmp .L2525
-.L2524:
+    jmp .L2917
+.L2916:
     movl $1, %eax
-.L2525:
+.L2917:
     testq %rax, %rax
-    jne .L2526
+    jne .L2918
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -16717,14 +18896,14 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2526
+    jne .L2918
     xorl %eax, %eax
-    jmp .L2527
-.L2526:
+    jmp .L2919
+.L2918:
     movl $1, %eax
-.L2527:
+.L2919:
     cmpq $0, %rax
-    je .L2528
+    je .L2920
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     pushq %r12
@@ -16734,7 +18913,7 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2530:
+.L2922:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -16743,10 +18922,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2532
+    je .L2924
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr757(%rip), %rax
+    leaq .Lstr819(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -16765,10 +18944,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2534
+    jne .L2926
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr758(%rip), %rax
+    leaq .Lstr820(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -16787,21 +18966,21 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2534
+    jne .L2926
     xorl %eax, %eax
-    jmp .L2535
-.L2534:
+    jmp .L2927
+.L2926:
     movl $1, %eax
-.L2535:
+.L2927:
     testq %rax, %rax
-    je .L2532
+    je .L2924
     movl $1, %eax
-    jmp .L2533
-.L2532:
+    jmp .L2925
+.L2924:
     xorl %eax, %eax
-.L2533:
+.L2925:
     cmpq $0, %rax
-    je .L2531
+    je .L2923
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -16809,9 +18988,9 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2530
-.L2531:
-.L2536:
+    jmp .L2922
+.L2923:
+.L2928:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -16820,26 +18999,26 @@ statement:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2538
+    je .L2930
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2538
+    je .L2930
     movl $1, %eax
-    jmp .L2539
-.L2538:
+    jmp .L2931
+.L2930:
     xorl %eax, %eax
-.L2539:
+.L2931:
     cmpq $0, %rax
-    je .L2537
+    je .L2929
     movq $0, %rax
     movq %rax, -32(%rbp)
-.L2540:
+.L2932:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -16848,7 +19027,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2541
+    je .L2933
     leaq -32(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -16861,8 +19040,8 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2540
-.L2541:
+    jmp .L2932
+.L2933:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -16871,8 +19050,8 @@ statement:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2542
-    leaq .Lstr759(%rip), %rax
+    je .L2934
+    leaq .Lstr821(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -16883,7 +19062,7 @@ statement:
     call error
     movq %r12, %rsp
     popq %r12
-.L2542:
+.L2934:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -16904,7 +19083,7 @@ statement:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2544
+    je .L2936
     leaq -80(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -16915,7 +19094,7 @@ statement:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2544:
+.L2936:
     leaq -64(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -16951,10 +19130,10 @@ statement:
     popq %r12
     movq -32(%rbp), %rax
     testq %rax, %rax
-    je .L2546
+    je .L2938
     movq $8, %rax
-    jmp .L2547
-.L2546:
+    jmp .L2939
+.L2938:
     movq -16(%rbp), %rax
     pushq %rax
     movq $263, %rax
@@ -16963,10 +19142,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2548
+    je .L2940
     movq $1, %rax
-    jmp .L2549
-.L2548:
+    jmp .L2941
+.L2940:
     movq -16(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -16975,14 +19154,14 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2550
+    je .L2942
     movq $4, %rax
-    jmp .L2551
-.L2550:
+    jmp .L2943
+.L2942:
     movq $8, %rax
-.L2551:
-.L2549:
-.L2547:
+.L2943:
+.L2941:
+.L2939:
     movq %rax, -96(%rbp)
     movq -16(%rbp), %rax
     pushq %rax
@@ -16992,12 +19171,12 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2552
+    je .L2944
     movq $0, %rax
-    jmp .L2553
-.L2552:
+    jmp .L2945
+.L2944:
     movq -16(%rbp), %rax
-.L2553:
+.L2945:
     movq %rax, -112(%rbp)
     leaq -64(%rbp), %rax
     pushq %rax
@@ -17007,12 +19186,12 @@ statement:
     pushq %rax
     movq -32(%rbp), %rax
     testq %rax, %rax
-    je .L2554
+    je .L2946
     movq -16(%rbp), %rax
-    jmp .L2555
-.L2554:
+    jmp .L2947
+.L2946:
     movq $0, %rax
-.L2555:
+.L2947:
     pushq %rax
     movq $0, %rax
     pushq %rax
@@ -17041,9 +19220,9 @@ statement:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $68, %rax
+    addq $72, %rax
     pushq %rax
     movq -112(%rbp), %rax
     popq %rcx
@@ -17056,7 +19235,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2556
+    je .L2948
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17087,16 +19266,16 @@ statement:
     pushq %rax
     movq -128(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -144(%rbp)
     movq -144(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L2558
+    je .L2950
     movq -144(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -17105,8 +19284,8 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2560
-    leaq .Lstr760(%rip), %rax
+    je .L2952
+    leaq .Lstr822(%rip), %rax
     pushq %rax
     movq -144(%rbp), %rax
     pushq %rax
@@ -17120,9 +19299,9 @@ statement:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L2561
-.L2560:
-    leaq .Lstr761(%rip), %rax
+    jmp .L2953
+.L2952:
+    leaq .Lstr823(%rip), %rax
     pushq %rax
     movq -144(%rbp), %rax
     pushq %rax
@@ -17136,11 +19315,11 @@ statement:
     call emit_s
     movq %r12, %rsp
     popq %r12
-.L2561:
-    jmp .L2559
-.L2558:
+.L2953:
+    jmp .L2951
+.L2950:
     movq -144(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -17149,8 +19328,8 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2562
-    leaq .Lstr762(%rip), %rax
+    je .L2954
+    leaq .Lstr824(%rip), %rax
     pushq %rax
     movq -144(%rbp), %rax
     addq $32, %rax
@@ -17166,9 +19345,9 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2563
-.L2562:
-    leaq .Lstr763(%rip), %rax
+    jmp .L2955
+.L2954:
+    leaq .Lstr825(%rip), %rax
     pushq %rax
     movq -144(%rbp), %rax
     addq $32, %rax
@@ -17184,9 +19363,9 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2563:
-.L2559:
-.L2556:
+.L2955:
+.L2951:
+.L2948:
     movq tok(%rip), %rax
     pushq %rax
     movq $44, %rax
@@ -17195,7 +19374,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2564
+    je .L2956
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17203,12 +19382,12 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2565
-.L2564:
-    jmp .L2537
-.L2565:
-    jmp .L2536
-.L2537:
+    jmp .L2957
+.L2956:
+    jmp .L2929
+.L2957:
+    jmp .L2928
+.L2929:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17220,8 +19399,8 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L2529
-.L2528:
+    jmp .L2921
+.L2920:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -17230,8 +19409,8 @@ statement:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2566
-.L2568:
+    je .L2958
+.L2960:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -17240,23 +19419,23 @@ statement:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2570
+    je .L2962
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2570
+    je .L2962
     movl $1, %eax
-    jmp .L2571
-.L2570:
+    jmp .L2963
+.L2962:
     xorl %eax, %eax
-.L2571:
+.L2963:
     cmpq $0, %rax
-    je .L2569
+    je .L2961
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17272,7 +19451,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2572
+    je .L2964
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17280,12 +19459,12 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2573
-.L2572:
-    jmp .L2569
-.L2573:
-    jmp .L2568
-.L2569:
+    jmp .L2965
+.L2964:
+    jmp .L2961
+.L2965:
+    jmp .L2960
+.L2961:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17297,8 +19476,8 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L2567
-.L2566:
+    jmp .L2959
+.L2958:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17310,8 +19489,8 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-.L2567:
-.L2529:
+.L2959:
+.L2921:
     movq input_ptr(%rip), %rax
     movq %rax, -16(%rbp)
     movq line(%rip), %rax
@@ -17342,8 +19521,8 @@ statement:
     movq %rax, -320(%rbp)
     movq -320(%rbp), %rax
     cmpq $0, %rax
-    je .L2574
-.L2576:
+    je .L2966
+.L2968:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -17352,23 +19531,23 @@ statement:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2578
+    je .L2970
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2578
+    je .L2970
     movl $1, %eax
-    jmp .L2579
-.L2578:
+    jmp .L2971
+.L2970:
     xorl %eax, %eax
-.L2579:
+.L2971:
     cmpq $0, %rax
-    je .L2577
+    je .L2969
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17376,9 +19555,9 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2576
-.L2577:
-.L2574:
+    jmp .L2968
+.L2969:
+.L2966:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17420,8 +19599,8 @@ statement:
     movq %rax, -640(%rbp)
     movq -640(%rbp), %rax
     cmpq $0, %rax
-    je .L2580
-.L2582:
+    je .L2972
+.L2974:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -17430,23 +19609,23 @@ statement:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2584
+    je .L2976
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2584
+    je .L2976
     movl $1, %eax
-    jmp .L2585
-.L2584:
+    jmp .L2977
+.L2976:
     xorl %eax, %eax
-.L2585:
+.L2977:
     cmpq $0, %rax
-    je .L2583
+    je .L2975
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17454,9 +19633,9 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2582
-.L2583:
-.L2580:
+    jmp .L2974
+.L2975:
+.L2972:
     movq $41, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17475,15 +19654,15 @@ statement:
     movq %rax, -656(%rbp)
     movq -640(%rbp), %rax
     testq %rax, %rax
-    je .L2586
+    je .L2978
     leaq label_counter(%rip), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2587
-.L2586:
+    jmp .L2979
+.L2978:
     movq $0, %rax
-.L2587:
+.L2979:
     movq %rax, -672(%rbp)
     leaq label_counter(%rip), %rax
     movq (%rax), %rcx
@@ -17497,14 +19676,14 @@ statement:
     movq %rax, -704(%rbp)
     movq -640(%rbp), %rax
     testq %rax, %rax
-    je .L2588
+    je .L2980
     movq -672(%rbp), %rax
-    jmp .L2589
-.L2588:
+    jmp .L2981
+.L2980:
     movq -688(%rbp), %rax
-.L2589:
+.L2981:
     movq %rax, -720(%rbp)
-    leaq .Lstr764(%rip), %rax
+    leaq .Lstr826(%rip), %rax
     pushq %rax
     movq -688(%rbp), %rax
     pushq %rax
@@ -17606,7 +19785,7 @@ statement:
     popq %r12
     movq -640(%rbp), %rax
     cmpq $0, %rax
-    je .L2590
+    je .L2982
     movq -672(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17660,16 +19839,16 @@ statement:
     popq %r12
     movq $0, %rax
     movq %rax, -1136(%rbp)
-.L2592:
+.L2984:
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2593
+    je .L2985
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -17678,13 +19857,13 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2594
+    je .L2986
     leaq -1136(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2595
-.L2594:
+    jmp .L2987
+.L2986:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -17693,7 +19872,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2596
+    je .L2988
     movq -1136(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -17702,15 +19881,15 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2598
-    jmp .L2593
-.L2598:
+    je .L2990
+    jmp .L2985
+.L2990:
     leaq -1136(%rbp), %rax
     movq (%rax), %rcx
     subq $1, (%rax)
     movq %rcx, %rax
-.L2596:
-.L2595:
+.L2988:
+.L2987:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17726,7 +19905,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2600
+    je .L2992
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17734,8 +19913,8 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2601
-.L2600:
+    jmp .L2993
+.L2992:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -17744,7 +19923,7 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2602
+    je .L2994
     movq -1136(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -17753,17 +19932,17 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2602
+    je .L2994
     movl $1, %eax
-    jmp .L2603
-.L2602:
+    jmp .L2995
+.L2994:
     xorl %eax, %eax
-.L2603:
+.L2995:
     cmpq $0, %rax
-    je .L2604
-    jmp .L2593
-    jmp .L2605
-.L2604:
+    je .L2996
+    jmp .L2985
+    jmp .L2997
+.L2996:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -17772,13 +19951,13 @@ statement:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2606
-    jmp .L2593
-.L2606:
-.L2605:
-.L2601:
-    jmp .L2592
-.L2593:
+    je .L2998
+    jmp .L2985
+.L2998:
+.L2997:
+.L2993:
+    jmp .L2984
+.L2985:
     leaq -1120(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17790,7 +19969,7 @@ statement:
     call restore_parser_state
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr765(%rip), %rax
+    leaq .Lstr827(%rip), %rax
     pushq %rax
     movq -688(%rbp), %rax
     pushq %rax
@@ -17804,7 +19983,7 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2590:
+.L2982:
     movq -688(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -17818,7 +19997,7 @@ statement:
     popq %r12
     movq -320(%rbp), %rax
     cmpq $0, %rax
-    je .L2608
+    je .L3000
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -17863,29 +20042,29 @@ statement:
     movq %rax, -1136(%rbp)
     movq $0, %rax
     movq %rax, -1152(%rbp)
-.L2610:
+.L3002:
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2612
+    je .L3004
     movq -1136(%rbp), %rax
     testq %rax, %rax
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2612
+    je .L3004
     movl $1, %eax
-    jmp .L2613
-.L2612:
+    jmp .L3005
+.L3004:
     xorl %eax, %eax
-.L2613:
+.L3005:
     cmpq $0, %rax
-    je .L2611
+    je .L3003
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -17894,13 +20073,13 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2614
+    je .L3006
     leaq -1152(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2615
-.L2614:
+    jmp .L3007
+.L3006:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -17909,13 +20088,13 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2616
+    je .L3008
     leaq -1152(%rbp), %rax
     movq (%rax), %rcx
     subq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2617
-.L2616:
+    jmp .L3009
+.L3008:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -17924,7 +20103,7 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2618
+    je .L3010
     movq -1152(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -17933,23 +20112,23 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2618
+    je .L3010
     movl $1, %eax
-    jmp .L2619
-.L2618:
+    jmp .L3011
+.L3010:
     xorl %eax, %eax
-.L2619:
+.L3011:
     cmpq $0, %rax
-    je .L2620
+    je .L3012
     leaq -1136(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2611
-.L2620:
-.L2617:
-.L2615:
+    jmp .L3003
+.L3012:
+.L3009:
+.L3007:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17965,7 +20144,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2622
+    je .L3014
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -17973,8 +20152,8 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2623
-.L2622:
+    jmp .L3015
+.L3014:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -17983,7 +20162,7 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2624
+    je .L3016
     movq -1152(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -17992,19 +20171,19 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2624
+    je .L3016
     movl $1, %eax
-    jmp .L2625
-.L2624:
+    jmp .L3017
+.L3016:
     xorl %eax, %eax
-.L2625:
+.L3017:
     cmpq $0, %rax
-    je .L2626
-    jmp .L2611
-.L2626:
-.L2623:
-    jmp .L2610
-.L2611:
+    je .L3018
+    jmp .L3003
+.L3018:
+.L3015:
+    jmp .L3002
+.L3003:
     leaq -1120(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -18016,7 +20195,7 @@ statement:
     call restore_parser_state
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr766(%rip), %rax
+    leaq .Lstr828(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18027,7 +20206,7 @@ statement:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr767(%rip), %rax
+    leaq .Lstr829(%rip), %rax
     pushq %rax
     movq -656(%rbp), %rax
     pushq %rax
@@ -18041,9 +20220,9 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2609
-.L2608:
-    leaq .Lstr768(%rip), %rax
+    jmp .L3001
+.L3000:
+    leaq .Lstr830(%rip), %rax
     pushq %rax
     movq -656(%rbp), %rax
     pushq %rax
@@ -18057,7 +20236,7 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2609:
+.L3001:
     movq -704(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -18107,7 +20286,206 @@ statement:
     popq %r12
     leave
     ret
-.L2508:
+.L2898:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $292, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L3020
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    leaq label_counter(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    movq %rax, -16(%rbp)
+    leaq label_counter(%rip), %rax
+    movq (%rax), %rcx
+    addq $1, (%rax)
+    movq %rcx, %rax
+    movq %rax, -32(%rbp)
+    movq continue_target(%rip), %rax
+    movq %rax, -48(%rbp)
+    movq continue_target_valid(%rip), %rax
+    movq %rax, -64(%rbp)
+    movq break_target(%rip), %rax
+    movq %rax, -80(%rbp)
+    movq break_target_valid(%rip), %rax
+    movq %rax, -96(%rbp)
+    leaq continue_target(%rip), %rax
+    pushq %rax
+    movq -16(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq continue_target_valid(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq break_target(%rip), %rax
+    pushq %rax
+    movq -32(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq break_target_valid(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit_label
+    movq %r12, %rsp
+    popq %r12
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call statement
+    movq %r12, %rsp
+    popq %r12
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $260, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    setne %al
+    movzbq %al, %rax
+    cmpq $0, %rax
+    je .L3022
+    leaq .Lstr831(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call error
+    movq %r12, %rsp
+    popq %r12
+.L3022:
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    movq $40, %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call match
+    movq %r12, %rsp
+    popq %r12
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call assignment_expr
+    movq %r12, %rsp
+    popq %r12
+    movq $41, %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call match
+    movq %r12, %rsp
+    popq %r12
+    movq $59, %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call match
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr832(%rip), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit
+    movq %r12, %rsp
+    popq %r12
+    leaq .Lstr833(%rip), %rax
+    pushq %rax
+    movq -16(%rbp), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit_i
+    movq %r12, %rsp
+    popq %r12
+    movq -32(%rbp), %rax
+    pushq %rax
+    movq 0(%rsp), %rdi
+    addq $8, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call emit_label
+    movq %r12, %rsp
+    popq %r12
+    leaq continue_target(%rip), %rax
+    pushq %rax
+    movq -48(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq continue_target_valid(%rip), %rax
+    pushq %rax
+    movq -64(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq break_target(%rip), %rax
+    pushq %rax
+    movq -80(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leaq break_target_valid(%rip), %rax
+    pushq %rax
+    movq -96(%rbp), %rax
+    popq %rcx
+    movq %rax, (%rcx)
+    leave
+    ret
+.L3020:
     movq tok(%rip), %rax
     pushq %rax
     movq $260, %rax
@@ -18116,7 +20494,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2628
+    je .L3024
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18202,7 +20580,7 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr769(%rip), %rax
+    leaq .Lstr834(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18213,7 +20591,7 @@ statement:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr770(%rip), %rax
+    leaq .Lstr835(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -18234,7 +20612,7 @@ statement:
     call statement
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr771(%rip), %rax
+    leaq .Lstr836(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -18281,7 +20659,7 @@ statement:
     movq %rax, (%rcx)
     leave
     ret
-.L2628:
+.L3024:
     movq tok(%rip), %rax
     pushq %rax
     movq $280, %rax
@@ -18290,7 +20668,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2630
+    je .L3026
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18337,7 +20715,7 @@ statement:
     addq $1, (%rax)
     movq %rcx, %rax
     movq %rax, -32(%rbp)
-    leaq .Lstr772(%rip), %rax
+    leaq .Lstr837(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18348,7 +20726,7 @@ statement:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr773(%rip), %rax
+    leaq .Lstr838(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18359,7 +20737,7 @@ statement:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr774(%rip), %rax
+    leaq .Lstr839(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -18419,7 +20797,7 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-.L2632:
+.L3028:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -18428,23 +20806,23 @@ statement:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2634
+    je .L3030
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2634
+    je .L3030
     movl $1, %eax
-    jmp .L2635
-.L2634:
+    jmp .L3031
+.L3030:
     xorl %eax, %eax
-.L2635:
+.L3031:
     cmpq $0, %rax
-    je .L2633
+    je .L3029
     movq tok(%rip), %rax
     pushq %rax
     movq $281, %rax
@@ -18453,7 +20831,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2636
+    je .L3032
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18531,8 +20909,8 @@ statement:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    jmp .L2637
-.L2636:
+    jmp .L3033
+.L3032:
     movq tok(%rip), %rax
     pushq %rax
     movq $282, %rax
@@ -18541,7 +20919,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2638
+    je .L3034
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18584,8 +20962,8 @@ statement:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    jmp .L2639
-.L2638:
+    jmp .L3035
+.L3034:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18593,10 +20971,10 @@ statement:
     call statement
     movq %r12, %rsp
     popq %r12
-.L2639:
-.L2637:
-    jmp .L2632
-.L2633:
+.L3035:
+.L3033:
+    jmp .L3028
+.L3029:
     movq $125, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -18608,7 +20986,7 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr775(%rip), %rax
+    leaq .Lstr840(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -18633,7 +21011,7 @@ statement:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr776(%rip), %rax
+    leaq .Lstr841(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18646,9 +21024,9 @@ statement:
     popq %r12
     movq $0, %rax
     movq %rax, -128(%rbp)
-    jmp .L2642
-.L2640:
-    leaq .Lstr777(%rip), %rax
+    jmp .L3038
+.L3036:
+    leaq .Lstr842(%rip), %rax
     pushq %rax
     leaq switch_case_values(%rip), %rax
     pushq %rax
@@ -18668,7 +21046,7 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr778(%rip), %rax
+    leaq .Lstr843(%rip), %rax
     pushq %rax
     leaq switch_case_labels(%rip), %rax
     pushq %rax
@@ -18688,13 +21066,13 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2641:
+.L3037:
     leaq -128(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2642
-.L2642:
+    jmp .L3038
+.L3038:
     movq -128(%rbp), %rax
     pushq %rax
     movq switch_case_count(%rip), %rax
@@ -18703,12 +21081,12 @@ statement:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    jne .L2640
-.L2643:
+    jne .L3036
+.L3039:
     movq switch_has_default(%rip), %rax
     cmpq $0, %rax
-    je .L2644
-    leaq .Lstr779(%rip), %rax
+    je .L3040
+    leaq .Lstr844(%rip), %rax
     pushq %rax
     movq switch_default_label(%rip), %rax
     pushq %rax
@@ -18722,7 +21100,7 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2644:
+.L3040:
     movq -32(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -18734,7 +21112,7 @@ statement:
     call emit_label
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr780(%rip), %rax
+    leaq .Lstr845(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18772,7 +21150,7 @@ statement:
     movq %rax, (%rcx)
     leave
     ret
-.L2630:
+.L3026:
     movq tok(%rip), %rax
     pushq %rax
     movq $283, %rax
@@ -18781,7 +21159,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2646
+    je .L3042
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18802,8 +21180,8 @@ statement:
     popq %r12
     movq break_target_valid(%rip), %rax
     cmpq $0, %rax
-    je .L2648
-    leaq .Lstr781(%rip), %rax
+    je .L3044
+    leaq .Lstr846(%rip), %rax
     pushq %rax
     movq break_target(%rip), %rax
     pushq %rax
@@ -18817,10 +21195,10 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2648:
+.L3044:
     leave
     ret
-.L2646:
+.L3042:
     movq tok(%rip), %rax
     pushq %rax
     movq $284, %rax
@@ -18829,7 +21207,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2650
+    je .L3046
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18850,8 +21228,8 @@ statement:
     popq %r12
     movq continue_target_valid(%rip), %rax
     cmpq $0, %rax
-    je .L2652
-    leaq .Lstr782(%rip), %rax
+    je .L3048
+    leaq .Lstr847(%rip), %rax
     pushq %rax
     movq continue_target(%rip), %rax
     pushq %rax
@@ -18865,10 +21243,10 @@ statement:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2652:
+.L3048:
     leave
     ret
-.L2650:
+.L3046:
     movq tok(%rip), %rax
     pushq %rax
     movq $288, %rax
@@ -18877,7 +21255,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2654
+    je .L3050
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18893,8 +21271,8 @@ statement:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2656
-    leaq .Lstr783(%rip), %rax
+    je .L3052
+    leaq .Lstr848(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -18905,8 +21283,8 @@ statement:
     call error
     movq %r12, %rsp
     popq %r12
-.L2656:
-    leaq .Lstr784(%rip), %rax
+.L3052:
+    leaq .Lstr849(%rip), %rax
     pushq %rax
     leaq token(%rip), %rax
     pushq %rax
@@ -18940,7 +21318,7 @@ statement:
     popq %r12
     leave
     ret
-.L2654:
+.L3050:
     movq tok(%rip), %rax
     pushq %rax
     movq $261, %rax
@@ -18949,7 +21327,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2658
+    je .L3054
     leaq function_has_return(%rip), %rax
     pushq %rax
     movq $1, %rax
@@ -18970,7 +21348,7 @@ statement:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2660
+    je .L3056
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -18978,7 +21356,7 @@ statement:
     call assignment_expr
     movq %r12, %rsp
     popq %r12
-.L2660:
+.L3056:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -18990,7 +21368,7 @@ statement:
     call match
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr785(%rip), %rax
+    leaq .Lstr850(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -19001,7 +21379,7 @@ statement:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr786(%rip), %rax
+    leaq .Lstr851(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -19014,7 +21392,7 @@ statement:
     popq %r12
     leave
     ret
-.L2658:
+.L3054:
     movq tok(%rip), %rax
     pushq %rax
     movq $123, %rax
@@ -19023,7 +21401,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2662
+    je .L3058
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19038,7 +21416,7 @@ statement:
     call push_scope
     movq %r12, %rsp
     popq %r12
-.L2664:
+.L3060:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -19047,23 +21425,23 @@ statement:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2666
+    je .L3062
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2666
+    je .L3062
     movl $1, %eax
-    jmp .L2667
-.L2666:
+    jmp .L3063
+.L3062:
     xorl %eax, %eax
-.L2667:
+.L3063:
     cmpq $0, %rax
-    je .L2665
+    je .L3061
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -19072,10 +21450,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2668
+    je .L3064
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr787(%rip), %rax
+    leaq .Lstr852(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -19094,10 +21472,10 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2670
+    jne .L3066
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr788(%rip), %rax
+    leaq .Lstr853(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -19116,21 +21494,45 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2670
+    jne .L3066
     xorl %eax, %eax
-    jmp .L2671
-.L2670:
+    jmp .L3067
+.L3066:
     movl $1, %eax
-.L2671:
+.L3067:
     testq %rax, %rax
-    je .L2668
+    je .L3064
     movl $1, %eax
-    jmp .L2669
-.L2668:
+    jmp .L3065
+.L3064:
     xorl %eax, %eax
-.L2669:
+.L3065:
     cmpq $0, %rax
-    je .L2672
+    je .L3068
+    leaq unsigned_type(%rip), %rax
+    pushq %rax
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr854(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19138,7 +21540,84 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2672:
+.L3070:
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $262, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    je .L3072
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr855(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3074
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr856(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3074
+    xorl %eax, %eax
+    jmp .L3075
+.L3074:
+    movl $1, %eax
+.L3075:
+    testq %rax, %rax
+    je .L3072
+    movl $1, %eax
+    jmp .L3073
+.L3072:
+    xorl %eax, %eax
+.L3073:
+    cmpq $0, %rax
+    je .L3071
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call next_token
+    movq %r12, %rsp
+    popq %r12
+    jmp .L3070
+.L3071:
+.L3068:
     movq tok(%rip), %rax
     pushq %rax
     movq $266, %rax
@@ -19147,7 +21626,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2674
+    je .L3076
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19155,9 +21634,9 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2664
-    jmp .L2675
-.L2674:
+    jmp .L3060
+    jmp .L3077
+.L3076:
     movq tok(%rip), %rax
     pushq %rax
     movq $269, %rax
@@ -19166,7 +21645,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2676
+    je .L3078
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19174,9 +21653,9 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2664
-    jmp .L2677
-.L2676:
+    jmp .L3060
+    jmp .L3079
+.L3078:
     movq tok(%rip), %rax
     pushq %rax
     movq $267, %rax
@@ -19185,7 +21664,7 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2678
+    je .L3080
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19193,8 +21672,8 @@ statement:
     call skip_typedef
     movq %r12, %rsp
     popq %r12
-    jmp .L2679
-.L2678:
+    jmp .L3081
+.L3080:
     movq tok(%rip), %rax
     pushq %rax
     movq $268, %rax
@@ -19202,8 +21681,24 @@ statement:
     cmpq %rax, %rcx
     sete %al
     movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3082
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $296, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3082
+    xorl %eax, %eax
+    jmp .L3083
+.L3082:
+    movl $1, %eax
+.L3083:
     cmpq $0, %rax
-    je .L2680
+    je .L3084
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19218,8 +21713,8 @@ statement:
     call skip_struct
     movq %r12, %rsp
     popq %r12
-    jmp .L2681
-.L2680:
+    jmp .L3085
+.L3084:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -19228,14 +21723,14 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2682
+    je .L3086
     movq input_ptr(%rip), %rax
     movq %rax, -16(%rbp)
-.L2684:
+.L3088:
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     testq %rax, %rax
-    je .L2692
+    je .L3096
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -19245,7 +21740,7 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2696
+    jne .L3100
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -19255,27 +21750,27 @@ statement:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2696
+    jne .L3100
     xorl %eax, %eax
-    jmp .L2697
-.L2696:
+    jmp .L3101
+.L3100:
     movl $1, %eax
-.L2697:
+.L3101:
     testq %rax, %rax
-    je .L2692
+    je .L3096
     movl $1, %eax
-    jmp .L2693
-.L2692:
+    jmp .L3097
+.L3096:
     xorl %eax, %eax
-.L2693:
+.L3097:
     cmpq $0, %rax
-    je .L2685
+    je .L3089
     leaq -16(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2684
-.L2685:
+    jmp .L3088
+.L3089:
     movq -16(%rbp), %rax
     movsbq (%rax), %rax
     pushq %rax
@@ -19285,8 +21780,8 @@ statement:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2698
-    leaq .Lstr789(%rip), %rax
+    je .L3102
+    leaq .Lstr857(%rip), %rax
     pushq %rax
     leaq token(%rip), %rax
     pushq %rax
@@ -19314,8 +21809,8 @@ statement:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2664
-.L2698:
+    jmp .L3060
+.L3102:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -19336,27 +21831,27 @@ statement:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2700
+    jne .L3104
     leaq symbols(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $48, %rax
+    addq $52, %rax
     movslq (%rax), %rax
     testq %rax, %rax
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2700
+    jne .L3104
     xorl %eax, %eax
-    jmp .L2701
-.L2700:
+    jmp .L3105
+.L3104:
     movl $1, %eax
-.L2701:
+.L3105:
     cmpq $0, %rax
-    je .L2702
+    je .L3106
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19364,15 +21859,15 @@ statement:
     call statement
     movq %r12, %rsp
     popq %r12
-    jmp .L2664
-.L2702:
+    jmp .L3060
+.L3106:
     leaq symbols(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $52, %rax
+    addq $56, %rax
     movslq (%rax), %rax
     movq %rax, -32(%rbp)
     pushq %r12
@@ -19385,7 +21880,7 @@ statement:
 restart_typedef:
     movq $0, %rax
     movq %rax, -48(%rbp)
-.L2704:
+.L3108:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -19394,7 +21889,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2705
+    je .L3109
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -19407,8 +21902,8 @@ restart_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2704
-.L2705:
+    jmp .L3108
+.L3109:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -19417,8 +21912,8 @@ restart_typedef:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2706
-    leaq .Lstr790(%rip), %rax
+    je .L3110
+    leaq .Lstr858(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -19429,7 +21924,7 @@ restart_typedef:
     call error
     movq %r12, %rsp
     popq %r12
-.L2706:
+.L3110:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -19450,7 +21945,7 @@ restart_typedef:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2708
+    je .L3112
     leaq -96(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -19461,7 +21956,7 @@ restart_typedef:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2708:
+.L3112:
     leaq -80(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -19497,12 +21992,12 @@ restart_typedef:
     popq %r12
     movq -48(%rbp), %rax
     testq %rax, %rax
-    je .L2710
+    je .L3114
     movq $8, %rax
-    jmp .L2711
-.L2710:
+    jmp .L3115
+.L3114:
     movq -32(%rbp), %rax
-.L2711:
+.L3115:
     movq %rax, -112(%rbp)
     movq $0, %rax
     movq %rax, -128(%rbp)
@@ -19512,7 +22007,7 @@ restart_typedef:
     movq %rax, -160(%rbp)
     movq $0, %rax
     movq %rax, -176(%rbp)
-.L2712:
+.L3116:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -19521,7 +22016,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2713
+    je .L3117
     leaq -128(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -19544,7 +22039,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2714
+    je .L3118
     leaq -192(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -19567,8 +22062,8 @@ restart_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2715
-.L2714:
+    jmp .L3119
+.L3118:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -19577,7 +22072,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2716
+    je .L3120
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -19598,7 +22093,7 @@ restart_typedef:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2718
+    je .L3122
     leaq -192(%rbp), %rax
     pushq %rax
     leaq macros(%rip), %rax
@@ -19611,9 +22106,9 @@ restart_typedef:
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2719
-.L2718:
-    leaq .Lstr791(%rip), %rax
+    jmp .L3123
+.L3122:
+    leaq .Lstr859(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -19624,7 +22119,7 @@ restart_typedef:
     call error
     movq %r12, %rsp
     popq %r12
-.L2719:
+.L3123:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19632,8 +22127,8 @@ restart_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2716:
-.L2715:
+.L3120:
+.L3119:
     movq $93, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -19657,12 +22152,12 @@ restart_typedef:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2720
+    je .L3124
     movq -192(%rbp), %rax
-    jmp .L2721
-.L2720:
+    jmp .L3125
+.L3124:
     movq $1, %rax
-.L2721:
+.L3125:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
@@ -19679,7 +22174,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2722
+    je .L3126
     leaq -160(%rbp), %rax
     pushq %rax
     movq -144(%rbp), %rax
@@ -19697,19 +22192,19 @@ restart_typedef:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2724
+    je .L3128
     movq -192(%rbp), %rax
-    jmp .L2725
-.L2724:
+    jmp .L3129
+.L3128:
     movq $1, %rax
-.L2725:
+.L3129:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2722:
-    jmp .L2712
-.L2713:
+.L3126:
+    jmp .L3116
+.L3117:
     leaq -80(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -19718,12 +22213,12 @@ restart_typedef:
     pushq %rax
     movq -48(%rbp), %rax
     testq %rax, %rax
-    je .L2726
+    je .L3130
     movq $262, %rax
-    jmp .L2727
-.L2726:
+    jmp .L3131
+.L3130:
     movq $0, %rax
-.L2727:
+.L3131:
     pushq %rax
     movq -128(%rbp), %rax
     pushq %rax
@@ -19751,7 +22246,7 @@ restart_typedef:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2728
+    je .L3132
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
@@ -19761,16 +22256,16 @@ restart_typedef:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -192(%rbp)
     movq -192(%rbp), %rax
-    addq $64, %rax
+    addq $68, %rax
     pushq %rax
     movq -160(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
-.L2728:
+.L3132:
     movq tok(%rip), %rax
     pushq %rax
     movq $61, %rax
@@ -19779,7 +22274,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2730
+    je .L3134
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19795,7 +22290,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2732
+    je .L3136
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19805,7 +22300,7 @@ restart_typedef:
     popq %r12
     movq $0, %rax
     movq %rax, -192(%rbp)
-.L2734:
+.L3138:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -19814,7 +22309,7 @@ restart_typedef:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2735
+    je .L3139
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19838,7 +22333,7 @@ restart_typedef:
     pushq %rax
     movq -208(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -224(%rbp)
     movq -224(%rbp), %rax
@@ -19861,8 +22356,8 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2736
-    leaq .Lstr792(%rip), %rax
+    je .L3140
+    leaq .Lstr860(%rip), %rax
     pushq %rax
     movq -240(%rbp), %rax
     pushq %rax
@@ -19876,8 +22371,8 @@ restart_typedef:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2737
-.L2736:
+    jmp .L3141
+.L3140:
     movq -144(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -19886,8 +22381,8 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2738
-    leaq .Lstr793(%rip), %rax
+    je .L3142
+    leaq .Lstr861(%rip), %rax
     pushq %rax
     movq -240(%rbp), %rax
     pushq %rax
@@ -19901,9 +22396,9 @@ restart_typedef:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2739
-.L2738:
-    leaq .Lstr794(%rip), %rax
+    jmp .L3143
+.L3142:
+    leaq .Lstr862(%rip), %rax
     pushq %rax
     movq -240(%rbp), %rax
     pushq %rax
@@ -19917,8 +22412,8 @@ restart_typedef:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2739:
-.L2737:
+.L3143:
+.L3141:
     movq tok(%rip), %rax
     pushq %rax
     movq $44, %rax
@@ -19927,7 +22422,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2740
+    je .L3144
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -19935,13 +22430,13 @@ restart_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2740:
+.L3144:
     leaq -192(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2734
-.L2735:
+    jmp .L3138
+.L3139:
     movq $125, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -19955,7 +22450,7 @@ restart_typedef:
     popq %r12
     movq -128(%rbp), %rax
     testq %rax, %rax
-    je .L2742
+    je .L3146
     movq -112(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -19964,14 +22459,14 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2742
+    je .L3146
     movl $1, %eax
-    jmp .L2743
-.L2742:
+    jmp .L3147
+.L3146:
     xorl %eax, %eax
-.L2743:
+.L3147:
     cmpq $0, %rax
-    je .L2744
+    je .L3148
     leaq -112(%rbp), %rax
     pushq %rax
     movq -192(%rbp), %rax
@@ -19997,11 +22492,11 @@ restart_typedef:
     pushq %rax
     movq -208(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -224(%rbp)
     movq -224(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $16, %rax
@@ -20045,7 +22540,7 @@ restart_typedef:
     andq %rcx, %rax
     movq %rax, -256(%rbp)
     movq -224(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     pushq %rax
     movq -112(%rbp), %rax
     popq %rcx
@@ -20087,16 +22582,16 @@ restart_typedef:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2746
+    je .L3150
     leaq max_func_stack(%rip), %rax
     pushq %rax
     movq stack_size(%rip), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2746:
-.L2744:
-    jmp .L2733
-.L2732:
+.L3150:
+.L3148:
+    jmp .L3137
+.L3136:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20120,16 +22615,16 @@ restart_typedef:
     pushq %rax
     movq -192(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -208(%rbp)
     movq -208(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L2748
+    je .L3152
     movq -208(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -20138,8 +22633,8 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2750
-    leaq .Lstr795(%rip), %rax
+    je .L3154
+    leaq .Lstr863(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     pushq %rax
@@ -20153,9 +22648,9 @@ restart_typedef:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L2751
-.L2750:
-    leaq .Lstr796(%rip), %rax
+    jmp .L3155
+.L3154:
+    leaq .Lstr864(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     pushq %rax
@@ -20169,11 +22664,11 @@ restart_typedef:
     call emit_s
     movq %r12, %rsp
     popq %r12
-.L2751:
-    jmp .L2749
-.L2748:
+.L3155:
+    jmp .L3153
+.L3152:
     movq -208(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -20182,8 +22677,8 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2752
-    leaq .Lstr797(%rip), %rax
+    je .L3156
+    leaq .Lstr865(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     addq $32, %rax
@@ -20199,9 +22694,9 @@ restart_typedef:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2753
-.L2752:
-    leaq .Lstr798(%rip), %rax
+    jmp .L3157
+.L3156:
+    leaq .Lstr866(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     addq $32, %rax
@@ -20217,10 +22712,10 @@ restart_typedef:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2753:
-.L2749:
-.L2733:
-.L2730:
+.L3157:
+.L3153:
+.L3137:
+.L3134:
     movq tok(%rip), %rax
     pushq %rax
     movq $44, %rax
@@ -20229,7 +22724,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2754
+    je .L3158
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20238,7 +22733,7 @@ restart_typedef:
     movq %r12, %rsp
     popq %r12
     jmp restart_typedef
-.L2754:
+.L3158:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -20250,8 +22745,8 @@ restart_typedef:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L2683
-.L2682:
+    jmp .L3087
+.L3086:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -20260,7 +22755,7 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2756
+    jne .L3160
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -20269,14 +22764,14 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2756
+    jne .L3160
     xorl %eax, %eax
-    jmp .L2757
-.L2756:
+    jmp .L3161
+.L3160:
     movl $1, %eax
-.L2757:
+.L3161:
     testq %rax, %rax
-    jne .L2758
+    jne .L3162
     movq tok(%rip), %rax
     pushq %rax
     movq $264, %rax
@@ -20285,14 +22780,14 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2758
+    jne .L3162
     xorl %eax, %eax
-    jmp .L2759
-.L2758:
+    jmp .L3163
+.L3162:
     movl $1, %eax
-.L2759:
+.L3163:
     testq %rax, %rax
-    jne .L2760
+    jne .L3164
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -20301,14 +22796,14 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2760
+    jne .L3164
     xorl %eax, %eax
-    jmp .L2761
-.L2760:
+    jmp .L3165
+.L3164:
     movl $1, %eax
-.L2761:
+.L3165:
     testq %rax, %rax
-    jne .L2762
+    jne .L3166
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -20317,14 +22812,14 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2762
+    jne .L3166
     xorl %eax, %eax
-    jmp .L2763
-.L2762:
+    jmp .L3167
+.L3166:
     movl $1, %eax
-.L2763:
+.L3167:
     cmpq $0, %rax
-    je .L2764
+    je .L3168
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     movq $0, %rax
@@ -20336,7 +22831,7 @@ restart_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2766:
+.L3170:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -20345,10 +22840,10 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2768
+    je .L3172
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr799(%rip), %rax
+    leaq .Lstr867(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -20367,10 +22862,10 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2770
+    jne .L3174
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr800(%rip), %rax
+    leaq .Lstr868(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -20389,21 +22884,21 @@ restart_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2770
+    jne .L3174
     xorl %eax, %eax
-    jmp .L2771
-.L2770:
+    jmp .L3175
+.L3174:
     movl $1, %eax
-.L2771:
+.L3175:
     testq %rax, %rax
-    je .L2768
+    je .L3172
     movl $1, %eax
-    jmp .L2769
-.L2768:
+    jmp .L3173
+.L3172:
     xorl %eax, %eax
-.L2769:
+.L3173:
     cmpq $0, %rax
-    je .L2767
+    je .L3171
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20411,12 +22906,12 @@ restart_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2766
-.L2767:
+    jmp .L3170
+.L3171:
 restart_int:
     movq $0, %rax
     movq %rax, -48(%rbp)
-.L2772:
+.L3176:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -20425,7 +22920,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2773
+    je .L3177
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -20438,8 +22933,8 @@ restart_int:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2772
-.L2773:
+    jmp .L3176
+.L3177:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -20448,8 +22943,8 @@ restart_int:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2774
-    leaq .Lstr801(%rip), %rax
+    je .L3178
+    leaq .Lstr869(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -20460,7 +22955,7 @@ restart_int:
     call error
     movq %r12, %rsp
     popq %r12
-.L2774:
+.L3178:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -20481,7 +22976,7 @@ restart_int:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2776
+    je .L3180
     leaq -96(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -20492,7 +22987,7 @@ restart_int:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2776:
+.L3180:
     leaq -80(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -20528,10 +23023,10 @@ restart_int:
     popq %r12
     movq -48(%rbp), %rax
     testq %rax, %rax
-    je .L2778
+    je .L3182
     movq $8, %rax
-    jmp .L2779
-.L2778:
+    jmp .L3183
+.L3182:
     movq -16(%rbp), %rax
     pushq %rax
     movq $263, %rax
@@ -20540,10 +23035,10 @@ restart_int:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2780
+    je .L3184
     movq $1, %rax
-    jmp .L2781
-.L2780:
+    jmp .L3185
+.L3184:
     movq -16(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -20552,14 +23047,14 @@ restart_int:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2782
+    je .L3186
     movq $4, %rax
-    jmp .L2783
-.L2782:
+    jmp .L3187
+.L3186:
     movq $8, %rax
-.L2783:
-.L2781:
-.L2779:
+.L3187:
+.L3185:
+.L3183:
     movq %rax, -112(%rbp)
     movq -16(%rbp), %rax
     pushq %rax
@@ -20569,7 +23064,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2784
+    jne .L3188
     movq -16(%rbp), %rax
     pushq %rax
     movq $264, %rax
@@ -20578,19 +23073,19 @@ restart_int:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2784
+    jne .L3188
     xorl %eax, %eax
-    jmp .L2785
-.L2784:
+    jmp .L3189
+.L3188:
     movl $1, %eax
-.L2785:
+.L3189:
     testq %rax, %rax
-    je .L2786
+    je .L3190
     movq $0, %rax
-    jmp .L2787
-.L2786:
+    jmp .L3191
+.L3190:
     movq -16(%rbp), %rax
-.L2787:
+.L3191:
     movq %rax, -128(%rbp)
     movq $0, %rax
     movq %rax, -144(%rbp)
@@ -20598,7 +23093,7 @@ restart_int:
     movq %rax, -160(%rbp)
     movq $0, %rax
     movq %rax, -176(%rbp)
-.L2788:
+.L3192:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -20607,7 +23102,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2789
+    je .L3193
     leaq -144(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -20630,7 +23125,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2790
+    je .L3194
     leaq -192(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -20653,8 +23148,8 @@ restart_int:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2791
-.L2790:
+    jmp .L3195
+.L3194:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -20663,7 +23158,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2792
+    je .L3196
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -20684,7 +23179,7 @@ restart_int:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2794
+    je .L3198
     leaq -192(%rbp), %rax
     pushq %rax
     leaq macros(%rip), %rax
@@ -20697,9 +23192,9 @@ restart_int:
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2795
-.L2794:
-    leaq .Lstr802(%rip), %rax
+    jmp .L3199
+.L3198:
+    leaq .Lstr870(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -20710,7 +23205,7 @@ restart_int:
     call error
     movq %r12, %rsp
     popq %r12
-.L2795:
+.L3199:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20718,8 +23213,8 @@ restart_int:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2792:
-.L2791:
+.L3196:
+.L3195:
     movq $93, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -20743,12 +23238,12 @@ restart_int:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2796
+    je .L3200
     movq -192(%rbp), %rax
-    jmp .L2797
-.L2796:
+    jmp .L3201
+.L3200:
     movq $1, %rax
-.L2797:
+.L3201:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
@@ -20765,7 +23260,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2798
+    je .L3202
     leaq -176(%rbp), %rax
     pushq %rax
     movq -160(%rbp), %rax
@@ -20783,19 +23278,19 @@ restart_int:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2800
+    je .L3204
     movq -192(%rbp), %rax
-    jmp .L2801
-.L2800:
+    jmp .L3205
+.L3204:
     movq $1, %rax
-.L2801:
+.L3205:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2798:
-    jmp .L2788
-.L2789:
+.L3202:
+    jmp .L3192
+.L3193:
     leaq -80(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -20804,12 +23299,12 @@ restart_int:
     pushq %rax
     movq -48(%rbp), %rax
     testq %rax, %rax
-    je .L2802
+    je .L3206
     movq -16(%rbp), %rax
-    jmp .L2803
-.L2802:
+    jmp .L3207
+.L3206:
     movq $0, %rax
-.L2803:
+.L3207:
     pushq %rax
     movq -144(%rbp), %rax
     pushq %rax
@@ -20838,9 +23333,9 @@ restart_int:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $68, %rax
+    addq $72, %rax
     pushq %rax
     movq -128(%rbp), %rax
     popq %rcx
@@ -20853,7 +23348,7 @@ restart_int:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2804
+    je .L3208
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
@@ -20863,16 +23358,16 @@ restart_int:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -192(%rbp)
     movq -192(%rbp), %rax
-    addq $64, %rax
+    addq $68, %rax
     pushq %rax
     movq -176(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
-.L2804:
+.L3208:
     movq tok(%rip), %rax
     pushq %rax
     movq $61, %rax
@@ -20881,7 +23376,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2806
+    je .L3210
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20897,7 +23392,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2808
+    je .L3212
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20907,7 +23402,7 @@ restart_int:
     popq %r12
     movq $0, %rax
     movq %rax, -192(%rbp)
-.L2810:
+.L3214:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -20916,7 +23411,7 @@ restart_int:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2811
+    je .L3215
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -20940,7 +23435,7 @@ restart_int:
     pushq %rax
     movq -208(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -224(%rbp)
     movq -224(%rbp), %rax
@@ -20963,8 +23458,8 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2812
-    leaq .Lstr803(%rip), %rax
+    je .L3216
+    leaq .Lstr871(%rip), %rax
     pushq %rax
     movq -240(%rbp), %rax
     pushq %rax
@@ -20978,8 +23473,8 @@ restart_int:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2813
-.L2812:
+    jmp .L3217
+.L3216:
     movq -160(%rbp), %rax
     pushq %rax
     movq $4, %rax
@@ -20988,8 +23483,8 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2814
-    leaq .Lstr804(%rip), %rax
+    je .L3218
+    leaq .Lstr872(%rip), %rax
     pushq %rax
     movq -240(%rbp), %rax
     pushq %rax
@@ -21003,9 +23498,9 @@ restart_int:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2815
-.L2814:
-    leaq .Lstr805(%rip), %rax
+    jmp .L3219
+.L3218:
+    leaq .Lstr873(%rip), %rax
     pushq %rax
     movq -240(%rbp), %rax
     pushq %rax
@@ -21019,8 +23514,8 @@ restart_int:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2815:
-.L2813:
+.L3219:
+.L3217:
     movq tok(%rip), %rax
     pushq %rax
     movq $44, %rax
@@ -21029,7 +23524,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2816
+    je .L3220
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21037,13 +23532,13 @@ restart_int:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2816:
+.L3220:
     leaq -192(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L2810
-.L2811:
+    jmp .L3214
+.L3215:
     movq $125, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -21057,7 +23552,7 @@ restart_int:
     popq %r12
     movq -144(%rbp), %rax
     testq %rax, %rax
-    je .L2818
+    je .L3222
     movq -112(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -21066,14 +23561,14 @@ restart_int:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2818
+    je .L3222
     movl $1, %eax
-    jmp .L2819
-.L2818:
+    jmp .L3223
+.L3222:
     xorl %eax, %eax
-.L2819:
+.L3223:
     cmpq $0, %rax
-    je .L2820
+    je .L3224
     leaq -112(%rbp), %rax
     pushq %rax
     movq -192(%rbp), %rax
@@ -21099,11 +23594,11 @@ restart_int:
     pushq %rax
     movq -208(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -224(%rbp)
     movq -224(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $16, %rax
@@ -21147,7 +23642,7 @@ restart_int:
     andq %rcx, %rax
     movq %rax, -256(%rbp)
     movq -224(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     pushq %rax
     movq -112(%rbp), %rax
     popq %rcx
@@ -21189,16 +23684,16 @@ restart_int:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2822
+    je .L3226
     leaq max_func_stack(%rip), %rax
     pushq %rax
     movq stack_size(%rip), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2822:
-.L2820:
-    jmp .L2809
-.L2808:
+.L3226:
+.L3224:
+    jmp .L3213
+.L3212:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21222,16 +23717,16 @@ restart_int:
     pushq %rax
     movq -192(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -208(%rbp)
     movq -208(%rbp), %rax
     addq $36, %rax
     movslq (%rax), %rax
     cmpq $0, %rax
-    je .L2824
+    je .L3228
     movq -208(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -21240,8 +23735,8 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2826
-    leaq .Lstr806(%rip), %rax
+    je .L3230
+    leaq .Lstr874(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     pushq %rax
@@ -21255,9 +23750,9 @@ restart_int:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    jmp .L2827
-.L2826:
-    leaq .Lstr807(%rip), %rax
+    jmp .L3231
+.L3230:
+    leaq .Lstr875(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     pushq %rax
@@ -21271,11 +23766,11 @@ restart_int:
     call emit_s
     movq %r12, %rsp
     popq %r12
-.L2827:
-    jmp .L2825
-.L2824:
+.L3231:
+    jmp .L3229
+.L3228:
     movq -208(%rbp), %rax
-    addq $68, %rax
+    addq $72, %rax
     movslq (%rax), %rax
     pushq %rax
     movq $289, %rax
@@ -21284,8 +23779,8 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2828
-    leaq .Lstr808(%rip), %rax
+    je .L3232
+    leaq .Lstr876(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     addq $32, %rax
@@ -21301,9 +23796,9 @@ restart_int:
     call emit_i
     movq %r12, %rsp
     popq %r12
-    jmp .L2829
-.L2828:
-    leaq .Lstr809(%rip), %rax
+    jmp .L3233
+.L3232:
+    leaq .Lstr877(%rip), %rax
     pushq %rax
     movq -208(%rbp), %rax
     addq $32, %rax
@@ -21319,10 +23814,10 @@ restart_int:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L2829:
-.L2825:
-.L2809:
-.L2806:
+.L3233:
+.L3229:
+.L3213:
+.L3210:
     movq tok(%rip), %rax
     pushq %rax
     movq $44, %rax
@@ -21331,7 +23826,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2830
+    je .L3234
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21340,7 +23835,7 @@ restart_int:
     movq %r12, %rsp
     popq %r12
     jmp restart_int
-.L2830:
+.L3234:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -21352,8 +23847,8 @@ restart_int:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L2765
-.L2764:
+    jmp .L3169
+.L3168:
     movq tok(%rip), %rax
     pushq %rax
     movq $265, %rax
@@ -21362,7 +23857,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2832
+    je .L3236
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21370,8 +23865,8 @@ restart_int:
     call parse_enum
     movq %r12, %rsp
     popq %r12
-    jmp .L2833
-.L2832:
+    jmp .L3237
+.L3236:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21379,15 +23874,15 @@ restart_int:
     call statement
     movq %r12, %rsp
     popq %r12
-.L2833:
-.L2765:
-.L2683:
-.L2681:
-.L2679:
-.L2677:
-.L2675:
-    jmp .L2664
-.L2665:
+.L3237:
+.L3169:
+.L3087:
+.L3085:
+.L3081:
+.L3079:
+.L3077:
+    jmp .L3060
+.L3061:
     movq $125, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -21408,7 +23903,7 @@ restart_int:
     popq %r12
     leave
     ret
-.L2662:
+.L3058:
     movq tok(%rip), %rax
     pushq %rax
     movq $40, %rax
@@ -21417,7 +23912,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2834
+    je .L3238
     movq input_ptr(%rip), %rax
     movq %rax, -16(%rbp)
     movq line(%rip), %rax
@@ -21453,7 +23948,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2836
+    je .L3240
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21469,7 +23964,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2838
+    je .L3242
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21497,8 +23992,8 @@ restart_int:
     popq %r12
     leave
     ret
-.L2838:
-.L2836:
+.L3242:
+.L3240:
     leaq input_ptr(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -21528,7 +24023,7 @@ restart_int:
     call strcpy
     movq %r12, %rsp
     popq %r12
-.L2834:
+.L3238:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -21537,7 +24032,7 @@ restart_int:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2840
+    je .L3244
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21547,7 +24042,7 @@ restart_int:
     popq %r12
     leave
     ret
-.L2840:
+.L3244:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21606,7 +24101,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2932
+    je .L3336
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21614,9 +24109,9 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2933
-.L2932:
-.L2934:
+    jmp .L3337
+.L3336:
+.L3338:
     movq tok(%rip), %rax
     pushq %rax
     movq $41, %rax
@@ -21625,23 +24120,23 @@ parse_function:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2936
+    je .L3340
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2936
+    je .L3340
     movl $1, %eax
-    jmp .L2937
-.L2936:
+    jmp .L3341
+.L3340:
     xorl %eax, %eax
-.L2937:
+.L3341:
     cmpq $0, %rax
-    je .L2935
+    je .L3339
     movq tok(%rip), %rax
     pushq %rax
     movq $269, %rax
@@ -21650,7 +24145,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2938
+    je .L3342
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21658,8 +24153,8 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2934
-.L2938:
+    jmp .L3338
+.L3342:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -21668,10 +24163,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2940
+    je .L3344
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr826(%rip), %rax
+    leaq .Lstr895(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -21690,10 +24185,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2942
+    jne .L3346
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr827(%rip), %rax
+    leaq .Lstr896(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -21712,21 +24207,45 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2942
+    jne .L3346
     xorl %eax, %eax
-    jmp .L2943
-.L2942:
+    jmp .L3347
+.L3346:
     movl $1, %eax
-.L2943:
+.L3347:
     testq %rax, %rax
-    je .L2940
+    je .L3344
     movl $1, %eax
-    jmp .L2941
-.L2940:
+    jmp .L3345
+.L3344:
     xorl %eax, %eax
-.L2941:
+.L3345:
     cmpq $0, %rax
-    je .L2944
+    je .L3348
+    leaq unsigned_type(%rip), %rax
+    pushq %rax
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr897(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21734,7 +24253,7 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2946:
+.L3350:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -21743,10 +24262,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2948
+    je .L3352
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr828(%rip), %rax
+    leaq .Lstr898(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -21765,10 +24284,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2950
+    jne .L3354
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr829(%rip), %rax
+    leaq .Lstr899(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -21787,21 +24306,21 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2950
+    jne .L3354
     xorl %eax, %eax
-    jmp .L2951
-.L2950:
+    jmp .L3355
+.L3354:
     movl $1, %eax
-.L2951:
+.L3355:
     testq %rax, %rax
-    je .L2948
+    je .L3352
     movl $1, %eax
-    jmp .L2949
-.L2948:
+    jmp .L3353
+.L3352:
     xorl %eax, %eax
-.L2949:
+.L3353:
     cmpq $0, %rax
-    je .L2947
+    je .L3351
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21809,9 +24328,9 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2946
-.L2947:
-.L2944:
+    jmp .L3350
+.L3351:
+.L3348:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -21820,7 +24339,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2952
+    jne .L3356
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -21829,14 +24348,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2952
+    jne .L3356
     xorl %eax, %eax
-    jmp .L2953
-.L2952:
+    jmp .L3357
+.L3356:
     movl $1, %eax
-.L2953:
+.L3357:
     testq %rax, %rax
-    jne .L2954
+    jne .L3358
     movq tok(%rip), %rax
     pushq %rax
     movq $264, %rax
@@ -21845,14 +24364,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2954
+    jne .L3358
     xorl %eax, %eax
-    jmp .L2955
-.L2954:
+    jmp .L3359
+.L3358:
     movl $1, %eax
-.L2955:
+.L3359:
     testq %rax, %rax
-    jne .L2956
+    jne .L3360
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -21861,14 +24380,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2956
+    jne .L3360
     xorl %eax, %eax
-    jmp .L2957
-.L2956:
+    jmp .L3361
+.L3360:
     movl $1, %eax
-.L2957:
+.L3361:
     testq %rax, %rax
-    jne .L2958
+    jne .L3362
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -21877,14 +24396,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2958
+    jne .L3362
     xorl %eax, %eax
-    jmp .L2959
-.L2958:
+    jmp .L3363
+.L3362:
     movl $1, %eax
-.L2959:
+.L3363:
     testq %rax, %rax
-    jne .L2960
+    jne .L3364
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -21893,14 +24412,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2960
+    jne .L3364
     xorl %eax, %eax
-    jmp .L2961
-.L2960:
+    jmp .L3365
+.L3364:
     movl $1, %eax
-.L2961:
+.L3365:
     cmpq $0, %rax
-    je .L2962
+    je .L3366
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -21909,12 +24428,12 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2964
+    je .L3368
     movq $262, %rax
-    jmp .L2965
-.L2964:
+    jmp .L3369
+.L3368:
     movq tok(%rip), %rax
-.L2965:
+.L3369:
     movq %rax, -65616(%rbp)
     movq tok(%rip), %rax
     pushq %rax
@@ -21924,7 +24443,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2966
+    je .L3370
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -21945,31 +24464,31 @@ parse_function:
     setge %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2968
+    je .L3372
     leaq symbols(%rip), %rax
     pushq %rax
     movq -65632(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $48, %rax
+    addq $52, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L2968
+    je .L3372
     movl $1, %eax
-    jmp .L2969
-.L2968:
+    jmp .L3373
+.L3372:
     xorl %eax, %eax
-.L2969:
+.L3373:
     cmpq $0, %rax
-    je .L2970
+    je .L3374
     leaq -65616(%rbp), %rax
     pushq %rax
     movq $262, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2970:
-.L2966:
+.L3374:
+.L3370:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -21977,7 +24496,7 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2972:
+.L3376:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -21986,10 +24505,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2974
+    je .L3378
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr830(%rip), %rax
+    leaq .Lstr900(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -22008,10 +24527,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2976
+    jne .L3380
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr831(%rip), %rax
+    leaq .Lstr901(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -22030,21 +24549,21 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2976
+    jne .L3380
     xorl %eax, %eax
-    jmp .L2977
-.L2976:
+    jmp .L3381
+.L3380:
     movl $1, %eax
-.L2977:
+.L3381:
     testq %rax, %rax
-    je .L2974
+    je .L3378
     movl $1, %eax
-    jmp .L2975
-.L2974:
+    jmp .L3379
+.L3378:
     xorl %eax, %eax
-.L2975:
+.L3379:
     cmpq $0, %rax
-    je .L2973
+    je .L3377
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22052,11 +24571,11 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2972
-.L2973:
+    jmp .L3376
+.L3377:
     movq $0, %rax
     movq %rax, -65632(%rbp)
-.L2978:
+.L3382:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -22065,7 +24584,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2979
+    je .L3383
     leaq -65632(%rbp), %rax
     pushq %rax
     movq -65632(%rbp), %rax
@@ -22082,8 +24601,8 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L2978
-.L2979:
+    jmp .L3382
+.L3383:
     movq -65632(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -22100,8 +24619,8 @@ parse_function:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2980
-    leaq .Lstr832(%rip), %rax
+    je .L3384
+    leaq .Lstr902(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22112,7 +24631,7 @@ parse_function:
     call error
     movq %r12, %rsp
     popq %r12
-.L2980:
+.L3384:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -22133,7 +24652,7 @@ parse_function:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2982
+    je .L3386
     leaq -65664(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -22144,7 +24663,7 @@ parse_function:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2982:
+.L3386:
     leaq -65584(%rbp), %rax
     pushq %rax
     movq -65600(%rbp), %rax
@@ -22183,10 +24702,10 @@ parse_function:
     movb %al, (%rcx)
     movq -65648(%rbp), %rax
     testq %rax, %rax
-    je .L2984
+    je .L3388
     movq $8, %rax
-    jmp .L2985
-.L2984:
+    jmp .L3389
+.L3388:
     movq -65616(%rbp), %rax
     pushq %rax
     movq $263, %rax
@@ -22195,10 +24714,10 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2986
+    je .L3390
     movq $1, %rax
-    jmp .L2987
-.L2986:
+    jmp .L3391
+.L3390:
     movq -65616(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -22207,14 +24726,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L2988
+    je .L3392
     movq $4, %rax
-    jmp .L2989
-.L2988:
+    jmp .L3393
+.L3392:
     movq $8, %rax
-.L2989:
-.L2987:
-.L2985:
+.L3393:
+.L3391:
+.L3389:
     movq %rax, -65680(%rbp)
     movq $0, %rax
     movq %rax, -65696(%rbp)
@@ -22226,7 +24745,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2990
+    jne .L3394
     movq -65616(%rbp), %rax
     pushq %rax
     movq $264, %rax
@@ -22235,19 +24754,19 @@ parse_function:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L2990
+    jne .L3394
     xorl %eax, %eax
-    jmp .L2991
-.L2990:
+    jmp .L3395
+.L3394:
     movl $1, %eax
-.L2991:
+.L3395:
     testq %rax, %rax
-    je .L2992
+    je .L3396
     movq $0, %rax
-    jmp .L2993
-.L2992:
+    jmp .L3397
+.L3396:
     movq -65616(%rbp), %rax
-.L2993:
+.L3397:
     movq %rax, -65712(%rbp)
     movq -65632(%rbp), %rax
     pushq %rax
@@ -22257,14 +24776,14 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2994
+    je .L3398
     leaq -65696(%rbp), %rax
     pushq %rax
     movq -65616(%rbp), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L2995
-.L2994:
+    jmp .L3399
+.L3398:
     movq -65632(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -22273,14 +24792,14 @@ parse_function:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2996
+    je .L3400
     leaq -65696(%rbp), %rax
     pushq %rax
     movq $262, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L2996:
-.L2995:
+.L3400:
+.L3399:
     leaq token(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -22316,9 +24835,9 @@ parse_function:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $68, %rax
+    addq $72, %rax
     pushq %rax
     movq -65712(%rbp), %rax
     popq %rcx
@@ -22342,7 +24861,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L2998
+    je .L3402
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22350,9 +24869,9 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L2998:
-    jmp .L2963
-.L2962:
+.L3402:
+    jmp .L3367
+.L3366:
     movq tok(%rip), %rax
     pushq %rax
     movq $46, %rax
@@ -22361,7 +24880,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3000
+    je .L3404
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22377,7 +24896,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3002
+    je .L3406
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22385,7 +24904,7 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3002:
+.L3406:
     movq tok(%rip), %rax
     pushq %rax
     movq $46, %rax
@@ -22394,7 +24913,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3004
+    je .L3408
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22402,10 +24921,10 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3004:
-    jmp .L2935
-    jmp .L3001
-.L3000:
+.L3408:
+    jmp .L3339
+    jmp .L3405
+.L3404:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22413,11 +24932,11 @@ parse_function:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3001:
-.L2963:
-    jmp .L2934
-.L2935:
-.L2933:
+.L3405:
+.L3367:
+    jmp .L3338
+.L3339:
+.L3337:
     movq $41, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -22437,7 +24956,7 @@ parse_function:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3006
+    je .L3410
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22454,7 +24973,7 @@ parse_function:
     popq %r12
     leave
     ret
-.L3006:
+.L3410:
     movq tok(%rip), %rax
     pushq %rax
     movq $123, %rax
@@ -22463,8 +24982,8 @@ parse_function:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3008
-    leaq .Lstr833(%rip), %rax
+    je .L3412
+    leaq .Lstr903(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22475,7 +24994,7 @@ parse_function:
     call error
     movq %r12, %rsp
     popq %r12
-.L3008:
+.L3412:
     movq stack_size(%rip), %rax
     pushq %rax
     movq -48(%rbp), %rax
@@ -22561,13 +25080,13 @@ parse_function:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3010
+    je .L3414
     leaq -65952(%rbp), %rax
     pushq %rax
     movq $64, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3010:
+.L3414:
     movq -65936(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -22613,7 +25132,7 @@ parse_function:
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    leaq .Lstr834(%rip), %rax
+    leaq .Lstr904(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -22627,7 +25146,7 @@ parse_function:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr835(%rip), %rax
+    leaq .Lstr905(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -22641,7 +25160,7 @@ parse_function:
     call emit_s
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr836(%rip), %rax
+    leaq .Lstr906(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22652,7 +25171,7 @@ parse_function:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr837(%rip), %rax
+    leaq .Lstr907(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22696,8 +25215,8 @@ parse_function:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3012
-    leaq .Lstr838(%rip), %rax
+    je .L3416
+    leaq .Lstr908(%rip), %rax
     pushq %rax
     movq -65968(%rbp), %rax
     pushq %rax
@@ -22711,11 +25230,11 @@ parse_function:
     call emit_i
     movq %r12, %rsp
     popq %r12
-.L3012:
+.L3416:
     movq $0, %rax
     movq %rax, -65984(%rbp)
-    jmp .L3016
-.L3014:
+    jmp .L3420
+.L3418:
     leaq -65584(%rbp), %rax
     pushq %rax
     movq -65984(%rbp), %rax
@@ -22741,15 +25260,15 @@ parse_function:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3018
+    je .L3422
     leaq symbols(%rip), %rax
     pushq %rax
     movq -66000(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -66016(%rbp)
-    leaq .Lstr839(%rip), %rax
+    leaq .Lstr909(%rip), %rax
     pushq %rax
     movq -65984(%rbp), %rax
     pushq %rax
@@ -22778,14 +25297,14 @@ parse_function:
     call emit_si
     movq %r12, %rsp
     popq %r12
-.L3018:
-.L3015:
+.L3422:
+.L3419:
     leaq -65984(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3016
-.L3016:
+    jmp .L3420
+.L3420:
     movq -65984(%rbp), %rax
     pushq %rax
     movq -65600(%rbp), %rax
@@ -22794,7 +25313,7 @@ parse_function:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3020
+    je .L3424
     movq -65984(%rbp), %rax
     pushq %rax
     movq $6, %rax
@@ -22803,15 +25322,15 @@ parse_function:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3020
+    je .L3424
     movl $1, %eax
-    jmp .L3021
-.L3020:
+    jmp .L3425
+.L3424:
     xorl %eax, %eax
-.L3021:
+.L3425:
     cmpq $0, %rax
-    jne .L3014
-.L3017:
+    jne .L3418
+.L3421:
     leaq stack_size(%rip), %rax
     pushq %rax
     movq -65616(%rbp), %rax
@@ -22829,7 +25348,7 @@ parse_function:
     call statement
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr840(%rip), %rax
+    leaq .Lstr910(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22840,7 +25359,7 @@ parse_function:
     call emit
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr841(%rip), %rax
+    leaq .Lstr911(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22880,7 +25399,7 @@ parse_enum:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3042
+    je .L3446
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22888,7 +25407,7 @@ parse_enum:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3042:
+.L3446:
     movq tok(%rip), %rax
     pushq %rax
     movq $123, %rax
@@ -22897,8 +25416,8 @@ parse_enum:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3044
-    leaq .Lstr846(%rip), %rax
+    je .L3448
+    leaq .Lstr916(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22909,7 +25428,7 @@ parse_enum:
     call error
     movq %r12, %rsp
     popq %r12
-.L3044:
+.L3448:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -22919,7 +25438,7 @@ parse_enum:
     popq %r12
     movq $0, %rax
     movq %rax, -16(%rbp)
-.L3046:
+.L3450:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -22928,23 +25447,23 @@ parse_enum:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3048
+    je .L3452
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3048
+    je .L3452
     movl $1, %eax
-    jmp .L3049
-.L3048:
+    jmp .L3453
+.L3452:
     xorl %eax, %eax
-.L3049:
+.L3453:
     cmpq $0, %rax
-    je .L3047
+    je .L3451
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -22953,8 +25472,8 @@ parse_enum:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3050
-    leaq .Lstr847(%rip), %rax
+    je .L3454
+    leaq .Lstr917(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22965,7 +25484,7 @@ parse_enum:
     call error
     movq %r12, %rsp
     popq %r12
-.L3050:
+.L3454:
     movq symbol_count(%rip), %rax
     pushq %rax
     movq $2048, %rax
@@ -22974,8 +25493,8 @@ parse_enum:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3052
-    leaq .Lstr848(%rip), %rax
+    je .L3456
+    leaq .Lstr918(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -22986,12 +25505,12 @@ parse_enum:
     call error
     movq %r12, %rsp
     popq %r12
-.L3052:
+.L3456:
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -32(%rbp)
     movq -32(%rbp), %rax
@@ -23020,7 +25539,7 @@ parse_enum:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3054
+    je .L3458
     leaq -64(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -23031,7 +25550,7 @@ parse_enum:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3054:
+.L3458:
     movq -48(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -23059,7 +25578,7 @@ parse_enum:
     popq %rcx
     movb %al, (%rcx)
     movq -32(%rbp), %rax
-    addq $48, %rax
+    addq $52, %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
@@ -23071,19 +25590,13 @@ parse_enum:
     popq %rcx
     movl %eax, (%rcx)
     movq -32(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     pushq %rax
     movq $8, %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -32(%rbp), %rax
-    addq $44, %rax
-    pushq %rax
-    movq $0, %rax
-    popq %rcx
-    movl %eax, (%rcx)
-    movq -32(%rbp), %rax
-    addq $56, %rax
+    addq $48, %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
@@ -23109,6 +25622,12 @@ parse_enum:
     movq -32(%rbp), %rax
     addq $72, %rax
     pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movl %eax, (%rcx)
+    movq -32(%rbp), %rax
+    addq $80, %rax
+    pushq %rax
     movq $1, %rax
     negq %rax
     popq %rcx
@@ -23126,7 +25645,7 @@ parse_enum:
     popq %r12
     movq %rax, -64(%rbp)
     movq -32(%rbp), %rax
-    addq $72, %rax
+    addq $80, %rax
     pushq %rax
     leaq hash_table(%rip), %rax
     pushq %rax
@@ -23167,7 +25686,7 @@ parse_enum:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3056
+    je .L3460
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23183,8 +25702,8 @@ parse_enum:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3058
-    leaq .Lstr849(%rip), %rax
+    je .L3462
+    leaq .Lstr919(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -23195,7 +25714,7 @@ parse_enum:
     call error
     movq %r12, %rsp
     popq %r12
-.L3058:
+.L3462:
     leaq -16(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -23218,9 +25737,9 @@ parse_enum:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3056:
+.L3460:
     movq -32(%rbp), %rax
-    addq $52, %rax
+    addq $56, %rax
     pushq %rax
     movq -16(%rbp), %rax
     popq %rcx
@@ -23237,7 +25756,7 @@ parse_enum:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3060
+    je .L3464
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23245,9 +25764,9 @@ parse_enum:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3060:
-    jmp .L3046
-.L3047:
+.L3464:
+    jmp .L3450
+.L3451:
     movq $125, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -23285,7 +25804,7 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3108
+    je .L3512
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23293,7 +25812,7 @@ skip_struct:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3108:
+.L3512:
     movq tok(%rip), %rax
     pushq %rax
     movq $123, %rax
@@ -23302,8 +25821,8 @@ skip_struct:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3110
-    leaq .Lstr851(%rip), %rax
+    je .L3514
+    leaq .Lstr921(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -23314,7 +25833,7 @@ skip_struct:
     call error
     movq %r12, %rsp
     popq %r12
-.L3110:
+.L3514:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23327,7 +25846,7 @@ skip_struct:
     movq $0, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3112:
+.L3516:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -23336,23 +25855,23 @@ skip_struct:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3114
+    je .L3518
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3114
+    je .L3518
     movl $1, %eax
-    jmp .L3115
-.L3114:
+    jmp .L3519
+.L3518:
     xorl %eax, %eax
-.L3115:
+.L3519:
     cmpq $0, %rax
-    je .L3113
+    je .L3517
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -23361,7 +25880,7 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3116
+    jne .L3520
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -23370,14 +25889,14 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3116
+    jne .L3520
     xorl %eax, %eax
-    jmp .L3117
-.L3116:
+    jmp .L3521
+.L3520:
     movl $1, %eax
-.L3117:
+.L3521:
     testq %rax, %rax
-    jne .L3118
+    jne .L3522
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -23386,14 +25905,14 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3118
+    jne .L3522
     xorl %eax, %eax
-    jmp .L3119
-.L3118:
+    jmp .L3523
+.L3522:
     movl $1, %eax
-.L3119:
+.L3523:
     testq %rax, %rax
-    jne .L3120
+    jne .L3524
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -23402,14 +25921,14 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3120
+    jne .L3524
     xorl %eax, %eax
-    jmp .L3121
-.L3120:
+    jmp .L3525
+.L3524:
     movl $1, %eax
-.L3121:
+.L3525:
     cmpq $0, %rax
-    je .L3122
+    je .L3526
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     pushq %r12
@@ -23421,7 +25940,7 @@ skip_struct:
     popq %r12
     movq $0, %rax
     movq %rax, -32(%rbp)
-.L3124:
+.L3528:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -23430,7 +25949,7 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3125
+    je .L3529
     leaq -32(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -23443,18 +25962,18 @@ skip_struct:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3124
-.L3125:
+    jmp .L3528
+.L3529:
     movq -32(%rbp), %rax
     cmpq $0, %rax
-    je .L3126
+    je .L3530
     leaq -48(%rbp), %rax
     pushq %rax
     movq $8, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L3127
-.L3126:
+    jmp .L3531
+.L3530:
     movq -16(%rbp), %rax
     pushq %rax
     movq $263, %rax
@@ -23463,14 +25982,14 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3128
+    je .L3532
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L3129
-.L3128:
+    jmp .L3533
+.L3532:
     movq -16(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -23479,14 +25998,14 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3130
+    je .L3534
     leaq -48(%rbp), %rax
     pushq %rax
     movq $4, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L3131
-.L3130:
+    jmp .L3535
+.L3534:
     movq -16(%rbp), %rax
     pushq %rax
     movq $290, %rax
@@ -23495,24 +26014,24 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3132
+    je .L3536
     leaq -48(%rbp), %rax
     pushq %rax
     movq $8, %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L3133
-.L3132:
+    jmp .L3537
+.L3536:
     leaq -48(%rbp), %rax
     pushq %rax
     movq $4, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3133:
-.L3131:
-.L3129:
-.L3127:
-.L3134:
+.L3537:
+.L3535:
+.L3533:
+.L3531:
+.L3538:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -23521,7 +26040,7 @@ skip_struct:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3136
+    je .L3540
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -23530,30 +26049,30 @@ skip_struct:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3136
+    je .L3540
     movl $1, %eax
-    jmp .L3137
-.L3136:
+    jmp .L3541
+.L3540:
     xorl %eax, %eax
-.L3137:
+.L3541:
     testq %rax, %rax
-    je .L3138
+    je .L3542
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3138
+    je .L3542
     movl $1, %eax
-    jmp .L3139
-.L3138:
+    jmp .L3543
+.L3542:
     xorl %eax, %eax
-.L3139:
+.L3543:
     cmpq $0, %rax
-    je .L3135
+    je .L3539
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -23562,7 +26081,7 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3140
+    je .L3544
     movq struct_member_count(%rip), %rax
     pushq %rax
     movq $256, %rax
@@ -23571,7 +26090,7 @@ skip_struct:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3142
+    je .L3546
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -23592,7 +26111,7 @@ skip_struct:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3144
+    je .L3548
     leaq -64(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -23603,7 +26122,7 @@ skip_struct:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3144:
+.L3548:
     leaq struct_member_names(%rip), %rax
     pushq %rax
     movq struct_member_count(%rip), %rax
@@ -23674,7 +26193,7 @@ skip_struct:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-.L3142:
+.L3546:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23690,7 +26209,7 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3146
+    je .L3550
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23708,7 +26227,7 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3148
+    je .L3552
     leaq -64(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -23731,7 +26250,7 @@ skip_struct:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3148:
+.L3552:
     movq $93, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -23764,7 +26283,7 @@ skip_struct:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3150
+    je .L3554
     leaq struct_member_sizes(%rip), %rax
     pushq %rax
     movq struct_member_count(%rip), %rax
@@ -23784,9 +26303,9 @@ skip_struct:
     imulq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3150:
-    jmp .L3147
-.L3146:
+.L3554:
+    jmp .L3551
+.L3550:
     leaq struct_total_size(%rip), %rax
     pushq %rax
     movq (%rax), %rax
@@ -23796,9 +26315,9 @@ skip_struct:
     addq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3147:
-    jmp .L3141
-.L3140:
+.L3551:
+    jmp .L3545
+.L3544:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23806,9 +26325,9 @@ skip_struct:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3141:
-    jmp .L3134
-.L3135:
+.L3545:
+    jmp .L3538
+.L3539:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -23820,8 +26339,8 @@ skip_struct:
     call match
     movq %r12, %rsp
     popq %r12
-    jmp .L3123
-.L3122:
+    jmp .L3527
+.L3526:
     movq tok(%rip), %rax
     pushq %rax
     movq $125, %rax
@@ -23830,10 +26349,10 @@ skip_struct:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3152
-    jmp .L3113
-    jmp .L3153
-.L3152:
+    je .L3556
+    jmp .L3517
+    jmp .L3557
+.L3556:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23841,10 +26360,10 @@ skip_struct:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3153:
-.L3123:
-    jmp .L3112
-.L3113:
+.L3557:
+.L3527:
+    jmp .L3516
+.L3517:
     movq $125, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -23878,7 +26397,7 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3186
+    je .L3590
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23893,8 +26412,8 @@ skip_typedef:
     call skip_struct
     movq %r12, %rsp
     popq %r12
-    jmp .L3187
-.L3186:
+    jmp .L3591
+.L3590:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -23903,7 +26422,7 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3188
+    jne .L3592
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -23912,14 +26431,14 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3188
+    jne .L3592
     xorl %eax, %eax
-    jmp .L3189
-.L3188:
+    jmp .L3593
+.L3592:
     movl $1, %eax
-.L3189:
+.L3593:
     testq %rax, %rax
-    jne .L3190
+    jne .L3594
     movq tok(%rip), %rax
     pushq %rax
     movq $264, %rax
@@ -23928,14 +26447,14 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3190
+    jne .L3594
     xorl %eax, %eax
-    jmp .L3191
-.L3190:
+    jmp .L3595
+.L3594:
     movl $1, %eax
-.L3191:
+.L3595:
     testq %rax, %rax
-    jne .L3192
+    jne .L3596
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -23944,14 +26463,14 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3192
+    jne .L3596
     xorl %eax, %eax
-    jmp .L3193
-.L3192:
+    jmp .L3597
+.L3596:
     movl $1, %eax
-.L3193:
+.L3597:
     testq %rax, %rax
-    jne .L3194
+    jne .L3598
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -23960,14 +26479,14 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3194
+    jne .L3598
     xorl %eax, %eax
-    jmp .L3195
-.L3194:
+    jmp .L3599
+.L3598:
     movl $1, %eax
-.L3195:
+.L3599:
     cmpq $0, %rax
-    je .L3196
+    je .L3600
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23975,7 +26494,7 @@ skip_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3198:
+.L3602:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -23984,7 +26503,7 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3199
+    je .L3603
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -23992,8 +26511,8 @@ skip_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3198
-.L3199:
+    jmp .L3602
+.L3603:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -24002,7 +26521,7 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3200
+    je .L3604
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24010,12 +26529,12 @@ skip_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3200:
-.L3196:
-.L3187:
-    leaq .Lstr854(%rip), %rax
+.L3604:
+.L3600:
+.L3591:
+    leaq .Lstr924(%rip), %rax
     movq %rax, -32(%rbp)
-.L3202:
+.L3606:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -24024,23 +26543,23 @@ skip_typedef:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3204
+    je .L3608
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3204
+    je .L3608
     movl $1, %eax
-    jmp .L3205
-.L3204:
+    jmp .L3609
+.L3608:
     xorl %eax, %eax
-.L3205:
+.L3609:
     cmpq $0, %rax
-    je .L3203
+    je .L3607
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -24049,7 +26568,7 @@ skip_typedef:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3206
+    je .L3610
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -24070,7 +26589,7 @@ skip_typedef:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3208
+    je .L3612
     leaq -48(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -24081,7 +26600,7 @@ skip_typedef:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3208:
+.L3612:
     leaq -32(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -24108,7 +26627,7 @@ skip_typedef:
     movq $0, %rax
     popq %rcx
     movb %al, (%rcx)
-.L3206:
+.L3610:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24116,8 +26635,8 @@ skip_typedef:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3202
-.L3203:
+    jmp .L3606
+.L3607:
     leaq -32(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -24125,7 +26644,7 @@ skip_typedef:
     addq %rcx, %rax
     movsbq (%rax), %rax
     cmpq $0, %rax
-    je .L3210
+    je .L3614
     movq symbol_count(%rip), %rax
     pushq %rax
     movq $2048, %rax
@@ -24134,8 +26653,8 @@ skip_typedef:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3212
-    leaq .Lstr855(%rip), %rax
+    je .L3616
+    leaq .Lstr925(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -24146,12 +26665,12 @@ skip_typedef:
     call error
     movq %r12, %rsp
     popq %r12
-.L3212:
+.L3616:
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -48(%rbp)
     movq -48(%rbp), %rax
@@ -24180,7 +26699,7 @@ skip_typedef:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3214
+    je .L3618
     leaq -80(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -24191,7 +26710,7 @@ skip_typedef:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3214:
+.L3618:
     movq -64(%rbp), %rax
     pushq %rax
     leaq -32(%rbp), %rax
@@ -24219,7 +26738,7 @@ skip_typedef:
     popq %rcx
     movb %al, (%rcx)
     movq -48(%rbp), %rax
-    addq $48, %rax
+    addq $52, %rax
     pushq %rax
     movq $1, %rax
     popq %rcx
@@ -24231,19 +26750,13 @@ skip_typedef:
     popq %rcx
     movl %eax, (%rcx)
     movq -48(%rbp), %rax
-    addq $40, %rax
+    addq $44, %rax
     pushq %rax
     movq $8, %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -48(%rbp), %rax
-    addq $44, %rax
-    pushq %rax
-    movq $0, %rax
-    popq %rcx
-    movl %eax, (%rcx)
-    movq -48(%rbp), %rax
-    addq $56, %rax
+    addq $48, %rax
     pushq %rax
     movq $0, %rax
     popq %rcx
@@ -24269,12 +26782,18 @@ skip_typedef:
     movq -48(%rbp), %rax
     addq $72, %rax
     pushq %rax
+    movq $0, %rax
+    popq %rcx
+    movl %eax, (%rcx)
+    movq -48(%rbp), %rax
+    addq $80, %rax
+    pushq %rax
     movq $1, %rax
     negq %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -48(%rbp), %rax
-    addq $52, %rax
+    addq $56, %rax
     pushq %rax
     movq $8, %rax
     popq %rcx
@@ -24287,14 +26806,14 @@ skip_typedef:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3216
+    je .L3620
     movq -48(%rbp), %rax
-    addq $52, %rax
+    addq $56, %rax
     pushq %rax
     movq struct_total_size(%rip), %rax
     popq %rcx
     movl %eax, (%rcx)
-.L3216:
+.L3620:
     leaq -32(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -24308,7 +26827,7 @@ skip_typedef:
     popq %r12
     movq %rax, -96(%rbp)
     movq -48(%rbp), %rax
-    addq $72, %rax
+    addq $80, %rax
     pushq %rax
     leaq hash_table(%rip), %rax
     pushq %rax
@@ -24334,7 +26853,7 @@ skip_typedef:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3210:
+.L3614:
     movq $59, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -24360,16 +26879,16 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3334:
+.L3740:
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3335
+    je .L3741
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -24378,10 +26897,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3336
+    je .L3742
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr869(%rip), %rax
+    leaq .Lstr940(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -24400,10 +26919,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3338
+    jne .L3744
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr870(%rip), %rax
+    leaq .Lstr941(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -24422,21 +26941,45 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3338
+    jne .L3744
     xorl %eax, %eax
-    jmp .L3339
-.L3338:
+    jmp .L3745
+.L3744:
     movl $1, %eax
-.L3339:
+.L3745:
     testq %rax, %rax
-    je .L3336
+    je .L3742
     movl $1, %eax
-    jmp .L3337
-.L3336:
+    jmp .L3743
+.L3742:
     xorl %eax, %eax
-.L3337:
+.L3743:
     cmpq $0, %rax
-    je .L3340
+    je .L3746
+    leaq unsigned_type(%rip), %rax
+    pushq %rax
+    leaq token(%rip), %rax
+    pushq %rax
+    leaq .Lstr942(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24444,7 +26987,7 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3342:
+.L3748:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -24453,10 +26996,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3344
+    je .L3750
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr871(%rip), %rax
+    leaq .Lstr943(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -24475,10 +27018,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3346
+    jne .L3752
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr872(%rip), %rax
+    leaq .Lstr944(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -24497,21 +27040,21 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3346
+    jne .L3752
     xorl %eax, %eax
-    jmp .L3347
-.L3346:
+    jmp .L3753
+.L3752:
     movl $1, %eax
-.L3347:
+.L3753:
     testq %rax, %rax
-    je .L3344
+    je .L3750
     movl $1, %eax
-    jmp .L3345
-.L3344:
+    jmp .L3751
+.L3750:
     xorl %eax, %eax
-.L3345:
+.L3751:
     cmpq $0, %rax
-    je .L3343
+    je .L3749
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24519,9 +27062,9 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3342
-.L3343:
-.L3340:
+    jmp .L3748
+.L3749:
+.L3746:
     movq tok(%rip), %rax
     pushq %rax
     movq $266, %rax
@@ -24530,7 +27073,12 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3348
+    je .L3754
+    leaq static_flag(%rip), %rax
+    pushq %rax
+    movq $1, %rax
+    popq %rcx
+    movq %rax, (%rcx)
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24538,9 +27086,7 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3334
-    jmp .L3349
-.L3348:
+.L3754:
     movq tok(%rip), %rax
     pushq %rax
     movq $269, %rax
@@ -24549,7 +27095,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3350
+    je .L3756
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24557,9 +27103,9 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3334
-    jmp .L3351
-.L3350:
+    jmp .L3740
+    jmp .L3757
+.L3756:
     movq tok(%rip), %rax
     pushq %rax
     movq $267, %rax
@@ -24568,7 +27114,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3352
+    je .L3758
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24576,8 +27122,8 @@ parse_program:
     call skip_typedef
     movq %r12, %rsp
     popq %r12
-    jmp .L3353
-.L3352:
+    jmp .L3759
+.L3758:
     movq tok(%rip), %rax
     pushq %rax
     movq $268, %rax
@@ -24585,8 +27131,24 @@ parse_program:
     cmpq %rax, %rcx
     sete %al
     movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3760
+    movq tok(%rip), %rax
+    pushq %rax
+    movq $296, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3760
+    xorl %eax, %eax
+    jmp .L3761
+.L3760:
+    movl $1, %eax
+.L3761:
     cmpq $0, %rax
-    je .L3354
+    je .L3762
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24601,8 +27163,8 @@ parse_program:
     call skip_struct
     movq %r12, %rsp
     popq %r12
-    jmp .L3355
-.L3354:
+    jmp .L3763
+.L3762:
     movq tok(%rip), %rax
     pushq %rax
     movq $265, %rax
@@ -24611,7 +27173,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3356
+    je .L3764
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24619,8 +27181,8 @@ parse_program:
     call parse_enum
     movq %r12, %rsp
     popq %r12
-    jmp .L3357
-.L3356:
+    jmp .L3765
+.L3764:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -24629,7 +27191,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3358
+    jne .L3766
     movq tok(%rip), %rax
     pushq %rax
     movq $263, %rax
@@ -24638,14 +27200,14 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3358
+    jne .L3766
     xorl %eax, %eax
-    jmp .L3359
-.L3358:
+    jmp .L3767
+.L3766:
     movl $1, %eax
-.L3359:
+.L3767:
     testq %rax, %rax
-    jne .L3360
+    jne .L3768
     movq tok(%rip), %rax
     pushq %rax
     movq $264, %rax
@@ -24654,14 +27216,14 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3360
+    jne .L3768
     xorl %eax, %eax
-    jmp .L3361
-.L3360:
+    jmp .L3769
+.L3768:
     movl $1, %eax
-.L3361:
+.L3769:
     testq %rax, %rax
-    jne .L3362
+    jne .L3770
     movq tok(%rip), %rax
     pushq %rax
     movq $289, %rax
@@ -24670,14 +27232,14 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3362
+    jne .L3770
     xorl %eax, %eax
-    jmp .L3363
-.L3362:
+    jmp .L3771
+.L3770:
     movl $1, %eax
-.L3363:
+.L3771:
     testq %rax, %rax
-    jne .L3364
+    jne .L3772
     movq tok(%rip), %rax
     pushq %rax
     movq $290, %rax
@@ -24686,14 +27248,14 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3364
+    jne .L3772
     xorl %eax, %eax
-    jmp .L3365
-.L3364:
+    jmp .L3773
+.L3772:
     movl $1, %eax
-.L3365:
+.L3773:
     cmpq $0, %rax
-    je .L3366
+    je .L3774
     movq tok(%rip), %rax
     movq %rax, -16(%rbp)
     pushq %r12
@@ -24703,7 +27265,7 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3368:
+.L3776:
     movq tok(%rip), %rax
     pushq %rax
     movq $262, %rax
@@ -24712,10 +27274,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3370
+    je .L3778
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr873(%rip), %rax
+    leaq .Lstr945(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -24734,10 +27296,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3372
+    jne .L3780
     leaq token(%rip), %rax
     pushq %rax
-    leaq .Lstr874(%rip), %rax
+    leaq .Lstr946(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -24756,21 +27318,21 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3372
+    jne .L3780
     xorl %eax, %eax
-    jmp .L3373
-.L3372:
+    jmp .L3781
+.L3780:
     movl $1, %eax
-.L3373:
+.L3781:
     testq %rax, %rax
-    je .L3370
+    je .L3778
     movl $1, %eax
-    jmp .L3371
-.L3370:
+    jmp .L3779
+.L3778:
     xorl %eax, %eax
-.L3371:
+.L3779:
     cmpq $0, %rax
-    je .L3369
+    je .L3777
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -24778,11 +27340,11 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3368
-.L3369:
+    jmp .L3776
+.L3777:
     movq $0, %rax
     movq %rax, -32(%rbp)
-.L3374:
+.L3782:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -24791,7 +27353,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3375
+    je .L3783
     leaq -32(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -24804,8 +27366,8 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3374
-.L3375:
+    jmp .L3782
+.L3783:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -24814,8 +27376,8 @@ parse_program:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3376
-    leaq .Lstr875(%rip), %rax
+    je .L3784
+    leaq .Lstr947(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -24826,7 +27388,7 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3376:
+.L3784:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -24847,7 +27409,7 @@ parse_program:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3378
+    je .L3786
     leaq -80(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -24858,7 +27420,7 @@ parse_program:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3378:
+.L3786:
     leaq -64(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -24900,7 +27462,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3380
+    je .L3788
     leaq -64(%rbp), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -24915,14 +27477,14 @@ parse_program:
     call parse_function
     movq %r12, %rsp
     popq %r12
-    jmp .L3381
-.L3380:
+    jmp .L3789
+.L3788:
     movq -32(%rbp), %rax
     testq %rax, %rax
-    je .L3382
+    je .L3790
     movq $8, %rax
-    jmp .L3383
-.L3382:
+    jmp .L3791
+.L3790:
     movq -16(%rbp), %rax
     pushq %rax
     movq $263, %rax
@@ -24931,10 +27493,10 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3384
+    je .L3792
     movq $1, %rax
-    jmp .L3385
-.L3384:
+    jmp .L3793
+.L3792:
     movq -16(%rbp), %rax
     pushq %rax
     movq $289, %rax
@@ -24943,14 +27505,14 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3386
+    je .L3794
     movq $4, %rax
-    jmp .L3387
-.L3386:
+    jmp .L3795
+.L3794:
     movq $8, %rax
-.L3387:
-.L3385:
-.L3383:
+.L3795:
+.L3793:
+.L3791:
     movq %rax, -96(%rbp)
     movq -16(%rbp), %rax
     pushq %rax
@@ -24960,7 +27522,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3388
+    jne .L3796
     movq -16(%rbp), %rax
     pushq %rax
     movq $264, %rax
@@ -24969,19 +27531,19 @@ parse_program:
     sete %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3388
+    jne .L3796
     xorl %eax, %eax
-    jmp .L3389
-.L3388:
+    jmp .L3797
+.L3796:
     movl $1, %eax
-.L3389:
+.L3797:
     testq %rax, %rax
-    je .L3390
+    je .L3798
     movq $0, %rax
-    jmp .L3391
-.L3390:
+    jmp .L3799
+.L3798:
     movq -16(%rbp), %rax
-.L3391:
+.L3799:
     movq %rax, -112(%rbp)
     movq $0, %rax
     movq %rax, -128(%rbp)
@@ -24991,7 +27553,7 @@ parse_program:
     movq %rax, -160(%rbp)
     movq $0, %rax
     movq %rax, -176(%rbp)
-.L3392:
+.L3800:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -25000,7 +27562,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3393
+    je .L3801
     leaq -128(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -25023,7 +27585,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3394
+    je .L3802
     leaq -192(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -25046,8 +27608,8 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3395
-.L3394:
+    jmp .L3803
+.L3802:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -25056,7 +27618,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3396
+    je .L3804
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -25077,7 +27639,7 @@ parse_program:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3398
+    je .L3806
     leaq -192(%rbp), %rax
     pushq %rax
     leaq macros(%rip), %rax
@@ -25090,9 +27652,9 @@ parse_program:
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L3399
-.L3398:
-    leaq .Lstr876(%rip), %rax
+    jmp .L3807
+.L3806:
+    leaq .Lstr948(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -25103,7 +27665,7 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3399:
+.L3807:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -25111,8 +27673,8 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3396:
-.L3395:
+.L3804:
+.L3803:
     movq $93, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -25136,12 +27698,12 @@ parse_program:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3400
+    je .L3808
     movq -192(%rbp), %rax
-    jmp .L3401
-.L3400:
+    jmp .L3809
+.L3808:
     movq $1, %rax
-.L3401:
+.L3809:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
@@ -25158,7 +27720,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3402
+    je .L3810
     leaq -160(%rbp), %rax
     pushq %rax
     movq -144(%rbp), %rax
@@ -25176,19 +27738,19 @@ parse_program:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3404
+    je .L3812
     movq -192(%rbp), %rax
-    jmp .L3405
-.L3404:
+    jmp .L3813
+.L3812:
     movq $1, %rax
-.L3405:
+.L3813:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3402:
-    jmp .L3392
-.L3393:
+.L3810:
+    jmp .L3800
+.L3801:
     leaq -64(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -25197,12 +27759,12 @@ parse_program:
     pushq %rax
     movq -32(%rbp), %rax
     testq %rax, %rax
-    je .L3406
+    je .L3814
     movq -16(%rbp), %rax
-    jmp .L3407
-.L3406:
+    jmp .L3815
+.L3814:
     movq $0, %rax
-.L3407:
+.L3815:
     pushq %rax
     movq -128(%rbp), %rax
     pushq %rax
@@ -25231,9 +27793,9 @@ parse_program:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $68, %rax
+    addq $72, %rax
     pushq %rax
     movq -112(%rbp), %rax
     popq %rcx
@@ -25246,7 +27808,7 @@ parse_program:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3408
+    je .L3816
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
@@ -25256,16 +27818,16 @@ parse_program:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -192(%rbp)
     movq -192(%rbp), %rax
-    addq $64, %rax
+    addq $68, %rax
     pushq %rax
     movq -160(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
-.L3408:
+.L3816:
     movq tok(%rip), %rax
     pushq %rax
     movq $61, %rax
@@ -25274,8 +27836,8 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3410
-.L3412:
+    je .L3818
+.L3820:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -25284,23 +27846,23 @@ parse_program:
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3414
+    je .L3822
     movq tok(%rip), %rax
     pushq %rax
-    movq $292, %rax
+    movq $297, %rax
     popq %rcx
     cmpq %rax, %rcx
     setne %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3414
+    je .L3822
     movl $1, %eax
-    jmp .L3415
-.L3414:
+    jmp .L3823
+.L3822:
     xorl %eax, %eax
-.L3415:
+.L3823:
     cmpq $0, %rax
-    je .L3413
+    je .L3821
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -25308,9 +27870,9 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3412
-.L3413:
-.L3410:
+    jmp .L3820
+.L3821:
+.L3818:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -25319,7 +27881,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3416
+    je .L3824
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -25327,9 +27889,9 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3417
-.L3416:
-    leaq .Lstr877(%rip), %rax
+    jmp .L3825
+.L3824:
+    leaq .Lstr949(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -25340,10 +27902,10 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3417:
-.L3381:
-    jmp .L3367
-.L3366:
+.L3825:
+.L3789:
+    jmp .L3775
+.L3774:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -25352,7 +27914,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3418
+    je .L3826
     movq $8, %rax
     movq %rax, -16(%rbp)
     leaq token(%rip), %rax
@@ -25375,37 +27937,37 @@ parse_program:
     setge %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3420
+    je .L3828
     leaq symbols(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $48, %rax
+    addq $52, %rax
     movslq (%rax), %rax
     testq %rax, %rax
-    je .L3420
+    je .L3828
     movl $1, %eax
-    jmp .L3421
-.L3420:
+    jmp .L3829
+.L3828:
     xorl %eax, %eax
-.L3421:
+.L3829:
     cmpq $0, %rax
-    je .L3422
+    je .L3830
     leaq -16(%rbp), %rax
     pushq %rax
     leaq symbols(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
-    addq $52, %rax
+    addq $56, %rax
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3422:
+.L3830:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -25415,7 +27977,7 @@ parse_program:
     popq %r12
     movq $0, %rax
     movq %rax, -48(%rbp)
-.L3424:
+.L3832:
     movq tok(%rip), %rax
     pushq %rax
     movq $42, %rax
@@ -25424,7 +27986,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3425
+    je .L3833
     leaq -48(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -25437,8 +27999,8 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3424
-.L3425:
+    jmp .L3832
+.L3833:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -25447,8 +28009,8 @@ parse_program:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3426
-    leaq .Lstr878(%rip), %rax
+    je .L3834
+    leaq .Lstr950(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -25459,7 +28021,7 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3426:
+.L3834:
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -25480,7 +28042,7 @@ parse_program:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3428
+    je .L3836
     leaq -96(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -25491,7 +28053,7 @@ parse_program:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3428:
+.L3836:
     leaq -80(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -25527,12 +28089,12 @@ parse_program:
     popq %r12
     movq -48(%rbp), %rax
     testq %rax, %rax
-    je .L3430
+    je .L3838
     movq $8, %rax
-    jmp .L3431
-.L3430:
+    jmp .L3839
+.L3838:
     movq -16(%rbp), %rax
-.L3431:
+.L3839:
     movq %rax, -112(%rbp)
     movq $0, %rax
     movq %rax, -128(%rbp)
@@ -25542,7 +28104,7 @@ parse_program:
     movq %rax, -160(%rbp)
     movq $0, %rax
     movq %rax, -176(%rbp)
-.L3432:
+.L3840:
     movq tok(%rip), %rax
     pushq %rax
     movq $91, %rax
@@ -25551,7 +28113,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3433
+    je .L3841
     leaq -128(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -25574,7 +28136,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3434
+    je .L3842
     leaq -192(%rbp), %rax
     pushq %rax
     leaq token(%rip), %rax
@@ -25597,8 +28159,8 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3435
-.L3434:
+    jmp .L3843
+.L3842:
     movq tok(%rip), %rax
     pushq %rax
     movq $257, %rax
@@ -25607,7 +28169,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3436
+    je .L3844
     leaq token(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -25628,7 +28190,7 @@ parse_program:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3438
+    je .L3846
     leaq -192(%rbp), %rax
     pushq %rax
     leaq macros(%rip), %rax
@@ -25641,9 +28203,9 @@ parse_program:
     movslq (%rax), %rax
     popq %rcx
     movq %rax, (%rcx)
-    jmp .L3439
-.L3438:
-    leaq .Lstr879(%rip), %rax
+    jmp .L3847
+.L3846:
+    leaq .Lstr951(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -25654,7 +28216,7 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3439:
+.L3847:
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -25662,8 +28224,8 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-.L3436:
-.L3435:
+.L3844:
+.L3843:
     movq $93, %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -25687,12 +28249,12 @@ parse_program:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3440
+    je .L3848
     movq -192(%rbp), %rax
-    jmp .L3441
-.L3440:
+    jmp .L3849
+.L3848:
     movq $1, %rax
-.L3441:
+.L3849:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
@@ -25709,7 +28271,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3442
+    je .L3850
     leaq -160(%rbp), %rax
     pushq %rax
     movq -144(%rbp), %rax
@@ -25727,19 +28289,19 @@ parse_program:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3444
+    je .L3852
     movq -192(%rbp), %rax
-    jmp .L3445
-.L3444:
+    jmp .L3853
+.L3852:
     movq $1, %rax
-.L3445:
+.L3853:
     popq %rcx
     imulq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3442:
-    jmp .L3432
-.L3433:
+.L3850:
+    jmp .L3840
+.L3841:
     leaq -80(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -25774,7 +28336,7 @@ parse_program:
     setg %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3446
+    je .L3854
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
@@ -25784,16 +28346,16 @@ parse_program:
     subq %rax, %rcx
     movq %rcx, %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -192(%rbp)
     movq -192(%rbp), %rax
-    addq $64, %rax
+    addq $68, %rax
     pushq %rax
     movq -160(%rbp), %rax
     popq %rcx
     movl %eax, (%rcx)
-.L3446:
+.L3854:
     movq tok(%rip), %rax
     pushq %rax
     movq $59, %rax
@@ -25802,7 +28364,7 @@ parse_program:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3448
+    je .L3856
     pushq %r12
     movq %rsp, %r12
     andq $-16, %rsp
@@ -25810,9 +28372,9 @@ parse_program:
     call next_token
     movq %r12, %rsp
     popq %r12
-    jmp .L3449
-.L3448:
-    leaq .Lstr880(%rip), %rax
+    jmp .L3857
+.L3856:
+    leaq .Lstr952(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -25823,10 +28385,10 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3449:
-    jmp .L3419
-.L3418:
-    leaq .Lstr881(%rip), %rax
+.L3857:
+    jmp .L3827
+.L3826:
+    leaq .Lstr953(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -25837,15 +28399,14 @@ parse_program:
     call error
     movq %r12, %rsp
     popq %r12
-.L3419:
-.L3367:
-.L3357:
-.L3355:
-.L3353:
-.L3351:
-.L3349:
-    jmp .L3334
-.L3335:
+.L3827:
+.L3775:
+.L3765:
+.L3763:
+.L3759:
+.L3757:
+    jmp .L3740
+.L3741:
     leave
     ret
     .globl emit_float_consts
@@ -25858,14 +28419,14 @@ emit_float_consts:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3458
+    je .L3866
     leave
     ret
-.L3458:
+.L3866:
     movq $0, %rax
     movq %rax, -16(%rbp)
-    jmp .L3462
-.L3460:
+    jmp .L3870
+.L3868:
     leaq float_const_is_float(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
@@ -25874,10 +28435,10 @@ emit_float_consts:
     addq %rcx, %rax
     movq (%rax), %rax
     cmpq $0, %rax
-    je .L3464
+    je .L3872
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr884(%rip), %rax
+    leaq .Lstr956(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -25900,11 +28461,11 @@ emit_float_consts:
     call fprintf
     movq %r12, %rsp
     popq %r12
-    jmp .L3465
-.L3464:
+    jmp .L3873
+.L3872:
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr885(%rip), %rax
+    leaq .Lstr957(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -25927,14 +28488,14 @@ emit_float_consts:
     call fprintf
     movq %r12, %rsp
     popq %r12
-.L3465:
-.L3461:
+.L3873:
+.L3869:
     leaq -16(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3462
-.L3462:
+    jmp .L3870
+.L3870:
     movq -16(%rbp), %rax
     pushq %rax
     movq float_const_count(%rip), %rax
@@ -25943,8 +28504,8 @@ emit_float_consts:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    jne .L3460
-.L3463:
+    jne .L3868
+.L3871:
     leave
     ret
     .globl emit_string_pool
@@ -25957,17 +28518,17 @@ emit_string_pool:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3486
+    je .L3894
     leave
     ret
-.L3486:
+.L3894:
     movq $0, %rax
     movq %rax, -16(%rbp)
-    jmp .L3490
-.L3488:
+    jmp .L3898
+.L3896:
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr893(%rip), %rax
+    leaq .Lstr965(%rip), %rax
     pushq %rax
     movq -16(%rbp), %rax
     pushq %rax
@@ -25990,11 +28551,11 @@ emit_string_pool:
     addq %rcx, %rax
     movq (%rax), %rax
     movq %rax, -32(%rbp)
-.L3492:
+.L3900:
     movq -32(%rbp), %rax
     movsbq (%rax), %rax
     cmpq $0, %rax
-    je .L3493
+    je .L3901
     movq -32(%rbp), %rax
     movsbq (%rax), %rax
     movq %rax, -48(%rbp)
@@ -26006,10 +28567,10 @@ emit_string_pool:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3494
+    je .L3902
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr894(%rip), %rax
+    leaq .Lstr966(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26021,8 +28582,8 @@ emit_string_pool:
     call fprintf
     movq %r12, %rsp
     popq %r12
-    jmp .L3495
-.L3494:
+    jmp .L3903
+.L3902:
     movsbq -48(%rbp), %rax
     pushq %rax
     movq $9, %rax
@@ -26031,10 +28592,10 @@ emit_string_pool:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3496
+    je .L3904
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr895(%rip), %rax
+    leaq .Lstr967(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26046,8 +28607,8 @@ emit_string_pool:
     call fprintf
     movq %r12, %rsp
     popq %r12
-    jmp .L3497
-.L3496:
+    jmp .L3905
+.L3904:
     movsbq -48(%rbp), %rax
     pushq %rax
     movq $92, %rax
@@ -26056,10 +28617,10 @@ emit_string_pool:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3498
+    je .L3906
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr896(%rip), %rax
+    leaq .Lstr968(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26071,8 +28632,8 @@ emit_string_pool:
     call fprintf
     movq %r12, %rsp
     popq %r12
-    jmp .L3499
-.L3498:
+    jmp .L3907
+.L3906:
     movsbq -48(%rbp), %rax
     pushq %rax
     movq $34, %rax
@@ -26081,10 +28642,10 @@ emit_string_pool:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3500
+    je .L3908
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr897(%rip), %rax
+    leaq .Lstr969(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26096,8 +28657,8 @@ emit_string_pool:
     call fprintf
     movq %r12, %rsp
     popq %r12
-    jmp .L3501
-.L3500:
+    jmp .L3909
+.L3908:
     movsbq -48(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -26106,7 +28667,7 @@ emit_string_pool:
     setge %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3502
+    je .L3910
     movsbq -48(%rbp), %rax
     pushq %rax
     movq $127, %rax
@@ -26115,14 +28676,14 @@ emit_string_pool:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    je .L3502
+    je .L3910
     movl $1, %eax
-    jmp .L3503
-.L3502:
+    jmp .L3911
+.L3910:
     xorl %eax, %eax
-.L3503:
+.L3911:
     cmpq $0, %rax
-    je .L3504
+    je .L3912
     movsbq -48(%rbp), %rax
     pushq %rax
     movq output(%rip), %rax
@@ -26137,11 +28698,11 @@ emit_string_pool:
     call fputc
     movq %r12, %rsp
     popq %r12
-    jmp .L3505
-.L3504:
+    jmp .L3913
+.L3912:
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr898(%rip), %rax
+    leaq .Lstr970(%rip), %rax
     pushq %rax
     movsbq -48(%rbp), %rax
     pushq %rax
@@ -26156,20 +28717,20 @@ emit_string_pool:
     call fprintf
     movq %r12, %rsp
     popq %r12
-.L3505:
-.L3501:
-.L3499:
-.L3497:
-.L3495:
+.L3913:
+.L3909:
+.L3907:
+.L3905:
+.L3903:
     leaq -32(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3492
-.L3493:
+    jmp .L3900
+.L3901:
     movq output(%rip), %rax
     pushq %rax
-    leaq .Lstr899(%rip), %rax
+    leaq .Lstr971(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26198,13 +28759,13 @@ emit_string_pool:
     call free
     movq %r12, %rsp
     popq %r12
-.L3489:
+.L3897:
     leaq -16(%rbp), %rax
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3490
-.L3490:
+    jmp .L3898
+.L3898:
     movq -16(%rbp), %rax
     pushq %rax
     movq string_count(%rip), %rax
@@ -26213,8 +28774,8 @@ emit_string_pool:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    jne .L3488
-.L3491:
+    jne .L3896
+.L3899:
     leave
     ret
     .globl main
@@ -26254,10 +28815,10 @@ main:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3538
+    je .L3948
     movq stderr(%rip), %rax
     pushq %rax
-    leaq .Lstr918(%rip), %rax
+    leaq .Lstr990(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -26281,7 +28842,7 @@ main:
     movq $1, %rax
     leave
     ret
-.L3538:
+.L3948:
     movq -32(%rbp), %rax
     pushq %rax
     movq $1, %rax
@@ -26290,7 +28851,7 @@ main:
     addq %rcx, %rax
     movq (%rax), %rax
     pushq %rax
-    leaq .Lstr919(%rip), %rax
+    leaq .Lstr991(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26308,10 +28869,10 @@ main:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3540
+    je .L3950
     movq stderr(%rip), %rax
     pushq %rax
-    leaq .Lstr920(%rip), %rax
+    leaq .Lstr992(%rip), %rax
     pushq %rax
     movq -32(%rbp), %rax
     pushq %rax
@@ -26335,7 +28896,7 @@ main:
     movq $1, %rax
     leave
     ret
-.L3540:
+.L3950:
     movq -48(%rbp), %rax
     pushq %rax
     movq $0, %rax
@@ -26373,7 +28934,7 @@ main:
     setl %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3542
+    jne .L3952
     movq -64(%rbp), %rax
     pushq %rax
     movq $1048576, %rax
@@ -26382,17 +28943,17 @@ main:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3542
+    jne .L3952
     xorl %eax, %eax
-    jmp .L3543
-.L3542:
+    jmp .L3953
+.L3952:
     movl $1, %eax
-.L3543:
+.L3953:
     cmpq $0, %rax
-    je .L3544
+    je .L3954
     movq stderr(%rip), %rax
     pushq %rax
-    leaq .Lstr921(%rip), %rax
+    leaq .Lstr993(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26418,7 +28979,7 @@ main:
     movq $1, %rax
     leave
     ret
-.L3544:
+.L3954:
     movq -48(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -26478,10 +29039,10 @@ main:
     setne %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3546
+    je .L3956
     movq stderr(%rip), %rax
     pushq %rax
-    leaq .Lstr922(%rip), %rax
+    leaq .Lstr994(%rip), %rax
     pushq %rax
     movq 8(%rsp), %rdi
     movq 0(%rsp), %rsi
@@ -26518,7 +29079,7 @@ main:
     movq $1, %rax
     leave
     ret
-.L3546:
+.L3956:
     movq source_start(%rip), %rax
     pushq %rax
     movq -64(%rbp), %rax
@@ -26588,7 +29149,7 @@ main:
     movq %rax, (%rcx)
     movq $0, %rax
     movq %rax, -112(%rbp)
-.L3548:
+.L3958:
     movq -112(%rbp), %rax
     pushq %rax
     movq -96(%rbp), %rax
@@ -26597,7 +29158,7 @@ main:
     setle %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3549
+    je .L3959
     movq current_file(%rip), %rax
     pushq %rax
     movq -112(%rbp), %rax
@@ -26623,9 +29184,9 @@ main:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3548
-.L3549:
-    leaq .Lstr923(%rip), %rax
+    jmp .L3958
+.L3959:
+    leaq .Lstr995(%rip), %rax
     pushq %rax
     movq $1, %rax
     pushq %rax
@@ -26639,7 +29200,7 @@ main:
     call add_macro
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr924(%rip), %rax
+    leaq .Lstr996(%rip), %rax
     pushq %rax
     movq $0, %rax
     pushq %rax
@@ -26653,7 +29214,7 @@ main:
     call add_macro
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr925(%rip), %rax
+    leaq .Lstr997(%rip), %rax
     pushq %rax
     movq $0, %rax
     pushq %rax
@@ -26667,7 +29228,7 @@ main:
     call add_macro
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr926(%rip), %rax
+    leaq .Lstr998(%rip), %rax
     pushq %rax
     movq $1, %rax
     pushq %rax
@@ -26681,7 +29242,7 @@ main:
     call add_macro
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr927(%rip), %rax
+    leaq .Lstr999(%rip), %rax
     pushq %rax
     movq $2, %rax
     pushq %rax
@@ -26695,7 +29256,7 @@ main:
     call add_macro
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr928(%rip), %rax
+    leaq .Lstr1000(%rip), %rax
     pushq %rax
     movq $0, %rax
     pushq %rax
@@ -26711,10 +29272,10 @@ main:
     popq %r12
     movq $0, %rax
     movq %rax, -96(%rbp)
-.L3550:
+.L3960:
     movq $1, %rax
     cmpq $0, %rax
-    je .L3551
+    je .L3961
     movq -96(%rbp), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -26735,14 +29296,14 @@ main:
     sete %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3552
-    jmp .L3551
-.L3552:
+    je .L3962
+    jmp .L3961
+.L3962:
     leaq symbols(%rip), %rax
     pushq %rax
     movq symbol_count(%rip), %rax
     popq %rcx
-    imulq $76, %rax
+    imulq $84, %rax
     addq %rcx, %rax
     movq %rax, -128(%rbp)
     movq -128(%rbp), %rax
@@ -26771,7 +29332,7 @@ main:
     setge %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3554
+    je .L3964
     leaq -160(%rbp), %rax
     pushq %rax
     movq $32, %rax
@@ -26782,7 +29343,7 @@ main:
     movq %rcx, %rax
     popq %rcx
     movq %rax, (%rcx)
-.L3554:
+.L3964:
     movq -144(%rbp), %rax
     pushq %rax
     movq -112(%rbp), %rax
@@ -26822,117 +29383,111 @@ main:
     popq %rcx
     movl %eax, (%rcx)
     movq -128(%rbp), %rax
-    addq $40, %rax
-    pushq %rax
-    movq $8, %rax
-    popq %rcx
-    movl %eax, (%rcx)
-    movq -128(%rbp), %rax
     addq $44, %rax
     pushq %rax
-    movq $0, %rax
+    movq $8, %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -128(%rbp), %rax
     addq $48, %rax
     pushq %rax
-    movq -112(%rbp), %rax
-    pushq %rax
-    leaq .Lstr929(%rip), %rax
-    pushq %rax
-    movq 8(%rsp), %rdi
-    movq 0(%rsp), %rsi
-    addq $16, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call strcmp
-    movq %r12, %rsp
-    popq %r12
-    pushq %rax
     movq $0, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L3556
-    movq -112(%rbp), %rax
-    pushq %rax
-    leaq .Lstr930(%rip), %rax
-    pushq %rax
-    movq 8(%rsp), %rdi
-    movq 0(%rsp), %rsi
-    addq $16, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call strcmp
-    movq %r12, %rsp
-    popq %r12
-    pushq %rax
-    movq $0, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L3556
-    xorl %eax, %eax
-    jmp .L3557
-.L3556:
-    movl $1, %eax
-.L3557:
-    testq %rax, %rax
-    jne .L3558
-    movq -112(%rbp), %rax
-    pushq %rax
-    leaq .Lstr931(%rip), %rax
-    pushq %rax
-    movq 8(%rsp), %rdi
-    movq 0(%rsp), %rsi
-    addq $16, %rsp
-    pushq %r12
-    movq %rsp, %r12
-    andq $-16, %rsp
-    xorl %eax, %eax
-    call strcmp
-    movq %r12, %rsp
-    popq %r12
-    pushq %rax
-    movq $0, %rax
-    popq %rcx
-    cmpq %rax, %rcx
-    sete %al
-    movzbq %al, %rax
-    testq %rax, %rax
-    jne .L3558
-    xorl %eax, %eax
-    jmp .L3559
-.L3558:
-    movl $1, %eax
-.L3559:
-    testq %rax, %rax
-    je .L3560
-    movq $1, %rax
-    jmp .L3561
-.L3560:
-    movq $0, %rax
-.L3561:
     popq %rcx
     movl %eax, (%rcx)
     movq -128(%rbp), %rax
     addq $52, %rax
     pushq %rax
-    movq $8, %rax
+    movq -112(%rbp), %rax
+    pushq %rax
+    leaq .Lstr1001(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3966
+    movq -112(%rbp), %rax
+    pushq %rax
+    leaq .Lstr1002(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3966
+    xorl %eax, %eax
+    jmp .L3967
+.L3966:
+    movl $1, %eax
+.L3967:
+    testq %rax, %rax
+    jne .L3968
+    movq -112(%rbp), %rax
+    pushq %rax
+    leaq .Lstr1003(%rip), %rax
+    pushq %rax
+    movq 8(%rsp), %rdi
+    movq 0(%rsp), %rsi
+    addq $16, %rsp
+    pushq %r12
+    movq %rsp, %r12
+    andq $-16, %rsp
+    xorl %eax, %eax
+    call strcmp
+    movq %r12, %rsp
+    popq %r12
+    pushq %rax
+    movq $0, %rax
+    popq %rcx
+    cmpq %rax, %rcx
+    sete %al
+    movzbq %al, %rax
+    testq %rax, %rax
+    jne .L3968
+    xorl %eax, %eax
+    jmp .L3969
+.L3968:
+    movl $1, %eax
+.L3969:
+    testq %rax, %rax
+    je .L3970
+    movq $1, %rax
+    jmp .L3971
+.L3970:
+    movq $0, %rax
+.L3971:
     popq %rcx
     movl %eax, (%rcx)
     movq -128(%rbp), %rax
     addq $56, %rax
     pushq %rax
-    movq $0, %rax
+    movq $8, %rax
     popq %rcx
     movl %eax, (%rcx)
     movq -128(%rbp), %rax
@@ -26956,6 +29511,19 @@ main:
     movq -128(%rbp), %rax
     addq $72, %rax
     pushq %rax
+    movq const_flag(%rip), %rax
+    testq %rax, %rax
+    je .L3972
+    movq $0, %rax
+    jmp .L3973
+.L3972:
+    movq $0, %rax
+.L3973:
+    popq %rcx
+    movl %eax, (%rcx)
+    movq -128(%rbp), %rax
+    addq $80, %rax
+    pushq %rax
     movq $1, %rax
     negq %rax
     popq %rcx
@@ -26973,7 +29541,7 @@ main:
     popq %r12
     movq %rax, -176(%rbp)
     movq -128(%rbp), %rax
-    addq $72, %rax
+    addq $80, %rax
     pushq %rax
     leaq hash_table(%rip), %rax
     pushq %rax
@@ -27003,9 +29571,9 @@ main:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3550
-.L3551:
-    leaq .Lstr932(%rip), %rax
+    jmp .L3960
+.L3961:
+    leaq .Lstr1004(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -27031,7 +29599,7 @@ main:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3562
+    jne .L3974
     movq float_const_count(%rip), %rax
     pushq %rax
     movq $0, %rax
@@ -27040,15 +29608,15 @@ main:
     setg %al
     movzbq %al, %rax
     testq %rax, %rax
-    jne .L3562
+    jne .L3974
     xorl %eax, %eax
-    jmp .L3563
-.L3562:
+    jmp .L3975
+.L3974:
     movl $1, %eax
-.L3563:
+.L3975:
     cmpq $0, %rax
-    je .L3564
-    leaq .Lstr933(%rip), %rax
+    je .L3976
+    leaq .Lstr1005(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -27073,7 +29641,7 @@ main:
     call emit_string_pool
     movq %r12, %rsp
     popq %r12
-    leaq .Lstr934(%rip), %rax
+    leaq .Lstr1006(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -27084,8 +29652,8 @@ main:
     call emit
     movq %r12, %rsp
     popq %r12
-.L3564:
-    leaq .Lstr935(%rip), %rax
+.L3976:
+    leaq .Lstr1007(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
     addq $8, %rsp
@@ -27109,7 +29677,7 @@ main:
     popq %r12
     movq $0, %rax
     movq %rax, -96(%rbp)
-.L3566:
+.L3978:
     movq -96(%rbp), %rax
     pushq %rax
     movq processed_count(%rip), %rax
@@ -27118,7 +29686,7 @@ main:
     setl %al
     movzbq %al, %rax
     cmpq $0, %rax
-    je .L3567
+    je .L3979
     leaq processed_files(%rip), %rax
     pushq %rax
     movq -96(%rbp), %rax
@@ -27140,11 +29708,11 @@ main:
     movq (%rax), %rcx
     addq $1, (%rax)
     movq %rcx, %rax
-    jmp .L3566
-.L3567:
+    jmp .L3978
+.L3979:
     movq current_file(%rip), %rax
     cmpq $0, %rax
-    je .L3568
+    je .L3980
     movq current_file(%rip), %rax
     pushq %rax
     movq 0(%rsp), %rdi
@@ -27156,7 +29724,7 @@ main:
     call free
     movq %r12, %rsp
     popq %r12
-.L3568:
+.L3980:
     movq $0, %rax
     leave
     ret
@@ -27204,681 +29772,681 @@ main:
 .Lstr19:
     .asciz "scope underflow"
 .Lstr20:
-    .asciz "define"
+    .asciz "ifdef"
 .Lstr21:
-    .asciz "include"
+    .asciz "ifndef"
 .Lstr22:
-    .asciz "include depth exceeded"
+    .asciz "if"
 .Lstr23:
-    .asciz "Warning: could not read included file: %s\n"
+    .asciz "#if nesting too deep"
 .Lstr24:
-    .asciz "Warning: could not find included file: %s\n"
+    .asciz "else"
 .Lstr25:
-    .asciz "if"
+    .asciz "endif"
 .Lstr26:
-    .asciz "else"
-.Lstr27:
-    .asciz "while"
-.Lstr28:
-    .asciz "return"
-.Lstr29:
-    .asciz "int"
-.Lstr30:
-    .asciz "long"
-.Lstr31:
-    .asciz "char"
-.Lstr32:
-    .asciz "void"
-.Lstr33:
-    .asciz "enum"
-.Lstr34:
-    .asciz "static"
-.Lstr35:
-    .asciz "typedef"
-.Lstr36:
-    .asciz "struct"
-.Lstr37:
-    .asciz "const"
-.Lstr38:
-    .asciz "for"
-.Lstr39:
-    .asciz "switch"
-.Lstr40:
-    .asciz "case"
-.Lstr41:
-    .asciz "default"
-.Lstr42:
-    .asciz "break"
-.Lstr43:
-    .asciz "continue"
-.Lstr44:
-    .asciz "goto"
-.Lstr45:
-    .asciz "float"
-.Lstr46:
-    .asciz "double"
-.Lstr47:
-    .asciz "%d"
-.Lstr48:
-    .asciz "unterminated string literal"
-.Lstr49:
-    .asciz "unterminated char literal"
-.Lstr50:
-    .asciz "%d"
-.Lstr51:
-    .asciz "=="
-.Lstr52:
-    .asciz "!="
-.Lstr53:
-    .asciz "<="
-.Lstr54:
-    .asciz ">="
-.Lstr55:
-    .asciz "&&"
-.Lstr56:
-    .asciz "||"
-.Lstr57:
-    .asciz "++"
-.Lstr58:
-    .asciz "+="
-.Lstr59:
-    .asciz "-="
-.Lstr60:
-    .asciz "--"
-.Lstr61:
-    .asciz "->"
-.Lstr62:
     .asciz "define"
-.Lstr63:
+.Lstr27:
     .asciz "include"
-.Lstr64:
+.Lstr28:
     .asciz "include depth exceeded"
-.Lstr65:
+.Lstr29:
     .asciz "Warning: could not read included file: %s\n"
-.Lstr66:
+.Lstr30:
     .asciz "Warning: could not find included file: %s\n"
-.Lstr67:
+.Lstr31:
+    .asciz "ifdef"
+.Lstr32:
+    .asciz "#if nesting too deep"
+.Lstr33:
+    .asciz "ifndef"
+.Lstr34:
+    .asciz "#if nesting too deep"
+.Lstr35:
     .asciz "if"
-.Lstr68:
+.Lstr36:
+    .asciz "#if nesting too deep"
+.Lstr37:
     .asciz "else"
-.Lstr69:
+.Lstr38:
+    .asciz "#else without #if"
+.Lstr39:
+    .asciz "endif"
+.Lstr40:
+    .asciz "#endif without #if"
+.Lstr41:
+    .asciz "if"
+.Lstr42:
+    .asciz "else"
+.Lstr43:
     .asciz "while"
-.Lstr70:
+.Lstr44:
     .asciz "return"
-.Lstr71:
+.Lstr45:
     .asciz "int"
-.Lstr72:
+.Lstr46:
     .asciz "long"
-.Lstr73:
+.Lstr47:
     .asciz "char"
-.Lstr74:
+.Lstr48:
     .asciz "void"
-.Lstr75:
+.Lstr49:
     .asciz "enum"
-.Lstr76:
+.Lstr50:
     .asciz "static"
-.Lstr77:
+.Lstr51:
     .asciz "typedef"
-.Lstr78:
+.Lstr52:
     .asciz "struct"
-.Lstr79:
+.Lstr53:
     .asciz "const"
-.Lstr80:
+.Lstr54:
     .asciz "for"
-.Lstr81:
+.Lstr55:
     .asciz "switch"
-.Lstr82:
+.Lstr56:
     .asciz "case"
-.Lstr83:
+.Lstr57:
     .asciz "default"
-.Lstr84:
+.Lstr58:
     .asciz "break"
-.Lstr85:
+.Lstr59:
     .asciz "continue"
-.Lstr86:
+.Lstr60:
     .asciz "goto"
-.Lstr87:
+.Lstr61:
     .asciz "float"
-.Lstr88:
+.Lstr62:
     .asciz "double"
-.Lstr89:
+.Lstr63:
+    .asciz "do"
+.Lstr64:
+    .asciz "sizeof"
+.Lstr65:
+    .asciz "union"
+.Lstr66:
     .asciz "%d"
-.Lstr90:
+.Lstr67:
     .asciz "unterminated string literal"
-.Lstr91:
+.Lstr68:
     .asciz "unterminated char literal"
-.Lstr92:
+.Lstr69:
     .asciz "%d"
-.Lstr93:
+.Lstr70:
+    .asciz "<<"
+.Lstr71:
+    .asciz ">>"
+.Lstr72:
     .asciz "=="
-.Lstr94:
+.Lstr73:
     .asciz "!="
-.Lstr95:
+.Lstr74:
     .asciz "<="
-.Lstr96:
+.Lstr75:
     .asciz ">="
-.Lstr97:
+.Lstr76:
     .asciz "&&"
-.Lstr98:
+.Lstr77:
     .asciz "||"
-.Lstr99:
+.Lstr78:
     .asciz "++"
-.Lstr100:
+.Lstr79:
     .asciz "+="
-.Lstr101:
+.Lstr80:
     .asciz "-="
-.Lstr102:
+.Lstr81:
     .asciz "--"
-.Lstr103:
+.Lstr82:
     .asciz "->"
+.Lstr83:
+    .asciz "ifdef"
+.Lstr84:
+    .asciz "ifndef"
+.Lstr85:
+    .asciz "if"
+.Lstr86:
+    .asciz "#if nesting too deep"
+.Lstr87:
+    .asciz "else"
+.Lstr88:
+    .asciz "endif"
+.Lstr89:
+    .asciz "define"
+.Lstr90:
+    .asciz "include"
+.Lstr91:
+    .asciz "include depth exceeded"
+.Lstr92:
+    .asciz "Warning: could not read included file: %s\n"
+.Lstr93:
+    .asciz "Warning: could not find included file: %s\n"
+.Lstr94:
+    .asciz "ifdef"
+.Lstr95:
+    .asciz "#if nesting too deep"
+.Lstr96:
+    .asciz "ifndef"
+.Lstr97:
+    .asciz "#if nesting too deep"
+.Lstr98:
+    .asciz "if"
+.Lstr99:
+    .asciz "#if nesting too deep"
+.Lstr100:
+    .asciz "else"
+.Lstr101:
+    .asciz "#else without #if"
+.Lstr102:
+    .asciz "endif"
+.Lstr103:
+    .asciz "#endif without #if"
 .Lstr104:
-    .asciz "unexpected token"
+    .asciz "if"
 .Lstr105:
-    .asciz "unexpected token"
+    .asciz "else"
 .Lstr106:
-    .asciz ".L%d:\n"
+    .asciz "while"
 .Lstr107:
-    .asciz ".L%d:\n"
+    .asciz "return"
 .Lstr108:
-    .asciz "too many symbols"
+    .asciz "int"
 .Lstr109:
-    .asciz "    .bss"
+    .asciz "long"
 .Lstr110:
-    .asciz "    .globl %s"
+    .asciz "char"
 .Lstr111:
-    .asciz "%s:"
+    .asciz "void"
 .Lstr112:
-    .asciz "    .space %d"
+    .asciz "enum"
 .Lstr113:
-    .asciz "    .text"
+    .asciz "static"
 .Lstr114:
-    .asciz "too many symbols"
+    .asciz "typedef"
 .Lstr115:
-    .asciz "    .bss"
+    .asciz "struct"
 .Lstr116:
-    .asciz "    .globl %s"
+    .asciz "const"
 .Lstr117:
-    .asciz "%s:"
+    .asciz "for"
 .Lstr118:
-    .asciz "    .space %d"
+    .asciz "switch"
 .Lstr119:
-    .asciz "    .text"
+    .asciz "case"
 .Lstr120:
-    .asciz "%rdi"
+    .asciz "default"
 .Lstr121:
-    .asciz "%rsi"
+    .asciz "break"
 .Lstr122:
-    .asciz "%rdx"
+    .asciz "continue"
 .Lstr123:
-    .asciz "%rcx"
+    .asciz "goto"
 .Lstr124:
-    .asciz "%r8"
+    .asciz "float"
 .Lstr125:
-    .asciz "%r9"
+    .asciz "double"
 .Lstr126:
-    .asciz "%rdi"
+    .asciz "do"
 .Lstr127:
-    .asciz "%rsi"
+    .asciz "sizeof"
 .Lstr128:
-    .asciz "%rdx"
+    .asciz "union"
 .Lstr129:
-    .asciz "%rcx"
+    .asciz "%d"
 .Lstr130:
-    .asciz "%r8"
+    .asciz "unterminated string literal"
 .Lstr131:
-    .asciz "%r9"
+    .asciz "unterminated char literal"
 .Lstr132:
-    .asciz "stderr"
+    .asciz "%d"
 .Lstr133:
-    .asciz "stdin"
+    .asciz "<<"
 .Lstr134:
-    .asciz "stdout"
+    .asciz ">>"
 .Lstr135:
-    .asciz "optarg"
+    .asciz "=="
 .Lstr136:
-    .asciz "optind"
+    .asciz "!="
 .Lstr137:
-    .asciz "errno"
+    .asciz "<="
 .Lstr138:
-    .asciz "size_t"
+    .asciz ">="
 .Lstr139:
-    .asciz "va_list"
+    .asciz "&&"
 .Lstr140:
-    .asciz "FILE"
+    .asciz "||"
 .Lstr141:
-    .asciz "stderr"
+    .asciz "++"
 .Lstr142:
-    .asciz "stdin"
+    .asciz "+="
 .Lstr143:
-    .asciz "stdout"
+    .asciz "-="
 .Lstr144:
-    .asciz "optarg"
+    .asciz "--"
 .Lstr145:
-    .asciz "optind"
+    .asciz "->"
 .Lstr146:
-    .asciz "errno"
+    .asciz "unexpected token"
 .Lstr147:
-    .asciz "size_t"
+    .asciz "unexpected token"
 .Lstr148:
-    .asciz "va_list"
+    .asciz ".L%d:\n"
 .Lstr149:
-    .asciz "FILE"
+    .asciz ".L%d:\n"
 .Lstr150:
-    .asciz "    movq $%s, %%rax"
+    .asciz "too many symbols"
 .Lstr151:
-    .asciz "    leaq .LCf%d(%%rip), %%rax"
+    .asciz "    .bss"
 .Lstr152:
-    .asciz "    movss (%%rax), %%xmm0"
+    .asciz "    .globl %s"
 .Lstr153:
-    .asciz "    movd %%xmm0, %%eax"
+    .asciz "%s:"
 .Lstr154:
-    .asciz "    movsd (%%rax), %%xmm0"
+    .asciz "    .space %d"
 .Lstr155:
-    .asciz "    movq %%xmm0, %%rax"
+    .asciz "    .text"
 .Lstr156:
-    .asciz "    pushq %%rax"
+    .asciz "too many symbols"
 .Lstr157:
-    .asciz "    movq %d(%%rsp), %s"
+    .asciz "    .bss"
 .Lstr158:
-    .asciz "too many function arguments (max 6)"
+    .asciz "    .globl %s"
 .Lstr159:
-    .asciz "    addq $%d, %%rsp"
+    .asciz "%s:"
 .Lstr160:
-    .asciz "    pushq %%r12"
+    .asciz "    .space %d"
 .Lstr161:
-    .asciz "    movq %%rsp, %%r12"
+    .asciz "    .text"
 .Lstr162:
-    .asciz "    andq $-16, %%rsp"
+    .asciz "%rdi"
 .Lstr163:
-    .asciz "    xorl %%eax, %%eax"
+    .asciz "%rsi"
 .Lstr164:
-    .asciz "    call %s"
+    .asciz "%rdx"
 .Lstr165:
-    .asciz "    movq %%r12, %%rsp"
+    .asciz "%rcx"
 .Lstr166:
-    .asciz "    popq %%r12"
+    .asciz "%r8"
 .Lstr167:
-    .asciz "undefined variable"
+    .asciz "%r9"
 .Lstr168:
-    .asciz "    movq $%d, %%rax"
+    .asciz "%rdi"
 .Lstr169:
-    .asciz "    leaq %s(%%rip), %%rax"
+    .asciz "%rsi"
 .Lstr170:
-    .asciz "    leaq %d(%%rbp), %%rax"
+    .asciz "%rdx"
 .Lstr171:
-    .asciz "    movl %s(%%rip), %%eax"
+    .asciz "%rcx"
 .Lstr172:
-    .asciz "    movl %d(%%rbp), %%eax"
+    .asciz "%r8"
 .Lstr173:
-    .asciz "    movsbq %s(%%rip), %%rax"
+    .asciz "%r9"
 .Lstr174:
-    .asciz "    movsbq %d(%%rbp), %%rax"
+    .asciz "stderr"
 .Lstr175:
-    .asciz "    movq %s(%%rip), %%rax"
+    .asciz "stdin"
 .Lstr176:
-    .asciz "    movq %d(%%rbp), %%rax"
+    .asciz "stdout"
 .Lstr177:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "optarg"
 .Lstr178:
-    .asciz "    movl (%%rax), %%eax"
+    .asciz "optind"
 .Lstr179:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "errno"
 .Lstr180:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "size_t"
 .Lstr181:
-    .asciz "expected identifier after '&'"
+    .asciz "va_list"
 .Lstr182:
-    .asciz "undefined variable"
+    .asciz "FILE"
 .Lstr183:
-    .asciz "    leaq %s(%%rip), %%rax"
+    .asciz "stderr"
 .Lstr184:
-    .asciz "    leaq %d(%%rbp), %%rax"
+    .asciz "stdin"
 .Lstr185:
-    .asciz "    leaq .Lstr%d(%%rip), %%rax"
+    .asciz "stdout"
 .Lstr186:
-    .asciz "    xorl $0x80000000, %%eax"
+    .asciz "optarg"
 .Lstr187:
-    .asciz "    xorq $0x8000000000000000, %%rax"
+    .asciz "optind"
 .Lstr188:
-    .asciz "    negq %%rax"
+    .asciz "errno"
 .Lstr189:
-    .asciz "    testq %%rax, %%rax"
+    .asciz "size_t"
 .Lstr190:
-    .asciz "    sete %%al"
+    .asciz "va_list"
 .Lstr191:
-    .asciz "    movzbq %%al, %%rax"
+    .asciz "FILE"
 .Lstr192:
-    .asciz "    notq %%rax"
-.Lstr193:
-    .asciz "invalid primary expression"
-.Lstr194:
     .asciz "    movq $%s, %%rax"
-.Lstr195:
+.Lstr193:
     .asciz "    leaq .LCf%d(%%rip), %%rax"
-.Lstr196:
+.Lstr194:
     .asciz "    movss (%%rax), %%xmm0"
-.Lstr197:
+.Lstr195:
     .asciz "    movd %%xmm0, %%eax"
-.Lstr198:
+.Lstr196:
     .asciz "    movsd (%%rax), %%xmm0"
-.Lstr199:
+.Lstr197:
     .asciz "    movq %%xmm0, %%rax"
-.Lstr200:
+.Lstr198:
     .asciz "    pushq %%rax"
-.Lstr201:
+.Lstr199:
     .asciz "    movq %d(%%rsp), %s"
-.Lstr202:
+.Lstr200:
     .asciz "too many function arguments (max 6)"
-.Lstr203:
+.Lstr201:
     .asciz "    addq $%d, %%rsp"
-.Lstr204:
+.Lstr202:
     .asciz "    pushq %%r12"
-.Lstr205:
+.Lstr203:
     .asciz "    movq %%rsp, %%r12"
-.Lstr206:
+.Lstr204:
     .asciz "    andq $-16, %%rsp"
-.Lstr207:
+.Lstr205:
     .asciz "    xorl %%eax, %%eax"
-.Lstr208:
+.Lstr206:
     .asciz "    call %s"
-.Lstr209:
+.Lstr207:
     .asciz "    movq %%r12, %%rsp"
-.Lstr210:
+.Lstr208:
     .asciz "    popq %%r12"
-.Lstr211:
+.Lstr209:
     .asciz "undefined variable"
-.Lstr212:
+.Lstr210:
     .asciz "    movq $%d, %%rax"
+.Lstr211:
+    .asciz "    leaq %s(%%rip), %%rax"
+.Lstr212:
+    .asciz "    leaq %d(%%rbp), %%rax"
 .Lstr213:
-    .asciz "    leaq %s(%%rip), %%rax"
-.Lstr214:
-    .asciz "    leaq %d(%%rbp), %%rax"
-.Lstr215:
     .asciz "    movl %s(%%rip), %%eax"
-.Lstr216:
+.Lstr214:
     .asciz "    movl %d(%%rbp), %%eax"
-.Lstr217:
+.Lstr215:
     .asciz "    movsbq %s(%%rip), %%rax"
-.Lstr218:
+.Lstr216:
     .asciz "    movsbq %d(%%rbp), %%rax"
-.Lstr219:
+.Lstr217:
     .asciz "    movq %s(%%rip), %%rax"
-.Lstr220:
+.Lstr218:
     .asciz "    movq %d(%%rbp), %%rax"
-.Lstr221:
+.Lstr219:
     .asciz "    movsbq (%%rax), %%rax"
-.Lstr222:
+.Lstr220:
     .asciz "    movl (%%rax), %%eax"
+.Lstr221:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr222:
+    .asciz "    movq (%%rax), %%rax"
 .Lstr223:
-    .asciz "    movq (%%rax), %%rax"
-.Lstr224:
-    .asciz "    movq (%%rax), %%rax"
-.Lstr225:
     .asciz "expected identifier after '&'"
-.Lstr226:
+.Lstr224:
     .asciz "undefined variable"
-.Lstr227:
+.Lstr225:
     .asciz "    leaq %s(%%rip), %%rax"
-.Lstr228:
+.Lstr226:
     .asciz "    leaq %d(%%rbp), %%rax"
-.Lstr229:
+.Lstr227:
     .asciz "    leaq .Lstr%d(%%rip), %%rax"
-.Lstr230:
+.Lstr228:
     .asciz "    xorl $0x80000000, %%eax"
-.Lstr231:
+.Lstr229:
     .asciz "    xorq $0x8000000000000000, %%rax"
-.Lstr232:
+.Lstr230:
     .asciz "    negq %%rax"
-.Lstr233:
+.Lstr231:
     .asciz "    testq %%rax, %%rax"
-.Lstr234:
+.Lstr232:
     .asciz "    sete %%al"
-.Lstr235:
+.Lstr233:
     .asciz "    movzbq %%al, %%rax"
-.Lstr236:
+.Lstr234:
     .asciz "    notq %%rax"
+.Lstr235:
+    .asciz "sizeof: undefined variable"
+.Lstr236:
+    .asciz "    movq $%d, %%rax"
 .Lstr237:
     .asciz "invalid primary expression"
 .Lstr238:
-    .asciz "undefined variable"
+    .asciz "    movq $%s, %%rax"
 .Lstr239:
-    .asciz "    movq %s(%%rip), %%rax"
+    .asciz "    leaq .LCf%d(%%rip), %%rax"
 .Lstr240:
-    .asciz "    movq %d(%%rbp), %%rax"
+    .asciz "    movss (%%rax), %%xmm0"
 .Lstr241:
-    .asciz "    leaq %s(%%rip), %%rax"
+    .asciz "    movd %%xmm0, %%eax"
 .Lstr242:
-    .asciz "    leaq %d(%%rbp), %%rax"
+    .asciz "    movsd (%%rax), %%xmm0"
 .Lstr243:
-    .asciz "lvalue required"
+    .asciz "    movq %%xmm0, %%rax"
 .Lstr244:
-    .asciz "undefined variable"
+    .asciz "    pushq %%rax"
 .Lstr245:
-    .asciz "    movq %s(%%rip), %%rax"
+    .asciz "    movq %d(%%rsp), %s"
 .Lstr246:
-    .asciz "    movq %d(%%rbp), %%rax"
+    .asciz "too many function arguments (max 6)"
 .Lstr247:
-    .asciz "    leaq %s(%%rip), %%rax"
+    .asciz "    addq $%d, %%rsp"
 .Lstr248:
-    .asciz "    leaq %d(%%rbp), %%rax"
+    .asciz "    pushq %%r12"
 .Lstr249:
-    .asciz "lvalue required"
+    .asciz "    movq %%rsp, %%r12"
 .Lstr250:
-    .asciz "    pushq %%rax"
+    .asciz "    andq $-16, %%rsp"
 .Lstr251:
-    .asciz "    popq %%rcx"
+    .asciz "    xorl %%eax, %%eax"
 .Lstr252:
-    .asciz "    imulq $%d, %%rax"
+    .asciz "    call %s"
 .Lstr253:
-    .asciz "    addq %%rcx, %%rax"
+    .asciz "    movq %%r12, %%rsp"
 .Lstr254:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    popq %%r12"
 .Lstr255:
-    .asciz "    movl (%%rax), %%eax"
+    .asciz "undefined variable"
 .Lstr256:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    movq $%d, %%rax"
 .Lstr257:
-    .asciz "    addq $%d, %%rax"
+    .asciz "    leaq %s(%%rip), %%rax"
 .Lstr258:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    leaq %d(%%rbp), %%rax"
 .Lstr259:
-    .asciz "    movslq (%%rax), %%rax"
+    .asciz "    movl %s(%%rip), %%eax"
 .Lstr260:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    movl %d(%%rbp), %%eax"
 .Lstr261:
-    .asciz "    addq $%d, %%rax"
+    .asciz "    movsbq %s(%%rip), %%rax"
 .Lstr262:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    movsbq %d(%%rbp), %%rax"
 .Lstr263:
-    .asciz "    movslq (%%rax), %%rax"
+    .asciz "    movq %s(%%rip), %%rax"
 .Lstr264:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    movq %d(%%rbp), %%rax"
 .Lstr265:
-    .asciz "    pushq %%rax"
+    .asciz "    movsbq (%%rax), %%rax"
 .Lstr266:
-    .asciz "    popq %%rcx"
-.Lstr267:
-    .asciz "    imulq $%d, %%rax"
-.Lstr268:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr269:
-    .asciz "    movsbq (%%rax), %%rax"
-.Lstr270:
     .asciz "    movl (%%rax), %%eax"
+.Lstr267:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr268:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr269:
+    .asciz "expected identifier after '&'"
+.Lstr270:
+    .asciz "undefined variable"
 .Lstr271:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    leaq %s(%%rip), %%rax"
 .Lstr272:
-    .asciz "    addq $%d, %%rax"
+    .asciz "    leaq %d(%%rbp), %%rax"
 .Lstr273:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    leaq .Lstr%d(%%rip), %%rax"
 .Lstr274:
-    .asciz "    movslq (%%rax), %%rax"
+    .asciz "    xorl $0x80000000, %%eax"
 .Lstr275:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    xorq $0x8000000000000000, %%rax"
 .Lstr276:
-    .asciz "    addq $%d, %%rax"
+    .asciz "    negq %%rax"
 .Lstr277:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    testq %%rax, %%rax"
 .Lstr278:
-    .asciz "    movslq (%%rax), %%rax"
+    .asciz "    sete %%al"
 .Lstr279:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    movzbq %%al, %%rax"
 .Lstr280:
-    .asciz "    pushq %%rax"
+    .asciz "    notq %%rax"
 .Lstr281:
-    .asciz "    popq %%rcx"
+    .asciz "sizeof: undefined variable"
 .Lstr282:
-    .asciz "    movd %%ecx, %%xmm0"
+    .asciz "    movq $%d, %%rax"
 .Lstr283:
-    .asciz "    movq %%rcx, %%xmm0"
+    .asciz "invalid primary expression"
 .Lstr284:
-    .asciz "    movq %%rcx, %%xmm0"
+    .asciz "undefined variable"
 .Lstr285:
-    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+    .asciz "    movq %s(%%rip), %%rax"
 .Lstr286:
-    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+    .asciz "    movq %d(%%rbp), %%rax"
 .Lstr287:
-    .asciz "    movd %%eax, %%xmm1"
+    .asciz "    leaq %s(%%rip), %%rax"
 .Lstr288:
-    .asciz "    movq %%rax, %%xmm1"
+    .asciz "    leaq %d(%%rbp), %%rax"
 .Lstr289:
-    .asciz "    movq %%rax, %%xmm1"
+    .asciz "lvalue required"
 .Lstr290:
-    .asciz "    cvtsi2sdq %%rax, %%xmm1"
+    .asciz "undefined variable"
 .Lstr291:
-    .asciz "    cvtsi2ssq %%rax, %%xmm1"
+    .asciz "    movq %s(%%rip), %%rax"
 .Lstr292:
-    .asciz "    mulsd %%xmm1, %%xmm0"
+    .asciz "    movq %d(%%rbp), %%rax"
 .Lstr293:
-    .asciz "    divsd %%xmm1, %%xmm0"
+    .asciz "    leaq %s(%%rip), %%rax"
 .Lstr294:
-    .asciz "    movq %%xmm0, %%rax"
+    .asciz "    leaq %d(%%rbp), %%rax"
 .Lstr295:
-    .asciz "    mulss %%xmm1, %%xmm0"
+    .asciz "lvalue required"
 .Lstr296:
-    .asciz "    divss %%xmm1, %%xmm0"
+    .asciz "    pushq %%rax"
 .Lstr297:
-    .asciz "    movd %%xmm0, %%eax"
+    .asciz "    popq %%rcx"
 .Lstr298:
-    .asciz "    movq %%rax, %%r8"
+    .asciz "    imulq $%d, %%rax"
 .Lstr299:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr300:
-    .asciz "    cqto"
-.Lstr301:
-    .asciz "    idivq %%r8"
-.Lstr302:
-    .asciz "    movq %%rdx, %%rax"
-.Lstr303:
-    .asciz "    imulq %%rcx, %%rax"
-.Lstr304:
-    .asciz "    movq %%rax, %%r8"
-.Lstr305:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr306:
-    .asciz "    cqto"
-.Lstr307:
-    .asciz "    idivq %%r8"
-.Lstr308:
-    .asciz "    pushq %%rax"
-.Lstr309:
-    .asciz "    popq %%rcx"
-.Lstr310:
-    .asciz "    movd %%ecx, %%xmm0"
-.Lstr311:
-    .asciz "    movq %%rcx, %%xmm0"
-.Lstr312:
-    .asciz "    movq %%rcx, %%xmm0"
-.Lstr313:
-    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
-.Lstr314:
-    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
-.Lstr315:
-    .asciz "    movd %%eax, %%xmm1"
-.Lstr316:
-    .asciz "    movq %%rax, %%xmm1"
-.Lstr317:
-    .asciz "    movq %%rax, %%xmm1"
-.Lstr318:
-    .asciz "    cvtsi2sdq %%rax, %%xmm1"
-.Lstr319:
-    .asciz "    cvtsi2ssq %%rax, %%xmm1"
-.Lstr320:
-    .asciz "    mulsd %%xmm1, %%xmm0"
-.Lstr321:
-    .asciz "    divsd %%xmm1, %%xmm0"
-.Lstr322:
-    .asciz "    movq %%xmm0, %%rax"
-.Lstr323:
-    .asciz "    mulss %%xmm1, %%xmm0"
-.Lstr324:
-    .asciz "    divss %%xmm1, %%xmm0"
-.Lstr325:
-    .asciz "    movd %%xmm0, %%eax"
-.Lstr326:
-    .asciz "    movq %%rax, %%r8"
-.Lstr327:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr328:
-    .asciz "    cqto"
-.Lstr329:
-    .asciz "    idivq %%r8"
-.Lstr330:
-    .asciz "    movq %%rdx, %%rax"
-.Lstr331:
-    .asciz "    imulq %%rcx, %%rax"
-.Lstr332:
-    .asciz "    movq %%rax, %%r8"
-.Lstr333:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr334:
-    .asciz "    cqto"
-.Lstr335:
-    .asciz "    idivq %%r8"
-.Lstr336:
-    .asciz "    pushq %%rax"
-.Lstr337:
-    .asciz "    popq %%rcx"
-.Lstr338:
-    .asciz "    movd %%ecx, %%xmm0"
-.Lstr339:
-    .asciz "    movq %%rcx, %%xmm0"
-.Lstr340:
-    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
-.Lstr341:
-    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
-.Lstr342:
-    .asciz "    movd %%eax, %%xmm1"
-.Lstr343:
-    .asciz "    movq %%rax, %%xmm1"
-.Lstr344:
-    .asciz "    cvtsi2sdq %%rax, %%xmm1"
-.Lstr345:
-    .asciz "    cvtsi2ssq %%rax, %%xmm1"
-.Lstr346:
-    .asciz "    addsd %%xmm1, %%xmm0"
-.Lstr347:
-    .asciz "    subsd %%xmm1, %%xmm0"
-.Lstr348:
-    .asciz "    movq %%xmm0, %%rax"
-.Lstr349:
-    .asciz "    addss %%xmm1, %%xmm0"
-.Lstr350:
-    .asciz "    subss %%xmm1, %%xmm0"
-.Lstr351:
-    .asciz "    movd %%xmm0, %%eax"
-.Lstr352:
     .asciz "    addq %%rcx, %%rax"
-.Lstr353:
-    .asciz "    subq %%rax, %%rcx"
-.Lstr354:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr355:
+.Lstr300:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr301:
+    .asciz "    movl (%%rax), %%eax"
+.Lstr302:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr303:
+    .asciz "    addq $%d, %%rax"
+.Lstr304:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr305:
+    .asciz "    movslq (%%rax), %%rax"
+.Lstr306:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr307:
+    .asciz "    addq $%d, %%rax"
+.Lstr308:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr309:
+    .asciz "    movslq (%%rax), %%rax"
+.Lstr310:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr311:
     .asciz "    pushq %%rax"
-.Lstr356:
+.Lstr312:
     .asciz "    popq %%rcx"
-.Lstr357:
+.Lstr313:
+    .asciz "    imulq $%d, %%rax"
+.Lstr314:
+    .asciz "    addq %%rcx, %%rax"
+.Lstr315:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr316:
+    .asciz "    movl (%%rax), %%eax"
+.Lstr317:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr318:
+    .asciz "    addq $%d, %%rax"
+.Lstr319:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr320:
+    .asciz "    movslq (%%rax), %%rax"
+.Lstr321:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr322:
+    .asciz "    addq $%d, %%rax"
+.Lstr323:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr324:
+    .asciz "    movslq (%%rax), %%rax"
+.Lstr325:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr326:
+    .asciz "    pushq %%rax"
+.Lstr327:
+    .asciz "    popq %%rcx"
+.Lstr328:
     .asciz "    movd %%ecx, %%xmm0"
+.Lstr329:
+    .asciz "    movq %%rcx, %%xmm0"
+.Lstr330:
+    .asciz "    movq %%rcx, %%xmm0"
+.Lstr331:
+    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+.Lstr332:
+    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+.Lstr333:
+    .asciz "    movd %%eax, %%xmm1"
+.Lstr334:
+    .asciz "    movq %%rax, %%xmm1"
+.Lstr335:
+    .asciz "    movq %%rax, %%xmm1"
+.Lstr336:
+    .asciz "    cvtsi2sdq %%rax, %%xmm1"
+.Lstr337:
+    .asciz "    cvtsi2ssq %%rax, %%xmm1"
+.Lstr338:
+    .asciz "    mulsd %%xmm1, %%xmm0"
+.Lstr339:
+    .asciz "    divsd %%xmm1, %%xmm0"
+.Lstr340:
+    .asciz "    movq %%xmm0, %%rax"
+.Lstr341:
+    .asciz "    mulss %%xmm1, %%xmm0"
+.Lstr342:
+    .asciz "    divss %%xmm1, %%xmm0"
+.Lstr343:
+    .asciz "    movd %%xmm0, %%eax"
+.Lstr344:
+    .asciz "    movq %%rax, %%r8"
+.Lstr345:
+    .asciz "    movq %%rcx, %%rax"
+.Lstr346:
+    .asciz "    cqto"
+.Lstr347:
+    .asciz "    idivq %%r8"
+.Lstr348:
+    .asciz "    movq %%rdx, %%rax"
+.Lstr349:
+    .asciz "    imulq %%rcx, %%rax"
+.Lstr350:
+    .asciz "    movq %%rax, %%r8"
+.Lstr351:
+    .asciz "    movq %%rcx, %%rax"
+.Lstr352:
+    .asciz "    cqto"
+.Lstr353:
+    .asciz "    idivq %%r8"
+.Lstr354:
+    .asciz "    pushq %%rax"
+.Lstr355:
+    .asciz "    popq %%rcx"
+.Lstr356:
+    .asciz "    movd %%ecx, %%xmm0"
+.Lstr357:
+    .asciz "    movq %%rcx, %%xmm0"
 .Lstr358:
     .asciz "    movq %%rcx, %%xmm0"
 .Lstr359:
@@ -27890,1150 +30458,1294 @@ main:
 .Lstr362:
     .asciz "    movq %%rax, %%xmm1"
 .Lstr363:
-    .asciz "    cvtsi2sdq %%rax, %%xmm1"
+    .asciz "    movq %%rax, %%xmm1"
 .Lstr364:
-    .asciz "    cvtsi2ssq %%rax, %%xmm1"
+    .asciz "    cvtsi2sdq %%rax, %%xmm1"
 .Lstr365:
-    .asciz "    addsd %%xmm1, %%xmm0"
+    .asciz "    cvtsi2ssq %%rax, %%xmm1"
 .Lstr366:
-    .asciz "    subsd %%xmm1, %%xmm0"
+    .asciz "    mulsd %%xmm1, %%xmm0"
 .Lstr367:
-    .asciz "    movq %%xmm0, %%rax"
+    .asciz "    divsd %%xmm1, %%xmm0"
 .Lstr368:
-    .asciz "    addss %%xmm1, %%xmm0"
+    .asciz "    movq %%xmm0, %%rax"
 .Lstr369:
-    .asciz "    subss %%xmm1, %%xmm0"
+    .asciz "    mulss %%xmm1, %%xmm0"
 .Lstr370:
-    .asciz "    movd %%xmm0, %%eax"
+    .asciz "    divss %%xmm1, %%xmm0"
 .Lstr371:
-    .asciz "    addq %%rcx, %%rax"
+    .asciz "    movd %%xmm0, %%eax"
 .Lstr372:
-    .asciz "    subq %%rax, %%rcx"
+    .asciz "    movq %%rax, %%r8"
 .Lstr373:
     .asciz "    movq %%rcx, %%rax"
 .Lstr374:
-    .asciz "    pushq %%rax"
+    .asciz "    cqto"
 .Lstr375:
-    .asciz "    popq %%rcx"
+    .asciz "    idivq %%r8"
 .Lstr376:
-    .asciz "    movd %%ecx, %%xmm0"
+    .asciz "    movq %%rdx, %%rax"
 .Lstr377:
-    .asciz "    movq %%rcx, %%xmm0"
+    .asciz "    imulq %%rcx, %%rax"
 .Lstr378:
-    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+    .asciz "    movq %%rax, %%r8"
 .Lstr379:
-    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+    .asciz "    movq %%rcx, %%rax"
 .Lstr380:
-    .asciz "    movd %%eax, %%xmm1"
+    .asciz "    cqto"
 .Lstr381:
-    .asciz "    movq %%rax, %%xmm1"
+    .asciz "    idivq %%r8"
 .Lstr382:
-    .asciz "    cvtsi2sdq %%rax, %%xmm1"
-.Lstr383:
-    .asciz "    cvtsi2ssq %%rax, %%xmm1"
-.Lstr384:
-    .asciz "    ucomisd %%xmm1, %%xmm0"
-.Lstr385:
-    .asciz "    ucomiss %%xmm1, %%xmm0"
-.Lstr386:
-    .asciz "    setb %%al"
-.Lstr387:
-    .asciz "    setbe %%al"
-.Lstr388:
-    .asciz "    seta %%al"
-.Lstr389:
-    .asciz "    setae %%al"
-.Lstr390:
-    .asciz "    movzbq %%al, %%rax"
-.Lstr391:
-    .asciz "    cmpq %%rax, %%rcx"
-.Lstr392:
-    .asciz "    setl %%al"
-.Lstr393:
-    .asciz "    setle %%al"
-.Lstr394:
-    .asciz "    setg %%al"
-.Lstr395:
-    .asciz "    setge %%al"
-.Lstr396:
-    .asciz "    movzbq %%al, %%rax"
-.Lstr397:
     .asciz "    pushq %%rax"
-.Lstr398:
+.Lstr383:
     .asciz "    popq %%rcx"
-.Lstr399:
+.Lstr384:
     .asciz "    movd %%ecx, %%xmm0"
-.Lstr400:
+.Lstr385:
     .asciz "    movq %%rcx, %%xmm0"
-.Lstr401:
+.Lstr386:
     .asciz "    cvtsi2sdq %%rcx, %%xmm0"
-.Lstr402:
+.Lstr387:
     .asciz "    cvtsi2ssq %%rcx, %%xmm0"
-.Lstr403:
+.Lstr388:
     .asciz "    movd %%eax, %%xmm1"
-.Lstr404:
+.Lstr389:
     .asciz "    movq %%rax, %%xmm1"
-.Lstr405:
+.Lstr390:
     .asciz "    cvtsi2sdq %%rax, %%xmm1"
-.Lstr406:
+.Lstr391:
     .asciz "    cvtsi2ssq %%rax, %%xmm1"
+.Lstr392:
+    .asciz "    addsd %%xmm1, %%xmm0"
+.Lstr393:
+    .asciz "    subsd %%xmm1, %%xmm0"
+.Lstr394:
+    .asciz "    movq %%xmm0, %%rax"
+.Lstr395:
+    .asciz "    addss %%xmm1, %%xmm0"
+.Lstr396:
+    .asciz "    subss %%xmm1, %%xmm0"
+.Lstr397:
+    .asciz "    movd %%xmm0, %%eax"
+.Lstr398:
+    .asciz "    addq %%rcx, %%rax"
+.Lstr399:
+    .asciz "    subq %%rax, %%rcx"
+.Lstr400:
+    .asciz "    movq %%rcx, %%rax"
+.Lstr401:
+    .asciz "    pushq %%rax"
+.Lstr402:
+    .asciz "    popq %%rcx"
+.Lstr403:
+    .asciz "    movd %%ecx, %%xmm0"
+.Lstr404:
+    .asciz "    movq %%rcx, %%xmm0"
+.Lstr405:
+    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+.Lstr406:
+    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
 .Lstr407:
-    .asciz "    ucomisd %%xmm1, %%xmm0"
+    .asciz "    movd %%eax, %%xmm1"
 .Lstr408:
-    .asciz "    ucomiss %%xmm1, %%xmm0"
+    .asciz "    movq %%rax, %%xmm1"
 .Lstr409:
-    .asciz "    setb %%al"
+    .asciz "    cvtsi2sdq %%rax, %%xmm1"
 .Lstr410:
-    .asciz "    setbe %%al"
+    .asciz "    cvtsi2ssq %%rax, %%xmm1"
 .Lstr411:
-    .asciz "    seta %%al"
+    .asciz "    addsd %%xmm1, %%xmm0"
 .Lstr412:
-    .asciz "    setae %%al"
+    .asciz "    subsd %%xmm1, %%xmm0"
 .Lstr413:
-    .asciz "    movzbq %%al, %%rax"
+    .asciz "    movq %%xmm0, %%rax"
 .Lstr414:
-    .asciz "    cmpq %%rax, %%rcx"
+    .asciz "    addss %%xmm1, %%xmm0"
 .Lstr415:
-    .asciz "    setl %%al"
+    .asciz "    subss %%xmm1, %%xmm0"
 .Lstr416:
-    .asciz "    setle %%al"
+    .asciz "    movd %%xmm0, %%eax"
 .Lstr417:
-    .asciz "    setg %%al"
+    .asciz "    addq %%rcx, %%rax"
 .Lstr418:
-    .asciz "    setge %%al"
+    .asciz "    subq %%rax, %%rcx"
 .Lstr419:
-    .asciz "    movzbq %%al, %%rax"
+    .asciz "    movq %%rcx, %%rax"
 .Lstr420:
     .asciz "    pushq %%rax"
 .Lstr421:
     .asciz "    popq %%rcx"
 .Lstr422:
-    .asciz "    movd %%ecx, %%xmm0"
+    .asciz "    salq %%cl, %%rax"
 .Lstr423:
-    .asciz "    movq %%rcx, %%xmm0"
+    .asciz "    sarq %%cl, %%rax"
 .Lstr424:
-    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+    .asciz "    pushq %%rax"
 .Lstr425:
-    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+    .asciz "    popq %%rcx"
 .Lstr426:
-    .asciz "    movd %%eax, %%xmm1"
+    .asciz "    salq %%cl, %%rax"
 .Lstr427:
-    .asciz "    movq %%rax, %%xmm1"
+    .asciz "    sarq %%cl, %%rax"
 .Lstr428:
-    .asciz "    cvtsi2sdq %%rax, %%xmm1"
+    .asciz "    pushq %%rax"
 .Lstr429:
-    .asciz "    cvtsi2ssq %%rax, %%xmm1"
+    .asciz "    popq %%rcx"
 .Lstr430:
-    .asciz "    ucomisd %%xmm1, %%xmm0"
-.Lstr431:
-    .asciz "    ucomiss %%xmm1, %%xmm0"
-.Lstr432:
-    .asciz "    sete %%al"
-.Lstr433:
-    .asciz "    setne %%al"
-.Lstr434:
-    .asciz "    movzbq %%al, %%rax"
-.Lstr435:
-    .asciz "    cmpq %%rax, %%rcx"
-.Lstr436:
-    .asciz "    sete %%al"
-.Lstr437:
-    .asciz "    setne %%al"
-.Lstr438:
-    .asciz "    movzbq %%al, %%rax"
-.Lstr439:
-    .asciz "    pushq %%rax"
-.Lstr440:
-    .asciz "    popq %%rcx"
-.Lstr441:
     .asciz "    movd %%ecx, %%xmm0"
-.Lstr442:
+.Lstr431:
     .asciz "    movq %%rcx, %%xmm0"
-.Lstr443:
+.Lstr432:
     .asciz "    cvtsi2sdq %%rcx, %%xmm0"
-.Lstr444:
+.Lstr433:
     .asciz "    cvtsi2ssq %%rcx, %%xmm0"
-.Lstr445:
+.Lstr434:
     .asciz "    movd %%eax, %%xmm1"
-.Lstr446:
+.Lstr435:
     .asciz "    movq %%rax, %%xmm1"
-.Lstr447:
+.Lstr436:
     .asciz "    cvtsi2sdq %%rax, %%xmm1"
-.Lstr448:
+.Lstr437:
     .asciz "    cvtsi2ssq %%rax, %%xmm1"
-.Lstr449:
+.Lstr438:
     .asciz "    ucomisd %%xmm1, %%xmm0"
-.Lstr450:
+.Lstr439:
     .asciz "    ucomiss %%xmm1, %%xmm0"
-.Lstr451:
-    .asciz "    sete %%al"
-.Lstr452:
-    .asciz "    setne %%al"
-.Lstr453:
+.Lstr440:
+    .asciz "    setb %%al"
+.Lstr441:
+    .asciz "    setbe %%al"
+.Lstr442:
+    .asciz "    seta %%al"
+.Lstr443:
+    .asciz "    setae %%al"
+.Lstr444:
     .asciz "    movzbq %%al, %%rax"
-.Lstr454:
+.Lstr445:
     .asciz "    cmpq %%rax, %%rcx"
-.Lstr455:
-    .asciz "    sete %%al"
-.Lstr456:
-    .asciz "    setne %%al"
-.Lstr457:
+.Lstr446:
+    .asciz "    setl %%al"
+.Lstr447:
+    .asciz "    setle %%al"
+.Lstr448:
+    .asciz "    setg %%al"
+.Lstr449:
+    .asciz "    setge %%al"
+.Lstr450:
     .asciz "    movzbq %%al, %%rax"
+.Lstr451:
+    .asciz "    pushq %%rax"
+.Lstr452:
+    .asciz "    popq %%rcx"
+.Lstr453:
+    .asciz "    movd %%ecx, %%xmm0"
+.Lstr454:
+    .asciz "    movq %%rcx, %%xmm0"
+.Lstr455:
+    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+.Lstr456:
+    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+.Lstr457:
+    .asciz "    movd %%eax, %%xmm1"
 .Lstr458:
-    .asciz "    pushq %%rax"
+    .asciz "    movq %%rax, %%xmm1"
 .Lstr459:
-    .asciz "    popq %%rcx"
+    .asciz "    cvtsi2sdq %%rax, %%xmm1"
 .Lstr460:
-    .asciz "    andq %%rcx, %%rax"
+    .asciz "    cvtsi2ssq %%rax, %%xmm1"
 .Lstr461:
-    .asciz "    pushq %%rax"
+    .asciz "    ucomisd %%xmm1, %%xmm0"
 .Lstr462:
-    .asciz "    popq %%rcx"
+    .asciz "    ucomiss %%xmm1, %%xmm0"
 .Lstr463:
-    .asciz "    andq %%rcx, %%rax"
+    .asciz "    setb %%al"
 .Lstr464:
-    .asciz "    pushq %%rax"
+    .asciz "    setbe %%al"
 .Lstr465:
-    .asciz "    popq %%rcx"
+    .asciz "    seta %%al"
 .Lstr466:
-    .asciz "    xorq %%rcx, %%rax"
+    .asciz "    setae %%al"
 .Lstr467:
-    .asciz "    pushq %%rax"
+    .asciz "    movzbq %%al, %%rax"
 .Lstr468:
-    .asciz "    popq %%rcx"
+    .asciz "    cmpq %%rax, %%rcx"
 .Lstr469:
-    .asciz "    xorq %%rcx, %%rax"
+    .asciz "    setl %%al"
 .Lstr470:
-    .asciz "    pushq %%rax"
+    .asciz "    setle %%al"
 .Lstr471:
-    .asciz "    popq %%rcx"
+    .asciz "    setg %%al"
 .Lstr472:
-    .asciz "    orq %%rcx, %%rax"
+    .asciz "    setge %%al"
 .Lstr473:
-    .asciz "    pushq %%rax"
+    .asciz "    movzbq %%al, %%rax"
 .Lstr474:
-    .asciz "    popq %%rcx"
-.Lstr475:
-    .asciz "    orq %%rcx, %%rax"
-.Lstr476:
-    .asciz "    testq %%rax, %%rax"
-.Lstr477:
-    .asciz "    je .L%d"
-.Lstr478:
-    .asciz "    testq %%rax, %%rax"
-.Lstr479:
-    .asciz "    je .L%d"
-.Lstr480:
-    .asciz "    movl $1, %%eax"
-.Lstr481:
-    .asciz "    jmp .L%d"
-.Lstr482:
-    .asciz "    xorl %%eax, %%eax"
-.Lstr483:
-    .asciz "    testq %%rax, %%rax"
-.Lstr484:
-    .asciz "    je .L%d"
-.Lstr485:
-    .asciz "    testq %%rax, %%rax"
-.Lstr486:
-    .asciz "    je .L%d"
-.Lstr487:
-    .asciz "    movl $1, %%eax"
-.Lstr488:
-    .asciz "    jmp .L%d"
-.Lstr489:
-    .asciz "    xorl %%eax, %%eax"
-.Lstr490:
-    .asciz "    testq %%rax, %%rax"
-.Lstr491:
-    .asciz "    jne .L%d"
-.Lstr492:
-    .asciz "    testq %%rax, %%rax"
-.Lstr493:
-    .asciz "    jne .L%d"
-.Lstr494:
-    .asciz "    xorl %%eax, %%eax"
-.Lstr495:
-    .asciz "    jmp .L%d"
-.Lstr496:
-    .asciz "    movl $1, %%eax"
-.Lstr497:
-    .asciz "    testq %%rax, %%rax"
-.Lstr498:
-    .asciz "    jne .L%d"
-.Lstr499:
-    .asciz "    testq %%rax, %%rax"
-.Lstr500:
-    .asciz "    jne .L%d"
-.Lstr501:
-    .asciz "    xorl %%eax, %%eax"
-.Lstr502:
-    .asciz "    jmp .L%d"
-.Lstr503:
-    .asciz "    movl $1, %%eax"
-.Lstr504:
-    .asciz "    testq %%rax, %%rax"
-.Lstr505:
-    .asciz "    je .L%d"
-.Lstr506:
-    .asciz "    jmp .L%d"
-.Lstr507:
-    .asciz "    testq %%rax, %%rax"
-.Lstr508:
-    .asciz "    je .L%d"
-.Lstr509:
-    .asciz "    jmp .L%d"
-.Lstr510:
     .asciz "    pushq %%rax"
-.Lstr511:
+.Lstr475:
     .asciz "    popq %%rcx"
+.Lstr476:
+    .asciz "    movd %%ecx, %%xmm0"
+.Lstr477:
+    .asciz "    movq %%rcx, %%xmm0"
+.Lstr478:
+    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+.Lstr479:
+    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+.Lstr480:
+    .asciz "    movd %%eax, %%xmm1"
+.Lstr481:
+    .asciz "    movq %%rax, %%xmm1"
+.Lstr482:
+    .asciz "    cvtsi2sdq %%rax, %%xmm1"
+.Lstr483:
+    .asciz "    cvtsi2ssq %%rax, %%xmm1"
+.Lstr484:
+    .asciz "    ucomisd %%xmm1, %%xmm0"
+.Lstr485:
+    .asciz "    ucomiss %%xmm1, %%xmm0"
+.Lstr486:
+    .asciz "    sete %%al"
+.Lstr487:
+    .asciz "    setne %%al"
+.Lstr488:
+    .asciz "    movzbq %%al, %%rax"
+.Lstr489:
+    .asciz "    cmpq %%rax, %%rcx"
+.Lstr490:
+    .asciz "    sete %%al"
+.Lstr491:
+    .asciz "    setne %%al"
+.Lstr492:
+    .asciz "    movzbq %%al, %%rax"
+.Lstr493:
+    .asciz "    pushq %%rax"
+.Lstr494:
+    .asciz "    popq %%rcx"
+.Lstr495:
+    .asciz "    movd %%ecx, %%xmm0"
+.Lstr496:
+    .asciz "    movq %%rcx, %%xmm0"
+.Lstr497:
+    .asciz "    cvtsi2sdq %%rcx, %%xmm0"
+.Lstr498:
+    .asciz "    cvtsi2ssq %%rcx, %%xmm0"
+.Lstr499:
+    .asciz "    movd %%eax, %%xmm1"
+.Lstr500:
+    .asciz "    movq %%rax, %%xmm1"
+.Lstr501:
+    .asciz "    cvtsi2sdq %%rax, %%xmm1"
+.Lstr502:
+    .asciz "    cvtsi2ssq %%rax, %%xmm1"
+.Lstr503:
+    .asciz "    ucomisd %%xmm1, %%xmm0"
+.Lstr504:
+    .asciz "    ucomiss %%xmm1, %%xmm0"
+.Lstr505:
+    .asciz "    sete %%al"
+.Lstr506:
+    .asciz "    setne %%al"
+.Lstr507:
+    .asciz "    movzbq %%al, %%rax"
+.Lstr508:
+    .asciz "    cmpq %%rax, %%rcx"
+.Lstr509:
+    .asciz "    sete %%al"
+.Lstr510:
+    .asciz "    setne %%al"
+.Lstr511:
+    .asciz "    movzbq %%al, %%rax"
 .Lstr512:
-    .asciz "    movb %%al, (%%rcx)"
+    .asciz "    pushq %%rax"
 .Lstr513:
-    .asciz "    movl %%eax, (%%rcx)"
+    .asciz "    popq %%rcx"
 .Lstr514:
-    .asciz "    movq %%rax, (%%rcx)"
+    .asciz "    andq %%rcx, %%rax"
 .Lstr515:
     .asciz "    pushq %%rax"
 .Lstr516:
-    .asciz "    movsbq (%%rax), %%rax"
-.Lstr517:
-    .asciz "    movl (%%rax), %%eax"
-.Lstr518:
-    .asciz "    movq (%%rax), %%rax"
-.Lstr519:
-    .asciz "    pushq %%rax"
-.Lstr520:
     .asciz "    popq %%rcx"
+.Lstr517:
+    .asciz "    andq %%rcx, %%rax"
+.Lstr518:
+    .asciz "    pushq %%rax"
+.Lstr519:
+    .asciz "    popq %%rcx"
+.Lstr520:
+    .asciz "    xorq %%rcx, %%rax"
 .Lstr521:
-    .asciz "    addq %%rcx, %%rax"
+    .asciz "    pushq %%rax"
 .Lstr522:
     .asciz "    popq %%rcx"
 .Lstr523:
-    .asciz "    movb %%al, (%%rcx)"
+    .asciz "    xorq %%rcx, %%rax"
 .Lstr524:
-    .asciz "    addl %%ecx, %%eax"
+    .asciz "    pushq %%rax"
 .Lstr525:
     .asciz "    popq %%rcx"
 .Lstr526:
-    .asciz "    movl %%eax, (%%rcx)"
+    .asciz "    orq %%rcx, %%rax"
 .Lstr527:
-    .asciz "    addq %%rcx, %%rax"
+    .asciz "    pushq %%rax"
 .Lstr528:
     .asciz "    popq %%rcx"
 .Lstr529:
-    .asciz "    movq %%rax, (%%rcx)"
+    .asciz "    orq %%rcx, %%rax"
 .Lstr530:
-    .asciz "    pushq %%rax"
+    .asciz "    testq %%rax, %%rax"
 .Lstr531:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    je .L%d"
 .Lstr532:
-    .asciz "    movl (%%rax), %%eax"
+    .asciz "    testq %%rax, %%rax"
 .Lstr533:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    je .L%d"
 .Lstr534:
-    .asciz "    pushq %%rax"
+    .asciz "    movl $1, %%eax"
 .Lstr535:
-    .asciz "    popq %%rcx"
+    .asciz "    jmp .L%d"
 .Lstr536:
-    .asciz "    subq %%rcx, %%rax"
+    .asciz "    xorl %%eax, %%eax"
 .Lstr537:
-    .asciz "    popq %%rcx"
+    .asciz "    testq %%rax, %%rax"
 .Lstr538:
-    .asciz "    movb %%al, (%%rcx)"
+    .asciz "    je .L%d"
 .Lstr539:
-    .asciz "    subl %%ecx, %%eax"
+    .asciz "    testq %%rax, %%rax"
 .Lstr540:
-    .asciz "    popq %%rcx"
+    .asciz "    je .L%d"
 .Lstr541:
-    .asciz "    movl %%eax, (%%rcx)"
+    .asciz "    movl $1, %%eax"
 .Lstr542:
-    .asciz "    subq %%rcx, %%rax"
+    .asciz "    jmp .L%d"
 .Lstr543:
-    .asciz "    popq %%rcx"
+    .asciz "    xorl %%eax, %%eax"
 .Lstr544:
-    .asciz "    movq %%rax, (%%rcx)"
+    .asciz "    testq %%rax, %%rax"
 .Lstr545:
-    .asciz "    movsbq (%%rax), %%rcx"
+    .asciz "    jne .L%d"
 .Lstr546:
-    .asciz "    movl (%%rax), %%ecx"
+    .asciz "    testq %%rax, %%rax"
 .Lstr547:
-    .asciz "    movq (%%rax), %%rcx"
+    .asciz "    jne .L%d"
 .Lstr548:
-    .asciz "    addb $1, (%%rax)"
+    .asciz "    xorl %%eax, %%eax"
 .Lstr549:
-    .asciz "    addl $1, (%%rax)"
+    .asciz "    jmp .L%d"
 .Lstr550:
-    .asciz "    addq $1, (%%rax)"
+    .asciz "    movl $1, %%eax"
 .Lstr551:
-    .asciz "    subb $1, (%%rax)"
+    .asciz "    testq %%rax, %%rax"
 .Lstr552:
-    .asciz "    subl $1, (%%rax)"
+    .asciz "    jne .L%d"
 .Lstr553:
-    .asciz "    subq $1, (%%rax)"
+    .asciz "    testq %%rax, %%rax"
 .Lstr554:
-    .asciz "    movq %%rcx, %%rax"
+    .asciz "    jne .L%d"
 .Lstr555:
-    .asciz "    pushq %%rax"
+    .asciz "    xorl %%eax, %%eax"
 .Lstr556:
-    .asciz "    popq %%rcx"
+    .asciz "    jmp .L%d"
 .Lstr557:
-    .asciz "    movb %%al, (%%rcx)"
+    .asciz "    movl $1, %%eax"
 .Lstr558:
-    .asciz "    movl %%eax, (%%rcx)"
+    .asciz "    testq %%rax, %%rax"
 .Lstr559:
-    .asciz "    movq %%rax, (%%rcx)"
+    .asciz "    je .L%d"
 .Lstr560:
-    .asciz "    pushq %%rax"
+    .asciz "    jmp .L%d"
 .Lstr561:
-    .asciz "    movsbq (%%rax), %%rax"
+    .asciz "    testq %%rax, %%rax"
 .Lstr562:
-    .asciz "    movl (%%rax), %%eax"
+    .asciz "    je .L%d"
 .Lstr563:
-    .asciz "    movq (%%rax), %%rax"
+    .asciz "    jmp .L%d"
 .Lstr564:
     .asciz "    pushq %%rax"
 .Lstr565:
     .asciz "    popq %%rcx"
 .Lstr566:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr567:
-    .asciz "    popq %%rcx"
-.Lstr568:
     .asciz "    movb %%al, (%%rcx)"
-.Lstr569:
-    .asciz "    addl %%ecx, %%eax"
-.Lstr570:
-    .asciz "    popq %%rcx"
-.Lstr571:
+.Lstr567:
     .asciz "    movl %%eax, (%%rcx)"
-.Lstr572:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr573:
-    .asciz "    popq %%rcx"
-.Lstr574:
+.Lstr568:
     .asciz "    movq %%rax, (%%rcx)"
-.Lstr575:
+.Lstr569:
     .asciz "    pushq %%rax"
-.Lstr576:
+.Lstr570:
     .asciz "    movsbq (%%rax), %%rax"
-.Lstr577:
+.Lstr571:
     .asciz "    movl (%%rax), %%eax"
-.Lstr578:
+.Lstr572:
     .asciz "    movq (%%rax), %%rax"
-.Lstr579:
+.Lstr573:
     .asciz "    pushq %%rax"
-.Lstr580:
+.Lstr574:
     .asciz "    popq %%rcx"
+.Lstr575:
+    .asciz "    addq %%rcx, %%rax"
+.Lstr576:
+    .asciz "    popq %%rcx"
+.Lstr577:
+    .asciz "    movb %%al, (%%rcx)"
+.Lstr578:
+    .asciz "    addl %%ecx, %%eax"
+.Lstr579:
+    .asciz "    popq %%rcx"
+.Lstr580:
+    .asciz "    movl %%eax, (%%rcx)"
 .Lstr581:
-    .asciz "    subq %%rcx, %%rax"
+    .asciz "    addq %%rcx, %%rax"
 .Lstr582:
     .asciz "    popq %%rcx"
 .Lstr583:
-    .asciz "    movb %%al, (%%rcx)"
+    .asciz "    movq %%rax, (%%rcx)"
 .Lstr584:
-    .asciz "    subl %%ecx, %%eax"
+    .asciz "    pushq %%rax"
 .Lstr585:
-    .asciz "    popq %%rcx"
-.Lstr586:
-    .asciz "    movl %%eax, (%%rcx)"
-.Lstr587:
-    .asciz "    subq %%rcx, %%rax"
-.Lstr588:
-    .asciz "    popq %%rcx"
-.Lstr589:
-    .asciz "    movq %%rax, (%%rcx)"
-.Lstr590:
-    .asciz "    movsbq (%%rax), %%rcx"
-.Lstr591:
-    .asciz "    movl (%%rax), %%ecx"
-.Lstr592:
-    .asciz "    movq (%%rax), %%rcx"
-.Lstr593:
-    .asciz "    addb $1, (%%rax)"
-.Lstr594:
-    .asciz "    addl $1, (%%rax)"
-.Lstr595:
-    .asciz "    addq $1, (%%rax)"
-.Lstr596:
-    .asciz "    subb $1, (%%rax)"
-.Lstr597:
-    .asciz "    subl $1, (%%rax)"
-.Lstr598:
-    .asciz "    subq $1, (%%rax)"
-.Lstr599:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr600:
-    .asciz "    pushq %%rax"
-.Lstr601:
-    .asciz "    popq %%rcx"
-.Lstr602:
-    .asciz "    movb %%al, (%%rcx)"
-.Lstr603:
-    .asciz "    movl %%eax, (%%rcx)"
-.Lstr604:
-    .asciz "    movq %%rax, (%%rcx)"
-.Lstr605:
-    .asciz "    pushq %%rax"
-.Lstr606:
     .asciz "    movsbq (%%rax), %%rax"
-.Lstr607:
+.Lstr586:
     .asciz "    movl (%%rax), %%eax"
-.Lstr608:
+.Lstr587:
     .asciz "    movq (%%rax), %%rax"
+.Lstr588:
+    .asciz "    pushq %%rax"
+.Lstr589:
+    .asciz "    popq %%rcx"
+.Lstr590:
+    .asciz "    subq %%rcx, %%rax"
+.Lstr591:
+    .asciz "    popq %%rcx"
+.Lstr592:
+    .asciz "    movb %%al, (%%rcx)"
+.Lstr593:
+    .asciz "    subl %%ecx, %%eax"
+.Lstr594:
+    .asciz "    popq %%rcx"
+.Lstr595:
+    .asciz "    movl %%eax, (%%rcx)"
+.Lstr596:
+    .asciz "    subq %%rcx, %%rax"
+.Lstr597:
+    .asciz "    popq %%rcx"
+.Lstr598:
+    .asciz "    movq %%rax, (%%rcx)"
+.Lstr599:
+    .asciz "    movsbq (%%rax), %%rcx"
+.Lstr600:
+    .asciz "    movl (%%rax), %%ecx"
+.Lstr601:
+    .asciz "    movq (%%rax), %%rcx"
+.Lstr602:
+    .asciz "    addb $1, (%%rax)"
+.Lstr603:
+    .asciz "    addl $1, (%%rax)"
+.Lstr604:
+    .asciz "    addq $1, (%%rax)"
+.Lstr605:
+    .asciz "    subb $1, (%%rax)"
+.Lstr606:
+    .asciz "    subl $1, (%%rax)"
+.Lstr607:
+    .asciz "    subq $1, (%%rax)"
+.Lstr608:
+    .asciz "    movq %%rcx, %%rax"
 .Lstr609:
     .asciz "    pushq %%rax"
 .Lstr610:
     .asciz "    popq %%rcx"
 .Lstr611:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr612:
-    .asciz "    popq %%rcx"
-.Lstr613:
     .asciz "    movb %%al, (%%rcx)"
-.Lstr614:
-    .asciz "    addl %%ecx, %%eax"
-.Lstr615:
-    .asciz "    popq %%rcx"
-.Lstr616:
+.Lstr612:
     .asciz "    movl %%eax, (%%rcx)"
-.Lstr617:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr618:
-    .asciz "    popq %%rcx"
-.Lstr619:
+.Lstr613:
     .asciz "    movq %%rax, (%%rcx)"
-.Lstr620:
+.Lstr614:
     .asciz "    pushq %%rax"
-.Lstr621:
+.Lstr615:
     .asciz "    movsbq (%%rax), %%rax"
-.Lstr622:
+.Lstr616:
     .asciz "    movl (%%rax), %%eax"
-.Lstr623:
+.Lstr617:
     .asciz "    movq (%%rax), %%rax"
-.Lstr624:
+.Lstr618:
     .asciz "    pushq %%rax"
-.Lstr625:
+.Lstr619:
     .asciz "    popq %%rcx"
+.Lstr620:
+    .asciz "    addq %%rcx, %%rax"
+.Lstr621:
+    .asciz "    popq %%rcx"
+.Lstr622:
+    .asciz "    movb %%al, (%%rcx)"
+.Lstr623:
+    .asciz "    addl %%ecx, %%eax"
+.Lstr624:
+    .asciz "    popq %%rcx"
+.Lstr625:
+    .asciz "    movl %%eax, (%%rcx)"
 .Lstr626:
-    .asciz "    subq %%rcx, %%rax"
+    .asciz "    addq %%rcx, %%rax"
 .Lstr627:
     .asciz "    popq %%rcx"
 .Lstr628:
-    .asciz "    movb %%al, (%%rcx)"
+    .asciz "    movq %%rax, (%%rcx)"
 .Lstr629:
-    .asciz "    subl %%ecx, %%eax"
+    .asciz "    pushq %%rax"
 .Lstr630:
-    .asciz "    popq %%rcx"
-.Lstr631:
-    .asciz "    movl %%eax, (%%rcx)"
-.Lstr632:
-    .asciz "    subq %%rcx, %%rax"
-.Lstr633:
-    .asciz "    popq %%rcx"
-.Lstr634:
-    .asciz "    movq %%rax, (%%rcx)"
-.Lstr635:
-    .asciz "    movsbq (%%rax), %%rcx"
-.Lstr636:
-    .asciz "    movl (%%rax), %%ecx"
-.Lstr637:
-    .asciz "    movq (%%rax), %%rcx"
-.Lstr638:
-    .asciz "    addb $1, (%%rax)"
-.Lstr639:
-    .asciz "    addl $1, (%%rax)"
-.Lstr640:
-    .asciz "    addq $1, (%%rax)"
-.Lstr641:
-    .asciz "    subb $1, (%%rax)"
-.Lstr642:
-    .asciz "    subl $1, (%%rax)"
-.Lstr643:
-    .asciz "    subq $1, (%%rax)"
-.Lstr644:
-    .asciz "    movq %%rcx, %%rax"
-.Lstr645:
-    .asciz "    pushq %%rax"
-.Lstr646:
-    .asciz "    popq %%rcx"
-.Lstr647:
-    .asciz "    movb %%al, (%%rcx)"
-.Lstr648:
-    .asciz "    movl %%eax, (%%rcx)"
-.Lstr649:
-    .asciz "    movq %%rax, (%%rcx)"
-.Lstr650:
-    .asciz "    pushq %%rax"
-.Lstr651:
     .asciz "    movsbq (%%rax), %%rax"
-.Lstr652:
+.Lstr631:
     .asciz "    movl (%%rax), %%eax"
-.Lstr653:
+.Lstr632:
     .asciz "    movq (%%rax), %%rax"
+.Lstr633:
+    .asciz "    pushq %%rax"
+.Lstr634:
+    .asciz "    popq %%rcx"
+.Lstr635:
+    .asciz "    subq %%rcx, %%rax"
+.Lstr636:
+    .asciz "    popq %%rcx"
+.Lstr637:
+    .asciz "    movb %%al, (%%rcx)"
+.Lstr638:
+    .asciz "    subl %%ecx, %%eax"
+.Lstr639:
+    .asciz "    popq %%rcx"
+.Lstr640:
+    .asciz "    movl %%eax, (%%rcx)"
+.Lstr641:
+    .asciz "    subq %%rcx, %%rax"
+.Lstr642:
+    .asciz "    popq %%rcx"
+.Lstr643:
+    .asciz "    movq %%rax, (%%rcx)"
+.Lstr644:
+    .asciz "    movsbq (%%rax), %%rcx"
+.Lstr645:
+    .asciz "    movl (%%rax), %%ecx"
+.Lstr646:
+    .asciz "    movq (%%rax), %%rcx"
+.Lstr647:
+    .asciz "    addb $1, (%%rax)"
+.Lstr648:
+    .asciz "    addl $1, (%%rax)"
+.Lstr649:
+    .asciz "    addq $1, (%%rax)"
+.Lstr650:
+    .asciz "    subb $1, (%%rax)"
+.Lstr651:
+    .asciz "    subl $1, (%%rax)"
+.Lstr652:
+    .asciz "    subq $1, (%%rax)"
+.Lstr653:
+    .asciz "    movq %%rcx, %%rax"
 .Lstr654:
     .asciz "    pushq %%rax"
 .Lstr655:
     .asciz "    popq %%rcx"
 .Lstr656:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr657:
-    .asciz "    popq %%rcx"
-.Lstr658:
     .asciz "    movb %%al, (%%rcx)"
-.Lstr659:
-    .asciz "    addl %%ecx, %%eax"
-.Lstr660:
-    .asciz "    popq %%rcx"
-.Lstr661:
+.Lstr657:
     .asciz "    movl %%eax, (%%rcx)"
-.Lstr662:
-    .asciz "    addq %%rcx, %%rax"
-.Lstr663:
-    .asciz "    popq %%rcx"
-.Lstr664:
+.Lstr658:
     .asciz "    movq %%rax, (%%rcx)"
-.Lstr665:
+.Lstr659:
     .asciz "    pushq %%rax"
-.Lstr666:
+.Lstr660:
     .asciz "    movsbq (%%rax), %%rax"
-.Lstr667:
+.Lstr661:
     .asciz "    movl (%%rax), %%eax"
-.Lstr668:
+.Lstr662:
     .asciz "    movq (%%rax), %%rax"
-.Lstr669:
+.Lstr663:
     .asciz "    pushq %%rax"
-.Lstr670:
+.Lstr664:
     .asciz "    popq %%rcx"
+.Lstr665:
+    .asciz "    addq %%rcx, %%rax"
+.Lstr666:
+    .asciz "    popq %%rcx"
+.Lstr667:
+    .asciz "    movb %%al, (%%rcx)"
+.Lstr668:
+    .asciz "    addl %%ecx, %%eax"
+.Lstr669:
+    .asciz "    popq %%rcx"
+.Lstr670:
+    .asciz "    movl %%eax, (%%rcx)"
 .Lstr671:
-    .asciz "    subq %%rcx, %%rax"
+    .asciz "    addq %%rcx, %%rax"
 .Lstr672:
     .asciz "    popq %%rcx"
 .Lstr673:
-    .asciz "    movb %%al, (%%rcx)"
-.Lstr674:
-    .asciz "    subl %%ecx, %%eax"
-.Lstr675:
-    .asciz "    popq %%rcx"
-.Lstr676:
-    .asciz "    movl %%eax, (%%rcx)"
-.Lstr677:
-    .asciz "    subq %%rcx, %%rax"
-.Lstr678:
-    .asciz "    popq %%rcx"
-.Lstr679:
     .asciz "    movq %%rax, (%%rcx)"
+.Lstr674:
+    .asciz "    pushq %%rax"
+.Lstr675:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr676:
+    .asciz "    movl (%%rax), %%eax"
+.Lstr677:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr678:
+    .asciz "    pushq %%rax"
+.Lstr679:
+    .asciz "    popq %%rcx"
 .Lstr680:
-    .asciz "    movsbq (%%rax), %%rcx"
+    .asciz "    subq %%rcx, %%rax"
 .Lstr681:
-    .asciz "    movl (%%rax), %%ecx"
+    .asciz "    popq %%rcx"
 .Lstr682:
-    .asciz "    movq (%%rax), %%rcx"
+    .asciz "    movb %%al, (%%rcx)"
 .Lstr683:
-    .asciz "    addb $1, (%%rax)"
+    .asciz "    subl %%ecx, %%eax"
 .Lstr684:
-    .asciz "    addl $1, (%%rax)"
+    .asciz "    popq %%rcx"
 .Lstr685:
-    .asciz "    addq $1, (%%rax)"
+    .asciz "    movl %%eax, (%%rcx)"
 .Lstr686:
-    .asciz "    subb $1, (%%rax)"
+    .asciz "    subq %%rcx, %%rax"
 .Lstr687:
-    .asciz "    subl $1, (%%rax)"
+    .asciz "    popq %%rcx"
 .Lstr688:
-    .asciz "    subq $1, (%%rax)"
+    .asciz "    movq %%rax, (%%rcx)"
 .Lstr689:
-    .asciz "    movq %%rcx, %%rax"
+    .asciz "    movsbq (%%rax), %%rcx"
 .Lstr690:
-    .asciz "    cmpq $0, %%rax"
+    .asciz "    movl (%%rax), %%ecx"
 .Lstr691:
-    .asciz "    je .L%d"
+    .asciz "    movq (%%rax), %%rcx"
 .Lstr692:
-    .asciz "    jmp .L%d"
+    .asciz "    addb $1, (%%rax)"
 .Lstr693:
-    .asciz "unsigned"
+    .asciz "    addl $1, (%%rax)"
 .Lstr694:
-    .asciz "signed"
+    .asciz "    addq $1, (%%rax)"
 .Lstr695:
-    .asciz "long"
+    .asciz "    subb $1, (%%rax)"
 .Lstr696:
-    .asciz "int"
+    .asciz "    subl $1, (%%rax)"
 .Lstr697:
-    .asciz "long"
+    .asciz "    subq $1, (%%rax)"
 .Lstr698:
-    .asciz "int"
+    .asciz "    movq %%rcx, %%rax"
 .Lstr699:
-    .asciz "expected variable name"
+    .asciz "    pushq %%rax"
 .Lstr700:
-    .asciz "    movl %%eax, %s(%%rip)"
+    .asciz "    popq %%rcx"
 .Lstr701:
-    .asciz "    movq %%rax, %s(%%rip)"
+    .asciz "    movb %%al, (%%rcx)"
 .Lstr702:
-    .asciz "    movl %%eax, %d(%%rbp)"
+    .asciz "    movl %%eax, (%%rcx)"
 .Lstr703:
-    .asciz "    movq %%rax, %d(%%rbp)"
+    .asciz "    movq %%rax, (%%rcx)"
 .Lstr704:
-    .asciz "    jmp .L%d"
+    .asciz "    pushq %%rax"
 .Lstr705:
-    .asciz "    jmp .L%d"
+    .asciz "    movsbq (%%rax), %%rax"
 .Lstr706:
-    .asciz "    cmpq $0, %%rax"
+    .asciz "    movl (%%rax), %%eax"
 .Lstr707:
-    .asciz "    jne .L%d"
+    .asciz "    movq (%%rax), %%rax"
 .Lstr708:
-    .asciz "    jmp .L%d"
+    .asciz "    pushq %%rax"
 .Lstr709:
-    .asciz "    cmpq $0, %%rax"
+    .asciz "    popq %%rcx"
 .Lstr710:
-    .asciz "    je .L%d"
+    .asciz "    addq %%rcx, %%rax"
 .Lstr711:
-    .asciz "    jmp .L%d"
+    .asciz "    popq %%rcx"
 .Lstr712:
-    .asciz "    pushq %%rax"
+    .asciz "    movb %%al, (%%rcx)"
 .Lstr713:
-    .asciz "    pushq $0"
+    .asciz "    addl %%ecx, %%eax"
 .Lstr714:
-    .asciz "    jmp .L%d"
+    .asciz "    popq %%rcx"
 .Lstr715:
-    .asciz "    jmp .L%d"
+    .asciz "    movl %%eax, (%%rcx)"
 .Lstr716:
-    .asciz "    movq 8(%%rsp), %%rax"
+    .asciz "    addq %%rcx, %%rax"
 .Lstr717:
-    .asciz "    cmpq $%d, %%rax"
+    .asciz "    popq %%rcx"
 .Lstr718:
-    .asciz "    je .L%d"
+    .asciz "    movq %%rax, (%%rcx)"
 .Lstr719:
-    .asciz "    jmp .L%d"
-.Lstr720:
-    .asciz "    addq $16, %%rsp"
-.Lstr721:
-    .asciz "    jmp .L%d"
-.Lstr722:
-    .asciz "    jmp .L%d"
-.Lstr723:
-    .asciz "expected label name"
-.Lstr724:
-    .asciz "    jmp %s"
-.Lstr725:
-    .asciz "    leave"
-.Lstr726:
-    .asciz "    ret"
-.Lstr727:
-    .asciz "unsigned"
-.Lstr728:
-    .asciz "signed"
-.Lstr729:
-    .asciz "%s:"
-.Lstr730:
-    .asciz "expected variable name"
-.Lstr731:
-    .asciz "undefined macro"
-.Lstr732:
-    .asciz "    movb %%al, %d(%%rbp)"
-.Lstr733:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr734:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr735:
-    .asciz "    movl %%eax, %s(%%rip)"
-.Lstr736:
-    .asciz "    movq %%rax, %s(%%rip)"
-.Lstr737:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr738:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr739:
-    .asciz "long"
-.Lstr740:
-    .asciz "int"
-.Lstr741:
-    .asciz "expected variable name"
-.Lstr742:
-    .asciz "undefined macro"
-.Lstr743:
-    .asciz "    movb %%al, %d(%%rbp)"
-.Lstr744:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr745:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr746:
-    .asciz "    movl %%eax, %s(%%rip)"
-.Lstr747:
-    .asciz "    movq %%rax, %s(%%rip)"
-.Lstr748:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr749:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr750:
-    .asciz "    cmpq $0, %%rax"
-.Lstr751:
-    .asciz "    je .L%d"
-.Lstr752:
-    .asciz "    jmp .L%d"
-.Lstr753:
-    .asciz "unsigned"
-.Lstr754:
-    .asciz "signed"
-.Lstr755:
-    .asciz "long"
-.Lstr756:
-    .asciz "int"
-.Lstr757:
-    .asciz "long"
-.Lstr758:
-    .asciz "int"
-.Lstr759:
-    .asciz "expected variable name"
-.Lstr760:
-    .asciz "    movl %%eax, %s(%%rip)"
-.Lstr761:
-    .asciz "    movq %%rax, %s(%%rip)"
-.Lstr762:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr763:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr764:
-    .asciz "    jmp .L%d"
-.Lstr765:
-    .asciz "    jmp .L%d"
-.Lstr766:
-    .asciz "    cmpq $0, %%rax"
-.Lstr767:
-    .asciz "    jne .L%d"
-.Lstr768:
-    .asciz "    jmp .L%d"
-.Lstr769:
-    .asciz "    cmpq $0, %%rax"
-.Lstr770:
-    .asciz "    je .L%d"
-.Lstr771:
-    .asciz "    jmp .L%d"
-.Lstr772:
     .asciz "    pushq %%rax"
-.Lstr773:
-    .asciz "    pushq $0"
-.Lstr774:
-    .asciz "    jmp .L%d"
-.Lstr775:
-    .asciz "    jmp .L%d"
-.Lstr776:
-    .asciz "    movq 8(%%rsp), %%rax"
-.Lstr777:
-    .asciz "    cmpq $%d, %%rax"
-.Lstr778:
+.Lstr720:
+    .asciz "    movsbq (%%rax), %%rax"
+.Lstr721:
+    .asciz "    movl (%%rax), %%eax"
+.Lstr722:
+    .asciz "    movq (%%rax), %%rax"
+.Lstr723:
+    .asciz "    pushq %%rax"
+.Lstr724:
+    .asciz "    popq %%rcx"
+.Lstr725:
+    .asciz "    subq %%rcx, %%rax"
+.Lstr726:
+    .asciz "    popq %%rcx"
+.Lstr727:
+    .asciz "    movb %%al, (%%rcx)"
+.Lstr728:
+    .asciz "    subl %%ecx, %%eax"
+.Lstr729:
+    .asciz "    popq %%rcx"
+.Lstr730:
+    .asciz "    movl %%eax, (%%rcx)"
+.Lstr731:
+    .asciz "    subq %%rcx, %%rax"
+.Lstr732:
+    .asciz "    popq %%rcx"
+.Lstr733:
+    .asciz "    movq %%rax, (%%rcx)"
+.Lstr734:
+    .asciz "    movsbq (%%rax), %%rcx"
+.Lstr735:
+    .asciz "    movl (%%rax), %%ecx"
+.Lstr736:
+    .asciz "    movq (%%rax), %%rcx"
+.Lstr737:
+    .asciz "    addb $1, (%%rax)"
+.Lstr738:
+    .asciz "    addl $1, (%%rax)"
+.Lstr739:
+    .asciz "    addq $1, (%%rax)"
+.Lstr740:
+    .asciz "    subb $1, (%%rax)"
+.Lstr741:
+    .asciz "    subl $1, (%%rax)"
+.Lstr742:
+    .asciz "    subq $1, (%%rax)"
+.Lstr743:
+    .asciz "    movq %%rcx, %%rax"
+.Lstr744:
+    .asciz "    cmpq $0, %%rax"
+.Lstr745:
     .asciz "    je .L%d"
+.Lstr746:
+    .asciz "    jmp .L%d"
+.Lstr747:
+    .asciz "unsigned"
+.Lstr748:
+    .asciz "signed"
+.Lstr749:
+    .asciz "unsigned"
+.Lstr750:
+    .asciz "long"
+.Lstr751:
+    .asciz "int"
+.Lstr752:
+    .asciz "long"
+.Lstr753:
+    .asciz "int"
+.Lstr754:
+    .asciz "expected variable name"
+.Lstr755:
+    .asciz "    movl %%eax, %s(%%rip)"
+.Lstr756:
+    .asciz "    movq %%rax, %s(%%rip)"
+.Lstr757:
+    .asciz "    movl %%eax, %d(%%rbp)"
+.Lstr758:
+    .asciz "    movq %%rax, %d(%%rbp)"
+.Lstr759:
+    .asciz "    jmp .L%d"
+.Lstr760:
+    .asciz "    jmp .L%d"
+.Lstr761:
+    .asciz "    cmpq $0, %%rax"
+.Lstr762:
+    .asciz "    jne .L%d"
+.Lstr763:
+    .asciz "    jmp .L%d"
+.Lstr764:
+    .asciz "expected 'while' after do body"
+.Lstr765:
+    .asciz "    cmpq $0, %%rax"
+.Lstr766:
+    .asciz "    jne .L%d"
+.Lstr767:
+    .asciz "    cmpq $0, %%rax"
+.Lstr768:
+    .asciz "    je .L%d"
+.Lstr769:
+    .asciz "    jmp .L%d"
+.Lstr770:
+    .asciz "    pushq %%rax"
+.Lstr771:
+    .asciz "    pushq $0"
+.Lstr772:
+    .asciz "    jmp .L%d"
+.Lstr773:
+    .asciz "    jmp .L%d"
+.Lstr774:
+    .asciz "    movq 8(%%rsp), %%rax"
+.Lstr775:
+    .asciz "    cmpq $%d, %%rax"
+.Lstr776:
+    .asciz "    je .L%d"
+.Lstr777:
+    .asciz "    jmp .L%d"
+.Lstr778:
+    .asciz "    addq $16, %%rsp"
 .Lstr779:
     .asciz "    jmp .L%d"
 .Lstr780:
-    .asciz "    addq $16, %%rsp"
+    .asciz "    jmp .L%d"
 .Lstr781:
-    .asciz "    jmp .L%d"
-.Lstr782:
-    .asciz "    jmp .L%d"
-.Lstr783:
     .asciz "expected label name"
-.Lstr784:
+.Lstr782:
     .asciz "    jmp %s"
-.Lstr785:
+.Lstr783:
     .asciz "    leave"
-.Lstr786:
+.Lstr784:
     .asciz "    ret"
+.Lstr785:
+    .asciz "unsigned"
+.Lstr786:
+    .asciz "signed"
 .Lstr787:
     .asciz "unsigned"
 .Lstr788:
-    .asciz "signed"
+    .asciz "long"
 .Lstr789:
-    .asciz "%s:"
+    .asciz "int"
 .Lstr790:
-    .asciz "expected variable name"
+    .asciz "%s:"
 .Lstr791:
-    .asciz "undefined macro"
-.Lstr792:
-    .asciz "    movb %%al, %d(%%rbp)"
-.Lstr793:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr794:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr795:
-    .asciz "    movl %%eax, %s(%%rip)"
-.Lstr796:
-    .asciz "    movq %%rax, %s(%%rip)"
-.Lstr797:
-    .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr798:
-    .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr799:
-    .asciz "long"
-.Lstr800:
-    .asciz "int"
-.Lstr801:
     .asciz "expected variable name"
-.Lstr802:
+.Lstr792:
     .asciz "undefined macro"
-.Lstr803:
+.Lstr793:
     .asciz "    movb %%al, %d(%%rbp)"
-.Lstr804:
+.Lstr794:
     .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr805:
+.Lstr795:
     .asciz "    movq %%rax, %d(%%rbp)"
-.Lstr806:
+.Lstr796:
     .asciz "    movl %%eax, %s(%%rip)"
-.Lstr807:
+.Lstr797:
     .asciz "    movq %%rax, %s(%%rip)"
-.Lstr808:
+.Lstr798:
     .asciz "    movl %%eax, %d(%%rbp)"
-.Lstr809:
+.Lstr799:
     .asciz "    movq %%rax, %d(%%rbp)"
+.Lstr800:
+    .asciz "long"
+.Lstr801:
+    .asciz "int"
+.Lstr802:
+    .asciz "expected variable name"
+.Lstr803:
+    .asciz "undefined macro"
+.Lstr804:
+    .asciz "    movb %%al, %d(%%rbp)"
+.Lstr805:
+    .asciz "    movl %%eax, %d(%%rbp)"
+.Lstr806:
+    .asciz "    movq %%rax, %d(%%rbp)"
+.Lstr807:
+    .asciz "    movl %%eax, %s(%%rip)"
+.Lstr808:
+    .asciz "    movq %%rax, %s(%%rip)"
+.Lstr809:
+    .asciz "    movl %%eax, %d(%%rbp)"
 .Lstr810:
-    .asciz "unsigned"
+    .asciz "    movq %%rax, %d(%%rbp)"
 .Lstr811:
-    .asciz "signed"
+    .asciz "    cmpq $0, %%rax"
 .Lstr812:
-    .asciz "long"
+    .asciz "    je .L%d"
 .Lstr813:
-    .asciz "int"
+    .asciz "    jmp .L%d"
 .Lstr814:
-    .asciz "long"
+    .asciz "unsigned"
 .Lstr815:
-    .asciz "int"
+    .asciz "signed"
 .Lstr816:
-    .asciz "expected parameter name"
+    .asciz "unsigned"
 .Lstr817:
-    .asciz "expected function body"
+    .asciz "long"
 .Lstr818:
-    .asciz "    .globl %s"
+    .asciz "int"
 .Lstr819:
-    .asciz "%s:"
+    .asciz "long"
 .Lstr820:
-    .asciz "    pushq %%rbp"
+    .asciz "int"
 .Lstr821:
-    .asciz "    movq %%rsp, %%rbp"
+    .asciz "expected variable name"
 .Lstr822:
-    .asciz "    subq $%d, %%rsp"
+    .asciz "    movl %%eax, %s(%%rip)"
 .Lstr823:
-    .asciz "    movq %s, %d(%%rbp)"
+    .asciz "    movq %%rax, %s(%%rip)"
 .Lstr824:
-    .asciz "    leave"
+    .asciz "    movl %%eax, %d(%%rbp)"
 .Lstr825:
-    .asciz "    ret"
+    .asciz "    movq %%rax, %d(%%rbp)"
 .Lstr826:
-    .asciz "unsigned"
+    .asciz "    jmp .L%d"
 .Lstr827:
-    .asciz "signed"
+    .asciz "    jmp .L%d"
 .Lstr828:
-    .asciz "long"
+    .asciz "    cmpq $0, %%rax"
 .Lstr829:
-    .asciz "int"
+    .asciz "    jne .L%d"
 .Lstr830:
-    .asciz "long"
+    .asciz "    jmp .L%d"
 .Lstr831:
-    .asciz "int"
+    .asciz "expected 'while' after do body"
 .Lstr832:
-    .asciz "expected parameter name"
+    .asciz "    cmpq $0, %%rax"
 .Lstr833:
-    .asciz "expected function body"
+    .asciz "    jne .L%d"
 .Lstr834:
-    .asciz "    .globl %s"
+    .asciz "    cmpq $0, %%rax"
 .Lstr835:
-    .asciz "%s:"
+    .asciz "    je .L%d"
 .Lstr836:
-    .asciz "    pushq %%rbp"
+    .asciz "    jmp .L%d"
 .Lstr837:
-    .asciz "    movq %%rsp, %%rbp"
+    .asciz "    pushq %%rax"
 .Lstr838:
-    .asciz "    subq $%d, %%rsp"
+    .asciz "    pushq $0"
 .Lstr839:
-    .asciz "    movq %s, %d(%%rbp)"
+    .asciz "    jmp .L%d"
 .Lstr840:
-    .asciz "    leave"
+    .asciz "    jmp .L%d"
 .Lstr841:
-    .asciz "    ret"
+    .asciz "    movq 8(%%rsp), %%rax"
 .Lstr842:
-    .asciz "expected '{' after enum"
+    .asciz "    cmpq $%d, %%rax"
 .Lstr843:
-    .asciz "expected enumerator name"
+    .asciz "    je .L%d"
 .Lstr844:
-    .asciz "too many symbols"
+    .asciz "    jmp .L%d"
 .Lstr845:
-    .asciz "expected integer constant"
+    .asciz "    addq $16, %%rsp"
 .Lstr846:
-    .asciz "expected '{' after enum"
+    .asciz "    jmp .L%d"
 .Lstr847:
-    .asciz "expected enumerator name"
+    .asciz "    jmp .L%d"
 .Lstr848:
-    .asciz "too many symbols"
+    .asciz "expected label name"
 .Lstr849:
-    .asciz "expected integer constant"
+    .asciz "    jmp %s"
 .Lstr850:
-    .asciz "expected '{' in struct"
+    .asciz "    leave"
 .Lstr851:
-    .asciz "expected '{' in struct"
+    .asciz "    ret"
 .Lstr852:
-    .asciz ""
+    .asciz "unsigned"
 .Lstr853:
-    .asciz "too many symbols"
+    .asciz "signed"
 .Lstr854:
-    .asciz ""
+    .asciz "unsigned"
 .Lstr855:
-    .asciz "too many symbols"
+    .asciz "long"
 .Lstr856:
-    .asciz "unsigned"
+    .asciz "int"
 .Lstr857:
-    .asciz "signed"
+    .asciz "%s:"
 .Lstr858:
-    .asciz "long"
+    .asciz "expected variable name"
 .Lstr859:
-    .asciz "int"
+    .asciz "undefined macro"
 .Lstr860:
-    .asciz "long"
+    .asciz "    movb %%al, %d(%%rbp)"
 .Lstr861:
-    .asciz "int"
+    .asciz "    movl %%eax, %d(%%rbp)"
 .Lstr862:
-    .asciz "expected identifier"
+    .asciz "    movq %%rax, %d(%%rbp)"
 .Lstr863:
-    .asciz "undefined macro"
+    .asciz "    movl %%eax, %s(%%rip)"
 .Lstr864:
-    .asciz "expected ';' or '(' after global"
+    .asciz "    movq %%rax, %s(%%rip)"
 .Lstr865:
-    .asciz "expected identifier"
+    .asciz "    movl %%eax, %d(%%rbp)"
 .Lstr866:
-    .asciz "undefined macro"
+    .asciz "    movq %%rax, %d(%%rbp)"
 .Lstr867:
-    .asciz "expected ';' or '(' after global"
+    .asciz "long"
 .Lstr868:
-    .asciz "global must be int, char, float, or double"
+    .asciz "int"
 .Lstr869:
-    .asciz "unsigned"
+    .asciz "expected variable name"
 .Lstr870:
-    .asciz "signed"
+    .asciz "undefined macro"
 .Lstr871:
-    .asciz "long"
+    .asciz "    movb %%al, %d(%%rbp)"
 .Lstr872:
-    .asciz "int"
+    .asciz "    movl %%eax, %d(%%rbp)"
 .Lstr873:
-    .asciz "long"
+    .asciz "    movq %%rax, %d(%%rbp)"
 .Lstr874:
-    .asciz "int"
+    .asciz "    movl %%eax, %s(%%rip)"
 .Lstr875:
-    .asciz "expected identifier"
+    .asciz "    movq %%rax, %s(%%rip)"
 .Lstr876:
-    .asciz "undefined macro"
+    .asciz "    movl %%eax, %d(%%rbp)"
 .Lstr877:
-    .asciz "expected ';' or '(' after global"
+    .asciz "    movq %%rax, %d(%%rbp)"
 .Lstr878:
-    .asciz "expected identifier"
+    .asciz "unsigned"
 .Lstr879:
-    .asciz "undefined macro"
+    .asciz "signed"
 .Lstr880:
-    .asciz "expected ';' or '(' after global"
+    .asciz "unsigned"
 .Lstr881:
-    .asciz "global must be int, char, float, or double"
+    .asciz "long"
 .Lstr882:
-    .asciz ".LCf%d:\n    .float %s\n"
+    .asciz "int"
 .Lstr883:
-    .asciz ".LCf%d:\n    .double %s\n"
+    .asciz "long"
 .Lstr884:
-    .asciz ".LCf%d:\n    .float %s\n"
+    .asciz "int"
 .Lstr885:
-    .asciz ".LCf%d:\n    .double %s\n"
+    .asciz "expected parameter name"
 .Lstr886:
-    .asciz ".Lstr%d:\n    .asciz \""
+    .asciz "expected function body"
 .Lstr887:
-    .asciz "\\n"
+    .asciz "    .globl %s"
 .Lstr888:
-    .asciz "\\t"
+    .asciz "%s:"
 .Lstr889:
-    .asciz "\\\\"
+    .asciz "    pushq %%rbp"
 .Lstr890:
-    .asciz "\\\""
+    .asciz "    movq %%rsp, %%rbp"
 .Lstr891:
-    .asciz "\\%hho"
+    .asciz "    subq $%d, %%rsp"
 .Lstr892:
-    .asciz "\"\n"
+    .asciz "    movq %s, %d(%%rbp)"
 .Lstr893:
-    .asciz ".Lstr%d:\n    .asciz \""
+    .asciz "    leave"
 .Lstr894:
-    .asciz "\\n"
+    .asciz "    ret"
 .Lstr895:
-    .asciz "\\t"
+    .asciz "unsigned"
 .Lstr896:
-    .asciz "\\\\"
+    .asciz "signed"
 .Lstr897:
-    .asciz "\\\""
+    .asciz "unsigned"
 .Lstr898:
-    .asciz "\\%hho"
+    .asciz "long"
 .Lstr899:
-    .asciz "\"\n"
+    .asciz "int"
 .Lstr900:
-    .asciz "Usage: %s source.c > output.s\n"
+    .asciz "long"
 .Lstr901:
-    .asciz "r"
+    .asciz "int"
 .Lstr902:
-    .asciz "Cannot open input file: %s\n"
+    .asciz "expected parameter name"
 .Lstr903:
-    .asciz "Invalid file size\n"
+    .asciz "expected function body"
 .Lstr904:
-    .asciz "Error reading file\n"
+    .asciz "    .globl %s"
 .Lstr905:
-    .asciz "EXIT_FAILURE"
+    .asciz "%s:"
 .Lstr906:
-    .asciz "EXIT_SUCCESS"
+    .asciz "    pushq %%rbp"
 .Lstr907:
-    .asciz "SEEK_SET"
+    .asciz "    movq %%rsp, %%rbp"
 .Lstr908:
-    .asciz "SEEK_CUR"
+    .asciz "    subq $%d, %%rsp"
 .Lstr909:
-    .asciz "SEEK_END"
+    .asciz "    movq %s, %d(%%rbp)"
 .Lstr910:
-    .asciz "NULL"
+    .asciz "    leave"
 .Lstr911:
-    .asciz "size_t"
+    .asciz "    ret"
 .Lstr912:
-    .asciz "va_list"
+    .asciz "expected '{' after enum"
 .Lstr913:
-    .asciz "FILE"
+    .asciz "expected enumerator name"
 .Lstr914:
-    .asciz "    .section .text"
+    .asciz "too many symbols"
 .Lstr915:
-    .asciz "    .section .rodata"
+    .asciz "expected integer constant"
 .Lstr916:
-    .asciz "    .section .text"
+    .asciz "expected '{' after enum"
 .Lstr917:
-    .asciz "    .globl _start"
+    .asciz "expected enumerator name"
 .Lstr918:
-    .asciz "Usage: %s source.c > output.s\n"
+    .asciz "too many symbols"
 .Lstr919:
-    .asciz "r"
+    .asciz "expected integer constant"
 .Lstr920:
-    .asciz "Cannot open input file: %s\n"
+    .asciz "expected '{' in struct"
 .Lstr921:
-    .asciz "Invalid file size\n"
+    .asciz "expected '{' in struct"
 .Lstr922:
-    .asciz "Error reading file\n"
+    .asciz ""
 .Lstr923:
-    .asciz "EXIT_FAILURE"
+    .asciz "too many symbols"
 .Lstr924:
-    .asciz "EXIT_SUCCESS"
+    .asciz ""
 .Lstr925:
-    .asciz "SEEK_SET"
+    .asciz "too many symbols"
 .Lstr926:
-    .asciz "SEEK_CUR"
+    .asciz "unsigned"
 .Lstr927:
-    .asciz "SEEK_END"
+    .asciz "signed"
 .Lstr928:
-    .asciz "NULL"
+    .asciz "unsigned"
 .Lstr929:
-    .asciz "size_t"
+    .asciz "long"
 .Lstr930:
-    .asciz "va_list"
+    .asciz "int"
 .Lstr931:
-    .asciz "FILE"
+    .asciz "long"
 .Lstr932:
-    .asciz "    .section .text"
+    .asciz "int"
 .Lstr933:
-    .asciz "    .section .rodata"
+    .asciz "expected identifier"
 .Lstr934:
-    .asciz "    .section .text"
+    .asciz "undefined macro"
 .Lstr935:
+    .asciz "expected ';' or '(' after global"
+.Lstr936:
+    .asciz "expected identifier"
+.Lstr937:
+    .asciz "undefined macro"
+.Lstr938:
+    .asciz "expected ';' or '(' after global"
+.Lstr939:
+    .asciz "global must be int, char, float, or double"
+.Lstr940:
+    .asciz "unsigned"
+.Lstr941:
+    .asciz "signed"
+.Lstr942:
+    .asciz "unsigned"
+.Lstr943:
+    .asciz "long"
+.Lstr944:
+    .asciz "int"
+.Lstr945:
+    .asciz "long"
+.Lstr946:
+    .asciz "int"
+.Lstr947:
+    .asciz "expected identifier"
+.Lstr948:
+    .asciz "undefined macro"
+.Lstr949:
+    .asciz "expected ';' or '(' after global"
+.Lstr950:
+    .asciz "expected identifier"
+.Lstr951:
+    .asciz "undefined macro"
+.Lstr952:
+    .asciz "expected ';' or '(' after global"
+.Lstr953:
+    .asciz "global must be int, char, float, or double"
+.Lstr954:
+    .asciz ".LCf%d:\n    .float %s\n"
+.Lstr955:
+    .asciz ".LCf%d:\n    .double %s\n"
+.Lstr956:
+    .asciz ".LCf%d:\n    .float %s\n"
+.Lstr957:
+    .asciz ".LCf%d:\n    .double %s\n"
+.Lstr958:
+    .asciz ".Lstr%d:\n    .asciz \""
+.Lstr959:
+    .asciz "\\n"
+.Lstr960:
+    .asciz "\\t"
+.Lstr961:
+    .asciz "\\\\"
+.Lstr962:
+    .asciz "\\\""
+.Lstr963:
+    .asciz "\\%hho"
+.Lstr964:
+    .asciz "\"\n"
+.Lstr965:
+    .asciz ".Lstr%d:\n    .asciz \""
+.Lstr966:
+    .asciz "\\n"
+.Lstr967:
+    .asciz "\\t"
+.Lstr968:
+    .asciz "\\\\"
+.Lstr969:
+    .asciz "\\\""
+.Lstr970:
+    .asciz "\\%hho"
+.Lstr971:
+    .asciz "\"\n"
+.Lstr972:
+    .asciz "Usage: %s source.c > output.s\n"
+.Lstr973:
+    .asciz "r"
+.Lstr974:
+    .asciz "Cannot open input file: %s\n"
+.Lstr975:
+    .asciz "Invalid file size\n"
+.Lstr976:
+    .asciz "Error reading file\n"
+.Lstr977:
+    .asciz "EXIT_FAILURE"
+.Lstr978:
+    .asciz "EXIT_SUCCESS"
+.Lstr979:
+    .asciz "SEEK_SET"
+.Lstr980:
+    .asciz "SEEK_CUR"
+.Lstr981:
+    .asciz "SEEK_END"
+.Lstr982:
+    .asciz "NULL"
+.Lstr983:
+    .asciz "size_t"
+.Lstr984:
+    .asciz "va_list"
+.Lstr985:
+    .asciz "FILE"
+.Lstr986:
+    .asciz "    .section .text"
+.Lstr987:
+    .asciz "    .section .rodata"
+.Lstr988:
+    .asciz "    .section .text"
+.Lstr989:
+    .asciz "    .globl _start"
+.Lstr990:
+    .asciz "Usage: %s source.c > output.s\n"
+.Lstr991:
+    .asciz "r"
+.Lstr992:
+    .asciz "Cannot open input file: %s\n"
+.Lstr993:
+    .asciz "Invalid file size\n"
+.Lstr994:
+    .asciz "Error reading file\n"
+.Lstr995:
+    .asciz "EXIT_FAILURE"
+.Lstr996:
+    .asciz "EXIT_SUCCESS"
+.Lstr997:
+    .asciz "SEEK_SET"
+.Lstr998:
+    .asciz "SEEK_CUR"
+.Lstr999:
+    .asciz "SEEK_END"
+.Lstr1000:
+    .asciz "NULL"
+.Lstr1001:
+    .asciz "size_t"
+.Lstr1002:
+    .asciz "va_list"
+.Lstr1003:
+    .asciz "FILE"
+.Lstr1004:
+    .asciz "    .section .text"
+.Lstr1005:
+    .asciz "    .section .rodata"
+.Lstr1006:
+    .asciz "    .section .text"
+.Lstr1007:
     .asciz "    .globl _start"
     .section .text
     .globl _start
