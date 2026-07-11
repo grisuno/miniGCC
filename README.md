@@ -53,6 +53,7 @@ Fully capable of compiling its own source code to reach complete technical sover
 - String literals and character constants
 - Escape sequences in strings (`\n`, `\t`, `\\`, `\"`)
 - Simple macro definitions via `#define`
+- File inclusion via `#include` (supports both `<>` and `""` styles)
 - Global and local variable allocation
 - Floating-point arithmetic (single and double precision)
 - Type casting: `(int)`, `(char)`, `(float)`, `(double)`, `(type*)`
@@ -67,7 +68,7 @@ Fully capable of compiling its own source code to reach complete technical sover
 - No variadic functions (no `...` parameter support)
 - No standard library linkage; programs must use only built-in types and direct system calls
 - The compiler uses 8-byte `int` internally but `skip_struct` treats `int` as 4 bytes (matching GCC's x86-64 ABI). This means `int` struct fields are sign-extended on load (`movslq`) to match the compiler's 64-bit integer model
-- Limited preprocessor: only `#define` with numeric values is supported (no `#include`, no `#ifdef`)
+- Limited preprocessor: only `#define` with numeric values and `#include` are supported (no `#ifdef`, no `#ifndef`, no macros with arguments)
 - No function pointers
 - No `sizeof` operator
 - No unions
