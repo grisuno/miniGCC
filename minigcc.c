@@ -12,10 +12,12 @@
 /*#include <ctype.h>*/
 #include <errno.h>
 
-#define MAX_TOKEN_LEN   64
+#define MAX_TOKEN_LEN   256
 #define MAX_SYMBOLS     2048
 #define MAX_IDENT_LEN   32
 #define MAX_SOURCE_SIZE 1048576
+#define MAX_INCLUDE_DEPTH 64
+#define MAX_PROCESSED_FILES 256
 #define STACK_ALIGN     16
 
 enum {
@@ -64,6 +66,19 @@ static char token[MAX_TOKEN_LEN];
 static int tok;
 static int line = 1;
 static FILE *output;
+
+typedef struct {
+    char *buf_start;
+    char *buf_ptr;
+    char *filename;
+    int saved_line;
+} FileContext;
+
+static FileContext ctx_stack[MAX_INCLUDE_DEPTH];
+static int ctx_top = 0;
+static char *current_file = NULL;
+static char *processed_files[MAX_PROCESSED_FILES];
+static int processed_count = 0;
 
 typedef struct {
     char name[MAX_IDENT_LEN];
@@ -253,7 +268,8 @@ static void add_macro(const char *name, int value) {
 }
 
 static void error(const char *msg) {
-    fprintf(stderr, "Error at line %d, token '%s': %s\n", line, token, msg);
+    fprintf(stderr, "%s:%d: Error at token '%s': %s\n",
+            current_file ? current_file : "(unknown)", line, token, msg);
     exit(EXIT_FAILURE);
 }
 
@@ -264,6 +280,107 @@ static void *safe_malloc(size_t size) {
         exit(EXIT_FAILURE);
     }
     return p;
+}
+
+static int is_file_processed(const char *path) {
+    int i = 0;
+    while (i < processed_count) {
+        if (strcmp(processed_files[i], path) == 0) return 1;
+        i++;
+    }
+    return 0;
+}
+
+static void mark_file_processed(const char *path) {
+    if (processed_count >= MAX_PROCESSED_FILES) {
+        fprintf(stderr, "Warning: too many processed files\n");
+        return;
+    }
+    int len = strlen(path);
+    processed_files[processed_count] = safe_malloc(len + 1);
+    int i = 0;
+    while (i <= len) { processed_files[processed_count][i] = path[i]; i++; }
+    processed_count++;
+}
+
+static void get_dir_from_path(const char *path, char *dir, int dir_sz) {
+    int last_slash = -1;
+    int i = 0;
+    while (path[i]) {
+        if (path[i] == '/') last_slash = i;
+        i++;
+    }
+    if (last_slash >= 0) {
+        int len = last_slash;
+        if (len >= dir_sz) len = dir_sz - 1;
+        int j = 0;
+        while (j < len) { dir[j] = path[j]; j++; }
+        dir[len] = '\0';
+    } else {
+        dir[0] = '.';
+        dir[1] = '\0';
+    }
+}
+
+static char *resolve_local_include(const char *target) {
+    FILE *f = fopen(target, "r");
+    if (f) {
+        fclose(f);
+        int len = strlen(target);
+        char *p = safe_malloc(len + 1);
+        int i = 0;
+        while (i <= len) { p[i] = target[i]; i++; }
+        return p;
+    }
+    if (current_file) {
+        char dir[512];
+        get_dir_from_path(current_file, dir, 512);
+        char full[1024];
+        int dlen = strlen(dir);
+        int tlen = strlen(target);
+        int pos = 0;
+        if (dlen > 0 && dir[dlen - 1] != '/') {
+            while (pos < dlen && pos < 1023) { full[pos] = dir[pos]; pos++; }
+            full[pos++] = '/';
+        } else {
+            while (pos < dlen && pos < 1023) { full[pos] = dir[pos]; pos++; }
+        }
+        int k = 0;
+        while (k < tlen && pos < 1023) { full[pos] = target[k]; pos++; k++; }
+        full[pos] = '\0';
+        f = fopen(full, "r");
+        if (f) {
+            fclose(f);
+            int len2 = strlen(full);
+            char *p = safe_malloc(len2 + 1);
+            int j = 0;
+            while (j <= len2) { p[j] = full[j]; j++; }
+            return p;
+        }
+    }
+    return NULL;
+}
+
+static char *read_include_file(const char *path) {
+    FILE *f = fopen(path, "r");
+    if (!f) return NULL;
+    fseek(f, 0, SEEK_END);
+    long sz = ftell(f);
+    if (sz < 0 || sz > MAX_SOURCE_SIZE) {
+        fclose(f);
+        return NULL;
+    }
+    rewind(f);
+    char *buf = safe_malloc(sz + 1);
+    size_t rd = fread(buf, 1, sz, f);
+    if (rd != (size_t)sz) {
+        free(buf);
+        fclose(f);
+        return NULL;
+    }
+    buf[sz] = '\0';
+    fclose(f);
+    return buf;
 }
 
 /* Must produce identical results under gcc (32-bit int) and under the
@@ -379,6 +496,16 @@ static void next_token(void) {
     }
     
     if (c == '\0') {
+        if (ctx_top > 0) {
+            free(source_start);
+            ctx_top--;
+            source_start = ctx_stack[ctx_top].buf_start;
+            input_ptr = ctx_stack[ctx_top].buf_ptr;
+            line = ctx_stack[ctx_top].saved_line;
+            free(current_file);
+            current_file = ctx_stack[ctx_top].filename;
+            goto restart;
+        }
         tok = T_EOF;
         return;
     }
@@ -427,6 +554,61 @@ static void next_token(void) {
             }
             if (has_val || mlen > 0) {
                 add_macro(mname, mval);
+            }
+        } else if (strncmp(input_ptr, "include", 7) == 0) {
+            input_ptr += 7;
+            while (my_isspace(*input_ptr)) input_ptr++;
+            char inc_path[512];
+            int plen = 0;
+            int is_local = 0;
+            if (*input_ptr == '"') {
+                is_local = 1;
+                input_ptr++;
+                while (*input_ptr && *input_ptr != '"' && plen < 511) {
+                    inc_path[plen++] = *input_ptr;
+                    input_ptr++;
+                }
+                if (*input_ptr == '"') input_ptr++;
+            } else if (*input_ptr == '<') {
+                input_ptr++;
+                while (*input_ptr && *input_ptr != '>' && plen < 511) {
+                    inc_path[plen++] = *input_ptr;
+                    input_ptr++;
+                }
+                if (*input_ptr == '>') input_ptr++;
+            }
+            inc_path[plen] = '\0';
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
+            if (is_local && plen > 0) {
+                char *resolved = resolve_local_include(inc_path);
+                if (resolved) {
+                    if (!is_file_processed(resolved)) {
+                        mark_file_processed(resolved);
+                        char *new_buf = read_include_file(resolved);
+                        if (new_buf) {
+                            if (ctx_top >= MAX_INCLUDE_DEPTH) {
+                                error("include depth exceeded");
+                            }
+                            ctx_stack[ctx_top].buf_start = source_start;
+                            ctx_stack[ctx_top].buf_ptr = input_ptr;
+                            ctx_stack[ctx_top].filename = current_file;
+                            ctx_stack[ctx_top].saved_line = line;
+                            ctx_top++;
+                            source_start = new_buf;
+                            input_ptr = new_buf;
+                            line = 1;
+                            current_file = resolved;
+                            goto restart;
+                        } else {
+                            fprintf(stderr, "Warning: could not read included file: %s\n", inc_path);
+                            free(resolved);
+                        }
+                    } else {
+                        free(resolved);
+                    }
+                } else {
+                    fprintf(stderr, "Warning: could not find included file: %s\n", inc_path);
+                }
             }
         }
         while (*input_ptr && *input_ptr != '\n') input_ptr++;
@@ -2715,6 +2897,12 @@ int main(int argc, char **argv) {
 
     input_ptr = source_start;
     output = stdout;
+    {
+        int fnlen = strlen(argv[1]);
+        current_file = safe_malloc(fnlen + 1);
+        int i = 0;
+        while (i <= fnlen) { current_file[i] = argv[1][i]; i++; }
+    }
 
     /* Predefine common macros */
     add_macro("EXIT_FAILURE", 1);
@@ -2778,5 +2966,10 @@ int main(int argc, char **argv) {
     emit("    syscall");
 */
     free(source_start);
+    {
+        int i = 0;
+        while (i < processed_count) { free(processed_files[i]); i++; }
+    }
+    if (current_file) free(current_file);
     return EXIT_SUCCESS;
 }
