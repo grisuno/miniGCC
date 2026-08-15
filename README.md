@@ -63,6 +63,12 @@ Fully capable of compiling its own source code to reach complete technical sover
 - Conditional compilation: `#ifdef`, `#ifndef`, `#if`, `#else`, `#endif`
 - File inclusion via `#include` (supports both `<>` and `""` styles)
 - Global and local variable allocation
+- Global initializers: scalar constants, brace lists for arrays, and string
+  literals for `char` arrays (which size an unsized array) and for `char *`.
+  Uninitialized globals stay in `.bss`; initialized ones go to `.data`. A
+  pointer global initialized with a string literal keeps a zero slot and is
+  filled in by rip-relative code emitted into `_start`, because the output is
+  position independent and carries no load-time relocations.
 - Floating-point arithmetic (single and double precision)
 - Type casting: `(int)`, `(char)`, `(float)`, `(double)`, `(type*)`
 - Two-pass compilation for accurate stack size calculation
@@ -80,6 +86,8 @@ Fully capable of compiling its own source code to reach complete technical sover
 - No hex (0x) / octal (0) integer literal parsing in self-hosted mode (planned, blocked by codegen bug in bootstrap)
 - No function pointers
 - No unions (parsed but members accumulate in global struct table)
+- Global initializers accept constants only: no address-of, no arithmetic on
+  symbols, and no nested brace lists for 2D arrays
 
 ## Building the Bootstrap (Generation 1)
 

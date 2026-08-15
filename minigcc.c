@@ -130,6 +130,7 @@ static int static_flag = 0;
 static int unsigned_type = 0;
 static int const_flag = 0;
 static int extern_flag = 0;
+static int global_emit_deferred = 0;
 
 #define MAX_FLOAT_CONSTS 2048
 static char float_const_str[MAX_FLOAT_CONSTS][MAX_TOKEN_LEN];
@@ -151,6 +152,16 @@ static int str_label_counter = 0;
 #define MAX_STRINGS 2048
 static char *string_pool[MAX_STRINGS];
 static int string_count = 0;
+
+/* Pointer globals initialized with a string literal cannot hold the address
+ * at rest: the output is position independent and carries no load-time
+ * relocations, so an absolute address baked into .data would be wrong once
+ * the image is loaded anywhere but its link address. The slot is defined as
+ * zero and filled in with rip-relative code emitted into _start. */
+#define MAX_PTR_INITS 256
+static char ptr_init_name[MAX_PTR_INITS][MAX_IDENT_LEN];
+static int  ptr_init_label[MAX_PTR_INITS];
+static int  ptr_init_count = 0;
 
 /* Members of ALL structs accumulate into one global table (see skip_struct),
    so this must exceed the sum of members across every struct in the program,
@@ -1003,6 +1014,28 @@ static void emit_si(const char *fmt, const char *s, int v) {
     fputc('\n', output);
 }
 
+/* Write a C string as the body of a .asciz directive, escaping everything the
+ * assembler cannot take literally. Shared by the string pool and by string
+ * initializers of global arrays. */
+static void emit_asciz_body(const char *s) {
+    if (!emit_enabled) return;
+    while (*s) {
+        unsigned char c = *s;
+        if (c == '\n') fprintf(output, "\\n");
+        else if (c == '\t') fprintf(output, "\\t");
+        else if (c == '\\') fprintf(output, "\\\\");
+        else if (c == '"') fprintf(output, "\\\"");
+        else if (c == '\r') fprintf(output, "\\r");
+        else if (c == '\f') fprintf(output, "\\f");
+        else if (c == '\v') fprintf(output, "\\v");
+        else if (c == '\a') fprintf(output, "\\a");
+        else if (c == '\b') fprintf(output, "\\b");
+        else if (c >= 32 && c <= 126) fputc(c, output);
+        else fprintf(output, "\\%03o", c);
+        s++;
+    }
+}
+
 static void emit_label(int label) {
     if (emit_enabled)
         fprintf(output, ".L%d:\n", label);
@@ -1044,7 +1077,9 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     s->next_hash = -1;
     if (is_global) {
         s->offset = 0;
-        if (!extern_flag) {
+        if (extern_flag) {
+            extern_flag = 0;
+        } else if (!global_emit_deferred) {
             emit("    .bss");
             if (!s->is_static)
                 emit_s("    .globl %s", name);
@@ -1052,8 +1087,6 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
             if (size > 0)
                 emit_i("    .space %d", size);
             emit("    .text");
-        } else {
-            extern_flag = 0;
         }
     } else {
         stack_size = (stack_size + size + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
@@ -2980,6 +3013,137 @@ static void skip_typedef(void) {
     match(';');
 }
 
+/* Storage directive for a datum of `size` bytes. */
+static const char *data_directive(int size) {
+    if (size == 1) return "    .byte %d";
+    if (size == 2) return "    .word %d";
+    if (size == 4) return "    .long %d";
+    return "    .quad %d";
+}
+
+/* Reserve zero-initialized storage for a global. */
+static void emit_global_bss(const char *name, int is_static, int size) {
+    emit("    .bss");
+    if (!is_static) emit_s("    .globl %s", name);
+    emit_s("%s:", name);
+    if (size > 0) emit_i("    .space %d", size);
+    emit("    .text");
+}
+
+static void emit_global_data_head(const char *name, int is_static) {
+    emit("    .data");
+    if (!is_static) emit_s("    .globl %s", name);
+    emit_s("%s:", name);
+}
+
+/* Parse an integer constant usable as a static initializer: an optionally
+ * signed numeric or character literal, or a macro standing for one.
+ * Returns 1 when a constant was consumed. */
+static int parse_const_int(long long *out) {
+    int neg = 0;
+    if (tok == '-') { neg = 1; next_token(); }
+    else if (tok == '+') { next_token(); }
+    if (tok == T_NUM) {
+        long long v = safe_strtoll(token);
+        next_token();
+        *out = neg ? -v : v;
+        return 1;
+    }
+    if (tok == T_ID) {
+        int mi = find_macro(token);
+        if (mi >= 0) {
+            long long v = macros[mi].value;
+            next_token();
+            *out = neg ? -v : v;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* Record a string literal in the pool and return its label index. */
+static int intern_string(const char *text) {
+    int lbl = str_label_counter++;
+    if (string_count < MAX_STRINGS) {
+        int len = strlen(text);
+        string_pool[string_count] = safe_malloc(len + 1);
+        safe_strcpy(string_pool[string_count], text, len + 1);
+        string_count++;
+    }
+    return lbl;
+}
+
+/* Emit the definition of a global that carries an initializer. On entry the
+ * current token is the one after '='. `size` is the declared byte size and is
+ * updated in place when the initializer determines the length of an unsized
+ * array. Returns 1 when the initializer was materialized, 0 when the form is
+ * unsupported, in which case nothing was emitted and the caller falls back to
+ * zero-initialized storage. */
+static int emit_global_initializer(const char *name, int is_static, int *size,
+                                   int elem_size, int is_array, int is_ptr) {
+    long long v = 0;
+
+    if (is_array && !is_ptr && elem_size == 1 && tok == T_STRING) {
+        int len = strlen(token);
+        if (*size <= 1) *size = len + 1;
+        emit_global_data_head(name, is_static);
+        if (emit_enabled) {
+            fprintf(output, "    .asciz \"");
+            emit_asciz_body(token);
+            fprintf(output, "\"\n");
+        }
+        if (*size > len + 1) emit_i("    .space %d", *size - (len + 1));
+        emit("    .text");
+        next_token();
+        return 1;
+    }
+
+    if (is_ptr && tok == T_STRING) {
+        int lbl = intern_string(token);
+        if (ptr_init_count >= MAX_PTR_INITS)
+            error("too many pointer initializers");
+        safe_strcpy(ptr_init_name[ptr_init_count], name, MAX_IDENT_LEN);
+        ptr_init_label[ptr_init_count] = lbl;
+        ptr_init_count++;
+        emit_global_data_head(name, is_static);
+        emit("    .quad 0");
+        emit("    .text");
+        next_token();
+        return 1;
+    }
+
+    if (tok == '{') {
+        int count = 0;
+        int slot = elem_size > 0 ? elem_size : 8;
+        int capacity = slot > 0 ? *size / slot : 0;
+        next_token();
+        emit_global_data_head(name, is_static);
+        while (tok != '}' && tok != T_EOF) {
+            if (!parse_const_int(&v)) error("unsupported global initializer");
+            if (capacity == 0 || count < capacity)
+                emit_i(data_directive(slot), (int)v);
+            count++;
+            if (tok == ',') next_token();
+            else break;
+        }
+        if (tok == '}') next_token();
+        else error("expected '}' in global initializer");
+        if (capacity == 0) *size = count * slot;
+        else if (count < capacity) emit_i("    .space %d", (capacity - count) * slot);
+        emit("    .text");
+        return 1;
+    }
+
+    if (parse_const_int(&v)) {
+        emit_global_data_head(name, is_static);
+        emit_i(data_directive(*size), (int)v);
+        emit("    .text");
+        return 1;
+    }
+
+    return 0;
+}
+
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
@@ -3050,14 +3214,29 @@ static void parse_program(void) {
                         elem_size = elem_size * (cnt > 0 ? cnt : 1);
                     }
                 }
+                int was_extern = extern_flag;
+                int was_static = static_flag;
+                global_emit_deferred = 1;
                 add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr, elem_size);
+                global_emit_deferred = 0;
                 symbols[symbol_count - 1].var_type = vt;
                 if (elem_size2 > 0) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
                 }
                 if (tok == '=') {
-                    while (tok != ';' && tok != T_EOF) next_token();
+                    next_token();
+                    if (was_extern) {
+                        while (tok != ';' && tok != T_EOF) next_token();
+                    } else if (emit_global_initializer(fname, was_static, &gsize,
+                                                       elem_size, is_arr, is_ptr)) {
+                        symbols[symbol_count - 1].size = gsize;
+                    } else {
+                        while (tok != ';' && tok != T_EOF) next_token();
+                        emit_global_bss(fname, was_static, gsize);
+                    }
+                } else if (!was_extern) {
+                    emit_global_bss(fname, was_static, gsize);
                 }
                 if (tok == ';') next_token();
                 else error("expected ';' or '(' after global");
@@ -3130,23 +3309,7 @@ static void emit_string_pool(void) {
     if (!emit_enabled) return;
     for (int i = 0; i < string_count; i++) {
         fprintf(output, ".Lstr%d:\n    .asciz \"", i);
-        const char *s = string_pool[i];
-        while (*s) {
-            unsigned char c = *s;
-            if (c == '\n') fprintf(output, "\\n");
-            else if (c == '\t') fprintf(output, "\\t");
-            else if (c == '\\') fprintf(output, "\\\\");
-            else if (c == '"') fprintf(output, "\\\"");
-            else if (c == '\r') fprintf(output, "\\r");
-            else if (c == '\f') fprintf(output, "\\f");
-            else if (c == '\v') fprintf(output, "\\v");
-            else if (c == '\0') fprintf(output, "\\0");
-            else if (c == '\a') fprintf(output, "\\a");
-            else if (c == '\b') fprintf(output, "\\b");
-            else if (c >= 32 && c <= 126) fputc(c, output);
-            else fprintf(output, "\\%03o", c);
-            s++;
-        }
+        emit_asciz_body(string_pool[i]);
         fprintf(output, "\"\n");
         free(string_pool[i]);
     }
@@ -3258,6 +3421,10 @@ int main(int argc, char **argv) {
     emit("    .globl _start");
     emit("_start:");
     emit("    subq $8, %rsp");
+    for (int i = 0; i < ptr_init_count; i++) {
+        emit_i("    leaq .Lstr%d(%%rip), %%rax", ptr_init_label[i]);
+        emit_s("    movq %%rax, %s(%%rip)", ptr_init_name[i]);
+    }
     emit("    movq 8(%rsp), %rdi");
     emit("    leaq 16(%rsp), %rsi");
     emit("    leaq 24(%rsp,%rdi,8), %rdx");
