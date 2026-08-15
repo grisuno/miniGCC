@@ -8,6 +8,15 @@
 
 MiniGCC is an educational, **self-hosting** C compiler that translates a substantial subset of the C language into x86-64 assembly (AT&T syntax) for Linux. It generates standalone ELF executables and is capable of compiling its own source code (bootstrapping).
 
+## Related projects
+
+| Repository | Role |
+|------------|------|
+| [miniGCC](https://github.com/grisuno/miniGCC) | C compiler: C to x86-64 AT&T assembly |
+| [ld](https://github.com/grisuno/ld) | this repository: assembly to a Linux ELF or a CVM module |
+| [cvm](https://github.com/grisuno/cvm) | the CVM / cvm2 bytecode interpreter |
+| [miniOS](https://github.com/grisuno/miniOS) | the kernel that hosts the whole toolchain |
+
 ## Features
 
 ### Self-Hosting (Generation 3+)
