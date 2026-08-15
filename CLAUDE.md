@@ -50,6 +50,9 @@ as minigccg3.s -o minigccg3.o && gcc -no-pie minigccg3.o -o minigccg3
 ./minigccg3 minigcc.c > minigccg4.s
 diff minigccg3.s minigccg4.s   # must be empty (fixed point)
 ```
+The GNU-free variant links every generation with the sibling `ld` instead of
+as/gcc; it is automated by `test_ld_selfhost.sh`, which `test.sh` runs
+whenever `../ld/ld.c` exists.
 
 ## Current Features
 - Types: int, char, float, double, void, pointers, arrays (1D/2D), structs, enums, typedefs

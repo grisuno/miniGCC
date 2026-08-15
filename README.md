@@ -130,7 +130,26 @@ diff minigccg3.s minigccg4.s
 
 *If `diff` returns no output, the compiler has successfully achieved perfect self-hosting stability.*
 
-> **Note:** The current version has been verified to bootstrap correctly — `g3.s` and `g4.s` are identical.
+The chain above leans on GNU as/ld. With the sibling [ld](https://github.com/grisuno/ld)
+assembler/linker, gcc is the only foreign tool left (generation 1); every
+generation after it is compiled by miniGCC and linked by `ld`:
+
+```bash
+gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c
+./minigcc minigcc.c > minigccg2.s
+ld -f elf -o minigccg2 minigccg2.s && chmod +x minigccg2
+./minigccg2 minigcc.c > minigccg3.s
+ld -f elf -o minigccg3 minigccg3.s && chmod +x minigccg3
+./minigccg3 minigcc.c > minigccg4.s
+diff minigccg3.s minigccg4.s
+```
+
+`test_ld_selfhost.sh` automates this GNU-free chain end to end (fixed point
+plus behavioural equivalence with generation 1) and runs as part of
+`test.sh`. The same chain builds the `minigcc.elf` that ships on the MiniOS
+ramdisk.
+
+> **Note:** The current version has been verified to bootstrap correctly through both chains — `g3.s` and `g4.s` are identical.
 
 ## Usage
 
@@ -164,6 +183,18 @@ The compiler now emits a `.weak _start` entry point for standalone executables:
 ./minigccg3 source.c > output.s
 as output.s -o output.o
 ld output.o -o output
+./output
+```
+
+### Option 3: Link with the sibling ld (no GNU tools)
+
+`ld` encodes x86-64 machine code directly and bundles a mini libc, so the
+output is a static PIE that runs on Linux and inside MiniOS:
+
+```bash
+./minigccg3 source.c > output.s
+ld -f elf -o output output.s
+chmod +x output
 ./output
 ```
 

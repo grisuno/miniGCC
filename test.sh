@@ -23,3 +23,10 @@ diff minigccg3.s minigccg4.s
 # Testing
 ./minigccg3 test.c
 ./minigccg3 test_for.c
+
+# Self-host chain linked with our own ld (sibling repository)
+if [ -f "$(dirname "$0")/../ld/ld.c" ]; then
+    bash "$(dirname "$0")/test_ld_selfhost.sh" || exit 1
+else
+    echo "SKIP ld self-host chain (../ld not found)"
+fi
