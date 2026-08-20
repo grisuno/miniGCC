@@ -198,6 +198,28 @@ chmod +x output
 ./output
 ```
 
+### Option 4: CVM v2 module (bytecode, no machine code)
+
+The same assembly, linked by `ld -f cvm`, becomes a CVM v2 module for the
+cvm2 interpreter — the format that runs inside MiniOS as `run file.cvm`:
+
+```bash
+./minigccg3 source.c > output.s
+ld -f cvm -o output.cvm output.s
+
+# host: run it with the cvm2 interpreter
+../cvm/cvm2/cvm output.cvm arg1
+
+# inside MiniOS
+miniOS> run minigcc.o source.c > output.s
+miniOS> run ld.o -f cvm -o output.cvm output.s
+miniOS> run output.cvm
+```
+
+CVM modules receive a Linux-style argv (the module path is `argv[0]`), and
+the interpreter's x86 stack model lets a module run with or without
+arguments identically.
+
 ## Example
 
 Given `test.c`:
