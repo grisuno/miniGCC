@@ -1,0 +1,80 @@
+{
+  "analysis_v2": {
+    "god_nodes": [
+      [
+        "minigccg2.s",
+        13.100000000000001
+      ],
+      [
+        "minigccg3.s",
+        13.100000000000001
+      ],
+      [
+        "minigccg4.s",
+        13.100000000000001
+      ],
+      [
+        "minigcc.c",
+        8.3
+      ],
+      [
+        "test_include.c",
+        2.2
+      ],
+      [
+        "my_library.h",
+        2.1
+      ],
+      [
+        "test_ld_selfhost.sh",
+        0.2
+      ],
+      [
+        "test.c",
+        0.1
+      ],
+      [
+        "test_for.c",
+        0.1
+      ],
+      [
+        "test.sh",
+        0.0
+      ]
+    ],
+    "communities": [
+      {
+        "id": 0,
+        "label": "root",
+        "file_ids": [
+          "test_include.c",
+          "my_library.h"
+        ],
+        "cohesion": 1.0,
+        "size": 2
+      }
+    ],
+    "surprising_connections": [],
+    "suggested_questions": [
+      "What does minigccg2.s depend on, and what depends on it? (0 connections)",
+      "What does minigccg3.s depend on, and what depends on it? (0 connections)",
+      "What does minigccg4.s depend on, and what depends on it? (0 connections)",
+      "What is the overall architecture of this codebase?"
+    ]
+  },
+  "layers": {
+    "minigcc.c": "utility",
+    "minigccg2.s": "utility",
+    "minigccg3.s": "utility",
+    "minigccg4.s": "utility",
+    "my_library.h": "utility",
+    "test.c": "testing",
+    "test.sh": "testing",
+    "test_for.c": "testing",
+    "test_include.c": "testing",
+    "test_ld_selfhost.sh": "testing"
+  },
+  "security": {
+    "findings": []
+  }
+}

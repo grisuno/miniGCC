@@ -1,11 +1,247 @@
 # Polyglot Codebase Knowledge Graph
 
-> Generated offline by **readmenator**. Supports C, C++, Python, Go, Rust, JS/TS, Java, C#, Shell, PHP, Dart, GDScript, Nim, ASM.
+> Generated offline by **readmenator**. Supports C, C++, Python, Go, Rust, JS/TS, Java, C#, Shell, PHP, Dart, GDScript, Nim, ASM, Ruby, Swift, Kotlin, Scala, Lua, Elixir.
 > No LLMs. No tokens. Pure static analysis. See more [here](https://github.com/grisuno/ReadMenator)
 
-**Total Files Parsed:** 9 | **Total Symbols Extracted:** 440 | **Total Imports:** 7
+**Total Files Parsed:** 10 | **Total Symbols Extracted:** 483 | **Total Imports:** 7
+
+<!-- ranking_model: v1.0 | weights: {ppr:0.45,auth:0.2,test:0.15,doc:0.1,fresh:0.1} | alpha:0.85 | commit:75d209c | date:2026-07-18 -->
+
+
+## Table of Contents
+
+1. [Statistics Dashboard](#statistics-dashboard)
+2. [Architectural Layers](#architectural-layers)
+3. [Ranked Context](#ranked-context)
+4. [God Nodes](#god-nodes)
+5. [Community Analysis](#community-analysis)
+6. [Suggested Questions](#suggested-questions)
+7. [Hotspot Analysis](#hotspot-analysis)
+8. [Change Impact Analysis](#change-impact-analysis)
+9. [Suggested Linting Rules](#suggested-linting-rules)
+10. [Orphans](#orphans)
+11. [Query Recipes](#query-recipes)
+12. [Structural Knowledge Map](#structural-knowledge-map)
+13. [UML Class Diagram](#uml-class-diagram)
+14. [Code Property Graph](#code-property-graph)
+15. [Architecture Reference](#architecture-reference)
+    - [C (4 files)](#c-4-files)
+    - [H (1 files)](#h-1-files)
+    - [S (3 files)](#s-3-files)
+    - [SH (2 files)](#sh-2-files)
+
+---
+
+## Statistics Dashboard
+
+| Metric | Value |
+|--------|-------|
+| Total Files | 10 |
+| Total Symbols | 483 |
+| Total Imports | 7 |
+| Call Edges | 0 |
+| Inheritance Edges | 0 |
+| Languages | 4 |
+| Avg Symbols/File | 48.3 |
+| Avg Imports/File | 0.7 |
+
+### Top Files by Import Count (Fan-Out)
+
+| File | Imports | Symbols | Language |
+|------|---------|---------|----------|
+| `minigcc.c` | 4 | 83 | c |
+| `test_include.c` | 2 | 2 | c |
+| `test_for.c` | 1 | 1 | c |
+
+### Top Files by Imported-By Count (Fan-In)
+
+| File | Imported By | Symbols | Language |
+|------|-------------|---------|----------|
+| `my_library.h` | 1 | 1 | h |
+
+---
+
+## Architectural Layers
+
+Auto-detected from path patterns, naming conventions, and imported frameworks.
+
+| Layer | Files |
+|-------|-------|
+| utility | 5 |
+| testing | 5 |
+
+### utility
+
+- `minigcc.c` (c, 83 symbols)
+- `minigccg2.s` (s, 131 symbols)
+- `minigccg3.s` (s, 131 symbols)
+- `minigccg4.s` (s, 131 symbols)
+- `my_library.h` (h, 1 symbols)
+
+### testing
+
+- `test.c` (c, 1 symbols)
+- `test.sh` (sh, 0 symbols)
+- `test_for.c` (c, 1 symbols)
+- `test_include.c` (c, 2 symbols)
+- `test_ld_selfhost.sh` (sh, 2 symbols)
+
+---
+
+## Ranked Context
+
+Files ranked by composite score for the current query context. The ranking combines Personalized PageRank (query relevance), global authority, test coverage, documentation coverage, and code freshness. Model: v1.0.
+
+| Rank | File | Composite | PPR | Authority | Test | Doc |
+|------|------|-----------|-----|-----------|------|-----|
+| 1 | `my_library.h` | 0.5219 | 0.6491 | 0.6491 | 0.00 | 1.00 |
+| 2 | `test_include.c` | 0.3281 | 0.3509 | 0.3509 | 0.00 | 1.00 |
+| 3 | `test_for.c` | 0.2000 | 0.0000 | 0.0000 | 0.00 | 2.00 |
+| 4 | `test.sh` | 0.1000 | 0.0000 | 0.0000 | 0.00 | 1.00 |
+| 5 | `test_ld_selfhost.sh` | 0.0500 | 0.0000 | 0.0000 | 0.00 | 0.50 |
+| 6 | `minigcc.c` | 0.0145 | 0.0000 | 0.0000 | 0.00 | 0.14 |
+| 7 | `minigccg2.s` | 0.0000 | 0.0000 | 0.0000 | 0.00 | 0.00 |
+| 8 | `minigccg3.s` | 0.0000 | 0.0000 | 0.0000 | 0.00 | 0.00 |
+| 9 | `minigccg4.s` | 0.0000 | 0.0000 | 0.0000 | 0.00 | 0.00 |
+| 10 | `test.c` | 0.0000 | 0.0000 | 0.0000 | 0.00 | 0.00 |
+
+---
+
+## God Nodes
+
+Most architecturally central files ranked by combined import/export degree and symbol richness.
+
+| File | Score | Connections | PageRank |
+|------|-------|-------------|----------|
+| `minigccg2.s` | 13.1 | | 0.0000 |
+| `minigccg3.s` | 13.1 | | 0.0000 |
+| `minigccg4.s` | 13.1 | | 0.0000 |
+| `minigcc.c` | 8.3 | | 0.0000 |
+| `test_include.c` | 2.2 | | 0.3509 |
+| `my_library.h` | 2.1 | | 0.6491 |
+| `test_ld_selfhost.sh` | 0.2 | | 0.0000 |
+| `test.c` | 0.1 | | 0.0000 |
+| `test_for.c` | 0.1 | | 0.0000 |
+| `test.sh` | 0.0 | | 0.0000 |
+
+---
+
+## Community Analysis
+
+Files grouped by import-based community detection. Cohesion measures how tightly connected each community is internally.
+
+### root (Cohesion: 1.00)
+
+**2 files** in this community:
+
+- `my_library.h` (h, 1 symbols)
+- `test_include.c` (c, 2 symbols)
+
+---
+
+## Suggested Questions
+
+Auto-generated exploration prompts based on graph structure:
+
+- What does minigccg2.s depend on, and what depends on it? (0 connections)
+- What does minigccg3.s depend on, and what depends on it? (0 connections)
+- What does minigccg4.s depend on, and what depends on it? (0 connections)
+- What is the overall architecture of this codebase?
+
+---
+
+## Hotspot Analysis
+
+Files ranked by combined complexity (symbol count) and centrality (connection count). High-scoring files are architecturally critical and may need refactoring attention.
+
+| File | Complexity | Centrality | Combined | Symbols | Connections |
+|------|-----------|------------|----------|---------|-------------|
+| `my_library.h` | 0.008 | 0.250 | 0.153 | 1 | 1 |
+| `test_include.c` | 0.015 | 0.500 | 0.306 | 2 | 2 |
+| `test_for.c` | 0.008 | 0.250 | 0.153 | 1 | 1 |
+| `test.sh` | 0.000 | 0.000 | 0.000 | 0 | 0 |
+| `test_ld_selfhost.sh` | 0.015 | 0.000 | 0.006 | 2 | 0 |
+| `minigcc.c` | 0.634 | 1.000 | 0.853 | 83 | 4 |
+| `minigccg2.s` | 1.000 | 0.000 | 0.400 | 131 | 0 |
+| `minigccg3.s` | 1.000 | 0.000 | 0.400 | 131 | 0 |
+| `minigccg4.s` | 1.000 | 0.000 | 0.400 | 131 | 0 |
+| `test.c` | 0.008 | 0.000 | 0.003 | 1 | 0 |
+
+---
+
+## Change Impact Analysis
+
+Files sorted by how many other files would be affected if they changed. High-impact files should be changed with caution.
+
+| File | Direct Dependents | Transitive Dependents | Total Impact |
+|------|------------------|----------------------|--------------|
+| `minigcc.c` | 0 | 0 | 0 |
+| `minigccg2.s` | 0 | 0 | 0 |
+| `minigccg3.s` | 0 | 0 | 0 |
+| `minigccg4.s` | 0 | 0 | 0 |
+| `my_library.h` | 0 | 0 | 0 |
+| `test.c` | 0 | 0 | 0 |
+| `test.sh` | 0 | 0 | 0 |
+| `test_for.c` | 0 | 0 | 0 |
+| `test_include.c` | 0 | 0 | 0 |
+| `test_ld_selfhost.sh` | 0 | 0 | 0 |
+
+---
+
+## Suggested Linting Rules
+
+Automatically suggested linting and security rules based on patterns detected in the codebase. These can be exported as Semgrep rules using the `--export-rules` flag.
+
+| Rule ID | Severity | Description | Language | Matches |
+|---------|----------|-------------|----------|---------|
+| `RM001` | info | Large number of functions in c: 70 total | c | 70 |
+| `RM002` | info | Large number of functions in s: 393 total | s | 393 |
+
+---
+
+## Orphans
+
+Files with no documentation or low connectivity. These are candidates for documentation investment or cleanup.
+
+- `minigccg2.s` (131 symbols, no doc)
+- `minigccg3.s` (131 symbols, no doc)
+- `minigccg4.s` (131 symbols, no doc)
+- `test.c` (1 symbols, no doc)
+
+---
+
+## Query Recipes
+
+Example queries you can run against this knowledge base using the ranking engine:
+
+```
+# Find files most relevant to a concept
+readmenator query "Where is the import resolver implemented?"
+
+# Rank files by relevance to a topic
+readmenator query "How does documentation generation work?"
+
+# Explain why a file ranks highly
+readmenator query "explain readmenator/_documentation.py"
+
+# Trace dependency paths with ranked context
+readmenator query "path from CLI to exporter"
+```
+
+The ranking model uses the following signals:
+
+- **Personalized PageRank** (45% weight): query-specific relevance via seed propagation
+- **Global Authority** (20% weight): structural importance via standard PageRank
+- **Test Coverage** (15% weight): fraction of symbols referenced in test files
+- **Doc Coverage** (10% weight): presence of docstrings and file-level docs
+- **Freshness** (10% weight): recent modification activity
+
+Results include score decomposition and justification paths for each ranked item.
+
+---
 
 ## Structural Knowledge Map
+
 ```mermaid
 graph TD
     classDef mod fill:#1e1e1e,stroke:#ff6666,stroke-width:2px,color:#fff;
@@ -29,82 +265,26 @@ graph TD
     minigcc_c_error["error"]
     class minigcc_c_error fn;
     minigcc_c --> minigcc_c_error
+    subgraph community_0 ["root"]
     test_include_c["test_include.c (c)"]
     class test_include_c mod;
-    test_include_c_main["main"]
-    class test_include_c_main fn;
-    test_include_c --> test_include_c_main
-    test_include_c_greet["greet"]
-    class test_include_c_greet fn;
-    test_include_c --> test_include_c_greet
     test_for_c["test_for.c (c)"]
     class test_for_c mod;
-    test_for_c_main["main"]
-    class test_for_c_main fn;
-    test_for_c --> test_for_c_main
     minigccg2_s["minigccg2.s (s)"]
     class minigccg2_s mod;
-    minigccg2_s_input_ptr["input_ptr"]
-    class minigccg2_s_input_ptr fn;
-    minigccg2_s --> minigccg2_s_input_ptr
-    minigccg2_s_source_start["source_start"]
-    class minigccg2_s_source_start fn;
-    minigccg2_s --> minigccg2_s_source_start
-    minigccg2_s_token["token"]
-    class minigccg2_s_token fn;
-    minigccg2_s --> minigccg2_s_token
-    minigccg2_s_tok["tok"]
-    class minigccg2_s_tok fn;
-    minigccg2_s --> minigccg2_s_tok
-    minigccg2_s_line["line"]
-    class minigccg2_s_line fn;
-    minigccg2_s --> minigccg2_s_line
     minigccg3_s["minigccg3.s (s)"]
     class minigccg3_s mod;
-    minigccg3_s_input_ptr["input_ptr"]
-    class minigccg3_s_input_ptr fn;
-    minigccg3_s --> minigccg3_s_input_ptr
-    minigccg3_s_source_start["source_start"]
-    class minigccg3_s_source_start fn;
-    minigccg3_s --> minigccg3_s_source_start
-    minigccg3_s_token["token"]
-    class minigccg3_s_token fn;
-    minigccg3_s --> minigccg3_s_token
-    minigccg3_s_tok["tok"]
-    class minigccg3_s_tok fn;
-    minigccg3_s --> minigccg3_s_tok
-    minigccg3_s_line["line"]
-    class minigccg3_s_line fn;
-    minigccg3_s --> minigccg3_s_line
     minigccg4_s["minigccg4.s (s)"]
     class minigccg4_s mod;
-    minigccg4_s_input_ptr["input_ptr"]
-    class minigccg4_s_input_ptr fn;
-    minigccg4_s --> minigccg4_s_input_ptr
-    minigccg4_s_source_start["source_start"]
-    class minigccg4_s_source_start fn;
-    minigccg4_s --> minigccg4_s_source_start
-    minigccg4_s_token["token"]
-    class minigccg4_s_token fn;
-    minigccg4_s --> minigccg4_s_token
-    minigccg4_s_tok["tok"]
-    class minigccg4_s_tok fn;
-    minigccg4_s --> minigccg4_s_tok
-    minigccg4_s_line["line"]
-    class minigccg4_s_line fn;
-    minigccg4_s --> minigccg4_s_line
+    test_ld_selfhost_sh["test_ld_selfhost.sh (sh)"]
+    class test_ld_selfhost_sh mod;
     my_library_h["my_library.h (h)"]
     class my_library_h mod;
-    my_library_h_MY_LIBRARY_H["MY_LIBRARY_H"]
-    class my_library_h_MY_LIBRARY_H fn;
-    my_library_h --> my_library_h_MY_LIBRARY_H
     test_c["test.c (c)"]
     class test_c mod;
-    test_c_main["main"]
-    class test_c_main fn;
-    test_c --> test_c_main
     test_sh["test.sh (sh)"]
     class test_sh mod;
+    end
     ext_stdio_h["stdio.h"]
     class ext_stdio_h ext;
     minigcc_c -.->|imports| ext_stdio_h
@@ -126,6 +306,16 @@ graph TD
 
 ---
 
+## Code Property Graph
+
+Machine-readable Code Property Graph (CPG) in JSON-LD format. This block allows AI agents to parse the full structural graph without additional file reads. Compatible with GraphRAG pipelines.
+
+```json
+{"@context": "https://schema.org", "analysis": {"communities": [{"cohesion": 1.0, "id": 0, "label": "root", "size": 2}], "god_nodes": [{"node_id": "minigccg2.s", "score": 13.1}, {"node_id": "minigccg3.s", "score": 13.1}, {"node_id": "minigccg4.s", "score": 13.1}, {"node_id": "minigcc.c", "score": 8.3}, {"node_id": "test_include.c", "score": 2.2}, {"node_id": "my_library.h", "score": 2.1}, {"node_id": "test_ld_selfhost.sh", "score": 0.2}, {"node_id": "test.c", "score": 0.1}, {"node_id": "test_for.c", "score": 0.1}, {"node_id": "test.sh", "score": 0.0}], "surprising_connections": []}, "edges": [{"confidence": "EXTRACTED", "relation": "imports", "source": "minigcc.c", "target": "stdio.h"}, {"confidence": "EXTRACTED", "relation": "imports", "source": "minigcc.c", "target": "stdlib.h"}, {"confidence": "EXTRACTED", "relation": "imports", "source": "minigcc.c", "target": "string.h"}, {"confidence": "EXTRACTED", "relation": "imports", "source": "minigcc.c", "target": "errno.h"}, {"confidence": "EXTRACTED", "relation": "imports", "source": "test_for.c", "target": "stdio.h"}, {"confidence": "EXTRACTED", "relation": "imports", "source": "test_include.c", "target": "stdio.h"}, {"confidence": "EXTRACTED", "relation": "imports", "source": "test_include.c", "target": "my_library.h"}], "generator": "readmenator", "metadata": {"edge_count": 7, "file_count": 10, "language_count": 4, "symbol_count": 483}, "nodes": [{"id": "minigcc.c", "kind": "module", "label": "minigcc.c", "language": "c", "sha256": "80b70c07d669a8c8", "symbol_count": 83, "symbols": [{"kind": "function", "line": 215, "name": "save_parser_state", "signature": "static void save_parser_state(ParserState *state)"}, {"kind": "function", "line": 240, "name": "restore_parser_state", "signature": "static void restore_parser_state(ParserState *state)"}, {"kind": "function", "line": 276, "name": "find_macro", "signature": "static int find_macro(const char *name)"}, {"kind": "function", "line": 285, "name": "add_macro", "signature": "static void add_macro(const char *name, int value)"}, {"kind": "function", "line": 298, "name": "error", "signature": "static void error(const char *msg)"}, {"kind": "function", "line": 304, "name": "safe_malloc", "signature": "static void *safe_malloc(size_t size)"}, {"kind": "function", "line": 313, "name": "safe_strcpy", "signature": "static void safe_strcpy(char *dst, const char *src, size_t dst_sz)"}, {"kind": "function", "line": 322, "name": "safe_strtoll", "signature": "static long safe_strtoll(const char *s)"}, {"kind": "function", "line": 335, "name": "is_file_processed", "signature": "static int is_file_processed(const char *path)"}, {"kind": "function", "line": 344, "name": "mark_file_processed", "signature": "static void mark_file_processed(const char *path)"}, {"kind": "function", "line": 356, "name": "get_dir_from_path", "signature": "static void get_dir_from_path(const char *path, char *dir, int dir_sz)"}, {"kind": "function", "line": 375, "name": "resolve_local_include", "signature": "static char *resolve_local_include(const char *target)"}, {"kind": "function", "line": 414, "name": "read_include_file", "signature": "static char *read_include_file(const char *path)"}, {"doc": "Must produce identical results under gcc (32-bit int) and under the compiler's own model (64-bit int), so avoid multiplication overflow.", "kind": "function", "line": 439, "name": "hash_name", "signature": "static int hash_name(const char *name)"}, {"kind": "function", "line": 448, "name": "hash_init", "signature": "static void hash_init(void)"}, {"kind": "function", "line": 453, "name": "push_scope", "signature": "static void push_scope(void)"}, {"kind": "function", "line": 461, "name": "pop_scope", "signature": "static void pop_scope(void)"}, {"doc": "Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (needed for the two-pass function body parsing pattern).", "kind": "function", "line": 491, "name": "truncate_symbols", "signature": "static void truncate_symbols(int start_idx)"}, {"kind": "function", "line": 509, "name": "my_isspace", "signature": "static int my_isspace(int c)"}, {"kind": "function", "line": 519, "name": "my_isalpha", "signature": "static int my_isalpha(int c)"}, {"kind": "function", "line": 525, "name": "my_isdigit", "signature": "static int my_isdigit(int c)"}, {"kind": "function", "line": 530, "name": "my_isalnum", "signature": "static int my_isalnum(int c)"}, {"doc": "} static int my_isdigit(int c) { if (c >= '0' && c <= '9') return 1; return 0; } static int my_isalnum(int c) { if (my_isalpha(c)) return 1; if (my_isdigit(c)) return 1; return 0; } /* Lexer", "kind": "function", "line": 538, "name": "next_token", "signature": "static void next_token(void)"}, {"kind": "function", "line": 974, "name": "match", "signature": "static void match(int expected)"}, {"kind": "function", "line": 979, "name": "emit", "signature": "static void emit(const char *s)"}, {"kind": "function", "line": 993, "name": "emit_i", "signature": "static void emit_i(const char *fmt, int v)"}, {"kind": "function", "line": 999, "name": "emit_s", "signature": "static void emit_s(const char *fmt, const char *s)"}, {"kind": "function", "line": 1005, "name": "emit_is", "signature": "static void emit_is(const char *fmt, int v, const char *s)"}, {"kind": "function", "line": 1011, "name": "emit_si", "signature": "static void emit_si(const char *fmt, const char *s, int v)"}, {"doc": "Write a C string as the body of a .asciz directive, escaping everything the assembler cannot take literally. Shared by the string pool and by string * initializers of global arrays.", "kind": "function", "line": 1021, "name": "emit_asciz_body", "signature": "static void emit_asciz_body(const char *s)"}, {"kind": "function", "line": 1039, "name": "emit_label", "signature": "static void emit_label(int label)"}, {"doc": "else if (c == '\\a') fprintf(output, \"\\\\a\"); else if (c == '\\b') fprintf(output, \"\\\\b\"); else if (c >= 32 && c <= 126) fputc(c, output); else fprintf(output, \"\\\\%03o\", c); s++; } } static void emit_label(int label) { if (emit_enabled) fprintf(output, \".L%d:\\n\", label); } /* Symbol table", "kind": "function", "line": 1046, "name": "find_symbol", "signature": "static int find_symbol(const char *name)"}, {"kind": "function", "line": 1056, "name": "add_symbol", "signature": "static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ..."}, {"doc": "Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace-initialized local arrays correctly (they overlap adjacent locals).", "kind": "function", "line": 1117, "name": "arg_reg", "signature": "static const char *arg_reg(int i)"}, {"doc": "Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace-initialized local arrays correctly (they overlap adjacent locals). static const char *arg_reg(int i) { if (i == 0) return \"%rdi\"; if (i == 1) return \"%rsi\"; if (i == 2) return \"%rdx\"; if (i == 3) return \"%rcx\"; if (i == 4) return \"%r8\"; return \"%r9\"; } /* Predefined libc global symbol names, indexed; returns NULL past the end.", "kind": "function", "line": 1127, "name": "libc_global_name", "signature": "static const char *libc_global_name(int i)"}, {"kind": "function", "line": 1139, "name": "unary", "signature": "static void unary(void)"}, {"kind": "function", "line": 1389, "name": "lvalue_address", "signature": "static void lvalue_address(void)"}, {"kind": "function", "line": 1440, "name": "handle_postfix", "signature": "static void handle_postfix(int is_lvalue)"}, {"kind": "function", "line": 1574, "name": "unary_expr", "signature": "static void unary_expr(void)"}, {"kind": "function", "line": 1589, "name": "multiplicative_expr", "signature": "static void multiplicative_expr(void)"}, {"kind": "function", "line": 1653, "name": "additive_expr", "signature": "static void additive_expr(void)"}, {"kind": "function", "line": 1708, "name": "shift_expr", "signature": "static void shift_expr(void)"}, {"kind": "function", "line": 1727, "name": "relational_expr", "signature": "static void relational_expr(void)"}, {"kind": "function", "line": 1780, "name": "equality_expr", "signature": "static void equality_expr(void)"}, {"kind": "function", "line": 1829, "name": "bitwise_and_expr", "signature": "static void bitwise_and_expr(void)"}, {"kind": "function", "line": 1841, "name": "bitwise_xor_expr", "signature": "static void bitwise_xor_expr(void)"}, {"kind": "function", "line": 1853, "name": "bitwise_or_expr", "signature": "static void bitwise_or_expr(void)"}, {"kind": "function", "line": 1865, "name": "logical_and_expr", "signature": "static void logical_and_expr(void)"}, {"kind": "function", "line": 1885, "name": "logical_or_expr", "signature": "static void logical_or_expr(void)"}, {"kind": "function", "line": 1905, "name": "conditional_expr", "signature": "static void conditional_expr(void)"}, {"kind": "function", "line": 1923, "name": "assignment_expr", "signature": "static void assignment_expr(void)"}, {"kind": "function", "line": 2084, "name": "statement", "signature": "static void statement(void)"}, {"kind": "function", "line": 2741, "name": "parse_function", "signature": "static void parse_function(const char *name, int ret_type)"}, {"kind": "function", "line": 2868, "name": "parse_enum", "signature": "static void parse_enum(void)"}, {"kind": "function", "line": 2917, "name": "skip_struct", "signature": "static void skip_struct(void)"}, {"kind": "function", "line": 2981, "name": "skip_typedef", "signature": "static void skip_typedef(void)"}, {"doc": "s->const_value = 8;  /* just a marker /* If a struct was just parsed, store its size if (struct_total_size > 0) s->const_value = struct_total_size; { int h = hash_name(last_name); s->next_hash = hash_table[h]; hash_table[h] = symbol_count - 1; } } match(';'); } /* Storage directive for a datum of `size` bytes.", "kind": "function", "line": 3036, "name": "data_directive", "signature": "static const char *data_directive(int size)"}, {"doc": "} } match(';'); } /* Storage directive for a datum of `size` bytes. static const char *data_directive(int size) { if (size == 1) return \"    .byte %d\"; if (size == 2) return \"    .word %d\"; if (size == 4) return \"    .long %d\"; return \"    .quad %d\"; } /* Reserve zero-initialized storage for a global.", "kind": "function", "line": 3044, "name": "emit_global_bss", "signature": "static void emit_global_bss(const char *name, int is_static, int size)"}, {"kind": "function", "line": 3051, "name": "emit_global_data_head", "signature": "static void emit_global_data_head(const char *name, int is_static)"}, {"doc": "Parse an integer constant usable as a static initializer: an optionally signed numeric or character literal, or a macro standing for one. * Returns 1 when a constant was consumed.", "kind": "function", "line": 3061, "name": "parse_const_int", "signature": "static int parse_const_int(long long *out)"}, {"doc": "} if (tok == T_ID) { int mi = find_macro(token); if (mi >= 0) { long long v = macros[mi].value; next_token(); out = neg ? -v : v; return 1; } } return 0; } /* Record a string literal in the pool and return its label index.", "kind": "function", "line": 3084, "name": "intern_string", "signature": "static int intern_string(const char *text)"}, {"doc": "Emit the definition of a global that carries an initializer. On entry the current token is the one after '='. `size` is the declared byte size and is updated in place when the initializer determines the length of an unsized array. Returns 1 when the initializer was materialized, 0 when the form is unsupported, in which case nothing was emitted and the caller falls back to * zero-initialized storage.", "kind": "function", "line": 3101, "name": "emit_global_initializer", "signature": "static int emit_global_initializer(const char *name, int is_static, int *size,\n                  ..."}, {"kind": "function", "line": 3165, "name": "parse_program", "signature": "static void parse_program(void)"}, {"kind": "function", "line": 3316, "name": "emit_float_consts", "signature": "static void emit_float_consts(void)"}, {"kind": "function", "line": 3326, "name": "emit_string_pool", "signature": "static void emit_string_pool(void)"}, {"kind": "function", "line": 3336, "name": "main", "signature": "int main(int argc, char **argv)"}, {"kind": "macro", "line": 14, "name": "MAX_TOKEN_LEN"}, {"kind": "macro", "line": 16, "name": "MAX_SYMBOLS"}, {"kind": "macro", "line": 17, "name": "MAX_IDENT_LEN"}, {"kind": "macro", "line": 18, "name": "MAX_SOURCE_SIZE"}, {"kind": "macro", "line": 19, "name": "MAX_INCLUDE_DEPTH"}, {"kind": "macro", "line": 20, "name": "MAX_PROCESSED_FILES"}, {"kind": "macro", "line": 21, "name": "STACK_ALIGN"}, {"kind": "macro", "line": 111, "name": "HASH_TABLE_SIZE"}, {"kind": "macro", "line": 113, "name": "MAX_SCOPE_DEPTH"}, {"kind": "macro", "line": 135, "name": "MAX_FLOAT_CONSTS"}, {"kind": "macro", "line": 140, "name": "MAX_CASES_PER_SWITCH"}, {"kind": "macro", "line": 153, "name": "MAX_STRINGS"}, {"kind": "macro", "line": 162, "name": "MAX_PTR_INITS"}, {"kind": "macro", "line": 172, "name": "MAX_STRUCT_MEMBERS"}, {"kind": "macro", "line": 179, "name": "MAX_IF_NESTING"}, {"kind": "macro", "line": 181, "name": "CONST_VAR_FLAG"}, {"kind": "macro", "line": 187, "name": "MAX_MACROS"}]}, {"id": "minigccg2.s", "kind": "module", "label": "minigccg2.s", "language": "s", "sha256": "a908f92d869c9c2d", "symbol_count": 131, "symbols": [{"kind": "function", "line": 3, "name": "input_ptr"}, {"kind": "function", "line": 7, "name": "source_start"}, {"kind": "function", "line": 11, "name": "token"}, {"kind": "function", "line": 15, "name": "tok"}, {"kind": "function", "line": 19, "name": "line"}, {"kind": "function", "line": 23, "name": "output"}, {"kind": "function", "line": 27, "name": "ctx_stack"}, {"kind": "function", "line": 31, "name": "ctx_top"}, {"kind": "function", "line": 35, "name": "current_file"}, {"kind": "function", "line": 39, "name": "processed_files"}, {"kind": "function", "line": 43, "name": "processed_count"}, {"kind": "function", "line": 47, "name": "symbols"}, {"kind": "function", "line": 51, "name": "symbol_count"}, {"kind": "function", "line": 55, "name": "hash_table"}, {"kind": "function", "line": 59, "name": "scope_stack_sym"}, {"kind": "function", "line": 63, "name": "scope_stack_stk"}, {"kind": "function", "line": 67, "name": "scope_depth"}, {"kind": "function", "line": 71, "name": "stack_size"}, {"kind": "function", "line": 75, "name": "label_counter"}, {"kind": "function", "line": 79, "name": "function_has_return"}, {"kind": "function", "line": 83, "name": "emit_enabled"}, {"kind": "function", "line": 87, "name": "max_func_stack"}, {"kind": "function", "line": 91, "name": "assign_size"}, {"kind": "function", "line": 95, "name": "expr_pointed"}, {"kind": "function", "line": 99, "name": "current_elem_size"}, {"kind": "function", "line": 103, "name": "current_elem_size2"}, {"kind": "function", "line": 107, "name": "no_postfix_deref"}, {"kind": "function", "line": 111, "name": "expr_type"}, {"kind": "function", "line": 115, "name": "static_flag"}, {"kind": "function", "line": 119, "name": "unsigned_type"}, {"kind": "function", "line": 123, "name": "const_flag"}, {"kind": "function", "line": 127, "name": "extern_flag"}, {"kind": "function", "line": 131, "name": "global_emit_deferred"}, {"kind": "function", "line": 135, "name": "float_const_str"}, {"kind": "function", "line": 139, "name": "float_const_is_float"}, {"kind": "function", "line": 143, "name": "float_const_count"}, {"kind": "function", "line": 147, "name": "switch_case_values"}, {"kind": "function", "line": 151, "name": "switch_case_labels"}, {"kind": "function", "line": 155, "name": "switch_case_count"}, {"kind": "function", "line": 159, "name": "switch_has_default"}, {"kind": "function", "line": 163, "name": "switch_default_label"}, {"kind": "function", "line": 167, "name": "break_target"}, {"kind": "function", "line": 171, "name": "break_target_valid"}, {"kind": "function", "line": 175, "name": "continue_target"}, {"kind": "function", "line": 179, "name": "continue_target_valid"}, {"kind": "function", "line": 183, "name": "str_label_counter"}, {"kind": "function", "line": 187, "name": "string_pool"}, {"kind": "function", "line": 191, "name": "string_count"}, {"kind": "function", "line": 195, "name": "ptr_init_name"}, {"kind": "function", "line": 199, "name": "ptr_init_label"}, {"kind": "function", "line": 203, "name": "ptr_init_count"}, {"kind": "function", "line": 207, "name": "struct_total_size"}, {"kind": "function", "line": 211, "name": "struct_member_names"}, {"kind": "function", "line": 215, "name": "struct_member_offsets"}, {"kind": "function", "line": 219, "name": "struct_member_sizes"}, {"kind": "function", "line": 223, "name": "struct_member_elem_sizes"}, {"kind": "function", "line": 227, "name": "struct_member_count"}, {"kind": "function", "line": 231, "name": "if_nest"}, {"kind": "function", "line": 235, "name": "if_depth"}, {"kind": "function", "line": 240, "name": "macro_count"}, {"kind": "function", "line": 244, "name": "save_parser_state"}, {"kind": "function", "line": 383, "name": "restore_parser_state"}, {"kind": "function", "line": 571, "name": "macros"}, {"kind": "function", "line": 575, "name": "find_macro"}, {"kind": "function", "line": 639, "name": "add_macro"}, {"kind": "function", "line": 769, "name": "error"}, {"kind": "function", "line": 821, "name": "safe_malloc"}, {"kind": "function", "line": 876, "name": "safe_strcpy"}, {"kind": "function", "line": 953, "name": "safe_strtoll"}, {"kind": "function", "line": 1068, "name": "is_file_processed"}, {"kind": "function", "line": 1129, "name": "mark_file_processed"}, {"kind": "function", "line": 1241, "name": "get_dir_from_path"}, {"kind": "function", "line": 1384, "name": "resolve_local_include"}, {"kind": "function", "line": 1834, "name": "read_include_file"}, {"kind": "function", "line": 2042, "name": "hash_name"}, {"kind": "function", "line": 2100, "name": "hash_init"}, {"kind": "function", "line": 2139, "name": "push_scope"}, {"kind": "function", "line": 2191, "name": "pop_scope"}, {"kind": "function", "line": 2387, "name": "truncate_symbols"}, {"kind": "function", "line": 2540, "name": "my_isspace"}, {"kind": "function", "line": 2629, "name": "my_isalpha"}, {"kind": "function", "line": 2698, "name": "my_isdigit"}, {"kind": "function", "line": 2738, "name": "my_isalnum"}, {"kind": "function", "line": 2783, "name": "next_token"}, {"kind": "function", "line": 2787, "name": "restart"}, {"kind": "function", "line": 8892, "name": "match"}, {"kind": "function", "line": 8930, "name": "emit"}, {"kind": "function", "line": 9044, "name": "emit_i"}, {"kind": "function", "line": 9093, "name": "emit_s"}, {"kind": "function", "line": 9142, "name": "emit_is"}, {"kind": "function", "line": 9195, "name": "emit_si"}, {"kind": "function", "line": 9248, "name": "emit_asciz_body"}, {"kind": "function", "line": 9572, "name": "emit_label"}, {"kind": "function", "line": 9601, "name": "find_symbol"}, {"kind": "function", "line": 9688, "name": "add_symbol"}, {"kind": "function", "line": 10056, "name": "arg_reg"}, {"kind": "function", "line": 10132, "name": "libc_global_name"}, {"kind": "function", "line": 10260, "name": "unary"}, {"kind": "function", "line": 12789, "name": "lvalue_address"}, {"kind": "function", "line": 13294, "name": "handle_postfix"}, {"kind": "function", "line": 14271, "name": "unary_expr"}, {"kind": "function", "line": 14296, "name": "multiplicative_expr"}, {"kind": "function", "line": 14918, "name": "additive_expr"}, {"kind": "function", "line": 15413, "name": "shift_expr"}, {"kind": "function", "line": 15559, "name": "relational_expr"}, {"kind": "function", "line": 16161, "name": "equality_expr"}, {"kind": "function", "line": 16639, "name": "bitwise_and_expr"}, {"kind": "function", "line": 16717, "name": "bitwise_xor_expr"}, {"kind": "function", "line": 16795, "name": "bitwise_or_expr"}, {"kind": "function", "line": 16873, "name": "logical_and_expr"}, {"kind": "function", "line": 17036, "name": "logical_or_expr"}, {"kind": "function", "line": 17199, "name": "conditional_expr"}, {"kind": "function", "line": 17331, "name": "assignment_expr"}, {"kind": "function", "line": 19851, "name": "statement"}, {"kind": "function", "line": 23297, "name": "restart_typedef"}, {"kind": "function", "line": 24328, "name": "restart_int"}, {"kind": "function", "line": 25484, "name": "parse_function"}, {"kind": "function", "line": 26800, "name": "parse_enum"}, {"kind": "function", "line": 27212, "name": "skip_struct"}, {"kind": "function", "line": 27798, "name": "skip_typedef"}, {"kind": "function", "line": 28288, "name": "data_directive"}, {"kind": "function", "line": 28338, "name": "emit_global_bss"}, {"kind": "function", "line": 28429, "name": "emit_global_data_head"}, {"kind": "function", "line": 28484, "name": "parse_const_int"}, {"kind": "function", "line": 28647, "name": "intern_string"}, {"kind": "function", "line": 28740, "name": "emit_global_initializer"}, {"kind": "function", "line": 29457, "name": "parse_program"}, {"kind": "function", "line": 31173, "name": "emit_float_consts"}, {"kind": "function", "line": 31272, "name": "emit_string_pool"}, {"kind": "function", "line": 31374, "name": "main"}, {"kind": "function", "line": 34714, "name": "_start"}]}, {"id": "minigccg3.s", "kind": "module", "label": "minigccg3.s", "language": "s", "sha256": "4c5938eac34ce670", "symbol_count": 131, "symbols": [{"kind": "function", "line": 3, "name": "input_ptr"}, {"kind": "function", "line": 7, "name": "source_start"}, {"kind": "function", "line": 11, "name": "token"}, {"kind": "function", "line": 15, "name": "tok"}, {"kind": "function", "line": 19, "name": "line"}, {"kind": "function", "line": 23, "name": "output"}, {"kind": "function", "line": 27, "name": "ctx_stack"}, {"kind": "function", "line": 31, "name": "ctx_top"}, {"kind": "function", "line": 35, "name": "current_file"}, {"kind": "function", "line": 39, "name": "processed_files"}, {"kind": "function", "line": 43, "name": "processed_count"}, {"kind": "function", "line": 47, "name": "symbols"}, {"kind": "function", "line": 51, "name": "symbol_count"}, {"kind": "function", "line": 55, "name": "hash_table"}, {"kind": "function", "line": 59, "name": "scope_stack_sym"}, {"kind": "function", "line": 63, "name": "scope_stack_stk"}, {"kind": "function", "line": 67, "name": "scope_depth"}, {"kind": "function", "line": 71, "name": "stack_size"}, {"kind": "function", "line": 75, "name": "label_counter"}, {"kind": "function", "line": 79, "name": "function_has_return"}, {"kind": "function", "line": 83, "name": "emit_enabled"}, {"kind": "function", "line": 87, "name": "max_func_stack"}, {"kind": "function", "line": 91, "name": "assign_size"}, {"kind": "function", "line": 95, "name": "expr_pointed"}, {"kind": "function", "line": 99, "name": "current_elem_size"}, {"kind": "function", "line": 103, "name": "current_elem_size2"}, {"kind": "function", "line": 107, "name": "no_postfix_deref"}, {"kind": "function", "line": 111, "name": "expr_type"}, {"kind": "function", "line": 115, "name": "static_flag"}, {"kind": "function", "line": 119, "name": "unsigned_type"}, {"kind": "function", "line": 123, "name": "const_flag"}, {"kind": "function", "line": 127, "name": "extern_flag"}, {"kind": "function", "line": 131, "name": "global_emit_deferred"}, {"kind": "function", "line": 135, "name": "float_const_str"}, {"kind": "function", "line": 139, "name": "float_const_is_float"}, {"kind": "function", "line": 143, "name": "float_const_count"}, {"kind": "function", "line": 147, "name": "switch_case_values"}, {"kind": "function", "line": 151, "name": "switch_case_labels"}, {"kind": "function", "line": 155, "name": "switch_case_count"}, {"kind": "function", "line": 159, "name": "switch_has_default"}, {"kind": "function", "line": 163, "name": "switch_default_label"}, {"kind": "function", "line": 167, "name": "break_target"}, {"kind": "function", "line": 171, "name": "break_target_valid"}, {"kind": "function", "line": 175, "name": "continue_target"}, {"kind": "function", "line": 179, "name": "continue_target_valid"}, {"kind": "function", "line": 183, "name": "str_label_counter"}, {"kind": "function", "line": 187, "name": "string_pool"}, {"kind": "function", "line": 191, "name": "string_count"}, {"kind": "function", "line": 195, "name": "ptr_init_name"}, {"kind": "function", "line": 199, "name": "ptr_init_label"}, {"kind": "function", "line": 203, "name": "ptr_init_count"}, {"kind": "function", "line": 207, "name": "struct_total_size"}, {"kind": "function", "line": 211, "name": "struct_member_names"}, {"kind": "function", "line": 215, "name": "struct_member_offsets"}, {"kind": "function", "line": 219, "name": "struct_member_sizes"}, {"kind": "function", "line": 223, "name": "struct_member_elem_sizes"}, {"kind": "function", "line": 227, "name": "struct_member_count"}, {"kind": "function", "line": 231, "name": "if_nest"}, {"kind": "function", "line": 235, "name": "if_depth"}, {"kind": "function", "line": 240, "name": "macro_count"}, {"kind": "function", "line": 244, "name": "save_parser_state"}, {"kind": "function", "line": 383, "name": "restore_parser_state"}, {"kind": "function", "line": 571, "name": "macros"}, {"kind": "function", "line": 575, "name": "find_macro"}, {"kind": "function", "line": 639, "name": "add_macro"}, {"kind": "function", "line": 769, "name": "error"}, {"kind": "function", "line": 821, "name": "safe_malloc"}, {"kind": "function", "line": 876, "name": "safe_strcpy"}, {"kind": "function", "line": 953, "name": "safe_strtoll"}, {"kind": "function", "line": 1068, "name": "is_file_processed"}, {"kind": "function", "line": 1129, "name": "mark_file_processed"}, {"kind": "function", "line": 1241, "name": "get_dir_from_path"}, {"kind": "function", "line": 1384, "name": "resolve_local_include"}, {"kind": "function", "line": 1834, "name": "read_include_file"}, {"kind": "function", "line": 2042, "name": "hash_name"}, {"kind": "function", "line": 2100, "name": "hash_init"}, {"kind": "function", "line": 2139, "name": "push_scope"}, {"kind": "function", "line": 2191, "name": "pop_scope"}, {"kind": "function", "line": 2387, "name": "truncate_symbols"}, {"kind": "function", "line": 2540, "name": "my_isspace"}, {"kind": "function", "line": 2629, "name": "my_isalpha"}, {"kind": "function", "line": 2698, "name": "my_isdigit"}, {"kind": "function", "line": 2738, "name": "my_isalnum"}, {"kind": "function", "line": 2783, "name": "next_token"}, {"kind": "function", "line": 2787, "name": "restart"}, {"kind": "function", "line": 8892, "name": "match"}, {"kind": "function", "line": 8930, "name": "emit"}, {"kind": "function", "line": 9044, "name": "emit_i"}, {"kind": "function", "line": 9093, "name": "emit_s"}, {"kind": "function", "line": 9142, "name": "emit_is"}, {"kind": "function", "line": 9195, "name": "emit_si"}, {"kind": "function", "line": 9248, "name": "emit_asciz_body"}, {"kind": "function", "line": 9572, "name": "emit_label"}, {"kind": "function", "line": 9601, "name": "find_symbol"}, {"kind": "function", "line": 9688, "name": "add_symbol"}, {"kind": "function", "line": 10056, "name": "arg_reg"}, {"kind": "function", "line": 10132, "name": "libc_global_name"}, {"kind": "function", "line": 10260, "name": "unary"}, {"kind": "function", "line": 12789, "name": "lvalue_address"}, {"kind": "function", "line": 13294, "name": "handle_postfix"}, {"kind": "function", "line": 14271, "name": "unary_expr"}, {"kind": "function", "line": 14296, "name": "multiplicative_expr"}, {"kind": "function", "line": 14918, "name": "additive_expr"}, {"kind": "function", "line": 15413, "name": "shift_expr"}, {"kind": "function", "line": 15559, "name": "relational_expr"}, {"kind": "function", "line": 16161, "name": "equality_expr"}, {"kind": "function", "line": 16639, "name": "bitwise_and_expr"}, {"kind": "function", "line": 16717, "name": "bitwise_xor_expr"}, {"kind": "function", "line": 16795, "name": "bitwise_or_expr"}, {"kind": "function", "line": 16873, "name": "logical_and_expr"}, {"kind": "function", "line": 17036, "name": "logical_or_expr"}, {"kind": "function", "line": 17199, "name": "conditional_expr"}, {"kind": "function", "line": 17331, "name": "assignment_expr"}, {"kind": "function", "line": 19851, "name": "statement"}, {"kind": "function", "line": 23297, "name": "restart_typedef"}, {"kind": "function", "line": 24328, "name": "restart_int"}, {"kind": "function", "line": 25484, "name": "parse_function"}, {"kind": "function", "line": 26800, "name": "parse_enum"}, {"kind": "function", "line": 27212, "name": "skip_struct"}, {"kind": "function", "line": 27798, "name": "skip_typedef"}, {"kind": "function", "line": 28288, "name": "data_directive"}, {"kind": "function", "line": 28338, "name": "emit_global_bss"}, {"kind": "function", "line": 28429, "name": "emit_global_data_head"}, {"kind": "function", "line": 28484, "name": "parse_const_int"}, {"kind": "function", "line": 28647, "name": "intern_string"}, {"kind": "function", "line": 28740, "name": "emit_global_initializer"}, {"kind": "function", "line": 29457, "name": "parse_program"}, {"kind": "function", "line": 31173, "name": "emit_float_consts"}, {"kind": "function", "line": 31272, "name": "emit_string_pool"}, {"kind": "function", "line": 31374, "name": "main"}, {"kind": "function", "line": 34714, "name": "_start"}]}, {"id": "minigccg4.s", "kind": "module", "label": "minigccg4.s", "language": "s", "sha256": "28ca85f037f9a309", "symbol_count": 131, "symbols": [{"kind": "function", "line": 3, "name": "input_ptr"}, {"kind": "function", "line": 7, "name": "source_start"}, {"kind": "function", "line": 11, "name": "token"}, {"kind": "function", "line": 15, "name": "tok"}, {"kind": "function", "line": 19, "name": "line"}, {"kind": "function", "line": 23, "name": "output"}, {"kind": "function", "line": 27, "name": "ctx_stack"}, {"kind": "function", "line": 31, "name": "ctx_top"}, {"kind": "function", "line": 35, "name": "current_file"}, {"kind": "function", "line": 39, "name": "processed_files"}, {"kind": "function", "line": 43, "name": "processed_count"}, {"kind": "function", "line": 47, "name": "symbols"}, {"kind": "function", "line": 51, "name": "symbol_count"}, {"kind": "function", "line": 55, "name": "hash_table"}, {"kind": "function", "line": 59, "name": "scope_stack_sym"}, {"kind": "function", "line": 63, "name": "scope_stack_stk"}, {"kind": "function", "line": 67, "name": "scope_depth"}, {"kind": "function", "line": 71, "name": "stack_size"}, {"kind": "function", "line": 75, "name": "label_counter"}, {"kind": "function", "line": 79, "name": "function_has_return"}, {"kind": "function", "line": 83, "name": "emit_enabled"}, {"kind": "function", "line": 87, "name": "max_func_stack"}, {"kind": "function", "line": 91, "name": "assign_size"}, {"kind": "function", "line": 95, "name": "expr_pointed"}, {"kind": "function", "line": 99, "name": "current_elem_size"}, {"kind": "function", "line": 103, "name": "current_elem_size2"}, {"kind": "function", "line": 107, "name": "no_postfix_deref"}, {"kind": "function", "line": 111, "name": "expr_type"}, {"kind": "function", "line": 115, "name": "static_flag"}, {"kind": "function", "line": 119, "name": "unsigned_type"}, {"kind": "function", "line": 123, "name": "const_flag"}, {"kind": "function", "line": 127, "name": "extern_flag"}, {"kind": "function", "line": 131, "name": "global_emit_deferred"}, {"kind": "function", "line": 135, "name": "float_const_str"}, {"kind": "function", "line": 139, "name": "float_const_is_float"}, {"kind": "function", "line": 143, "name": "float_const_count"}, {"kind": "function", "line": 147, "name": "switch_case_values"}, {"kind": "function", "line": 151, "name": "switch_case_labels"}, {"kind": "function", "line": 155, "name": "switch_case_count"}, {"kind": "function", "line": 159, "name": "switch_has_default"}, {"kind": "function", "line": 163, "name": "switch_default_label"}, {"kind": "function", "line": 167, "name": "break_target"}, {"kind": "function", "line": 171, "name": "break_target_valid"}, {"kind": "function", "line": 175, "name": "continue_target"}, {"kind": "function", "line": 179, "name": "continue_target_valid"}, {"kind": "function", "line": 183, "name": "str_label_counter"}, {"kind": "function", "line": 187, "name": "string_pool"}, {"kind": "function", "line": 191, "name": "string_count"}, {"kind": "function", "line": 195, "name": "ptr_init_name"}, {"kind": "function", "line": 199, "name": "ptr_init_label"}, {"kind": "function", "line": 203, "name": "ptr_init_count"}, {"kind": "function", "line": 207, "name": "struct_total_size"}, {"kind": "function", "line": 211, "name": "struct_member_names"}, {"kind": "function", "line": 215, "name": "struct_member_offsets"}, {"kind": "function", "line": 219, "name": "struct_member_sizes"}, {"kind": "function", "line": 223, "name": "struct_member_elem_sizes"}, {"kind": "function", "line": 227, "name": "struct_member_count"}, {"kind": "function", "line": 231, "name": "if_nest"}, {"kind": "function", "line": 235, "name": "if_depth"}, {"kind": "function", "line": 240, "name": "macro_count"}, {"kind": "function", "line": 244, "name": "save_parser_state"}, {"kind": "function", "line": 383, "name": "restore_parser_state"}, {"kind": "function", "line": 571, "name": "macros"}, {"kind": "function", "line": 575, "name": "find_macro"}, {"kind": "function", "line": 639, "name": "add_macro"}, {"kind": "function", "line": 769, "name": "error"}, {"kind": "function", "line": 821, "name": "safe_malloc"}, {"kind": "function", "line": 876, "name": "safe_strcpy"}, {"kind": "function", "line": 953, "name": "safe_strtoll"}, {"kind": "function", "line": 1068, "name": "is_file_processed"}, {"kind": "function", "line": 1129, "name": "mark_file_processed"}, {"kind": "function", "line": 1241, "name": "get_dir_from_path"}, {"kind": "function", "line": 1384, "name": "resolve_local_include"}, {"kind": "function", "line": 1834, "name": "read_include_file"}, {"kind": "function", "line": 2042, "name": "hash_name"}, {"kind": "function", "line": 2100, "name": "hash_init"}, {"kind": "function", "line": 2139, "name": "push_scope"}, {"kind": "function", "line": 2191, "name": "pop_scope"}, {"kind": "function", "line": 2387, "name": "truncate_symbols"}, {"kind": "function", "line": 2540, "name": "my_isspace"}, {"kind": "function", "line": 2629, "name": "my_isalpha"}, {"kind": "function", "line": 2698, "name": "my_isdigit"}, {"kind": "function", "line": 2738, "name": "my_isalnum"}, {"kind": "function", "line": 2783, "name": "next_token"}, {"kind": "function", "line": 2787, "name": "restart"}, {"kind": "function", "line": 8892, "name": "match"}, {"kind": "function", "line": 8930, "name": "emit"}, {"kind": "function", "line": 9044, "name": "emit_i"}, {"kind": "function", "line": 9093, "name": "emit_s"}, {"kind": "function", "line": 9142, "name": "emit_is"}, {"kind": "function", "line": 9195, "name": "emit_si"}, {"kind": "function", "line": 9248, "name": "emit_asciz_body"}, {"kind": "function", "line": 9572, "name": "emit_label"}, {"kind": "function", "line": 9601, "name": "find_symbol"}, {"kind": "function", "line": 9688, "name": "add_symbol"}, {"kind": "function", "line": 10056, "name": "arg_reg"}, {"kind": "function", "line": 10132, "name": "libc_global_name"}, {"kind": "function", "line": 10260, "name": "unary"}, {"kind": "function", "line": 12789, "name": "lvalue_address"}, {"kind": "function", "line": 13294, "name": "handle_postfix"}, {"kind": "function", "line": 14271, "name": "unary_expr"}, {"kind": "function", "line": 14296, "name": "multiplicative_expr"}, {"kind": "function", "line": 14918, "name": "additive_expr"}, {"kind": "function", "line": 15413, "name": "shift_expr"}, {"kind": "function", "line": 15559, "name": "relational_expr"}, {"kind": "function", "line": 16161, "name": "equality_expr"}, {"kind": "function", "line": 16639, "name": "bitwise_and_expr"}, {"kind": "function", "line": 16717, "name": "bitwise_xor_expr"}, {"kind": "function", "line": 16795, "name": "bitwise_or_expr"}, {"kind": "function", "line": 16873, "name": "logical_and_expr"}, {"kind": "function", "line": 17036, "name": "logical_or_expr"}, {"kind": "function", "line": 17199, "name": "conditional_expr"}, {"kind": "function", "line": 17331, "name": "assignment_expr"}, {"kind": "function", "line": 19851, "name": "statement"}, {"kind": "function", "line": 23297, "name": "restart_typedef"}, {"kind": "function", "line": 24328, "name": "restart_int"}, {"kind": "function", "line": 25484, "name": "parse_function"}, {"kind": "function", "line": 26800, "name": "parse_enum"}, {"kind": "function", "line": 27212, "name": "skip_struct"}, {"kind": "function", "line": 27798, "name": "skip_typedef"}, {"kind": "function", "line": 28288, "name": "data_directive"}, {"kind": "function", "line": 28338, "name": "emit_global_bss"}, {"kind": "function", "line": 28429, "name": "emit_global_data_head"}, {"kind": "function", "line": 28484, "name": "parse_const_int"}, {"kind": "function", "line": 28647, "name": "intern_string"}, {"kind": "function", "line": 28740, "name": "emit_global_initializer"}, {"kind": "function", "line": 29457, "name": "parse_program"}, {"kind": "function", "line": 31173, "name": "emit_float_consts"}, {"kind": "function", "line": 31272, "name": "emit_string_pool"}, {"kind": "function", "line": 31374, "name": "main"}, {"kind": "function", "line": 34714, "name": "_start"}]}, {"doc": "ifndef MY_LIBRARY_H define MY_LIBRARY_H  Test function to verify that inclusion works correctly", "id": "my_library.h", "kind": "module", "label": "my_library.h", "language": "h", "sha256": "470d867f4c539b78", "symbol_count": 1, "symbols": [{"kind": "macro", "line": 2, "name": "MY_LIBRARY_H"}]}, {"id": "test.c", "kind": "module", "label": "test.c", "language": "c", "sha256": "2106b8757a54e31b", "symbol_count": 1, "symbols": [{"kind": "function", "line": 1, "name": "main", "signature": "int main(void)"}]}, {"doc": "Cleaning env", "id": "test.sh", "kind": "module", "label": "test.sh", "language": "sh", "sha256": "2a5a4539c1bfb714", "symbol_count": 0, "symbols": []}, {"doc": "include <stdio.h>", "id": "test_for.c", "kind": "module", "label": "test_for.c", "language": "c", "sha256": "b41cecb08d6bd4c5", "symbol_count": 1, "symbols": [{"doc": "include <stdio.h>", "kind": "function", "line": 2, "name": "main", "signature": "int main()"}]}, {"doc": "include <stdio.h> include \"my_library.h\"", "id": "test_include.c", "kind": "module", "label": "test_include.c", "language": "c", "sha256": "649f43e18dda44ad", "symbol_count": 2, "symbols": [{"doc": "include <stdio.h> include \"my_library.h\"", "kind": "function", "line": 3, "name": "main", "signature": "int main(void)"}, {"kind": "function", "line": 9, "name": "greet", "signature": "void greet(void)"}]}, {"doc": "Self-host test: miniGCC bootstraps itself with the sibling 'ld' repository as the assembler and linker. GNU as/ld are not used after generation 1:  gcc    -> minigcc (gen1, the only foreign binary) gen1   -> g2.s  -> ld -> g2.elf g2.elf -> g3.s  -> ld -> g3.elf g3.elf -> g4.s  Success requires the fixed point (g3.s == g4.s) and that the self-hosted compiler behaves exactly like generation 1 on the test fixtures.  Environment overrides: LD_DIR (path to the ld repository, default ../ld).", "id": "test_ld_selfhost.sh", "kind": "module", "label": "test_ld_selfhost.sh", "language": "sh", "sha256": "0a33ea3718b4aa9d", "symbol_count": 2, "symbols": [{"kind": "function", "line": 27, "name": "pass"}, {"kind": "function", "line": 32, "name": "fail"}]}], "type": "CodePropertyGraph", "version": "1.0"}
+```
+
+---
+
 ## Architecture Reference
 
 ### C (4 files)
@@ -134,65 +324,73 @@ graph TD
 **Path:** `minigcc.c`
 
 **Functions:**
-- `save_parser_state` (line 203) `static void save_parser_state(ParserState *state)`
-- `restore_parser_state` (line 228) `static void restore_parser_state(ParserState *state)`
-- `find_macro` (line 264) `static int find_macro(const char *name)`
-- `add_macro` (line 273) `static void add_macro(const char *name, int value)`
-- `error` (line 286) `static void error(const char *msg)`
-- `safe_malloc` (line 292) `static void *safe_malloc(size_t size)`
-- `safe_strcpy` (line 301) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
-- `safe_strtoll` (line 310) `static long safe_strtoll(const char *s)`
-- `is_file_processed` (line 323) `static int is_file_processed(const char *path)`
-- `mark_file_processed` (line 332) `static void mark_file_processed(const char *path)`
-- `get_dir_from_path` (line 344) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
-- `resolve_local_include` (line 363) `static char *resolve_local_include(const char *target)`
-- `read_include_file` (line 402) `static char *read_include_file(const char *path)`
-- `hash_name` (line 427) `static int hash_name(const char *name)` - *Must produce identical results under gcc (32-bit int) and under the compiler's own model (64-bit int), so avoid multiplication overflow.*
-- `hash_init` (line 436) `static void hash_init(void)`
-- `push_scope` (line 441) `static void push_scope(void)`
-- `pop_scope` (line 449) `static void pop_scope(void)`
-- `truncate_symbols` (line 479) `static void truncate_symbols(int start_idx)` - *Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (needed for the two-pass fun...*
-- `my_isspace` (line 497) `static int my_isspace(int c)`
-- `my_isalpha` (line 507) `static int my_isalpha(int c)`
-- `my_isdigit` (line 513) `static int my_isdigit(int c)`
-- `my_isalnum` (line 518) `static int my_isalnum(int c)`
-- `next_token` (line 526) `static void next_token(void)` - *} static int my_isdigit(int c) { if (c >= '0' && c <= '9') return 1; return 0; } static int my_isalnum(int c) { if (my_isalpha(c)) return 1; if (my...*
-- `match` (line 962) `static void match(int expected)`
-- `emit` (line 967) `static void emit(const char *s)`
-- `emit_i` (line 981) `static void emit_i(const char *fmt, int v)`
-- `emit_s` (line 987) `static void emit_s(const char *fmt, const char *s)`
-- `emit_is` (line 993) `static void emit_is(const char *fmt, int v, const char *s)`
-- `emit_si` (line 999) `static void emit_si(const char *fmt, const char *s, int v)`
-- `emit_label` (line 1005) `static void emit_label(int label)`
-- `find_symbol` (line 1012) `static int find_symbol(const char *name)` - *} static void emit_si(const char *fmt, const char *s, int v) { if (!emit_enabled) return; fprintf(output, fmt, s, v); fputc('\n', output); } static...*
-- `add_symbol` (line 1022) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
-- `arg_reg` (line 1082) `static const char *arg_reg(int i)` - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace...*
-- `libc_global_name` (line 1092) `static const char *libc_global_name(int i)` - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace...*
-- `unary` (line 1104) `static void unary(void)`
-- `lvalue_address` (line 1352) `static void lvalue_address(void)`
-- `handle_postfix` (line 1401) `static void handle_postfix(int is_lvalue)`
-- `unary_expr` (line 1526) `static void unary_expr(void)`
-- `multiplicative_expr` (line 1541) `static void multiplicative_expr(void)`
-- `additive_expr` (line 1605) `static void additive_expr(void)`
-- `shift_expr` (line 1660) `static void shift_expr(void)`
-- `relational_expr` (line 1677) `static void relational_expr(void)`
-- `equality_expr` (line 1730) `static void equality_expr(void)`
-- `bitwise_and_expr` (line 1779) `static void bitwise_and_expr(void)`
-- `bitwise_xor_expr` (line 1791) `static void bitwise_xor_expr(void)`
-- `bitwise_or_expr` (line 1803) `static void bitwise_or_expr(void)`
-- `logical_and_expr` (line 1815) `static void logical_and_expr(void)`
-- `logical_or_expr` (line 1835) `static void logical_or_expr(void)`
-- `conditional_expr` (line 1855) `static void conditional_expr(void)`
-- `assignment_expr` (line 1873) `static void assignment_expr(void)`
-- `statement` (line 2034) `static void statement(void)`
-- `parse_function` (line 2691) `static void parse_function(const char *name, int ret_type)`
-- `parse_enum` (line 2816) `static void parse_enum(void)`
-- `skip_struct` (line 2865) `static void skip_struct(void)`
-- `skip_typedef` (line 2929) `static void skip_typedef(void)`
-- `parse_program` (line 2982) `static void parse_program(void)`
-- `emit_float_consts` (line 3118) `static void emit_float_consts(void)`
-- `emit_string_pool` (line 3128) `static void emit_string_pool(void)`
-- `main` (line 3154) `int main(int argc, char **argv)`
+- `save_parser_state` (line 215) `static void save_parser_state(ParserState *state)`
+- `restore_parser_state` (line 240) `static void restore_parser_state(ParserState *state)`
+- `find_macro` (line 276) `static int find_macro(const char *name)`
+- `add_macro` (line 285) `static void add_macro(const char *name, int value)`
+- `error` (line 298) `static void error(const char *msg)`
+- `safe_malloc` (line 304) `static void *safe_malloc(size_t size)`
+- `safe_strcpy` (line 313) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
+- `safe_strtoll` (line 322) `static long safe_strtoll(const char *s)`
+- `is_file_processed` (line 335) `static int is_file_processed(const char *path)`
+- `mark_file_processed` (line 344) `static void mark_file_processed(const char *path)`
+- `get_dir_from_path` (line 356) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
+- `resolve_local_include` (line 375) `static char *resolve_local_include(const char *target)`
+- `read_include_file` (line 414) `static char *read_include_file(const char *path)`
+- `hash_name` (line 439) `static int hash_name(const char *name)` - *Must produce identical results under gcc (32-bit int) and under the compiler's own model (64-bit int), so avoid multiplication overflow.*
+- `hash_init` (line 448) `static void hash_init(void)`
+- `push_scope` (line 453) `static void push_scope(void)`
+- `pop_scope` (line 461) `static void pop_scope(void)`
+- `truncate_symbols` (line 491) `static void truncate_symbols(int start_idx)` - *Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (needed for the two-pass function body parsing pattern).*
+- `my_isspace` (line 509) `static int my_isspace(int c)`
+- `my_isalpha` (line 519) `static int my_isalpha(int c)`
+- `my_isdigit` (line 525) `static int my_isdigit(int c)`
+- `my_isalnum` (line 530) `static int my_isalnum(int c)`
+- `next_token` (line 538) `static void next_token(void)` - *} static int my_isdigit(int c) { if (c >= '0' && c <= '9') return 1; return 0; } static int my_isalnum(int c) { if (my_isalpha(c)) return 1; if (my_isdigit(c)) return 1; return 0; } /* Lexer*
+- `match` (line 974) `static void match(int expected)`
+- `emit` (line 979) `static void emit(const char *s)`
+- `emit_i` (line 993) `static void emit_i(const char *fmt, int v)`
+- `emit_s` (line 999) `static void emit_s(const char *fmt, const char *s)`
+- `emit_is` (line 1005) `static void emit_is(const char *fmt, int v, const char *s)`
+- `emit_si` (line 1011) `static void emit_si(const char *fmt, const char *s, int v)`
+- `emit_asciz_body` (line 1021) `static void emit_asciz_body(const char *s)` - *Write a C string as the body of a .asciz directive, escaping everything the assembler cannot take literally. Shared by the string pool and by string * initializers of global arrays.*
+- `emit_label` (line 1039) `static void emit_label(int label)`
+- `find_symbol` (line 1046) `static int find_symbol(const char *name)` - *else if (c == '\a') fprintf(output, "\\a"); else if (c == '\b') fprintf(output, "\\b"); else if (c >= 32 && c <= 126) fputc(c, output); else fprintf(output, "\\%03o", c); s++; } } static void emit_label(int label) { if (emit_enabled) fprintf(output, ".L%d:\n", label); } /* Symbol table*
+- `add_symbol` (line 1056) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
+- `arg_reg` (line 1117) `static const char *arg_reg(int i)` - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace-initialized local arrays correctly (they overlap adjacent locals).*
+- `libc_global_name` (line 1127) `static const char *libc_global_name(int i)` - *Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compiler does not allocate brace-initialized local arrays correctly (they overlap adjacent locals). static const char *arg_reg(int i) { if (i == 0) return "%rdi"; if (i == 1) return "%rsi"; if (i == 2) return "%rdx"; if (i == 3) return "%rcx"; if (i == 4) return "%r8"; return "%r9"; } /* Predefined libc global symbol names, indexed; returns NULL past the end.*
+- `unary` (line 1139) `static void unary(void)`
+- `lvalue_address` (line 1389) `static void lvalue_address(void)`
+- `handle_postfix` (line 1440) `static void handle_postfix(int is_lvalue)`
+- `unary_expr` (line 1574) `static void unary_expr(void)`
+- `multiplicative_expr` (line 1589) `static void multiplicative_expr(void)`
+- `additive_expr` (line 1653) `static void additive_expr(void)`
+- `shift_expr` (line 1708) `static void shift_expr(void)`
+- `relational_expr` (line 1727) `static void relational_expr(void)`
+- `equality_expr` (line 1780) `static void equality_expr(void)`
+- `bitwise_and_expr` (line 1829) `static void bitwise_and_expr(void)`
+- `bitwise_xor_expr` (line 1841) `static void bitwise_xor_expr(void)`
+- `bitwise_or_expr` (line 1853) `static void bitwise_or_expr(void)`
+- `logical_and_expr` (line 1865) `static void logical_and_expr(void)`
+- `logical_or_expr` (line 1885) `static void logical_or_expr(void)`
+- `conditional_expr` (line 1905) `static void conditional_expr(void)`
+- `assignment_expr` (line 1923) `static void assignment_expr(void)`
+- `statement` (line 2084) `static void statement(void)`
+- `parse_function` (line 2741) `static void parse_function(const char *name, int ret_type)`
+- `parse_enum` (line 2868) `static void parse_enum(void)`
+- `skip_struct` (line 2917) `static void skip_struct(void)`
+- `skip_typedef` (line 2981) `static void skip_typedef(void)`
+- `data_directive` (line 3036) `static const char *data_directive(int size)` - *s->const_value = 8;  /* just a marker /* If a struct was just parsed, store its size if (struct_total_size > 0) s->const_value = struct_total_size; { int h = hash_name(last_name); s->next_hash = hash_table[h]; hash_table[h] = symbol_count - 1; } } match(';'); } /* Storage directive for a datum of `size` bytes.*
+- `emit_global_bss` (line 3044) `static void emit_global_bss(const char *name, int is_static, int size)` - *} } match(';'); } /* Storage directive for a datum of `size` bytes. static const char *data_directive(int size) { if (size == 1) return "    .byte %d"; if (size == 2) return "    .word %d"; if (size == 4) return "    .long %d"; return "    .quad %d"; } /* Reserve zero-initialized storage for a global.*
+- `emit_global_data_head` (line 3051) `static void emit_global_data_head(const char *name, int is_static)`
+- `parse_const_int` (line 3061) `static int parse_const_int(long long *out)` - *Parse an integer constant usable as a static initializer: an optionally signed numeric or character literal, or a macro standing for one. * Returns 1 when a constant was consumed.*
+- `intern_string` (line 3084) `static int intern_string(const char *text)` - *} if (tok == T_ID) { int mi = find_macro(token); if (mi >= 0) { long long v = macros[mi].value; next_token(); out = neg ? -v : v; return 1; } } return 0; } /* Record a string literal in the pool and return its label index.*
+- `emit_global_initializer` (line 3101) `static int emit_global_initializer(const char *name, int is_static, int *size,
+                  ...` - *Emit the definition of a global that carries an initializer. On entry the current token is the one after '='. `size` is the declared byte size and is updated in place when the initializer determines the length of an unsized array. Returns 1 when the initializer was materialized, 0 when the form is unsupported, in which case nothing was emitted and the caller falls back to * zero-initialized storage.*
+- `parse_program` (line 3165) `static void parse_program(void)`
+- `emit_float_consts` (line 3316) `static void emit_float_consts(void)`
+- `emit_string_pool` (line 3326) `static void emit_string_pool(void)`
+- `main` (line 3336) `int main(int argc, char **argv)`
 
 **Macros:**
 - `MAX_TOKEN_LEN` (line 14)
@@ -202,15 +400,16 @@ graph TD
 - `MAX_INCLUDE_DEPTH` (line 19)
 - `MAX_PROCESSED_FILES` (line 20)
 - `STACK_ALIGN` (line 21)
-- `HASH_TABLE_SIZE` (line 110)
-- `MAX_SCOPE_DEPTH` (line 112)
-- `MAX_FLOAT_CONSTS` (line 133)
-- `MAX_CASES_PER_SWITCH` (line 138)
-- `MAX_STRINGS` (line 151)
-- `MAX_STRUCT_MEMBERS` (line 160)
-- `MAX_IF_NESTING` (line 167)
-- `CONST_VAR_FLAG` (line 169)
-- `MAX_MACROS` (line 175)
+- `HASH_TABLE_SIZE` (line 111)
+- `MAX_SCOPE_DEPTH` (line 113)
+- `MAX_FLOAT_CONSTS` (line 135)
+- `MAX_CASES_PER_SWITCH` (line 140)
+- `MAX_STRINGS` (line 153)
+- `MAX_PTR_INITS` (line 162)
+- `MAX_STRUCT_MEMBERS` (line 172)
+- `MAX_IF_NESTING` (line 179)
+- `CONST_VAR_FLAG` (line 181)
+- `MAX_MACROS` (line 187)
 
 #### `test.c`
 **Path:** `test.c`
@@ -220,12 +419,14 @@ graph TD
 
 #### `test_for.c`
 **Path:** `test_for.c`
+**File Doc:** *include <stdio.h>*
 
 **Functions:**
 - `main` (line 2) `int main()` - *include <stdio.h>*
 
 #### `test_include.c`
 **Path:** `test_include.c`
+**File Doc:** *include <stdio.h> include "my_library.h"*
 
 **Functions:**
 - `main` (line 3) `int main(void)` - *include <stdio.h> include "my_library.h"*
@@ -235,6 +436,9 @@ graph TD
 
 #### `my_library.h`
 **Path:** `my_library.h`
+**File Doc:** *ifndef MY_LIBRARY_H define MY_LIBRARY_H  Test function to verify that inclusion works correctly*
+
+**Imported by:** `test_include.c`
 
 **Macros:**
 - `MY_LIBRARY_H` (line 2)
@@ -277,94 +481,105 @@ graph TD
 - `unsigned_type` (line 119)
 - `const_flag` (line 123)
 - `extern_flag` (line 127)
-- `float_const_str` (line 131)
-- `float_const_is_float` (line 135)
-- `float_const_count` (line 139)
-- `switch_case_values` (line 143)
-- `switch_case_labels` (line 147)
-- `switch_case_count` (line 151)
-- `switch_has_default` (line 155)
-- `switch_default_label` (line 159)
-- `break_target` (line 163)
-- `break_target_valid` (line 167)
-- `continue_target` (line 171)
-- `continue_target_valid` (line 175)
-- `str_label_counter` (line 179)
-- `string_pool` (line 183)
-- `string_count` (line 187)
-- `struct_total_size` (line 191)
-- `struct_member_names` (line 195)
-- `struct_member_offsets` (line 199)
-- `struct_member_sizes` (line 203)
-- `struct_member_elem_sizes` (line 207)
-- `struct_member_count` (line 211)
-- `if_nest` (line 215)
-- `if_depth` (line 219)
-- `macro_count` (line 224)
-- `save_parser_state` (line 228)
-- `restore_parser_state` (line 367)
-- `macros` (line 555)
-- `find_macro` (line 559)
-- `add_macro` (line 623)
-- `error` (line 753)
-- `safe_malloc` (line 805)
-- `safe_strcpy` (line 860)
-- `safe_strtoll` (line 937)
-- `is_file_processed` (line 1052)
-- `mark_file_processed` (line 1113)
-- `get_dir_from_path` (line 1225)
-- `resolve_local_include` (line 1368)
-- `read_include_file` (line 1818)
-- `hash_name` (line 2026)
-- `hash_init` (line 2084)
-- `push_scope` (line 2123)
-- `pop_scope` (line 2175)
-- `truncate_symbols` (line 2371)
-- `my_isspace` (line 2524)
-- `my_isalpha` (line 2613)
-- `my_isdigit` (line 2682)
-- `my_isalnum` (line 2722)
-- `next_token` (line 2767)
-- `restart` (line 2771)
-- `match` (line 8860)
-- `emit` (line 8898)
-- `emit_i` (line 9012)
-- `emit_s` (line 9061)
-- `emit_is` (line 9110)
-- `emit_si` (line 9163)
-- `emit_label` (line 9216)
-- `find_symbol` (line 9245)
-- `add_symbol` (line 9332)
-- `arg_reg` (line 9696)
-- `libc_global_name` (line 9772)
-- `unary` (line 9900)
-- `lvalue_address` (line 12429)
-- `handle_postfix` (line 12934)
-- `unary_expr` (line 13911)
-- `multiplicative_expr` (line 13936)
-- `additive_expr` (line 14558)
-- `shift_expr` (line 15053)
-- `relational_expr` (line 15177)
-- `equality_expr` (line 15779)
-- `bitwise_and_expr` (line 16257)
-- `bitwise_xor_expr` (line 16335)
-- `bitwise_or_expr` (line 16413)
-- `logical_and_expr` (line 16491)
-- `logical_or_expr` (line 16654)
-- `conditional_expr` (line 16817)
-- `assignment_expr` (line 16949)
-- `statement` (line 19469)
-- `restart_typedef` (line 22915)
-- `restart_int` (line 23946)
-- `parse_function` (line 25102)
-- `parse_enum` (line 26418)
-- `skip_struct` (line 26830)
-- `skip_typedef` (line 27416)
-- `parse_program` (line 27906)
-- `emit_float_consts` (line 29470)
-- `emit_string_pool` (line 29569)
-- `main` (line 29995)
-- `_start` (line 33167)
+- `global_emit_deferred` (line 131)
+- `float_const_str` (line 135)
+- `float_const_is_float` (line 139)
+- `float_const_count` (line 143)
+- `switch_case_values` (line 147)
+- `switch_case_labels` (line 151)
+- `switch_case_count` (line 155)
+- `switch_has_default` (line 159)
+- `switch_default_label` (line 163)
+- `break_target` (line 167)
+- `break_target_valid` (line 171)
+- `continue_target` (line 175)
+- `continue_target_valid` (line 179)
+- `str_label_counter` (line 183)
+- `string_pool` (line 187)
+- `string_count` (line 191)
+- `ptr_init_name` (line 195)
+- `ptr_init_label` (line 199)
+- `ptr_init_count` (line 203)
+- `struct_total_size` (line 207)
+- `struct_member_names` (line 211)
+- `struct_member_offsets` (line 215)
+- `struct_member_sizes` (line 219)
+- `struct_member_elem_sizes` (line 223)
+- `struct_member_count` (line 227)
+- `if_nest` (line 231)
+- `if_depth` (line 235)
+- `macro_count` (line 240)
+- `save_parser_state` (line 244)
+- `restore_parser_state` (line 383)
+- `macros` (line 571)
+- `find_macro` (line 575)
+- `add_macro` (line 639)
+- `error` (line 769)
+- `safe_malloc` (line 821)
+- `safe_strcpy` (line 876)
+- `safe_strtoll` (line 953)
+- `is_file_processed` (line 1068)
+- `mark_file_processed` (line 1129)
+- `get_dir_from_path` (line 1241)
+- `resolve_local_include` (line 1384)
+- `read_include_file` (line 1834)
+- `hash_name` (line 2042)
+- `hash_init` (line 2100)
+- `push_scope` (line 2139)
+- `pop_scope` (line 2191)
+- `truncate_symbols` (line 2387)
+- `my_isspace` (line 2540)
+- `my_isalpha` (line 2629)
+- `my_isdigit` (line 2698)
+- `my_isalnum` (line 2738)
+- `next_token` (line 2783)
+- `restart` (line 2787)
+- `match` (line 8892)
+- `emit` (line 8930)
+- `emit_i` (line 9044)
+- `emit_s` (line 9093)
+- `emit_is` (line 9142)
+- `emit_si` (line 9195)
+- `emit_asciz_body` (line 9248)
+- `emit_label` (line 9572)
+- `find_symbol` (line 9601)
+- `add_symbol` (line 9688)
+- `arg_reg` (line 10056)
+- `libc_global_name` (line 10132)
+- `unary` (line 10260)
+- `lvalue_address` (line 12789)
+- `handle_postfix` (line 13294)
+- `unary_expr` (line 14271)
+- `multiplicative_expr` (line 14296)
+- `additive_expr` (line 14918)
+- `shift_expr` (line 15413)
+- `relational_expr` (line 15559)
+- `equality_expr` (line 16161)
+- `bitwise_and_expr` (line 16639)
+- `bitwise_xor_expr` (line 16717)
+- `bitwise_or_expr` (line 16795)
+- `logical_and_expr` (line 16873)
+- `logical_or_expr` (line 17036)
+- `conditional_expr` (line 17199)
+- `assignment_expr` (line 17331)
+- `statement` (line 19851)
+- `restart_typedef` (line 23297)
+- `restart_int` (line 24328)
+- `parse_function` (line 25484)
+- `parse_enum` (line 26800)
+- `skip_struct` (line 27212)
+- `skip_typedef` (line 27798)
+- `data_directive` (line 28288)
+- `emit_global_bss` (line 28338)
+- `emit_global_data_head` (line 28429)
+- `parse_const_int` (line 28484)
+- `intern_string` (line 28647)
+- `emit_global_initializer` (line 28740)
+- `parse_program` (line 29457)
+- `emit_float_consts` (line 31173)
+- `emit_string_pool` (line 31272)
+- `main` (line 31374)
+- `_start` (line 34714)
 
 #### `minigccg3.s`
 **Path:** `minigccg3.s`
@@ -402,94 +617,105 @@ graph TD
 - `unsigned_type` (line 119)
 - `const_flag` (line 123)
 - `extern_flag` (line 127)
-- `float_const_str` (line 131)
-- `float_const_is_float` (line 135)
-- `float_const_count` (line 139)
-- `switch_case_values` (line 143)
-- `switch_case_labels` (line 147)
-- `switch_case_count` (line 151)
-- `switch_has_default` (line 155)
-- `switch_default_label` (line 159)
-- `break_target` (line 163)
-- `break_target_valid` (line 167)
-- `continue_target` (line 171)
-- `continue_target_valid` (line 175)
-- `str_label_counter` (line 179)
-- `string_pool` (line 183)
-- `string_count` (line 187)
-- `struct_total_size` (line 191)
-- `struct_member_names` (line 195)
-- `struct_member_offsets` (line 199)
-- `struct_member_sizes` (line 203)
-- `struct_member_elem_sizes` (line 207)
-- `struct_member_count` (line 211)
-- `if_nest` (line 215)
-- `if_depth` (line 219)
-- `macro_count` (line 224)
-- `save_parser_state` (line 228)
-- `restore_parser_state` (line 367)
-- `macros` (line 555)
-- `find_macro` (line 559)
-- `add_macro` (line 623)
-- `error` (line 753)
-- `safe_malloc` (line 805)
-- `safe_strcpy` (line 860)
-- `safe_strtoll` (line 937)
-- `is_file_processed` (line 1052)
-- `mark_file_processed` (line 1113)
-- `get_dir_from_path` (line 1225)
-- `resolve_local_include` (line 1368)
-- `read_include_file` (line 1818)
-- `hash_name` (line 2026)
-- `hash_init` (line 2084)
-- `push_scope` (line 2123)
-- `pop_scope` (line 2175)
-- `truncate_symbols` (line 2371)
-- `my_isspace` (line 2524)
-- `my_isalpha` (line 2613)
-- `my_isdigit` (line 2682)
-- `my_isalnum` (line 2722)
-- `next_token` (line 2767)
-- `restart` (line 2771)
-- `match` (line 8860)
-- `emit` (line 8898)
-- `emit_i` (line 9012)
-- `emit_s` (line 9061)
-- `emit_is` (line 9110)
-- `emit_si` (line 9163)
-- `emit_label` (line 9216)
-- `find_symbol` (line 9245)
-- `add_symbol` (line 9332)
-- `arg_reg` (line 9696)
-- `libc_global_name` (line 9772)
-- `unary` (line 9900)
-- `lvalue_address` (line 12429)
-- `handle_postfix` (line 12934)
-- `unary_expr` (line 13911)
-- `multiplicative_expr` (line 13936)
-- `additive_expr` (line 14558)
-- `shift_expr` (line 15053)
-- `relational_expr` (line 15177)
-- `equality_expr` (line 15779)
-- `bitwise_and_expr` (line 16257)
-- `bitwise_xor_expr` (line 16335)
-- `bitwise_or_expr` (line 16413)
-- `logical_and_expr` (line 16491)
-- `logical_or_expr` (line 16654)
-- `conditional_expr` (line 16817)
-- `assignment_expr` (line 16949)
-- `statement` (line 19469)
-- `restart_typedef` (line 22915)
-- `restart_int` (line 23946)
-- `parse_function` (line 25102)
-- `parse_enum` (line 26418)
-- `skip_struct` (line 26830)
-- `skip_typedef` (line 27416)
-- `parse_program` (line 27906)
-- `emit_float_consts` (line 29470)
-- `emit_string_pool` (line 29569)
-- `main` (line 29995)
-- `_start` (line 33167)
+- `global_emit_deferred` (line 131)
+- `float_const_str` (line 135)
+- `float_const_is_float` (line 139)
+- `float_const_count` (line 143)
+- `switch_case_values` (line 147)
+- `switch_case_labels` (line 151)
+- `switch_case_count` (line 155)
+- `switch_has_default` (line 159)
+- `switch_default_label` (line 163)
+- `break_target` (line 167)
+- `break_target_valid` (line 171)
+- `continue_target` (line 175)
+- `continue_target_valid` (line 179)
+- `str_label_counter` (line 183)
+- `string_pool` (line 187)
+- `string_count` (line 191)
+- `ptr_init_name` (line 195)
+- `ptr_init_label` (line 199)
+- `ptr_init_count` (line 203)
+- `struct_total_size` (line 207)
+- `struct_member_names` (line 211)
+- `struct_member_offsets` (line 215)
+- `struct_member_sizes` (line 219)
+- `struct_member_elem_sizes` (line 223)
+- `struct_member_count` (line 227)
+- `if_nest` (line 231)
+- `if_depth` (line 235)
+- `macro_count` (line 240)
+- `save_parser_state` (line 244)
+- `restore_parser_state` (line 383)
+- `macros` (line 571)
+- `find_macro` (line 575)
+- `add_macro` (line 639)
+- `error` (line 769)
+- `safe_malloc` (line 821)
+- `safe_strcpy` (line 876)
+- `safe_strtoll` (line 953)
+- `is_file_processed` (line 1068)
+- `mark_file_processed` (line 1129)
+- `get_dir_from_path` (line 1241)
+- `resolve_local_include` (line 1384)
+- `read_include_file` (line 1834)
+- `hash_name` (line 2042)
+- `hash_init` (line 2100)
+- `push_scope` (line 2139)
+- `pop_scope` (line 2191)
+- `truncate_symbols` (line 2387)
+- `my_isspace` (line 2540)
+- `my_isalpha` (line 2629)
+- `my_isdigit` (line 2698)
+- `my_isalnum` (line 2738)
+- `next_token` (line 2783)
+- `restart` (line 2787)
+- `match` (line 8892)
+- `emit` (line 8930)
+- `emit_i` (line 9044)
+- `emit_s` (line 9093)
+- `emit_is` (line 9142)
+- `emit_si` (line 9195)
+- `emit_asciz_body` (line 9248)
+- `emit_label` (line 9572)
+- `find_symbol` (line 9601)
+- `add_symbol` (line 9688)
+- `arg_reg` (line 10056)
+- `libc_global_name` (line 10132)
+- `unary` (line 10260)
+- `lvalue_address` (line 12789)
+- `handle_postfix` (line 13294)
+- `unary_expr` (line 14271)
+- `multiplicative_expr` (line 14296)
+- `additive_expr` (line 14918)
+- `shift_expr` (line 15413)
+- `relational_expr` (line 15559)
+- `equality_expr` (line 16161)
+- `bitwise_and_expr` (line 16639)
+- `bitwise_xor_expr` (line 16717)
+- `bitwise_or_expr` (line 16795)
+- `logical_and_expr` (line 16873)
+- `logical_or_expr` (line 17036)
+- `conditional_expr` (line 17199)
+- `assignment_expr` (line 17331)
+- `statement` (line 19851)
+- `restart_typedef` (line 23297)
+- `restart_int` (line 24328)
+- `parse_function` (line 25484)
+- `parse_enum` (line 26800)
+- `skip_struct` (line 27212)
+- `skip_typedef` (line 27798)
+- `data_directive` (line 28288)
+- `emit_global_bss` (line 28338)
+- `emit_global_data_head` (line 28429)
+- `parse_const_int` (line 28484)
+- `intern_string` (line 28647)
+- `emit_global_initializer` (line 28740)
+- `parse_program` (line 29457)
+- `emit_float_consts` (line 31173)
+- `emit_string_pool` (line 31272)
+- `main` (line 31374)
+- `_start` (line 34714)
 
 #### `minigccg4.s`
 **Path:** `minigccg4.s`
@@ -527,98 +753,118 @@ graph TD
 - `unsigned_type` (line 119)
 - `const_flag` (line 123)
 - `extern_flag` (line 127)
-- `float_const_str` (line 131)
-- `float_const_is_float` (line 135)
-- `float_const_count` (line 139)
-- `switch_case_values` (line 143)
-- `switch_case_labels` (line 147)
-- `switch_case_count` (line 151)
-- `switch_has_default` (line 155)
-- `switch_default_label` (line 159)
-- `break_target` (line 163)
-- `break_target_valid` (line 167)
-- `continue_target` (line 171)
-- `continue_target_valid` (line 175)
-- `str_label_counter` (line 179)
-- `string_pool` (line 183)
-- `string_count` (line 187)
-- `struct_total_size` (line 191)
-- `struct_member_names` (line 195)
-- `struct_member_offsets` (line 199)
-- `struct_member_sizes` (line 203)
-- `struct_member_elem_sizes` (line 207)
-- `struct_member_count` (line 211)
-- `if_nest` (line 215)
-- `if_depth` (line 219)
-- `macro_count` (line 224)
-- `save_parser_state` (line 228)
-- `restore_parser_state` (line 367)
-- `macros` (line 555)
-- `find_macro` (line 559)
-- `add_macro` (line 623)
-- `error` (line 753)
-- `safe_malloc` (line 805)
-- `safe_strcpy` (line 860)
-- `safe_strtoll` (line 937)
-- `is_file_processed` (line 1052)
-- `mark_file_processed` (line 1113)
-- `get_dir_from_path` (line 1225)
-- `resolve_local_include` (line 1368)
-- `read_include_file` (line 1818)
-- `hash_name` (line 2026)
-- `hash_init` (line 2084)
-- `push_scope` (line 2123)
-- `pop_scope` (line 2175)
-- `truncate_symbols` (line 2371)
-- `my_isspace` (line 2524)
-- `my_isalpha` (line 2613)
-- `my_isdigit` (line 2682)
-- `my_isalnum` (line 2722)
-- `next_token` (line 2767)
-- `restart` (line 2771)
-- `match` (line 8860)
-- `emit` (line 8898)
-- `emit_i` (line 9012)
-- `emit_s` (line 9061)
-- `emit_is` (line 9110)
-- `emit_si` (line 9163)
-- `emit_label` (line 9216)
-- `find_symbol` (line 9245)
-- `add_symbol` (line 9332)
-- `arg_reg` (line 9696)
-- `libc_global_name` (line 9772)
-- `unary` (line 9900)
-- `lvalue_address` (line 12429)
-- `handle_postfix` (line 12934)
-- `unary_expr` (line 13911)
-- `multiplicative_expr` (line 13936)
-- `additive_expr` (line 14558)
-- `shift_expr` (line 15053)
-- `relational_expr` (line 15177)
-- `equality_expr` (line 15779)
-- `bitwise_and_expr` (line 16257)
-- `bitwise_xor_expr` (line 16335)
-- `bitwise_or_expr` (line 16413)
-- `logical_and_expr` (line 16491)
-- `logical_or_expr` (line 16654)
-- `conditional_expr` (line 16817)
-- `assignment_expr` (line 16949)
-- `statement` (line 19469)
-- `restart_typedef` (line 22915)
-- `restart_int` (line 23946)
-- `parse_function` (line 25102)
-- `parse_enum` (line 26418)
-- `skip_struct` (line 26830)
-- `skip_typedef` (line 27416)
-- `parse_program` (line 27906)
-- `emit_float_consts` (line 29470)
-- `emit_string_pool` (line 29569)
-- `main` (line 29995)
-- `_start` (line 33167)
+- `global_emit_deferred` (line 131)
+- `float_const_str` (line 135)
+- `float_const_is_float` (line 139)
+- `float_const_count` (line 143)
+- `switch_case_values` (line 147)
+- `switch_case_labels` (line 151)
+- `switch_case_count` (line 155)
+- `switch_has_default` (line 159)
+- `switch_default_label` (line 163)
+- `break_target` (line 167)
+- `break_target_valid` (line 171)
+- `continue_target` (line 175)
+- `continue_target_valid` (line 179)
+- `str_label_counter` (line 183)
+- `string_pool` (line 187)
+- `string_count` (line 191)
+- `ptr_init_name` (line 195)
+- `ptr_init_label` (line 199)
+- `ptr_init_count` (line 203)
+- `struct_total_size` (line 207)
+- `struct_member_names` (line 211)
+- `struct_member_offsets` (line 215)
+- `struct_member_sizes` (line 219)
+- `struct_member_elem_sizes` (line 223)
+- `struct_member_count` (line 227)
+- `if_nest` (line 231)
+- `if_depth` (line 235)
+- `macro_count` (line 240)
+- `save_parser_state` (line 244)
+- `restore_parser_state` (line 383)
+- `macros` (line 571)
+- `find_macro` (line 575)
+- `add_macro` (line 639)
+- `error` (line 769)
+- `safe_malloc` (line 821)
+- `safe_strcpy` (line 876)
+- `safe_strtoll` (line 953)
+- `is_file_processed` (line 1068)
+- `mark_file_processed` (line 1129)
+- `get_dir_from_path` (line 1241)
+- `resolve_local_include` (line 1384)
+- `read_include_file` (line 1834)
+- `hash_name` (line 2042)
+- `hash_init` (line 2100)
+- `push_scope` (line 2139)
+- `pop_scope` (line 2191)
+- `truncate_symbols` (line 2387)
+- `my_isspace` (line 2540)
+- `my_isalpha` (line 2629)
+- `my_isdigit` (line 2698)
+- `my_isalnum` (line 2738)
+- `next_token` (line 2783)
+- `restart` (line 2787)
+- `match` (line 8892)
+- `emit` (line 8930)
+- `emit_i` (line 9044)
+- `emit_s` (line 9093)
+- `emit_is` (line 9142)
+- `emit_si` (line 9195)
+- `emit_asciz_body` (line 9248)
+- `emit_label` (line 9572)
+- `find_symbol` (line 9601)
+- `add_symbol` (line 9688)
+- `arg_reg` (line 10056)
+- `libc_global_name` (line 10132)
+- `unary` (line 10260)
+- `lvalue_address` (line 12789)
+- `handle_postfix` (line 13294)
+- `unary_expr` (line 14271)
+- `multiplicative_expr` (line 14296)
+- `additive_expr` (line 14918)
+- `shift_expr` (line 15413)
+- `relational_expr` (line 15559)
+- `equality_expr` (line 16161)
+- `bitwise_and_expr` (line 16639)
+- `bitwise_xor_expr` (line 16717)
+- `bitwise_or_expr` (line 16795)
+- `logical_and_expr` (line 16873)
+- `logical_or_expr` (line 17036)
+- `conditional_expr` (line 17199)
+- `assignment_expr` (line 17331)
+- `statement` (line 19851)
+- `restart_typedef` (line 23297)
+- `restart_int` (line 24328)
+- `parse_function` (line 25484)
+- `parse_enum` (line 26800)
+- `skip_struct` (line 27212)
+- `skip_typedef` (line 27798)
+- `data_directive` (line 28288)
+- `emit_global_bss` (line 28338)
+- `emit_global_data_head` (line 28429)
+- `parse_const_int` (line 28484)
+- `intern_string` (line 28647)
+- `emit_global_initializer` (line 28740)
+- `parse_program` (line 29457)
+- `emit_float_consts` (line 31173)
+- `emit_string_pool` (line 31272)
+- `main` (line 31374)
+- `_start` (line 34714)
 
-### SH (1 files)
+### SH (2 files)
 
 #### `test.sh`
 **Path:** `test.sh`
+**File Doc:** *Cleaning env*
 
 *No symbols extracted*
+
+#### `test_ld_selfhost.sh`
+**Path:** `test_ld_selfhost.sh`
+**File Doc:** *Self-host test: miniGCC bootstraps itself with the sibling 'ld' repository as the assembler and linker. GNU as/ld are not used after generation 1:  gcc    -> minigcc (gen1, the only foreign binary) gen1   -> g2.s  -> ld -> g2.elf g2.elf -> g3.s  -> ld -> g3.elf g3.elf -> g4.s  Success requires the fixed point (g3.s == g4.s) and that the self-hosted compiler behaves exactly like generation 1 on the test fixtures.  Environment overrides: LD_DIR (path to the ld repository, default ../ld).*
+
+**Functions:**
+- `pass` (line 27)
+- `fail` (line 32)
