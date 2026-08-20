@@ -99,6 +99,7 @@ typedef struct {
     int elem_size;
     int elem_size2;
     int var_type;
+    int elem_ptr;      /* pointer elements: stride 8 on the first subscript */
     int is_unsigned;
     int next_hash;
 } Symbol;
@@ -1074,6 +1075,7 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     s->elem_size = elem_size;
     s->elem_size2 = 0;
     s->var_type = 0;
+    s->elem_ptr = 0;
     s->next_hash = -1;
     if (is_global) {
         s->offset = 0;
@@ -1222,7 +1224,9 @@ static void unary(void) {
                 int sv = s->var_type;
                 expr_pointed = s->pointed;
                 current_elem_size2 = 0;
-                if (s->pointed) current_elem_size = (s->pointed == T_CHAR) ? 1 : 8;
+                if (s->pointed)
+                    current_elem_size =
+                        (s->pointed == T_CHAR && !s->elem_ptr) ? 1 : 8;
                 else current_elem_size = 0;
                 expr_type = sv;
                 
@@ -1397,7 +1401,9 @@ static void lvalue_address(void) {
         } else {
             current_elem_size2 = 0;
             expr_pointed = s->pointed;
-            if (s->pointed) current_elem_size = (s->pointed == T_CHAR) ? 1 : 8;
+            if (s->pointed)
+                current_elem_size =
+                    (s->pointed == T_CHAR && !s->elem_ptr) ? 1 : 8;
             else current_elem_size = 0;
         }
         int need_ptr_value = (s->pointed && s->size == 8);
@@ -1483,7 +1489,16 @@ static void handle_postfix(int is_lvalue) {
 					emit("    movl (%%rax), %%eax");
 				else
 					emit("    movq (%%rax), %%rax");
-				expr_pointed = 0;
+				if (elem_size == 8 && saved_ep) {
+					/* The loaded element is itself a pointer: the value in
+					   %rax still points at the pointee, so a chained
+					   subscript (argv[i][j]) indexes it with the pointee's
+					   element size, not the pointer-array stride. */
+					expr_pointed = saved_ep;
+					current_elem_size = (saved_ep == T_CHAR) ? 1 : 8;
+				} else {
+					expr_pointed = 0;
+				}
 			}
 			match(']');
 		} else if (tok == '.') {
@@ -1698,7 +1713,9 @@ static void shift_expr(void) {
         next_token();
         emit("    pushq %%rax");
         shift_expr();
+        emit("    pushq %%rax");
         emit("    popq %%rcx");
+        emit("    popq %%rax");
         if (op == T_SHL)
             emit("    salq %%cl, %%rax");
         else
@@ -2758,15 +2775,17 @@ static void parse_function(const char *name, int ret_type) {
                 memcpy(param_names[param_count], token, nlen);
                 param_names[param_count][nlen] = '\0';
                 int psize = is_ptr ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : 8));
-                /* tipo tras UNA desreferencia: char* apunta a char (movsbq,
-                   stride 1); char** y demas apuntan a otro puntero (8 bytes,
-                   convencion T_INT) */
+                /* Pointee type after one dereference: char* points at char
+                   (movsbq, stride 1); with two or more stars the first
+                   subscript yields another pointer (stride 8) whose pointee
+                   is still the base type, so char** keeps char as the
+                   pointee and elem_ptr marks the 8-byte first stride. */
                 int pointed_type = 0;
                 int vt = (ptype == T_INT || ptype == T_VOID) ? 0 : ptype;
-                if (nstars == 1) pointed_type = ptype;
-                else if (nstars > 1) pointed_type = T_INT;
+                if (nstars >= 1) pointed_type = ptype;
                 add_symbol(token, 0, psize, pointed_type, 0, 0);
                 symbols[symbol_count - 1].var_type = vt;
+                symbols[symbol_count - 1].elem_ptr = (nstars >= 2);
                 param_count++;
                 next_token();
                 if (tok == ',') next_token();
