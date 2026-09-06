@@ -1,0 +1,539 @@
+# Subsystem: root
+
+## minigcc.c
+- Layer: utility
+- Language: c
+- Symbols:
+  - `save_parser_state` (function, line 215) `static void save_parser_state(ParserState *state)`
+  - `restore_parser_state` (function, line 240) `static void restore_parser_state(ParserState *state)`
+  - `find_macro` (function, line 276) `static int find_macro(const char *name)`
+  - `add_macro` (function, line 285) `static void add_macro(const char *name, int value)`
+  - `error` (function, line 298) `static void error(const char *msg)`
+  - `safe_malloc` (function, line 304) `static void *safe_malloc(size_t size)`
+  - `safe_strcpy` (function, line 313) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
+  - `safe_strtoll` (function, line 322) `static long safe_strtoll(const char *s)`
+  - `is_file_processed` (function, line 335) `static int is_file_processed(const char *path)`
+  - `mark_file_processed` (function, line 344) `static void mark_file_processed(const char *path)`
+  - `get_dir_from_path` (function, line 356) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
+  - `resolve_local_include` (function, line 375) `static char *resolve_local_include(const char *target)`
+  - `read_include_file` (function, line 414) `static char *read_include_file(const char *path)`
+  - `hash_name` (function, line 439) `static int hash_name(const char *name)`
+  - `hash_init` (function, line 448) `static void hash_init(void)`
+  - `push_scope` (function, line 453) `static void push_scope(void)`
+  - `pop_scope` (function, line 461) `static void pop_scope(void)`
+  - `truncate_symbols` (function, line 491) `static void truncate_symbols(int start_idx)`
+  - `my_isspace` (function, line 509) `static int my_isspace(int c)`
+  - `my_isalpha` (function, line 519) `static int my_isalpha(int c)`
+  - `my_isdigit` (function, line 525) `static int my_isdigit(int c)`
+  - `my_isalnum` (function, line 530) `static int my_isalnum(int c)`
+  - `next_token` (function, line 538) `static void next_token(void)`
+  - `match` (function, line 974) `static void match(int expected)`
+  - `emit` (function, line 979) `static void emit(const char *s)`
+  - `emit_i` (function, line 993) `static void emit_i(const char *fmt, int v)`
+  - `emit_s` (function, line 999) `static void emit_s(const char *fmt, const char *s)`
+  - `emit_is` (function, line 1005) `static void emit_is(const char *fmt, int v, const char *s)`
+  - `emit_si` (function, line 1011) `static void emit_si(const char *fmt, const char *s, int v)`
+  - `emit_asciz_body` (function, line 1021) `static void emit_asciz_body(const char *s)`
+  - `emit_label` (function, line 1039) `static void emit_label(int label)`
+  - `find_symbol` (function, line 1046) `static int find_symbol(const char *name)`
+  - `add_symbol` (function, line 1056) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
+  - `arg_reg` (function, line 1117) `static const char *arg_reg(int i)`
+  - `libc_global_name` (function, line 1127) `static const char *libc_global_name(int i)`
+  - `unary` (function, line 1139) `static void unary(void)`
+  - `lvalue_address` (function, line 1389) `static void lvalue_address(void)`
+  - `handle_postfix` (function, line 1440) `static void handle_postfix(int is_lvalue)`
+  - `unary_expr` (function, line 1574) `static void unary_expr(void)`
+  - `multiplicative_expr` (function, line 1589) `static void multiplicative_expr(void)`
+  - `additive_expr` (function, line 1653) `static void additive_expr(void)`
+  - `shift_expr` (function, line 1708) `static void shift_expr(void)`
+  - `relational_expr` (function, line 1727) `static void relational_expr(void)`
+  - `equality_expr` (function, line 1780) `static void equality_expr(void)`
+  - `bitwise_and_expr` (function, line 1829) `static void bitwise_and_expr(void)`
+  - `bitwise_xor_expr` (function, line 1841) `static void bitwise_xor_expr(void)`
+  - `bitwise_or_expr` (function, line 1853) `static void bitwise_or_expr(void)`
+  - `logical_and_expr` (function, line 1865) `static void logical_and_expr(void)`
+  - `logical_or_expr` (function, line 1885) `static void logical_or_expr(void)`
+  - `conditional_expr` (function, line 1905) `static void conditional_expr(void)`
+  - `assignment_expr` (function, line 1923) `static void assignment_expr(void)`
+  - `statement` (function, line 2084) `static void statement(void)`
+  - `parse_function` (function, line 2741) `static void parse_function(const char *name, int ret_type)`
+  - `parse_enum` (function, line 2868) `static void parse_enum(void)`
+  - `skip_struct` (function, line 2917) `static void skip_struct(void)`
+  - `skip_typedef` (function, line 2981) `static void skip_typedef(void)`
+  - `data_directive` (function, line 3036) `static const char *data_directive(int size)`
+  - `emit_global_bss` (function, line 3044) `static void emit_global_bss(const char *name, int is_static, int size)`
+  - `emit_global_data_head` (function, line 3051) `static void emit_global_data_head(const char *name, int is_static)`
+  - `parse_const_int` (function, line 3061) `static int parse_const_int(long long *out)`
+  - `intern_string` (function, line 3084) `static int intern_string(const char *text)`
+  - `emit_global_initializer` (function, line 3101) `static int emit_global_initializer(const char *name, int is_static, int *size,
+                  ...`
+  - `parse_program` (function, line 3165) `static void parse_program(void)`
+  - `emit_float_consts` (function, line 3316) `static void emit_float_consts(void)`
+  - `emit_string_pool` (function, line 3326) `static void emit_string_pool(void)`
+  - `main` (function, line 3336) `int main(int argc, char **argv)`
+  - `MAX_TOKEN_LEN` (macro, line 14)
+  - `MAX_SYMBOLS` (macro, line 16)
+  - `MAX_IDENT_LEN` (macro, line 17)
+  - `MAX_SOURCE_SIZE` (macro, line 18)
+  - `MAX_INCLUDE_DEPTH` (macro, line 19)
+  - `MAX_PROCESSED_FILES` (macro, line 20)
+  - `STACK_ALIGN` (macro, line 21)
+  - `HASH_TABLE_SIZE` (macro, line 111)
+  - `MAX_SCOPE_DEPTH` (macro, line 113)
+  - `MAX_FLOAT_CONSTS` (macro, line 135)
+  - `MAX_CASES_PER_SWITCH` (macro, line 140)
+  - `MAX_STRINGS` (macro, line 153)
+  - `MAX_PTR_INITS` (macro, line 162)
+  - `MAX_STRUCT_MEMBERS` (macro, line 172)
+  - `MAX_IF_NESTING` (macro, line 179)
+  - `CONST_VAR_FLAG` (macro, line 181)
+  - `MAX_MACROS` (macro, line 187)
+
+## minigccg2.s
+- Layer: utility
+- Language: s
+- Symbols:
+  - `input_ptr` (function, line 3)
+  - `source_start` (function, line 7)
+  - `token` (function, line 11)
+  - `tok` (function, line 15)
+  - `line` (function, line 19)
+  - `output` (function, line 23)
+  - `ctx_stack` (function, line 27)
+  - `ctx_top` (function, line 31)
+  - `current_file` (function, line 35)
+  - `processed_files` (function, line 39)
+  - `processed_count` (function, line 43)
+  - `symbols` (function, line 47)
+  - `symbol_count` (function, line 51)
+  - `hash_table` (function, line 55)
+  - `scope_stack_sym` (function, line 59)
+  - `scope_stack_stk` (function, line 63)
+  - `scope_depth` (function, line 67)
+  - `stack_size` (function, line 71)
+  - `label_counter` (function, line 75)
+  - `function_has_return` (function, line 79)
+  - `emit_enabled` (function, line 83)
+  - `max_func_stack` (function, line 87)
+  - `assign_size` (function, line 91)
+  - `expr_pointed` (function, line 95)
+  - `current_elem_size` (function, line 99)
+  - `current_elem_size2` (function, line 103)
+  - `no_postfix_deref` (function, line 107)
+  - `expr_type` (function, line 111)
+  - `static_flag` (function, line 115)
+  - `unsigned_type` (function, line 119)
+  - `const_flag` (function, line 123)
+  - `extern_flag` (function, line 127)
+  - `global_emit_deferred` (function, line 131)
+  - `float_const_str` (function, line 135)
+  - `float_const_is_float` (function, line 139)
+  - `float_const_count` (function, line 143)
+  - `switch_case_values` (function, line 147)
+  - `switch_case_labels` (function, line 151)
+  - `switch_case_count` (function, line 155)
+  - `switch_has_default` (function, line 159)
+  - `switch_default_label` (function, line 163)
+  - `break_target` (function, line 167)
+  - `break_target_valid` (function, line 171)
+  - `continue_target` (function, line 175)
+  - `continue_target_valid` (function, line 179)
+  - `str_label_counter` (function, line 183)
+  - `string_pool` (function, line 187)
+  - `string_count` (function, line 191)
+  - `ptr_init_name` (function, line 195)
+  - `ptr_init_label` (function, line 199)
+  - `ptr_init_count` (function, line 203)
+  - `struct_total_size` (function, line 207)
+  - `struct_member_names` (function, line 211)
+  - `struct_member_offsets` (function, line 215)
+  - `struct_member_sizes` (function, line 219)
+  - `struct_member_elem_sizes` (function, line 223)
+  - `struct_member_count` (function, line 227)
+  - `if_nest` (function, line 231)
+  - `if_depth` (function, line 235)
+  - `macro_count` (function, line 240)
+  - `save_parser_state` (function, line 244)
+  - `restore_parser_state` (function, line 383)
+  - `macros` (function, line 571)
+  - `find_macro` (function, line 575)
+  - `add_macro` (function, line 639)
+  - `error` (function, line 769)
+  - `safe_malloc` (function, line 821)
+  - `safe_strcpy` (function, line 876)
+  - `safe_strtoll` (function, line 953)
+  - `is_file_processed` (function, line 1068)
+  - `mark_file_processed` (function, line 1129)
+  - `get_dir_from_path` (function, line 1241)
+  - `resolve_local_include` (function, line 1384)
+  - `read_include_file` (function, line 1834)
+  - `hash_name` (function, line 2042)
+  - `hash_init` (function, line 2100)
+  - `push_scope` (function, line 2139)
+  - `pop_scope` (function, line 2191)
+  - `truncate_symbols` (function, line 2387)
+  - `my_isspace` (function, line 2540)
+  - `my_isalpha` (function, line 2629)
+  - `my_isdigit` (function, line 2698)
+  - `my_isalnum` (function, line 2738)
+  - `next_token` (function, line 2783)
+  - `restart` (function, line 2787)
+  - `match` (function, line 8892)
+  - `emit` (function, line 8930)
+  - `emit_i` (function, line 9044)
+  - `emit_s` (function, line 9093)
+  - `emit_is` (function, line 9142)
+  - `emit_si` (function, line 9195)
+  - `emit_asciz_body` (function, line 9248)
+  - `emit_label` (function, line 9572)
+  - `find_symbol` (function, line 9601)
+  - `add_symbol` (function, line 9688)
+  - `arg_reg` (function, line 10056)
+  - `libc_global_name` (function, line 10132)
+  - `unary` (function, line 10260)
+  - `lvalue_address` (function, line 12789)
+  - `handle_postfix` (function, line 13294)
+  - `unary_expr` (function, line 14271)
+  - `multiplicative_expr` (function, line 14296)
+  - `additive_expr` (function, line 14918)
+  - `shift_expr` (function, line 15413)
+  - `relational_expr` (function, line 15559)
+  - `equality_expr` (function, line 16161)
+  - `bitwise_and_expr` (function, line 16639)
+  - `bitwise_xor_expr` (function, line 16717)
+  - `bitwise_or_expr` (function, line 16795)
+  - `logical_and_expr` (function, line 16873)
+  - `logical_or_expr` (function, line 17036)
+  - `conditional_expr` (function, line 17199)
+  - `assignment_expr` (function, line 17331)
+  - `statement` (function, line 19851)
+  - `restart_typedef` (function, line 23297)
+  - `restart_int` (function, line 24328)
+  - `parse_function` (function, line 25484)
+  - `parse_enum` (function, line 26800)
+  - `skip_struct` (function, line 27212)
+  - `skip_typedef` (function, line 27798)
+  - `data_directive` (function, line 28288)
+  - `emit_global_bss` (function, line 28338)
+  - `emit_global_data_head` (function, line 28429)
+  - `parse_const_int` (function, line 28484)
+  - `intern_string` (function, line 28647)
+  - `emit_global_initializer` (function, line 28740)
+  - `parse_program` (function, line 29457)
+  - `emit_float_consts` (function, line 31173)
+  - `emit_string_pool` (function, line 31272)
+  - `main` (function, line 31374)
+  - `_start` (function, line 34714)
+
+## minigccg3.s
+- Layer: utility
+- Language: s
+- Symbols:
+  - `input_ptr` (function, line 3)
+  - `source_start` (function, line 7)
+  - `token` (function, line 11)
+  - `tok` (function, line 15)
+  - `line` (function, line 19)
+  - `output` (function, line 23)
+  - `ctx_stack` (function, line 27)
+  - `ctx_top` (function, line 31)
+  - `current_file` (function, line 35)
+  - `processed_files` (function, line 39)
+  - `processed_count` (function, line 43)
+  - `symbols` (function, line 47)
+  - `symbol_count` (function, line 51)
+  - `hash_table` (function, line 55)
+  - `scope_stack_sym` (function, line 59)
+  - `scope_stack_stk` (function, line 63)
+  - `scope_depth` (function, line 67)
+  - `stack_size` (function, line 71)
+  - `label_counter` (function, line 75)
+  - `function_has_return` (function, line 79)
+  - `emit_enabled` (function, line 83)
+  - `max_func_stack` (function, line 87)
+  - `assign_size` (function, line 91)
+  - `expr_pointed` (function, line 95)
+  - `current_elem_size` (function, line 99)
+  - `current_elem_size2` (function, line 103)
+  - `no_postfix_deref` (function, line 107)
+  - `expr_type` (function, line 111)
+  - `static_flag` (function, line 115)
+  - `unsigned_type` (function, line 119)
+  - `const_flag` (function, line 123)
+  - `extern_flag` (function, line 127)
+  - `global_emit_deferred` (function, line 131)
+  - `float_const_str` (function, line 135)
+  - `float_const_is_float` (function, line 139)
+  - `float_const_count` (function, line 143)
+  - `switch_case_values` (function, line 147)
+  - `switch_case_labels` (function, line 151)
+  - `switch_case_count` (function, line 155)
+  - `switch_has_default` (function, line 159)
+  - `switch_default_label` (function, line 163)
+  - `break_target` (function, line 167)
+  - `break_target_valid` (function, line 171)
+  - `continue_target` (function, line 175)
+  - `continue_target_valid` (function, line 179)
+  - `str_label_counter` (function, line 183)
+  - `string_pool` (function, line 187)
+  - `string_count` (function, line 191)
+  - `ptr_init_name` (function, line 195)
+  - `ptr_init_label` (function, line 199)
+  - `ptr_init_count` (function, line 203)
+  - `struct_total_size` (function, line 207)
+  - `struct_member_names` (function, line 211)
+  - `struct_member_offsets` (function, line 215)
+  - `struct_member_sizes` (function, line 219)
+  - `struct_member_elem_sizes` (function, line 223)
+  - `struct_member_count` (function, line 227)
+  - `if_nest` (function, line 231)
+  - `if_depth` (function, line 235)
+  - `macro_count` (function, line 240)
+  - `save_parser_state` (function, line 244)
+  - `restore_parser_state` (function, line 383)
+  - `macros` (function, line 571)
+  - `find_macro` (function, line 575)
+  - `add_macro` (function, line 639)
+  - `error` (function, line 769)
+  - `safe_malloc` (function, line 821)
+  - `safe_strcpy` (function, line 876)
+  - `safe_strtoll` (function, line 953)
+  - `is_file_processed` (function, line 1068)
+  - `mark_file_processed` (function, line 1129)
+  - `get_dir_from_path` (function, line 1241)
+  - `resolve_local_include` (function, line 1384)
+  - `read_include_file` (function, line 1834)
+  - `hash_name` (function, line 2042)
+  - `hash_init` (function, line 2100)
+  - `push_scope` (function, line 2139)
+  - `pop_scope` (function, line 2191)
+  - `truncate_symbols` (function, line 2387)
+  - `my_isspace` (function, line 2540)
+  - `my_isalpha` (function, line 2629)
+  - `my_isdigit` (function, line 2698)
+  - `my_isalnum` (function, line 2738)
+  - `next_token` (function, line 2783)
+  - `restart` (function, line 2787)
+  - `match` (function, line 8892)
+  - `emit` (function, line 8930)
+  - `emit_i` (function, line 9044)
+  - `emit_s` (function, line 9093)
+  - `emit_is` (function, line 9142)
+  - `emit_si` (function, line 9195)
+  - `emit_asciz_body` (function, line 9248)
+  - `emit_label` (function, line 9572)
+  - `find_symbol` (function, line 9601)
+  - `add_symbol` (function, line 9688)
+  - `arg_reg` (function, line 10056)
+  - `libc_global_name` (function, line 10132)
+  - `unary` (function, line 10260)
+  - `lvalue_address` (function, line 12789)
+  - `handle_postfix` (function, line 13294)
+  - `unary_expr` (function, line 14271)
+  - `multiplicative_expr` (function, line 14296)
+  - `additive_expr` (function, line 14918)
+  - `shift_expr` (function, line 15413)
+  - `relational_expr` (function, line 15559)
+  - `equality_expr` (function, line 16161)
+  - `bitwise_and_expr` (function, line 16639)
+  - `bitwise_xor_expr` (function, line 16717)
+  - `bitwise_or_expr` (function, line 16795)
+  - `logical_and_expr` (function, line 16873)
+  - `logical_or_expr` (function, line 17036)
+  - `conditional_expr` (function, line 17199)
+  - `assignment_expr` (function, line 17331)
+  - `statement` (function, line 19851)
+  - `restart_typedef` (function, line 23297)
+  - `restart_int` (function, line 24328)
+  - `parse_function` (function, line 25484)
+  - `parse_enum` (function, line 26800)
+  - `skip_struct` (function, line 27212)
+  - `skip_typedef` (function, line 27798)
+  - `data_directive` (function, line 28288)
+  - `emit_global_bss` (function, line 28338)
+  - `emit_global_data_head` (function, line 28429)
+  - `parse_const_int` (function, line 28484)
+  - `intern_string` (function, line 28647)
+  - `emit_global_initializer` (function, line 28740)
+  - `parse_program` (function, line 29457)
+  - `emit_float_consts` (function, line 31173)
+  - `emit_string_pool` (function, line 31272)
+  - `main` (function, line 31374)
+  - `_start` (function, line 34714)
+
+## minigccg4.s
+- Layer: utility
+- Language: s
+- Symbols:
+  - `input_ptr` (function, line 3)
+  - `source_start` (function, line 7)
+  - `token` (function, line 11)
+  - `tok` (function, line 15)
+  - `line` (function, line 19)
+  - `output` (function, line 23)
+  - `ctx_stack` (function, line 27)
+  - `ctx_top` (function, line 31)
+  - `current_file` (function, line 35)
+  - `processed_files` (function, line 39)
+  - `processed_count` (function, line 43)
+  - `symbols` (function, line 47)
+  - `symbol_count` (function, line 51)
+  - `hash_table` (function, line 55)
+  - `scope_stack_sym` (function, line 59)
+  - `scope_stack_stk` (function, line 63)
+  - `scope_depth` (function, line 67)
+  - `stack_size` (function, line 71)
+  - `label_counter` (function, line 75)
+  - `function_has_return` (function, line 79)
+  - `emit_enabled` (function, line 83)
+  - `max_func_stack` (function, line 87)
+  - `assign_size` (function, line 91)
+  - `expr_pointed` (function, line 95)
+  - `current_elem_size` (function, line 99)
+  - `current_elem_size2` (function, line 103)
+  - `no_postfix_deref` (function, line 107)
+  - `expr_type` (function, line 111)
+  - `static_flag` (function, line 115)
+  - `unsigned_type` (function, line 119)
+  - `const_flag` (function, line 123)
+  - `extern_flag` (function, line 127)
+  - `global_emit_deferred` (function, line 131)
+  - `float_const_str` (function, line 135)
+  - `float_const_is_float` (function, line 139)
+  - `float_const_count` (function, line 143)
+  - `switch_case_values` (function, line 147)
+  - `switch_case_labels` (function, line 151)
+  - `switch_case_count` (function, line 155)
+  - `switch_has_default` (function, line 159)
+  - `switch_default_label` (function, line 163)
+  - `break_target` (function, line 167)
+  - `break_target_valid` (function, line 171)
+  - `continue_target` (function, line 175)
+  - `continue_target_valid` (function, line 179)
+  - `str_label_counter` (function, line 183)
+  - `string_pool` (function, line 187)
+  - `string_count` (function, line 191)
+  - `ptr_init_name` (function, line 195)
+  - `ptr_init_label` (function, line 199)
+  - `ptr_init_count` (function, line 203)
+  - `struct_total_size` (function, line 207)
+  - `struct_member_names` (function, line 211)
+  - `struct_member_offsets` (function, line 215)
+  - `struct_member_sizes` (function, line 219)
+  - `struct_member_elem_sizes` (function, line 223)
+  - `struct_member_count` (function, line 227)
+  - `if_nest` (function, line 231)
+  - `if_depth` (function, line 235)
+  - `macro_count` (function, line 240)
+  - `save_parser_state` (function, line 244)
+  - `restore_parser_state` (function, line 383)
+  - `macros` (function, line 571)
+  - `find_macro` (function, line 575)
+  - `add_macro` (function, line 639)
+  - `error` (function, line 769)
+  - `safe_malloc` (function, line 821)
+  - `safe_strcpy` (function, line 876)
+  - `safe_strtoll` (function, line 953)
+  - `is_file_processed` (function, line 1068)
+  - `mark_file_processed` (function, line 1129)
+  - `get_dir_from_path` (function, line 1241)
+  - `resolve_local_include` (function, line 1384)
+  - `read_include_file` (function, line 1834)
+  - `hash_name` (function, line 2042)
+  - `hash_init` (function, line 2100)
+  - `push_scope` (function, line 2139)
+  - `pop_scope` (function, line 2191)
+  - `truncate_symbols` (function, line 2387)
+  - `my_isspace` (function, line 2540)
+  - `my_isalpha` (function, line 2629)
+  - `my_isdigit` (function, line 2698)
+  - `my_isalnum` (function, line 2738)
+  - `next_token` (function, line 2783)
+  - `restart` (function, line 2787)
+  - `match` (function, line 8892)
+  - `emit` (function, line 8930)
+  - `emit_i` (function, line 9044)
+  - `emit_s` (function, line 9093)
+  - `emit_is` (function, line 9142)
+  - `emit_si` (function, line 9195)
+  - `emit_asciz_body` (function, line 9248)
+  - `emit_label` (function, line 9572)
+  - `find_symbol` (function, line 9601)
+  - `add_symbol` (function, line 9688)
+  - `arg_reg` (function, line 10056)
+  - `libc_global_name` (function, line 10132)
+  - `unary` (function, line 10260)
+  - `lvalue_address` (function, line 12789)
+  - `handle_postfix` (function, line 13294)
+  - `unary_expr` (function, line 14271)
+  - `multiplicative_expr` (function, line 14296)
+  - `additive_expr` (function, line 14918)
+  - `shift_expr` (function, line 15413)
+  - `relational_expr` (function, line 15559)
+  - `equality_expr` (function, line 16161)
+  - `bitwise_and_expr` (function, line 16639)
+  - `bitwise_xor_expr` (function, line 16717)
+  - `bitwise_or_expr` (function, line 16795)
+  - `logical_and_expr` (function, line 16873)
+  - `logical_or_expr` (function, line 17036)
+  - `conditional_expr` (function, line 17199)
+  - `assignment_expr` (function, line 17331)
+  - `statement` (function, line 19851)
+  - `restart_typedef` (function, line 23297)
+  - `restart_int` (function, line 24328)
+  - `parse_function` (function, line 25484)
+  - `parse_enum` (function, line 26800)
+  - `skip_struct` (function, line 27212)
+  - `skip_typedef` (function, line 27798)
+  - `data_directive` (function, line 28288)
+  - `emit_global_bss` (function, line 28338)
+  - `emit_global_data_head` (function, line 28429)
+  - `parse_const_int` (function, line 28484)
+  - `intern_string` (function, line 28647)
+  - `emit_global_initializer` (function, line 28740)
+  - `parse_program` (function, line 29457)
+  - `emit_float_consts` (function, line 31173)
+  - `emit_string_pool` (function, line 31272)
+  - `main` (function, line 31374)
+  - `_start` (function, line 34714)
+
+## my_library.h
+- Layer: utility
+- Doc: ifndef MY_LIBRARY_H define MY_LIBRARY_H  Test function to verify that inclusion works correctly
+- Language: h
+- Symbols:
+  - `MY_LIBRARY_H` (macro, line 2)
+
+## test.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 1) `int main(void)`
+
+## test.sh
+- Layer: testing
+- Doc: Cleaning env
+- Language: sh
+
+## test_for.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `main` (function, line 2) `int main()`
+
+## test_include.c
+- Layer: testing
+- Doc: include <stdio.h> include "my_library.h"
+- Language: c
+- Symbols:
+  - `main` (function, line 3) `int main(void)`
+  - `greet` (function, line 9) `void greet(void)`
+
+## test_ld_selfhost.sh
+- Layer: testing
+- Doc: Self-host test: miniGCC bootstraps itself with the sibling 'ld' repository as the assembler and linker. GNU as/ld are no
+- Language: sh
+- Symbols:
+  - `pass` (function, line 27)
+  - `fail` (function, line 32)
