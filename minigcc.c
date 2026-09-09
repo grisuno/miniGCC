@@ -296,6 +296,295 @@ static void add_macro(const char *name, int value) {
     macros[macro_count - 1].value = value;
 }
 
+/* Constant integer expression folding for `#define NAME <expr>`.
+ * MiniGCC macros are numeric substitutions, so a directive whose value is
+ * an expression (e.g. `#define N (1 << EI)`) must be reduced to a value at
+ * define time.  This is a small recursive-descent folder over the subset of
+ * C operators miniGCC itself emits, written in the same restricted dialect
+ * the compiler accepts so the self-hosted build stays correct.  Any RHS
+ * that is not a foldable integer constant (function-like macros, strings)
+ * leaves macro_ok clear and the caller falls back to the historical value-0
+ * behaviour, so nothing that compiled before changes meaning. */
+static char *macro_p;
+static int macro_ok;
+
+static int macro_or_expr(void);
+
+static void macro_skipws(void) {
+    while (*macro_p == ' ' || *macro_p == '\t') macro_p++;
+}
+
+static int macro_hex_digit(int c) {
+    if (c >= '0' && c <= '9') return 1;
+    if (c >= 'a' && c <= 'f') return 1;
+    if (c >= 'A' && c <= 'F') return 1;
+    return 0;
+}
+
+static int macro_digit_val(int c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return 0;
+}
+
+static int macro_primary(void) {
+    int v;
+    int mi;
+    char name[MAX_IDENT_LEN];
+    int n;
+    macro_skipws();
+    if (*macro_p == '(') {
+        macro_p++;
+        v = macro_or_expr();
+        macro_skipws();
+        if (*macro_p != ')') { macro_ok = 0; return 0; }
+        macro_p++;
+        return v;
+    }
+    if (*macro_p == '\'') {
+        int c;
+        macro_p++;
+        if (*macro_p == '\\') {
+            macro_p++;
+            c = *macro_p;
+            if (c == 'n') c = 10;
+            else if (c == 't') c = 9;
+            else if (c == 'r') c = 13;
+            else if (c == '0') c = 0;
+            else if (c == '\\') c = 92;
+            else if (c == '\'') c = 39;
+            else if (c == '"') c = 34;
+            else if (c == 'a') c = 7;
+            else if (c == 'b') c = 8;
+            macro_p++;
+        } else {
+            c = *macro_p;
+            macro_p++;
+        }
+        if (*macro_p != '\'') { macro_ok = 0; return 0; }
+        macro_p++;
+        return c;
+    }
+    if (*macro_p >= '0' && *macro_p <= '9') {
+        v = 0;
+        if (*macro_p == '0' && (macro_p[1] == 'x' || macro_p[1] == 'X')) {
+            macro_p += 2;
+            while (macro_hex_digit(*macro_p)) {
+                v = v * 16 + macro_digit_val(*macro_p);
+                macro_p++;
+            }
+        } else {
+            while (*macro_p >= '0' && *macro_p <= '9') {
+                v = v * 10 + (*macro_p - '0');
+                macro_p++;
+            }
+        }
+        return v;
+    }
+    if ((*macro_p >= 'a' && *macro_p <= 'z') ||
+        (*macro_p >= 'A' && *macro_p <= 'Z') || *macro_p == '_') {
+        n = 0;
+        while (((*macro_p >= 'a' && *macro_p <= 'z') ||
+                (*macro_p >= 'A' && *macro_p <= 'Z') ||
+                (*macro_p >= '0' && *macro_p <= '9') || *macro_p == '_') &&
+               n < MAX_IDENT_LEN - 1) {
+            name[n] = *macro_p;
+            n++;
+            macro_p++;
+        }
+        name[n] = '\0';
+        mi = find_macro(name);
+        if (mi < 0) { macro_ok = 0; return 0; }
+        return macros[mi].value;
+    }
+    macro_ok = 0;
+    return 0;
+}
+
+static int macro_unary(void) {
+    macro_skipws();
+    if (*macro_p == '-') { macro_p++; return 0 - macro_unary(); }
+    if (*macro_p == '+') { macro_p++; return macro_unary(); }
+    if (*macro_p == '~') { macro_p++; return ~macro_unary(); }
+    if (*macro_p == '!') { macro_p++; return !macro_unary(); }
+    return macro_primary();
+}
+
+static int macro_mul(void) {
+    int v;
+    int d;
+    v = macro_unary();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '*') {
+            macro_p++;
+            v = v * macro_unary();
+        } else if (*macro_p == '/' && macro_p[1] != '/') {
+            macro_p++;
+            d = macro_unary();
+            if (d == 0) { macro_ok = 0; return 0; }
+            v = v / d;
+        } else if (*macro_p == '%') {
+            macro_p++;
+            d = macro_unary();
+            if (d == 0) { macro_ok = 0; return 0; }
+            v = v % d;
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_add(void) {
+    int v;
+    v = macro_mul();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '+') {
+            macro_p++;
+            v = v + macro_mul();
+        } else if (*macro_p == '-') {
+            macro_p++;
+            v = v - macro_mul();
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_shift(void) {
+    int v;
+    v = macro_add();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '<' && macro_p[1] == '<') {
+            macro_p += 2;
+            v = v << macro_add();
+        } else if (*macro_p == '>' && macro_p[1] == '>') {
+            macro_p += 2;
+            v = v >> macro_add();
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_cmp(void) {
+    int v;
+    v = macro_shift();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '<' && macro_p[1] == '=') {
+            macro_p += 2;
+            v = (v <= macro_shift());
+        } else if (*macro_p == '>' && macro_p[1] == '=') {
+            macro_p += 2;
+            v = (v >= macro_shift());
+        } else if (*macro_p == '<') {
+            macro_p++;
+            v = (v < macro_shift());
+        } else if (*macro_p == '>') {
+            macro_p++;
+            v = (v > macro_shift());
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_eq(void) {
+    int v;
+    v = macro_cmp();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '=' && macro_p[1] == '=') {
+            macro_p += 2;
+            v = (v == macro_cmp());
+        } else if (*macro_p == '!' && macro_p[1] == '=') {
+            macro_p += 2;
+            v = (v != macro_cmp());
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_bitand(void) {
+    int v;
+    v = macro_eq();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '&' && macro_p[1] != '&') {
+            macro_p++;
+            v = v & macro_eq();
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_bitxor(void) {
+    int v;
+    v = macro_bitand();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '^') {
+            macro_p++;
+            v = v ^ macro_bitand();
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_bitor(void) {
+    int v;
+    v = macro_bitxor();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '|' && macro_p[1] != '|') {
+            macro_p++;
+            v = v | macro_bitxor();
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_logand(void) {
+    int v;
+    v = macro_bitor();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '&' && macro_p[1] == '&') {
+            macro_p += 2;
+            v = (v && macro_bitor());
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_or_expr(void) {
+    int v;
+    v = macro_logand();
+    for (;;) {
+        macro_skipws();
+        if (*macro_p == '|' && macro_p[1] == '|') {
+            macro_p += 2;
+            v = (v || macro_logand());
+        } else {
+            return v;
+        }
+    }
+}
+
+static int macro_fold(void) {
+    macro_ok = 1;
+    return macro_or_expr();
+}
+
 static void error(const char *msg) {
     fprintf(stderr, "%s:%d: Error at token '%s': %s\n",
             current_file ? current_file : "(unknown)", line, token, msg);
@@ -618,12 +907,11 @@ static void next_token(void) {
             while (*input_ptr == ' ' || *input_ptr == '\t') input_ptr++;
             int mval = 0;
             int has_val = 0;
-            if (my_isdigit(*input_ptr)) {
+            macro_p = input_ptr;
+            mval = macro_fold();
+            if (macro_ok) {
                 has_val = 1;
-                while (my_isdigit(*input_ptr)) {
-                    mval = mval * 10 + (*input_ptr - '0');
-                    input_ptr++;
-                }
+                input_ptr = macro_p;
             }
             if (has_val || mlen > 0) {
                 add_macro(mname, mval);
@@ -1427,6 +1715,7 @@ static void lvalue_address(void) {
     } else if (tok == '*') {
         next_token();
         unary();
+        assign_size = 0;
         handle_postfix(1);
         if (assign_size == 0) {
             if (expr_pointed == T_CHAR) assign_size = 1;
@@ -1990,9 +2279,9 @@ static void assignment_expr(void) {
             lvalue_address(); emit("    pushq %%rax");
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
-            if (assign_size == 1) { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
-            else if (assign_size == 4) { emit("    subl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
-            else { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
+            if (assign_size == 1) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else if (assign_size == 4) { emit("    subl %%eax, %%ecx"); emit("    movl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
+            else { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type != 0) {
             int op = tok == T_INC ? T_INC : T_DEC;
@@ -2065,9 +2354,9 @@ static void assignment_expr(void) {
             lvalue_address(); emit("    pushq %%rax");
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
-            if (assign_size == 1) { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
-            else if (assign_size == 4) { emit("    subl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
-            else { emit("    subq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
+            if (assign_size == 1) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else if (assign_size == 4) { emit("    subl %%eax, %%ecx"); emit("    movl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
+            else { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type != 0) {
             lvalue_address();

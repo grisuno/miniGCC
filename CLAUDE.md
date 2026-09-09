@@ -60,7 +60,7 @@ whenever `../ld/ld.c` exists.
 - Control: if/else, while, for, do/while, switch/case/default, break, continue, goto, return
 - Operators: +, -, *, /, %, <, <=, >, >=, ==, !=, &&, ||, !, &, |, ^, ~, <<, >>, =, +=, -=, ++, --, ?:, [], ., ->, sizeof(type-name)
 - Functions: up to 6 reg params (SysV AMD64 ABI), recursion, 16-byte stack alignment
-- Preprocessor: #define (numeric), #include (<> and ""), #ifdef, #ifndef, #if (0/1), #else, #endif
+- Preprocessor: #define (numeric constant-expression folding: decimal and hex literals, char literals with escapes, prior macros, and the operators + - * / % << >> & | ^ ~ ! < <= > >= == != && || with parentheses; any non-foldable RHS such as a function-like macro or string falls back to value 0 as before), #include (<> and ""), #ifdef, #ifndef, #if (0/1), #else, #endif
 - Floating-point: SSE (float/double), mixed int-float expressions
 - String/char literals with full escape sequences (\n, \t, \r, \f, \v, \a, \b, \0, \\, \", \', \xNN, octal)
 - Global initializers: scalar constants, brace lists for arrays, string

@@ -68,7 +68,7 @@ Fully capable of compiling its own source code to reach complete technical sover
 ### Other Features
 - String literals and character constants
 - Full escape sequences in strings and chars (`\n`, `\t`, `\r`, `\f`, `\v`, `\a`, `\b`, `\0`, `\\`, `\"`, `\'`, `\xNN`, octal `\NNN`)
-- Simple macro definitions via `#define`
+- Simple macro definitions via `#define`, with constant-expression folding so `#define N (1 << 8)` and `#define CH 'A'` evaluate to real values (not 0)
 - Conditional compilation: `#ifdef`, `#ifndef`, `#if`, `#else`, `#endif`
 - File inclusion via `#include` (supports both `<>` and `""` styles)
 - Global and local variable allocation
