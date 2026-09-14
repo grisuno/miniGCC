@@ -69,6 +69,7 @@ enum {
     T_XOR_ASSIGN,
     T_SHL_ASSIGN,
     T_SHR_ASSIGN,
+    T_INLINE,
     T_UNION,
     T_EXTERN,
     T_EOF
@@ -80,6 +81,7 @@ enum {
 static char lex_kw_blob[LEX_KW_BLOB];
 static int lex_kw_ids[LEX_KW_CAP];
 static int lex_kw_count = 0;
+static int lex_pass_top = -1;
 
 static char *input_ptr;
 static char *source_start;
@@ -889,6 +891,9 @@ static void lex_init_keywords(void) {
     lex_kw_add("sizeof", T_SIZEOF);
     lex_kw_add("union", T_UNION);
     lex_kw_add("extern", T_EXTERN);
+    lex_kw_add("inline", T_INLINE);
+    lex_kw_add("__inline", T_INLINE);
+    lex_kw_add("__inline__", T_INLINE);
 }
 
 static int lex_kw_lookup(void) {
@@ -1080,7 +1085,7 @@ static void next_token(void) {
     }
     
     if (c == '\0') {
-        if (ctx_top > 0) {
+        if (ctx_top > 0 && (lex_pass_top < 0 || ctx_top > lex_pass_top)) {
             free(source_start);
             ctx_top--;
             source_start = ctx_stack[ctx_top].buf_start;
@@ -1372,6 +1377,7 @@ static void next_token(void) {
                 case 'x': {
                     input_ptr++;
                     int hv = 0;
+                    int hcnt = 0;
                     while (*input_ptr) {
                         char hc = *input_ptr;
                         if (hc >= '0' && hc <= '9') hv = (hv << 4) | (hc - '0');
@@ -1379,8 +1385,12 @@ static void next_token(void) {
                         else if (hc >= 'A' && hc <= 'F') hv = (hv << 4) | (hc - 'A' + 10);
                         else break;
                         input_ptr++;
+                        hcnt++;
                     }
-                    ch = hv;
+                    if (hcnt == 0) error("invalid hex escape");
+                    input_ptr--;
+                    ch = hv & 255;
+                    if (ch > 127) ch = ch - 256;
                     break;
                 }
                 default:
@@ -1392,7 +1402,9 @@ static void next_token(void) {
                             input_ptr++;
                             cnt++;
                         }
-                        ch = ov;
+                        input_ptr--;
+                        ch = ov & 255;
+                        if (ch > 127) ch = ch - 256;
                     } else {
                         ch = *input_ptr;
                     }
@@ -1711,6 +1723,7 @@ static void unary(void) {
                 int sg = s->is_global;
                 int sz = s->size;
                 int sv = s->var_type;
+                int dot_after = (tok == '.') && !s->pointed;
                 expr_pointed = s->pointed;
                 current_elem_size2 = 0;
                 if (s->pointed)
@@ -1720,20 +1733,41 @@ static void unary(void) {
                 expr_type = sv;
                 
                 if (sv == T_FLOAT) {
-                    if (sg)
-                        emit_s("    movl %s(%%rip), %%eax", id_name);
-                    else
-                        emit_i("    movl %d(%%rbp), %%eax", s->offset);
+                    if (sg) {
+                        if (dot_after)
+                            emit_s("    leaq %s(%%rip), %%rax", id_name);
+                        else
+                            emit_s("    movl %s(%%rip), %%eax", id_name);
+                    } else {
+                        if (dot_after)
+                            emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                        else
+                            emit_i("    movl %d(%%rbp), %%eax", s->offset);
+                    }
                 } else if (sz == 1) {
-                    if (sg)
-                        emit_s("    movsbq %s(%%rip), %%rax", id_name);
-                    else
-                        emit_i("    movsbq %d(%%rbp), %%rax", s->offset);
+                    if (sg) {
+                        if (dot_after)
+                            emit_s("    leaq %s(%%rip), %%rax", id_name);
+                        else
+                            emit_s("    movsbq %s(%%rip), %%rax", id_name);
+                    } else {
+                        if (dot_after)
+                            emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                        else
+                            emit_i("    movsbq %d(%%rbp), %%rax", s->offset);
+                    }
                 } else {
-                    if (sg)
-                        emit_s("    movq %s(%%rip), %%rax", id_name);
-                    else
-                        emit_i("    movq %d(%%rbp), %%rax", s->offset);
+                    if (sg) {
+                        if (dot_after)
+                            emit_s("    leaq %s(%%rip), %%rax", id_name);
+                        else
+                            emit_s("    movq %s(%%rip), %%rax", id_name);
+                    } else {
+                        if (dot_after)
+                            emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                        else
+                            emit_i("    movq %d(%%rbp), %%rax", s->offset);
+                    }
                 }
             }
         }
@@ -3043,6 +3077,9 @@ static void statement(void) {
         if (tok == T_STATIC) {
                 next_token();
                 continue;
+            } else if (tok == T_INLINE) {
+                next_token();
+                continue;
             } else if (tok == T_CONST) {
                 next_token();
                 continue;
@@ -3382,11 +3419,20 @@ static void parse_function(const char *name, int ret_type) {
     char body_token[MAX_TOKEN_LEN];
     strcpy(body_token, token);
     int saved_symbol_cnt = symbol_count;
+    int saved_macro_count = macro_count;
+    int saved_if_depth = if_depth;
+    int saved_if_nest[MAX_IF_NESTING];
+    int saved_processed = processed_count;
+    {
+        int ni = 0;
+        while (ni < MAX_IF_NESTING) { saved_if_nest[ni] = if_nest[ni]; ni++; }
+    }
 
     emit_enabled = 0;
     max_func_stack = param_stack;
     stack_size = param_stack;
     function_has_return = 0;
+    lex_pass_top = ctx_top;
 
     statement();  /* primera pasada completa */
 
@@ -3394,11 +3440,22 @@ static void parse_function(const char *name, int ret_type) {
     if (func_stack < 64) func_stack = 64; // Margen de seguridad para pushes de argumentos
     /* Restaurar estado exacto */
     truncate_symbols(saved_symbol_cnt);
+    macro_count = saved_macro_count;
+    if_depth = saved_if_depth;
+    {
+        int ni = 0;
+        while (ni < MAX_IF_NESTING) { if_nest[ni] = saved_if_nest[ni]; ni++; }
+    }
+    while (processed_count > saved_processed) {
+        processed_count--;
+        free(processed_files[processed_count]);
+    }
     input_ptr = body_start;
     line = body_line;
     tok = body_tok;
     strcpy(token, body_token);
     emit_enabled = 1;
+    lex_pass_top = -1;
 
     /* Prologue real */
     emit_s("    .globl %s", name);
@@ -3732,6 +3789,7 @@ static int emit_global_initializer(const char *name, int is_static, int *size,
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
+        while (tok == T_INLINE) next_token();
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
             unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
@@ -3745,6 +3803,7 @@ static void parse_program(void) {
             static_flag = 1;
             next_token();
         }
+        while (tok == T_INLINE) next_token();
         if (tok == T_CONST) {
             next_token();
             continue;

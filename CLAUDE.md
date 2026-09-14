@@ -11,6 +11,8 @@ All ints are 8 bytes internally. Generates standalone ELF with `_start`.
 3. **BDD (Behavior-Driven Development):** Test behavior via bootstrap + test suite.
 4. **Boy Scout Rule:** Fix any technical debt or security issue encountered; never out of scope.
 5. **Validation:** After every change: `gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c` must succeed, then `./test.sh` must pass.
+   `bash test_all.sh` (25 runtime tests + 4 negative lexer tests in `tests/`,
+   each diffed against a gcc reference) must report 29 passed, 0 failed.
 
 ## Code Standards
 - No comments, no emojis.
@@ -60,6 +62,14 @@ whenever `../ld/ld.c` exists.
 - Control: if/else, while, for, do/while, switch/case/default, break, continue, goto, return
 - Operators: +, -, *, /, %, <, <=, >, >=, ==, !=, &&, ||, !, &, |, ^, ~, <<, >>, =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=, ++, --, ?:, [], ., ->, sizeof(type-name)
 - Literals: decimal, octal `0...` and hex `0x...` integers with `uUlL` suffixes, floats with exponent and `fFlL` suffixes
+- `inline` / `__inline` / `__inline__` accepted as a no-op qualifier and
+  skipped by the parser (functions always emit out-of-line, so a plain
+  `inline` definition links like a normal global instead of following the
+  C99 no-emit rule)
+- Function definitions in headers work: pass 1 of the two-pass body sizing
+  is clamped to its include level (`lex_pass_top`), so the over-read past
+  the closing `}` can no longer POP an include and strand the rewind on a
+  freed buffer (which silently dropped every declaration after the header)
 - Functions: up to 6 reg params (SysV AMD64 ABI), recursion, 16-byte stack alignment
 - Preprocessor: #define (numeric constant-expression folding: decimal and hex literals, char literals with escapes, prior macros, and the operators + - * / % << >> & | ^ ~ ! < <= > >= == != && || with parentheses; any non-foldable RHS such as a function-like macro or string falls back to value 0 as before), #include (<> and ""), #ifdef, #ifndef, #if (0/1), #else, #endif
 - Floating-point: SSE (float/double), mixed int-float expressions
@@ -110,6 +120,22 @@ still bootstraps it.
    symbols, and no nested brace lists for 2D arrays
 7. No `asm` inline (lexer groundwork done: a future `T_ASM` keyword must be
    wired through the parser to emit the string body verbatim)
+8. Structs only through `typedef struct {...} Name;` with single-level
+   `ptr->field` / `value.field` access; chained member access (`a.b.c`),
+   `enum` used as a declared type, and `typedef` names for locals are
+   rejected or miscompiled instead of working
+9. Pointer arithmetic and `++`/`--` on multi-byte pointers are unscaled
+   (correct only for `char*`); array subscripting scales correctly
+10. Float model gaps: no `float`/`double` mixing in one expression, no
+    compound assignment or `double` to `float` narrowing on floats, and
+    `(int)` casts of doubles; clean single-model code works
+11. `static` locals re-initialize on every entry (no persistence); `static`
+    globals persist correctly
+12. Array dimensions accept a single number or macro only (no expressions);
+    `case` labels accept numeric literals only (an enumerator reads as 0)
+13. `char *` globals initialized with a string literal only materialize when
+    linked with the sibling `ld` (the weak `_start` fill loses to crt1 under
+    a gcc link); `char[]` globals work everywhere
 
 <!-- readmenator-agent-kb-link -->
 ## Project Knowledge Base (MUST read before coding)
