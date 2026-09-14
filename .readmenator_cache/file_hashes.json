@@ -1,8 +1,8 @@
 {
-  "minigcc.c": "41beb4b234df4f00d3d469b0e83489c8966aa99fbbf6b4fbe3163c6aaf7f87d4",
-  "minigccg2.s": "c5318756a4d170b1e9f89abcaabf760bbdcce8b5aabf50cb6fb43eeb419b178e",
-  "minigccg3.s": "c5318756a4d170b1e9f89abcaabf760bbdcce8b5aabf50cb6fb43eeb419b178e",
-  "minigccg4.s": "c5318756a4d170b1e9f89abcaabf760bbdcce8b5aabf50cb6fb43eeb419b178e",
+  "minigcc.c": "b26ba3b6620fb384ab3412464e6623a7b462c7880539b895bdc700df152fab5a",
+  "minigccg2.s": "0595009228ce7d13bac5e4871251d52a15dacd5cb63063e3289a17d23647dc0b",
+  "minigccg3.s": "0595009228ce7d13bac5e4871251d52a15dacd5cb63063e3289a17d23647dc0b",
+  "minigccg4.s": "0595009228ce7d13bac5e4871251d52a15dacd5cb63063e3289a17d23647dc0b",
   "my_library.h": "46b2e9d03d73a56f9f0610e55e671690128aa3a13aea5510bd9059bf7c8a0796",
   "test.c": "1b5cc57a5d2bc6b25717280ff11d58557b99ba4402a9d7c9601f7f8dce121387",
   "test.sh": "ecd260bd1ea6368b9ed2ae45a28e3bfceecf3db88e09ae5bb8ac4414f0712236",

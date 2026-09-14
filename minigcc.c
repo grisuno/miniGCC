@@ -61,10 +61,25 @@ enum {
     T_SIZEOF,
     T_SHL,
     T_SHR,
+    T_MUL_ASSIGN,
+    T_DIV_ASSIGN,
+    T_MOD_ASSIGN,
+    T_AND_ASSIGN,
+    T_OR_ASSIGN,
+    T_XOR_ASSIGN,
+    T_SHL_ASSIGN,
+    T_SHR_ASSIGN,
     T_UNION,
     T_EXTERN,
     T_EOF
 };
+
+#define LEX_KW_CAP 32
+#define LEX_KW_BLOB 256
+
+static char lex_kw_blob[LEX_KW_BLOB];
+static int lex_kw_ids[LEX_KW_CAP];
+static int lex_kw_count = 0;
 
 static char *input_ptr;
 static char *source_start;
@@ -823,6 +838,213 @@ static int my_isalnum(int c) {
     return 0;
 }
 
+static void lex_fail(const char *msg, char *start, char *end) {
+    int n = end - start;
+    if (n < 0) n = 0;
+    if (n >= MAX_TOKEN_LEN) n = MAX_TOKEN_LEN - 1;
+    int i = 0;
+    while (i < n) { token[i] = start[i]; i++; }
+    token[n] = '\0';
+    error(msg);
+}
+
+static void lex_kw_add(const char *name, int id) {
+    int off = 0;
+    int i = 0;
+    while (i < lex_kw_count) { off += strlen(lex_kw_blob + off) + 1; i++; }
+    int n = strlen(name);
+    if (lex_kw_count >= LEX_KW_CAP || off + n + 1 >= LEX_KW_BLOB)
+        error("keyword table full");
+    int j = 0;
+    while (j <= n) { lex_kw_blob[off + j] = name[j]; j++; }
+    lex_kw_ids[lex_kw_count] = id;
+    lex_kw_count++;
+}
+
+static void lex_init_keywords(void) {
+    if (lex_kw_count > 0) return;
+    lex_kw_add("if", T_IF);
+    lex_kw_add("else", T_ELSE);
+    lex_kw_add("while", T_WHILE);
+    lex_kw_add("return", T_RETURN);
+    lex_kw_add("int", T_INT);
+    lex_kw_add("long", T_INT);
+    lex_kw_add("char", T_CHAR);
+    lex_kw_add("void", T_VOID);
+    lex_kw_add("enum", T_ENUM);
+    lex_kw_add("static", T_STATIC);
+    lex_kw_add("typedef", T_TYPEDEF);
+    lex_kw_add("struct", T_STRUCT);
+    lex_kw_add("const", T_CONST);
+    lex_kw_add("for", T_FOR);
+    lex_kw_add("switch", T_SWITCH);
+    lex_kw_add("case", T_CASE);
+    lex_kw_add("default", T_DEFAULT);
+    lex_kw_add("break", T_BREAK);
+    lex_kw_add("continue", T_CONTINUE);
+    lex_kw_add("goto", T_GOTO);
+    lex_kw_add("float", T_FLOAT);
+    lex_kw_add("double", T_DOUBLE);
+    lex_kw_add("do", T_DO);
+    lex_kw_add("sizeof", T_SIZEOF);
+    lex_kw_add("union", T_UNION);
+    lex_kw_add("extern", T_EXTERN);
+}
+
+static int lex_kw_lookup(void) {
+    int off = 0;
+    int i = 0;
+    while (i < lex_kw_count) {
+        if (strcmp(token, lex_kw_blob + off) == 0)
+            return lex_kw_ids[i];
+        off += strlen(lex_kw_blob + off) + 1;
+        i++;
+    }
+    return -1;
+}
+
+static int lex_match_op(const char *op, int id) {
+    int i = 0;
+    while (op[i]) {
+        if (input_ptr[i] != op[i]) return 0;
+        i++;
+    }
+    safe_strcpy(token, op, MAX_TOKEN_LEN);
+    tok = id;
+    input_ptr += i;
+    return 1;
+}
+
+static int lex_hex_val(int c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return -1;
+}
+
+static int lex_is_int_suffix(int c) {
+    if (c == 'u' || c == 'U') return 1;
+    if (c == 'l' || c == 'L') return 1;
+    return 0;
+}
+
+static void lex_number(void) {
+    if (*input_ptr == '0' && (input_ptr[1] == 'x' || input_ptr[1] == 'X')) {
+        char *bad = input_ptr;
+        long v = 0;
+        input_ptr += 2;
+        if (lex_hex_val(*input_ptr) < 0) {
+            lex_fail("invalid hex constant", bad, input_ptr);
+            return;
+        }
+        while (lex_hex_val(*input_ptr) >= 0) {
+            v = v * 16 + lex_hex_val(*input_ptr);
+            input_ptr++;
+        }
+        while (lex_is_int_suffix(*input_ptr)) input_ptr++;
+        snprintf(token, MAX_TOKEN_LEN, "%ld", v);
+        tok = T_NUM;
+        return;
+    }
+    if (*input_ptr == '0' && input_ptr[1] >= '0' && input_ptr[1] <= '9') {
+        char *t = input_ptr + 1;
+        while (*t >= '0' && *t <= '9') t++;
+        if (*t != '.' && *t != 'e' && *t != 'E') {
+            char *bad = input_ptr;
+            long v = 0;
+            while (*input_ptr >= '0' && *input_ptr <= '9') {
+                if (*input_ptr == '8' || *input_ptr == '9') {
+                    char *end = input_ptr + 1;
+                    while (*end >= '0' && *end <= '9') end++;
+                    lex_fail("invalid octal constant", bad, end);
+                    return;
+                }
+                v = v * 8 + (*input_ptr - '0');
+                input_ptr++;
+            }
+            while (lex_is_int_suffix(*input_ptr)) input_ptr++;
+            snprintf(token, MAX_TOKEN_LEN, "%ld", v);
+            tok = T_NUM;
+            return;
+        }
+    }
+    if (*input_ptr == '.') {
+        char *q = input_ptr + 1;
+        while (*q >= '0' && *q <= '9') q++;
+        if (*q == 'e' || *q == 'E') {
+            char *r = q + 1;
+            if (*r == '+' || *r == '-') r++;
+            if (*r < '0' || *r > '9') {
+                lex_fail("invalid float constant", input_ptr, r);
+                return;
+            }
+            q = r;
+            while (*q >= '0' && *q <= '9') q++;
+        }
+        if (q - input_ptr >= MAX_TOKEN_LEN - 1) {
+            lex_fail("numeric constant too long", input_ptr, q);
+            return;
+        }
+        int n = q - input_ptr;
+        int i = 0;
+        while (i < n) { token[i] = input_ptr[i]; i++; }
+        token[n] = '\0';
+        input_ptr = q;
+        int sfx = *input_ptr;
+        if (sfx == 'f' || sfx == 'F' || sfx == 'l' || sfx == 'L') input_ptr++;
+        tok = T_FLOAT_NUM;
+        float_const_is_float[float_const_count] = (sfx == 'f' || sfx == 'F') ? 1 : 0;
+        safe_strcpy(float_const_str[float_const_count], token, MAX_TOKEN_LEN);
+        float_const_count++;
+        return;
+    }
+    {
+        char *q = input_ptr;
+        long v = 0;
+        int is_float = 0;
+        while (*q >= '0' && *q <= '9') { v = v * 10 + (*q - '0'); q++; }
+        if (*q == '.') {
+            is_float = 1;
+            q++;
+            while (*q >= '0' && *q <= '9') q++;
+        }
+        if (*q == 'e' || *q == 'E') {
+            char *r = q + 1;
+            if (*r == '+' || *r == '-') r++;
+            if (*r < '0' || *r > '9') {
+                lex_fail("invalid float constant", input_ptr, r);
+                return;
+            }
+            is_float = 1;
+            q = r;
+            while (*q >= '0' && *q <= '9') q++;
+        }
+        if (q - input_ptr >= MAX_TOKEN_LEN - 1) {
+            lex_fail("numeric constant too long", input_ptr, q);
+            return;
+        }
+        if (is_float) {
+            int n = q - input_ptr;
+            int i = 0;
+            while (i < n) { token[i] = input_ptr[i]; i++; }
+            token[n] = '\0';
+            input_ptr = q;
+            int sfx = *input_ptr;
+            if (sfx == 'f' || sfx == 'F' || sfx == 'l' || sfx == 'L') input_ptr++;
+            tok = T_FLOAT_NUM;
+            float_const_is_float[float_const_count] = (sfx == 'f' || sfx == 'F') ? 1 : 0;
+            safe_strcpy(float_const_str[float_const_count], token, MAX_TOKEN_LEN);
+            float_const_count++;
+            return;
+        }
+        while (lex_is_int_suffix(*q)) q++;
+        input_ptr = q;
+        snprintf(token, MAX_TOKEN_LEN, "%ld", v);
+        tok = T_NUM;
+        return;
+    }
+}
+
 /* Lexer */
 static void next_token(void) {
     int c;
@@ -874,14 +1096,21 @@ static void next_token(void) {
     
     /* Skip comments and preprocessor directives */
     if (c == '/' && input_ptr[1] == '*') {
+        char *cstart = input_ptr;
+        int closed = 0;
         input_ptr += 2;
         while (*input_ptr) {
             if (*input_ptr == '*' && input_ptr[1] == '/') {
                 input_ptr += 2;
+                closed = 1;
                 break;
             }
             if (*input_ptr == '\n') line++;
             input_ptr++;
+        }
+        if (!closed) {
+            lex_fail("unterminated comment", cstart, input_ptr);
+            return;
         }
         goto restart;
     }
@@ -1021,99 +1250,39 @@ static void next_token(void) {
     }
 
     if (my_isalpha(c) || c == '_') {
-        char *p = token;
+        char *start = input_ptr;
         int len = 0;
-        while ((my_isalnum(*input_ptr) || *input_ptr == '_') && len < MAX_TOKEN_LEN - 1) {
-            *p = *input_ptr;
-            p++;
+        int kid;
+        int mi;
+        while (my_isalnum(*input_ptr) || *input_ptr == '_') {
             input_ptr++;
             len++;
         }
-        *p = '\0';
-        if (strcmp(token, "if") == 0)       tok = T_IF;
-        else if (strcmp(token, "else") == 0) tok = T_ELSE;
-        else if (strcmp(token, "while") == 0) tok = T_WHILE;
-        else if (strcmp(token, "return") == 0) tok = T_RETURN;
-        else if (strcmp(token, "int") == 0)  tok = T_INT;
-        else if (strcmp(token, "long") == 0) tok = T_INT;
-        else if (strcmp(token, "char") == 0) tok = T_CHAR;
-        else if (strcmp(token, "void") == 0) tok = T_VOID;
-        else if (strcmp(token, "enum") == 0) tok = T_ENUM;
-        else if (strcmp(token, "static") == 0) tok = T_STATIC;
-        else if (strcmp(token, "typedef") == 0) tok = T_TYPEDEF;
-        else if (strcmp(token, "struct") == 0) tok = T_STRUCT;
-        else if (strcmp(token, "const") == 0) tok = T_CONST;
-        else if (strcmp(token, "for") == 0) tok = T_FOR;
-        else if (strcmp(token, "switch") == 0) tok = T_SWITCH;
-        else if (strcmp(token, "case") == 0) tok = T_CASE;
-        else if (strcmp(token, "default") == 0) tok = T_DEFAULT;
-        else if (strcmp(token, "break") == 0) tok = T_BREAK;
-        else if (strcmp(token, "continue") == 0) tok = T_CONTINUE;
-        else if (strcmp(token, "goto") == 0) tok = T_GOTO;
-        else if (strcmp(token, "float") == 0) tok = T_FLOAT;
-        else if (strcmp(token, "double") == 0) tok = T_DOUBLE;
-        else if (strcmp(token, "do") == 0) tok = T_DO;
-        else if (strcmp(token, "sizeof") == 0) tok = T_SIZEOF;
-        else if (strcmp(token, "union") == 0) tok = T_UNION;
-        else if (strcmp(token, "extern") == 0) tok = T_EXTERN;
-        else {
-            int mi = find_macro(token);
-            if (mi >= 0) {
-                snprintf(token, MAX_TOKEN_LEN, "%d", macros[mi].value);
-                tok = T_NUM;
-            } else {
-                tok = T_ID;
-            }
+        if (len >= MAX_TOKEN_LEN) {
+            char *end = start + len;
+            lex_fail("identifier too long", start, end);
+            return;
+        }
+        int i = 0;
+        while (i < len) { token[i] = start[i]; i++; }
+        token[len] = '\0';
+        kid = lex_kw_lookup();
+        if (kid >= 0) {
+            tok = kid;
+            return;
+        }
+        mi = find_macro(token);
+        if (mi >= 0) {
+            snprintf(token, MAX_TOKEN_LEN, "%d", macros[mi].value);
+            tok = T_NUM;
+        } else {
+            tok = T_ID;
         }
         return;
     }
 
     if (my_isdigit(c) || (c == '.' && my_isdigit(input_ptr[1]))) {
-        char *p = token;
-        int len = 0;
-        int is_float = 0;
-        if (my_isdigit(c)) {
-            while (my_isdigit(*input_ptr) && len < MAX_TOKEN_LEN - 1) {
-                *p = *input_ptr; p++; input_ptr++; len++;
-            }
-        }
-        if (*input_ptr == '.' && len < MAX_TOKEN_LEN - 1) {
-            is_float = 1;
-            *p = '.'; p++; input_ptr++; len++;
-            while (my_isdigit(*input_ptr) && len < MAX_TOKEN_LEN - 1) {
-                *p = *input_ptr; p++; input_ptr++; len++;
-            }
-        }
-        if ((*input_ptr == 'e' || *input_ptr == 'E') && len < MAX_TOKEN_LEN - 1) {
-            is_float = 1;
-            *p = *input_ptr; p++; input_ptr++; len++;
-            if ((*input_ptr == '+' || *input_ptr == '-') && len < MAX_TOKEN_LEN - 1) {
-                *p = *input_ptr; p++; input_ptr++; len++;
-            }
-            while (my_isdigit(*input_ptr) && len < MAX_TOKEN_LEN - 1) {
-                *p = *input_ptr; p++; input_ptr++; len++;
-            }
-        }
-        if ((*input_ptr == 'f' || *input_ptr == 'F' || *input_ptr == 'l' || *input_ptr == 'L') && len < MAX_TOKEN_LEN - 1) {
-            is_float = 1;
-            int sfx = *input_ptr;
-            *p = *input_ptr; p++; input_ptr++; len++;
-            *p = '\0';
-            tok = T_FLOAT_NUM;
-            float_const_is_float[float_const_count] = (sfx == 'f' || sfx == 'F') ? 1 : 0;
-            strcpy(float_const_str[float_const_count], token);
-            float_const_count++;
-            return;
-        }
-        *p = '\0';
-        if (is_float) {
-            tok = T_FLOAT_NUM;
-            float_const_is_float[float_const_count] = 0;
-            safe_strcpy(float_const_str[float_const_count], token, MAX_TOKEN_LEN);
-            float_const_count++;
-        } else {
-            tok = T_NUM;
-        }
+        lex_number();
         return;
     }
 
@@ -1240,19 +1409,51 @@ static void next_token(void) {
         return;
     }
 
-    if (c == '<' && input_ptr[1] == '<') { input_ptr += 2; tok = T_SHL; strcpy(token, "<<"); return; }
-    if (c == '>' && input_ptr[1] == '>') { input_ptr += 2; tok = T_SHR; strcpy(token, ">>"); return; }
-    if (c == '=' && input_ptr[1] == '=') { input_ptr += 2; tok = T_EQ; strcpy(token, "=="); return; }
-    if (c == '!' && input_ptr[1] == '=') { input_ptr += 2; tok = T_NE; strcpy(token, "!="); return; }
-    if (c == '<' && input_ptr[1] == '=') { input_ptr += 2; tok = T_LE; strcpy(token, "<="); return; }
-    if (c == '>' && input_ptr[1] == '=') { input_ptr += 2; tok = T_GE; strcpy(token, ">="); return; }
-    if (c == '&' && input_ptr[1] == '&') { input_ptr += 2; tok = T_AND; strcpy(token, "&&"); return; }
-    if (c == '|' && input_ptr[1] == '|') { input_ptr += 2; tok = T_OR; strcpy(token, "||"); return; }
-    if (c == '+' && input_ptr[1] == '+') { input_ptr += 2; tok = T_INC; strcpy(token, "++"); return; }
-    if (c == '+' && input_ptr[1] == '=') { input_ptr += 2; tok = T_ADD_ASSIGN; strcpy(token, "+="); return; }
-    if (c == '-' && input_ptr[1] == '=') { input_ptr += 2; tok = T_SUB_ASSIGN; strcpy(token, "-="); return; }
-    if (c == '-' && input_ptr[1] == '-') { input_ptr += 2; tok = T_DEC; strcpy(token, "--"); return; }
-    if (c == '-' && input_ptr[1] == '>') { input_ptr += 2; tok = T_ARROW; strcpy(token, "->"); return; }
+    if (c == '<') {
+        if (lex_match_op("<<=", T_SHL_ASSIGN)) return;
+        if (lex_match_op("<<", T_SHL)) return;
+        if (lex_match_op("<=", T_LE)) return;
+    }
+    if (c == '>') {
+        if (lex_match_op(">>=", T_SHR_ASSIGN)) return;
+        if (lex_match_op(">>", T_SHR)) return;
+        if (lex_match_op(">=", T_GE)) return;
+    }
+    if (c == '=') {
+        if (lex_match_op("==", T_EQ)) return;
+    }
+    if (c == '!') {
+        if (lex_match_op("!=", T_NE)) return;
+    }
+    if (c == '&') {
+        if (lex_match_op("&&", T_AND)) return;
+        if (lex_match_op("&=", T_AND_ASSIGN)) return;
+    }
+    if (c == '|') {
+        if (lex_match_op("||", T_OR)) return;
+        if (lex_match_op("|=", T_OR_ASSIGN)) return;
+    }
+    if (c == '+') {
+        if (lex_match_op("++", T_INC)) return;
+        if (lex_match_op("+=", T_ADD_ASSIGN)) return;
+    }
+    if (c == '-') {
+        if (lex_match_op("--", T_DEC)) return;
+        if (lex_match_op("-=", T_SUB_ASSIGN)) return;
+        if (lex_match_op("->", T_ARROW)) return;
+    }
+    if (c == '*') {
+        if (lex_match_op("*=", T_MUL_ASSIGN)) return;
+    }
+    if (c == '/') {
+        if (lex_match_op("/=", T_DIV_ASSIGN)) return;
+    }
+    if (c == '%') {
+        if (lex_match_op("%=", T_MOD_ASSIGN)) return;
+    }
+    if (c == '^') {
+        if (lex_match_op("^=", T_XOR_ASSIGN)) return;
+    }
 
     token[0] = c;
     token[1] = '\0';
@@ -2210,6 +2411,47 @@ static void conditional_expr(void) {
     }
 }
 
+static void emit_compound_op(int op, int asize) {
+    if (op == T_MUL_ASSIGN) {
+        if (asize == 4) emit("    imull %%ecx, %%eax");
+        else emit("    imulq %%rcx, %%rax");
+    } else if (op == T_DIV_ASSIGN || op == T_MOD_ASSIGN) {
+        if (asize == 4) {
+            emit("    movl %%eax, %%r8d");
+            emit("    movl %%ecx, %%eax");
+            emit("    cltd");
+            emit("    idivl %%r8d");
+            if (op == T_MOD_ASSIGN) emit("    movl %%edx, %%eax");
+        } else {
+            emit("    movq %%rax, %%r8");
+            emit("    movq %%rcx, %%rax");
+            emit("    cqto");
+            emit("    idivq %%r8");
+            if (op == T_MOD_ASSIGN) emit("    movq %%rdx, %%rax");
+        }
+    } else if (op == T_AND_ASSIGN) {
+        if (asize == 4) emit("    andl %%ecx, %%eax");
+        else emit("    andq %%rcx, %%rax");
+    } else if (op == T_OR_ASSIGN) {
+        if (asize == 4) emit("    orl %%ecx, %%eax");
+        else emit("    orq %%rcx, %%rax");
+    } else if (op == T_XOR_ASSIGN) {
+        if (asize == 4) emit("    xorl %%ecx, %%eax");
+        else emit("    xorq %%rcx, %%rax");
+    } else if (op == T_SHL_ASSIGN || op == T_SHR_ASSIGN) {
+        emit("    movq %%rax, %%r8");
+        emit("    movq %%rcx, %%rax");
+        emit("    movq %%r8, %%rcx");
+        if (op == T_SHL_ASSIGN) {
+            if (asize == 4) emit("    sall %%cl, %%eax");
+            else emit("    salq %%cl, %%rax");
+        } else {
+            if (asize == 4) emit("    sarl %%cl, %%eax");
+            else emit("    sarq %%cl, %%rax");
+        }
+    }
+}
+
 static void assignment_expr(void) {
     //no_postfix_deref = 0; 
     int saved_tok = tok;
@@ -2251,6 +2493,14 @@ static void assignment_expr(void) {
         else if (tok == T_DEC) assign_type = 3;
         else if (tok == T_ADD_ASSIGN) assign_type = 4;
         else if (tok == T_SUB_ASSIGN) assign_type = 5;
+        else if (tok == T_MUL_ASSIGN) assign_type = 6;
+        else if (tok == T_DIV_ASSIGN) assign_type = 7;
+        else if (tok == T_MOD_ASSIGN) assign_type = 8;
+        else if (tok == T_AND_ASSIGN) assign_type = 9;
+        else if (tok == T_OR_ASSIGN) assign_type = 10;
+        else if (tok == T_XOR_ASSIGN) assign_type = 11;
+        else if (tok == T_SHL_ASSIGN) assign_type = 12;
+        else if (tok == T_SHR_ASSIGN) assign_type = 13;
         else assign_type = 0;
 
         input_ptr = peek_ptr;
@@ -2282,6 +2532,16 @@ static void assignment_expr(void) {
             if (assign_size == 1) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
             else if (assign_size == 4) { emit("    subl %%eax, %%ecx"); emit("    movl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
             else { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
+            return;
+        } else if (assign_type >= 6) {
+            int cop = 0;
+            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            lvalue_address(); emit("    pushq %%rax");
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
+            emit("    pushq %%rax"); cop = tok; next_token(); assignment_expr(); emit("    popq %%rcx");
+            emit_compound_op(cop, assign_size);
+            emit("    popq %%rcx");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type != 0) {
             int op = tok == T_INC ? T_INC : T_DEC;
@@ -2330,6 +2590,14 @@ static void assignment_expr(void) {
         else if (tok == T_DEC) assign_type = 3;
         else if (tok == T_ADD_ASSIGN) assign_type = 4;
         else if (tok == T_SUB_ASSIGN) assign_type = 5;
+        else if (tok == T_MUL_ASSIGN) assign_type = 6;
+        else if (tok == T_DIV_ASSIGN) assign_type = 7;
+        else if (tok == T_MOD_ASSIGN) assign_type = 8;
+        else if (tok == T_AND_ASSIGN) assign_type = 9;
+        else if (tok == T_OR_ASSIGN) assign_type = 10;
+        else if (tok == T_XOR_ASSIGN) assign_type = 11;
+        else if (tok == T_SHL_ASSIGN) assign_type = 12;
+        else if (tok == T_SHR_ASSIGN) assign_type = 13;
 
         input_ptr = peek_ptr; 
         line = peek_line; 
@@ -2357,6 +2625,15 @@ static void assignment_expr(void) {
             if (assign_size == 1) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
             else if (assign_size == 4) { emit("    subl %%eax, %%ecx"); emit("    movl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
             else { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
+            return;
+        } else if (assign_type >= 6) {
+            int cop = 0;
+            lvalue_address(); emit("    pushq %%rax");
+            if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
+            emit("    pushq %%rax"); cop = tok; next_token(); assignment_expr(); emit("    popq %%rcx");
+            emit_compound_op(cop, assign_size);
+            emit("    popq %%rcx");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type != 0) {
             lvalue_address();
@@ -3633,6 +3910,7 @@ int main(int argc, char **argv) {
     line = 1;
     assign_size = 8;
     hash_init();
+    lex_init_keywords();
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s source.c > output.s\n", argv[0]);

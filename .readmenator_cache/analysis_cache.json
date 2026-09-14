@@ -3,27 +3,27 @@
     "god_nodes": [
       [
         "minigccg2.s",
-        13.100000000000001
+        16.1
       ],
       [
         "minigccg3.s",
-        13.100000000000001
+        16.1
       ],
       [
         "minigccg4.s",
-        13.100000000000001
+        16.1
       ],
       [
         "minigcc.c",
-        8.3
+        12.5
       ],
       [
         "test_include.c",
-        2.2
+        2.3
       ],
       [
         "my_library.h",
-        2.1
+        2.2
       ],
       [
         "test_ld_selfhost.sh",
@@ -59,6 +59,7 @@
       "What does minigccg2.s depend on, and what depends on it? (0 connections)",
       "What does minigccg3.s depend on, and what depends on it? (0 connections)",
       "What does minigccg4.s depend on, and what depends on it? (0 connections)",
+      "What is FileContext in minigcc.c and how is it used?",
       "What is the overall architecture of this codebase?"
     ]
   },
