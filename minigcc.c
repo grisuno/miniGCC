@@ -121,6 +121,7 @@ typedef struct {
     int var_type;
     int elem_ptr;      /* pointer elements: stride 8 on the first subscript */
     int is_unsigned;
+    int is_fnptr;
     int next_hash;
 } Symbol;
 
@@ -143,6 +144,8 @@ static int emit_enabled = 1;
 static int max_func_stack = 0;
 static int assign_size = 8;
 static int expr_pointed = 0;
+static int expr_fnptr = 0;
+static int subscript_base_fnptr = 0;
 static int current_elem_size = 0;
 static int current_elem_size2 = 0;
 static int current_elem_unsigned = 0;
@@ -204,7 +207,12 @@ static int struct_member_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_elem_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_unsigned[MAX_STRUCT_MEMBERS];
 static int struct_member_is_float[MAX_STRUCT_MEMBERS];
+static int struct_member_is_fnptr[MAX_STRUCT_MEMBERS];
 static int struct_member_count = 0;
+
+#define MAX_DEFINED_FUNCS 512
+static char defined_func_names[MAX_DEFINED_FUNCS][MAX_IDENT_LEN];
+static int defined_func_count = 0;
 
 #define MAX_IF_NESTING 64
 #define CONST_VAR_FLAG 0x10000
@@ -1304,6 +1312,64 @@ static void next_token(void) {
             tok = kid;
             return;
         }
+        if (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0) {
+            int is_uns = (token[0] == 'u');
+            int has_long = 0;
+            int has_char = 0;
+            char *p = input_ptr;
+            int pline = line;
+            for (;;) {
+                while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r' || *p == '\f' || *p == '\v') {
+                    if (*p == '\n')
+                        pline++;
+                    p++;
+                }
+                if (strncmp(p, "long", 4) == 0 && !my_isalnum(p[4]) && p[4] != '_') {
+                    has_long = 1;
+                    p += 4;
+                } else if (strncmp(p, "int", 3) == 0 && !my_isalnum(p[3]) && p[3] != '_') {
+                    p += 3;
+                } else if (strncmp(p, "char", 4) == 0 && !my_isalnum(p[4]) && p[4] != '_') {
+                    has_char = 1;
+                    p += 4;
+                } else {
+                    break;
+                }
+            }
+            if (!has_long && !has_char && p != input_ptr) {
+                int is_short = (strncmp(p, "short", 5) == 0 && !my_isalnum(p[5]) && p[5] != '_');
+                if (is_short) {
+                    tok = T_ID;
+                    return;
+                }
+            }
+            input_ptr = p;
+            line = pline;
+            unsigned_type = is_uns;
+            if (has_char) {
+                tok = T_CHAR;
+                token[0] = 'c';
+                token[1] = 'h';
+                token[2] = 'a';
+                token[3] = 'r';
+                token[4] = '\0';
+            } else {
+                tok = T_INT;
+                if (has_long) {
+                    token[0] = 'l';
+                    token[1] = 'o';
+                    token[2] = 'n';
+                    token[3] = 'g';
+                    token[4] = '\0';
+                } else {
+                    token[0] = 'i';
+                    token[1] = 'n';
+                    token[2] = 't';
+                    token[3] = '\0';
+                }
+            }
+            return;
+        }
         mi = find_macro(token);
         if (mi >= 0) {
             snprintf(token, MAX_TOKEN_LEN, "%d", macros[mi].value);
@@ -1612,6 +1678,7 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     s->elem_size2 = 0;
     s->var_type = 0;
     s->elem_ptr = 0;
+    s->is_fnptr = 0;
     s->next_hash = -1;
     if (is_global) {
         s->offset = 0;
@@ -1659,6 +1726,12 @@ static void skip_typedef(void);
 static void parse_asm_block(void);
 static int parse_const_int(long long *out);
 static int skip_gcc_attribute(void);
+static void parse_indirect_call(void);
+static int parse_fnptr_declarator(char *out_name, int *out_count);
+static void note_defined_func(const char *name);
+static int is_defined_func(const char *name);
+static int peek_call_argc(void);
+static void emit_spill_reverse(int argc);
 
 /* Argument/parameter register names by ABI index. Written as a function
    instead of a local array literal because the compiler does not allocate
@@ -1670,6 +1743,168 @@ static const char *arg_reg(int i) {
     if (i == 3) return "%rcx";
     if (i == 4) return "%r8";
     return "%r9";
+}
+
+static void note_defined_func(const char *name) {
+    int i = 0;
+    while (i < defined_func_count) {
+        if (strcmp(defined_func_names[i], name) == 0)
+            return;
+        i++;
+    }
+    if (defined_func_count >= MAX_DEFINED_FUNCS)
+        error("too many functions");
+    safe_strcpy(defined_func_names[defined_func_count], name, MAX_IDENT_LEN);
+    defined_func_count++;
+}
+
+static int is_defined_func(const char *name) {
+    int i = 0;
+    while (i < defined_func_count) {
+        if (strcmp(defined_func_names[i], name) == 0)
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
+static int parse_fnptr_declarator(char *out_name, int *out_count) {
+    int depth;
+    int nlen;
+    match('(');
+    if (tok != '*')
+        error("expected function pointer declarator");
+    next_token();
+    if (tok != T_ID)
+        error("expected function pointer name");
+    nlen = strlen(token);
+    if (nlen >= MAX_IDENT_LEN)
+        nlen = MAX_IDENT_LEN - 1;
+    memcpy(out_name, token, nlen);
+    out_name[nlen] = '\0';
+    next_token();
+    *out_count = 0;
+    if (tok == '[') {
+        int cnt = 0;
+        next_token();
+        if (tok == T_NUM) {
+            cnt = (int)safe_strtoll(token);
+            next_token();
+        } else if (tok == T_ID) {
+            int mi = find_macro(token);
+            if (mi < 0)
+                error("undefined macro");
+            cnt = macros[mi].value;
+            next_token();
+        } else {
+            error("expected array size");
+        }
+        if (cnt <= 0)
+            error("function pointer array needs a positive size");
+        match(']');
+        *out_count = cnt;
+    }
+    match(')');
+    if (tok != '(')
+        error("expected parameter list in function pointer declarator");
+    depth = 1;
+    next_token();
+    while (depth > 0 && tok != T_EOF) {
+        if (tok == '(')
+            depth++;
+        else if (tok == ')')
+            depth--;
+        next_token();
+    }
+    return 1;
+}
+
+static int peek_call_argc(void) {
+    char *save_src = input_ptr;
+    int save_line = line;
+    int save_tok = tok;
+    char save_token[MAX_TOKEN_LEN];
+    int depth = 0;
+    int argc = 0;
+    if (tok != '(')
+        error("call arity lookahead needs '('");
+    strcpy(save_token, token);
+    next_token();
+    if (tok == ')') {
+        input_ptr = save_src;
+        line = save_line;
+        tok = save_tok;
+        strcpy(token, save_token);
+        return 0;
+    }
+    argc = 1;
+    while (tok != T_EOF) {
+        if (tok == '(' || tok == '[' || tok == '{') {
+            depth++;
+        } else if (tok == ')' || tok == ']' || tok == '}') {
+            if (depth == 0)
+                break;
+            depth--;
+        } else if (tok == ',' && depth == 0) {
+            argc++;
+        }
+        next_token();
+    }
+    input_ptr = save_src;
+    line = save_line;
+    tok = save_tok;
+    strcpy(token, save_token);
+    return argc;
+}
+
+static void emit_spill_reverse(int argc) {
+    int m = argc - 6;
+    int k;
+    for (k = 0; k < m - 1 - k; k++) {
+        int j = m - 1 - k;
+        emit_i("    movq %d(%%rsp), %%r10", k * 8);
+        emit_i("    movq %d(%%rsp), %%rax", j * 8);
+        emit_si("    movq %s, %d(%%rsp)", "%rax", k * 8);
+        emit_si("    movq %s, %d(%%rsp)", "%r10", j * 8);
+    }
+}
+
+static void parse_indirect_call(void) {
+    int argc = 0;
+    int i;
+    int want;
+    want = peek_call_argc();
+    match('(');
+    emit("    pushq %%rax");
+    emit("    pushq %%r12");
+    emit("    movq %%rsp, %%r12");
+    emit("    andq $-16, %%rsp");
+    if (want & 1)
+        emit("    subq $8, %%rsp");
+    if (tok != ')') {
+        while (1) {
+            assignment_expr();
+            emit("    pushq %%rax");
+            argc++;
+            if (tok == ')')
+                break;
+            match(',');
+        }
+    }
+    match(')');
+    for (i = 0; i < argc && i < 6; i++)
+        emit_is("    movq %d(%%rsp), %s", (argc - i - 1) * 8, arg_reg(i));
+    emit_spill_reverse(argc);
+    emit("    movq 8(%%r12), %%r10");
+    emit("    xorl %%eax, %%eax");
+    emit("    call *%%r10");
+    emit("    movq %%r12, %%rsp");
+    emit("    popq %%r12");
+    emit("    addq $8, %%rsp");
+    expr_pointed = 0;
+    expr_fnptr = 0;
+    deref_w = 0;
+    deref_u = 0;
 }
 
 /* Predefined libc global symbol names, indexed; returns NULL past the end. */
@@ -1731,6 +1966,7 @@ static void unary(void) {
     if (tok == T_NUM) {
         emit_s("    movq $%s, %%rax", token);
         expr_pointed = 0;
+        expr_fnptr = 0;
         expr_type = 0;
         deref_w = 0;
         deref_u = 0;
@@ -1749,15 +1985,26 @@ static void unary(void) {
             expr_type = T_DOUBLE;
         }
         expr_pointed = 0;
+        expr_fnptr = 0;
         deref_w = 0;
         deref_u = 0;
         next_token();
     } else if (tok == T_ID) {
         char id_name[MAX_IDENT_LEN];
+        int fidx;
         safe_strcpy(id_name, token, MAX_IDENT_LEN);
         next_token();
+        fidx = find_symbol(id_name);
         if (tok == '(') {
-            if (strcmp(id_name, "__sync_fetch_and_add") == 0 ||
+            if (fidx >= 0 && symbols[fidx].is_fnptr && !symbols[fidx].is_array) {
+                Symbol *fs = &symbols[fidx];
+                if (fs->is_global)
+                    emit_s("    movq %s(%%rip), %%rax", fs->name);
+                else
+                    emit_i("    movq %d(%%rbp), %%rax", fs->offset);
+                expr_fnptr = 1;
+                parse_indirect_call();
+            } else if (strcmp(id_name, "__sync_fetch_and_add") == 0 ||
                 strcmp(id_name, "__sync_lock_test_and_set") == 0 ||
                 strcmp(id_name, "__sync_lock_release") == 0 ||
                 strcmp(id_name, "__sync_synchronize") == 0) {
@@ -1772,9 +2019,17 @@ static void unary(void) {
                        strcmp(id_name, "va_arg") == 0) {
                 parse_va_arg();
             } else {
+            if (fidx >= 0 && !symbols[fidx].is_fnptr)
+                error("cannot call non-function");
             /* Function call */
-            next_token();
             int argc = 0;
+            int want = peek_call_argc();
+            next_token();
+            emit("    pushq %%r12");
+            emit("    movq %%rsp, %%r12");
+            emit("    andq $-16, %%rsp");
+            if (want & 1)
+                emit("    subq $8, %%rsp");
             if (tok != ')') {
                 while (1) {
                     assignment_expr();
@@ -1787,33 +2042,34 @@ static void unary(void) {
             match(')');
             for (int i = 0; i < argc && i < 6; i++)
                 emit_is("    movq %d(%%rsp), %s", (argc - i - 1) * 8, arg_reg(i));
-            if (argc > 6)
-                error("too many function arguments (max 6)");
-            if (argc > 0)
-                emit_i("    addq $%d, %%rsp", argc * 8);
-            
-            /* Alineación dinámica de pila a 16 bytes antes de call (ABI x86-64). */
-            // En lugar de andq, calculamos si necesitamos alinear basándonos en el número de argumentos
-            // Pero la forma más segura es usar r12 como ancla y asegurar que el stack no baje de rbp - func_stack
-            emit("    pushq %%r12");
-            emit("    movq %%rsp, %%r12");
-            // Si el stack ya está alineado a 16 antes del call (después de los pushes de args), no hacemos andq
-            // Pero para ser seguros con la ABI:
-            emit("    andq $-16, %%rsp"); 
+            emit_spill_reverse(argc);
             emit("    xorl %%eax, %%eax");
             emit_s("    call %s", id_name);
-            emit("    movq %%r12, %%rsp"); // Restauramos exactamente donde estábamos antes de alinear
+            emit("    movq %%r12, %%rsp");
             emit("    popq %%r12");
             
             expr_pointed = 0;
+            expr_fnptr = 0;
             deref_w = 0;
             deref_u = 0;
             }
         } else {
             int idx = find_symbol(id_name);
-            if (idx < 0) error("undefined variable");
+            if (idx < 0) {
+                if (is_defined_func(id_name)) {
+                    emit_s("    leaq %s(%%rip), %%rax", id_name);
+                    expr_pointed = 0;
+                    expr_fnptr = 1;
+                    deref_w = 0;
+                    deref_u = 0;
+                } else {
+                    error("undefined variable");
+                }
+            } else {
             Symbol *s = &symbols[idx];
             int sc = s->is_const;
+            expr_fnptr = 0;
+            subscript_base_fnptr = 0;
             if (sc) {
                 int cv = s->const_value;
                 emit_i("    movq $%d, %%rax", cv);
@@ -1837,6 +2093,7 @@ static void unary(void) {
                     emit_s("    leaq %s(%%rip), %%rax", id_name);
                 else
                     emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                subscript_base_fnptr = s->is_fnptr;
                 expr_pointed = s->size > 0 && s->size <= 8 ? 0 : (s->pointed ? s->pointed : T_INT);
             } else {
                 int sg = s->is_global;
@@ -1920,17 +2177,22 @@ static void unary(void) {
                     if (sg) {
                         if (dot_after)
                             emit_s("    leaq %s(%%rip), %%rax", id_name);
-                        else
+                        else {
                             emit_s("    movq %s(%%rip), %%rax", id_name);
+                            expr_fnptr = s->is_fnptr;
+                        }
                     } else {
                         if (dot_after)
                             emit_i("    leaq %d(%%rbp), %%rax", s->offset);
-                        else
+                        else {
                             emit_i("    movq %d(%%rbp), %%rax", s->offset);
+                            expr_fnptr = s->is_fnptr;
+                        }
                     }
                 }
             }
         }
+    }
     } else if (tok == '(') {
         char *cast_save = input_ptr;
         int cast_line = line;
@@ -1953,6 +2215,7 @@ static void unary(void) {
         if (is_cast) {
             next_token();
             unary();
+            expr_fnptr = 0;
         } else {
             input_ptr = cast_save;
             line = cast_line;
@@ -1964,7 +2227,9 @@ static void unary(void) {
     } else if (tok == '*') {
         next_token();
         unary();
-        if (expr_pointed == T_CHAR && deref_w == 0)
+        if (expr_fnptr) {
+            assign_size = 8;
+        } else if (expr_pointed == T_CHAR && deref_w == 0)
             emit("    movsbq (%%rax), %%rax");
         else if (deref_w == 1) {
             if (deref_u) emit("    movzbq (%%rax), %%rax");
@@ -1991,8 +2256,20 @@ static void unary(void) {
         next_token();
         if (tok != T_ID) error("expected identifier after '&'");
         int idx = find_symbol(token);
-        if (idx < 0) error("undefined variable");
+        if (idx < 0) {
+            if (is_defined_func(token)) {
+                emit_s("    leaq %s(%%rip), %%rax", token);
+                expr_pointed = 0;
+                expr_fnptr = 1;
+                deref_w = 0;
+                deref_u = 0;
+                next_token();
+            } else {
+                error("undefined variable");
+            }
+        } else {
         Symbol *s = &symbols[idx];
+        expr_fnptr = 0;
         if (s->var_type == T_CHAR) expr_pointed = T_CHAR;
         else if (s->var_type == T_FLOAT) expr_pointed = T_FLOAT;
         else if (s->var_type == T_DOUBLE) expr_pointed = T_DOUBLE;
@@ -2009,6 +2286,7 @@ static void unary(void) {
         else
             emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
+        }
     } else if (tok == T_STRING) {
         int lbl = str_label_counter++;
         if (string_count < MAX_STRINGS) {
@@ -2019,11 +2297,13 @@ static void unary(void) {
         }
         emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
         expr_pointed = T_CHAR;
+        expr_fnptr = 0;
         next_token();
     } else if (tok == '-') {
         next_token();
         unary();
         handle_postfix(0);
+        expr_fnptr = 0;
         if (expr_type == T_FLOAT)
             emit("    xorl $0x80000000, %%eax");
         else if (expr_type == T_DOUBLE)
@@ -2034,6 +2314,7 @@ static void unary(void) {
         next_token();
         unary();
         handle_postfix(0);
+        expr_fnptr = 0;
         emit("    testq %%rax, %%rax");
         emit("    sete %%al");
         emit("    movzbq %%al, %%rax");
@@ -2041,6 +2322,7 @@ static void unary(void) {
         next_token();
         unary();
         handle_postfix(0);
+        expr_fnptr = 0;
         emit("    notq %%rax");
     } else if (tok == T_SIZEOF) {
         next_token();
@@ -2292,6 +2574,7 @@ static void handle_postfix(int is_lvalue) {
 			int saved_ceu = current_elem_unsigned;
 			int saved_as = assign_size;       // <--- ¡FALTABA ESTE!
 			int saved_npd = no_postfix_deref;
+			int saved_sbfn = subscript_base_fnptr;
 			
 			assignment_expr(); // Evalúa el índice del array
 			
@@ -2302,6 +2585,7 @@ static void handle_postfix(int is_lvalue) {
 			current_elem_unsigned = saved_ceu;
 			assign_size = saved_as;           // <--- ¡RESTAURADO!
 			no_postfix_deref = saved_npd;
+			subscript_base_fnptr = saved_sbfn;
 			// ------------------------------------------
 
 			emit("    popq %%rcx");
@@ -2325,6 +2609,8 @@ static void handle_postfix(int is_lvalue) {
 				current_elem_size = current_elem_size2;
 				current_elem_size2 = 0;
 				assign_size = current_elem_size;
+				expr_fnptr = 0;
+				subscript_base_fnptr = 0;
 			} else if (!is_lvalue && !no_postfix_deref && elem_size <= 8) {
 				/* Load width follows the element size, not the pointed-to
 				   type: elements of a char*[] array are 8-byte pointers even
@@ -2345,39 +2631,95 @@ static void handle_postfix(int is_lvalue) {
 					/* The loaded element is itself a pointer: the value in
 					   %rax still points at the pointee, so a chained
 					   subscript (argv[i][j]) indexes it with the pointee's
-					   element size, not the pointer-array stride. */
+					   element size, not the pointer-array stride. A function
+					   pointer element stays callable through the same flag. */
 					expr_pointed = saved_ep;
 					current_elem_size = (saved_ep == T_CHAR) ? 1 : 8;
+					expr_fnptr = subscript_base_fnptr;
+					subscript_base_fnptr = 0;
 				} else {
 					expr_pointed = 0;
+					expr_fnptr = subscript_base_fnptr;
+					subscript_base_fnptr = 0;
 				}
+			} else {
+				expr_fnptr = 0;
+				subscript_base_fnptr = 0;
 			}
 			match(']');
-		} else if (tok == '.') {
-			next_token();
-			int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0;
-			for (int i = 0; i < struct_member_count; i++) {
-				if (strcmp(token, struct_member_names[i]) == 0) {
-					off = struct_member_offsets[i];
-					msize = struct_member_sizes[i];
-					mesize = struct_member_elem_sizes[i];
-					muns = struct_member_unsigned[i];
-					mfloat = struct_member_is_float[i];
-					break;
-				}
-			}
-			next_token();
-			if (off > 0) emit_i("    addq $%d, %%rax", off);
-			assign_size = msize;
-			current_elem_size = mesize;
-			current_elem_size2 = 0;
-			current_elem_unsigned = muns;
-			if (is_lvalue || no_postfix_deref) {
-				if (msize == 1 && !muns) expr_pointed = T_CHAR;
+        } else if (tok == '.') {
+            next_token();
+            int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0, mfnptr = 0;
+            for (int i = 0; i < struct_member_count; i++) {
+                if (strcmp(token, struct_member_names[i]) == 0) {
+                    off = struct_member_offsets[i];
+                    msize = struct_member_sizes[i];
+                    mesize = struct_member_elem_sizes[i];
+                    muns = struct_member_unsigned[i];
+                    mfloat = struct_member_is_float[i];
+                    mfnptr = struct_member_is_fnptr[i];
+                    break;
+                }
+            }
+            next_token();
+            if (off > 0) emit_i("    addq $%d, %%rax", off);
+            assign_size = msize;
+            current_elem_size = mesize;
+            current_elem_size2 = 0;
+            current_elem_unsigned = muns;
+            if (is_lvalue || no_postfix_deref) {
+                expr_fnptr = 0;
+                if (msize == 1 && !muns) expr_pointed = T_CHAR;
+				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
+				else expr_pointed = (msize > 8) ? T_INT : 0;
+            } else {
+                if (msize > 8) {
+                    expr_fnptr = 0;
+                    expr_pointed = (msize > 0) ? T_INT : 0;
+                } else {
+                    if (msize == 1) {
+                        if (muns) emit("    movzbq (%%rax), %%rax");
+                        else emit("    movsbq (%%rax), %%rax");
+                    } else if (msize == 2) {
+                        if (muns) emit("    movzwq (%%rax), %%rax");
+                        else emit("    movswq (%%rax), %%rax");
+                    } else if (msize == 4) {
+                        if (muns) emit("    movl (%%rax), %%eax");
+                        else emit("    movslq (%%rax), %%rax");
+                    } else
+                        emit("    movq (%%rax), %%rax");
+                    expr_pointed = 0;
+                    expr_fnptr = mfnptr;
+                }
+            }
+        } else if (tok == T_ARROW) {
+            next_token();
+            int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0, mfnptr = 0;
+            for (int i = 0; i < struct_member_count; i++) {
+                if (strcmp(token, struct_member_names[i]) == 0) {
+                    off = struct_member_offsets[i];
+                    msize = struct_member_sizes[i];
+                    mesize = struct_member_elem_sizes[i];
+                    muns = struct_member_unsigned[i];
+                    mfloat = struct_member_is_float[i];
+                    mfnptr = struct_member_is_fnptr[i];
+                    break;
+                }
+            }
+            next_token();
+            if (off > 0) emit_i("    addq $%d, %%rax", off);
+            assign_size = msize;
+            current_elem_size = mesize;
+            current_elem_size2 = 0;
+            current_elem_unsigned = muns;
+            if (is_lvalue || no_postfix_deref) {
+                expr_fnptr = 0;
+                if (msize == 1 && !muns) expr_pointed = T_CHAR;
 				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
 				else expr_pointed = (msize > 8) ? T_INT : 0;
 			} else {
 				if (msize > 8) {
+					expr_fnptr = 0;
 					expr_pointed = (msize > 0) ? T_INT : 0;
 				} else {
 					if (msize == 1) {
@@ -2392,51 +2734,16 @@ static void handle_postfix(int is_lvalue) {
 					} else
 						emit("    movq (%%rax), %%rax");
 					expr_pointed = 0;
-				}
-			}
-		} else if (tok == T_ARROW) {
-			next_token();
-			int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0;
-			for (int i = 0; i < struct_member_count; i++) {
-				if (strcmp(token, struct_member_names[i]) == 0) {
-					off = struct_member_offsets[i];
-					msize = struct_member_sizes[i];
-					mesize = struct_member_elem_sizes[i];
-					muns = struct_member_unsigned[i];
-					mfloat = struct_member_is_float[i];
-					break;
-				}
-			}
-			next_token();
-			if (off > 0) emit_i("    addq $%d, %%rax", off);
-			assign_size = msize;
-			current_elem_size = mesize;
-			current_elem_size2 = 0;
-			current_elem_unsigned = muns;
-			if (is_lvalue || no_postfix_deref) {
-				if (msize == 1 && !muns) expr_pointed = T_CHAR;
-				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
-				else expr_pointed = (msize > 8) ? T_INT : 0;
-			} else {
-				if (msize > 8) {
-					expr_pointed = (msize > 0) ? T_INT : 0;
-				} else {
-					if (msize == 1) {
-						if (muns) emit("    movzbq (%%rax), %%rax");
-						else emit("    movsbq (%%rax), %%rax");
-					} else if (msize == 2) {
-						if (muns) emit("    movzwq (%%rax), %%rax");
-						else emit("    movswq (%%rax), %%rax");
-					} else if (msize == 4) {
-						if (muns) emit("    movl (%%rax), %%eax");
-						else emit("    movslq (%%rax), %%rax");
-					} else
-						emit("    movq (%%rax), %%rax");
-					expr_pointed = 0;
+					expr_fnptr = mfnptr;
 				}
 			}
 		}
 	}
+    if (tok == '(') {
+        if (!expr_fnptr)
+            error("cannot call non-function");
+        parse_indirect_call();
+    }
     no_postfix_deref = 0;
 }
 
@@ -2462,7 +2769,10 @@ static void multiplicative_expr(void) {
         next_token();
         emit("    pushq %%rax");
         int left_type = expr_type;
+        int left_fn = expr_fnptr;
         unary_expr();
+        if (left_fn || expr_fnptr)
+            error("arithmetic on function pointer");
         int right_type = expr_type;
         emit("    popq %%rcx");
         
@@ -2516,6 +2826,7 @@ static void multiplicative_expr(void) {
         }
         expr_type = t;
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2526,9 +2837,12 @@ static void additive_expr(void) {
         next_token();
         emit("    pushq %%rax");
         int left_type = expr_type;
+        int left_fn = expr_fnptr;
         int save_dw = deref_w;
         int save_du = deref_u;
         multiplicative_expr();
+        if (left_fn || expr_fnptr)
+            error("arithmetic on function pointer");
         if (save_dw) {
             deref_w = save_dw;
             deref_u = save_du;
@@ -2577,6 +2891,7 @@ static void additive_expr(void) {
         }
         expr_type = t;
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2584,9 +2899,12 @@ static void shift_expr(void) {
     additive_expr();
     while (tok == T_SHL || tok == T_SHR) {
         int op = tok;
+        int left_fn = expr_fnptr;
         next_token();
         emit("    pushq %%rax");
         shift_expr();
+        if (left_fn || expr_fnptr)
+            error("arithmetic on function pointer");
         emit("    pushq %%rax");
         emit("    popq %%rcx");
         emit("    popq %%rax");
@@ -2596,6 +2914,7 @@ static void shift_expr(void) {
             emit("    sarq %%cl, %%rax");
         expr_pointed = 0;
         expr_type = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2649,6 +2968,7 @@ static void relational_expr(void) {
             emit("    movzbq %%al, %%rax");
         }
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2698,6 +3018,7 @@ static void equality_expr(void) {
             emit("    movzbq %%al, %%rax");
         }
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2706,10 +3027,14 @@ static void bitwise_and_expr(void) {
     while (tok == '&') {
         next_token();
         emit("    pushq %%rax");
+        int left_fn = expr_fnptr;
         equality_expr();
+        if (left_fn || expr_fnptr)
+            error("arithmetic on function pointer");
         emit("    popq %%rcx");
         emit("    andq %%rcx, %%rax");
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2718,10 +3043,14 @@ static void bitwise_xor_expr(void) {
     while (tok == '^') {
         next_token();
         emit("    pushq %%rax");
+        int left_fn = expr_fnptr;
         bitwise_and_expr();
+        if (left_fn || expr_fnptr)
+            error("arithmetic on function pointer");
         emit("    popq %%rcx");
         emit("    xorq %%rcx, %%rax");
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2730,10 +3059,14 @@ static void bitwise_or_expr(void) {
     while (tok == '|') {
         next_token();
         emit("    pushq %%rax");
+        int left_fn = expr_fnptr;
         bitwise_xor_expr();
+        if (left_fn || expr_fnptr)
+            error("arithmetic on function pointer");
         emit("    popq %%rcx");
         emit("    orq %%rcx, %%rax");
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -2792,6 +3125,7 @@ static void conditional_expr(void) {
         conditional_expr(); /* Rama falsa (recursiva para asociatividad derecha) */
         emit_label(l_end);
         expr_pointed = 0;
+        expr_fnptr = 0;
     }
 }
 
@@ -3071,6 +3405,8 @@ static void asm_home_text(int home, char *buf) {
     else if (home == 1) safe_strcpy(buf, "%rbx", ASM_TXT_SZ);
     else if (home == 2) safe_strcpy(buf, "%rcx", ASM_TXT_SZ);
     else if (home == 3) safe_strcpy(buf, "%rdx", ASM_TXT_SZ);
+    else if (home == 10) safe_strcpy(buf, "%rdi", ASM_TXT_SZ);
+    else if (home == 11) safe_strcpy(buf, "%rsi", ASM_TXT_SZ);
     else safe_strcpy(buf, asm_scratch(home - 4), ASM_TXT_SZ);
 }
 
@@ -3084,6 +3420,8 @@ static void asm_reg_sized(int home, int size, char *buf) {
         else if (home == 5) safe_strcpy(buf, "%r8b", ASM_TXT_SZ);
         else if (home == 6) safe_strcpy(buf, "%r9b", ASM_TXT_SZ);
         else if (home == 7) safe_strcpy(buf, "%sil", ASM_TXT_SZ);
+        else if (home == 10) safe_strcpy(buf, "%dil", ASM_TXT_SZ);
+        else if (home == 11) safe_strcpy(buf, "%sil", ASM_TXT_SZ);
         else safe_strcpy(buf, "%dil", ASM_TXT_SZ);
     } else if (size == 2) {
         if (home == 0) safe_strcpy(buf, "%ax", ASM_TXT_SZ);
@@ -3094,6 +3432,8 @@ static void asm_reg_sized(int home, int size, char *buf) {
         else if (home == 5) safe_strcpy(buf, "%r8w", ASM_TXT_SZ);
         else if (home == 6) safe_strcpy(buf, "%r9w", ASM_TXT_SZ);
         else if (home == 7) safe_strcpy(buf, "%si", ASM_TXT_SZ);
+        else if (home == 10) safe_strcpy(buf, "%di", ASM_TXT_SZ);
+        else if (home == 11) safe_strcpy(buf, "%si", ASM_TXT_SZ);
         else safe_strcpy(buf, "%di", ASM_TXT_SZ);
     } else if (size == 4) {
         if (home == 0) safe_strcpy(buf, "%eax", ASM_TXT_SZ);
@@ -3104,6 +3444,8 @@ static void asm_reg_sized(int home, int size, char *buf) {
         else if (home == 5) safe_strcpy(buf, "%r8d", ASM_TXT_SZ);
         else if (home == 6) safe_strcpy(buf, "%r9d", ASM_TXT_SZ);
         else if (home == 7) safe_strcpy(buf, "%esi", ASM_TXT_SZ);
+        else if (home == 10) safe_strcpy(buf, "%edi", ASM_TXT_SZ);
+        else if (home == 11) safe_strcpy(buf, "%esi", ASM_TXT_SZ);
         else safe_strcpy(buf, "%edi", ASM_TXT_SZ);
     } else {
         asm_home_text(home, buf);
@@ -3115,6 +3457,8 @@ static int asm_fixed_home(int c) {
     if (c == 'b') return 1;
     if (c == 'c') return 2;
     if (c == 'd') return 3;
+    if (c == 'D') return 10;
+    if (c == 'S') return 11;
     return -1;
 }
 
@@ -3236,8 +3580,11 @@ static void asm_parse_one(int idx, int is_out) {
         }
         if (!eq || cbuf[1] == '+' || cbuf[k] == '\0')
             error("unsupported asm output constraint");
+        if (cbuf[k] == '&')
+            k++;
         if (cbuf[k] == 'r' || cbuf[k] == 'a' || cbuf[k] == 'b' ||
-            cbuf[k] == 'c' || cbuf[k] == 'd') {
+            cbuf[k] == 'c' || cbuf[k] == 'd' || cbuf[k] == 'D' ||
+            cbuf[k] == 'S') {
             asm_home[idx] = -3;
             asm_text[idx][0] = cbuf[k];
             asm_text[idx][1] = '\0';
@@ -3251,7 +3598,8 @@ static void asm_parse_one(int idx, int is_out) {
     } else {
         if (cbuf[0] == '+' || cbuf[0] == '=') error("read-write asm operands are not supported");
         if ((cbuf[0] == 'r' || cbuf[0] == 'a' || cbuf[0] == 'b' ||
-             cbuf[0] == 'c' || cbuf[0] == 'd') && cbuf[1] == '\0') {
+             cbuf[0] == 'c' || cbuf[0] == 'd' || cbuf[0] == 'D' ||
+             cbuf[0] == 'S') && cbuf[1] == '\0') {
             asm_home[idx] = -3;
             asm_text[idx][0] = cbuf[0];
             asm_text[idx][1] = '\0';
@@ -3274,26 +3622,43 @@ static void asm_parse_one(int idx, int is_out) {
 }
 
 static void asm_assign_homes(void) {
-    int fixed_out[4];
-    int fixed_in[4];
+    int fixed_out[12];
+    int fixed_in[12];
+    int scr_pool[5];
+    int scr_n;
+    int use_d;
+    int use_s;
     int si;
     int i;
-    fixed_out[0] = 0;
-    fixed_out[1] = 0;
-    fixed_out[2] = 0;
-    fixed_out[3] = 0;
-    fixed_in[0] = 0;
-    fixed_in[1] = 0;
-    fixed_in[2] = 0;
-    fixed_in[3] = 0;
+    for (i = 0; i < 12; i++) {
+        fixed_out[i] = 0;
+        fixed_in[i] = 0;
+    }
+    use_d = 0;
+    use_s = 0;
+    for (i = 0; i < asm_nops; i++) {
+        if (asm_home[i] == -3 && asm_text[i][0] == 'D')
+            use_d = 1;
+        if (asm_home[i] == -3 && asm_text[i][0] == 'S')
+            use_s = 1;
+    }
+    scr_n = 0;
+    for (i = 4; i <= 8; i++) {
+        if (i == 8 && use_d)
+            continue;
+        if (i == 7 && use_s)
+            continue;
+        scr_pool[scr_n] = i;
+        scr_n++;
+    }
     si = 0;
     i = 0;
     while (i < asm_nops) {
         if (asm_home[i] == -3) {
             int fh = asm_fixed_home(asm_text[i][0]);
             if (fh < 0) {
-                if (si > 4) error("too many register asm operands");
-                asm_home[i] = 4 + si;
+                if (si >= scr_n) error("too many register asm operands");
+                asm_home[i] = scr_pool[si];
                 si++;
             } else {
                 if (asm_is_out[i]) {
@@ -3309,8 +3674,8 @@ static void asm_assign_homes(void) {
         } else if (asm_home[i] == -4) {
             asm_home[i] = 9;
         } else if (asm_home[i] == -2) {
-            if (si > 4) error("too many register asm operands");
-            asm_home[i] = 4 + si;
+            if (si >= scr_n) error("too many register asm operands");
+            asm_home[i] = scr_pool[si];
             si++;
             snprintf(asm_text[i], ASM_TXT_SZ, "(%s)", asm_scratch(asm_home[i] - 4));
         }
@@ -3530,22 +3895,37 @@ static void statement(void) {
             int type = tok;
             next_token();
             while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
-            
+            int uns_fi = unsigned_type;
             while (tok != ';' && tok != T_EOF) {
+                unsigned_type = uns_fi;
                 int nstars = 0;
                 while (tok == '*') { nstars++; next_token(); }
                 int is_ptr = nstars > 0;
-                if (tok != T_ID) error("expected variable name");
+                int is_fn = 0;
+                int fn_arr = 0;
                 char varname[MAX_IDENT_LEN];
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(varname, token, nlen);
-                varname[nlen] = '\0';
-                next_token();
-                int vsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
+                if (tok == '(') {
+                    parse_fnptr_declarator(varname, &fn_arr);
+                    is_fn = 1;
+                    is_ptr = 1;
+                    if (fn_arr > 0)
+                        error("function pointer arrays need a body declaration");
+                } else {
+                    if (tok != T_ID) error("expected variable name");
+                    int nlen = strlen(token);
+                    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                    memcpy(varname, token, nlen);
+                    varname[nlen] = '\0';
+                    next_token();
+                }
+                int vsize = 8;
                 int vt = (type == T_INT) ? 0 : type;
-                add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0, is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : 0);
+                if (!is_fn) {
+                    vsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
+                }
+                add_symbol(varname, 0, vsize, (!is_fn && is_ptr) ? type : 0, 0, (!is_fn && is_ptr) ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : 0);
                 symbols[symbol_count - 1].var_type = vt;
+                symbols[symbol_count - 1].is_fnptr = is_fn;
                 parse_trailing_align();
                 if (tok == '=') {
                     next_token();
@@ -3923,24 +4303,46 @@ static void statement(void) {
                 if (ti < 0 || !symbols[ti].is_const) { statement(); continue; }
                 int type_size = symbols[ti].const_value;
                 if (symbols[ti].is_unsigned) unsigned_type = 1;
+                int td_fnptr = symbols[ti].is_fnptr;
                 next_token();
+                int uns_td = unsigned_type;
                 restart_typedef: ;
+                unsigned_type = uns_td;
                 int nstars = 0;
                 while (tok == '*') { nstars++; next_token(); }
                 int is_ptr = nstars > 0;
-                if (tok != T_ID) error("expected variable name");
+                int is_fn = 0;
+                int fn_arr = 0;
                 char varname[MAX_IDENT_LEN];
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(varname, token, nlen);
-                varname[nlen] = '\0';
-                next_token();
-                int size = is_ptr ? 8 : type_size;
+                if (tok == '(') {
+                    parse_fnptr_declarator(varname, &fn_arr);
+                    is_fn = 1;
+                    is_ptr = 1;
+                } else {
+                    if (tok != T_ID) error("expected variable name");
+                    int nlen = strlen(token);
+                    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                    memcpy(varname, token, nlen);
+                    varname[nlen] = '\0';
+                    next_token();
+                    if (td_fnptr && nstars == 0) {
+                        is_fn = 1;
+                        is_ptr = 1;
+                    }
+                }
+                int size = 8;
                 int is_arr = 0;
-                int elem_size = (is_ptr && nstars >= 2) ? 8 : type_size;
+                int elem_size = 8;
                 int elem_size2 = 0;
                 int ndims = 0;
-                while (tok == '[') {
+                if (!is_fn) {
+                    size = is_ptr ? 8 : type_size;
+                    elem_size = (is_ptr && nstars >= 2) ? 8 : type_size;
+                } else if (fn_arr > 0) {
+                    size = 8 * fn_arr;
+                    is_arr = 1;
+                }
+                if (!is_fn) while (tok == '[') {
                     is_arr = 1;
                     next_token();
                     int cnt = 0;
@@ -3964,6 +4366,7 @@ static void statement(void) {
                     elem_size2 = 0;
                 }
                 add_symbol(varname, 0, size, is_ptr ? T_INT : 0, is_arr, elem_size);
+                symbols[symbol_count - 1].is_fnptr = is_fn;
                 if (elem_size2 > 0) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
@@ -4031,23 +4434,40 @@ static void statement(void) {
                 next_token();
                 /* FIX: saltar 'long' extra para 'long long', 'long int', etc. */
                 while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
+                int uns = unsigned_type;
                 restart_int: ;
+                unsigned_type = uns;
                 int nstars = 0;
                 while (tok == '*') { nstars++; next_token(); }
                 int is_ptr = nstars > 0;
-                if (tok != T_ID) error("expected variable name");
+                int is_fn = 0;
+                int fn_arr = 0;
                 char varname[MAX_IDENT_LEN];
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(varname, token, nlen);
-                varname[nlen] = '\0';
-                next_token();
-                int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
+                if (tok == '(') {
+                    parse_fnptr_declarator(varname, &fn_arr);
+                    is_fn = 1;
+                    is_ptr = 1;
+                } else {
+                    if (tok != T_ID) error("expected variable name");
+                    int nlen = strlen(token);
+                    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                    memcpy(varname, token, nlen);
+                    varname[nlen] = '\0';
+                    next_token();
+                }
+                int gsize = 8;
                 int vt = (type == T_INT || type == T_VOID) ? 0 : type;
                 int is_arr = 0;
-                int elem_size = is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : gsize; // <--- REVERTIR A ESTO (Debe ser 'gsize', no 1)
+                int elem_size = 8;
                 int elem_size2 = 0;
-                while (tok == '[') {
+                if (!is_fn) {
+                    gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
+                    elem_size = is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : gsize; // <--- REVERTIR A ESTO (Debe ser 'gsize', no 1)
+                } else if (fn_arr > 0) {
+                    gsize = 8 * fn_arr;
+                    is_arr = 1;
+                }
+                if (!is_fn) while (tok == '[') {
                     is_arr = 1;
                     next_token();
                     int cnt = 0;
@@ -4074,6 +4494,7 @@ static void statement(void) {
                 }
                 add_symbol(varname, 0, gsize, is_ptr ? type : 0, is_arr, elem_size);
                 symbols[symbol_count - 1].var_type = vt;
+                symbols[symbol_count - 1].is_fnptr = is_fn;
                 if (elem_size2 > 0) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
@@ -4201,6 +4622,7 @@ static void parse_function(const char *name, int ret_type) {
             if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_FLOAT || tok == T_DOUBLE || tok == T_ID) {
                 int ptype = (tok == T_ID) ? T_INT : tok;
                 int tsize = 8;
+                int td_fnptr = 0;
                 if (tok == T_ID) {
                     int ti = find_symbol(token);
                     if (ti >= 0 && symbols[ti].is_const) {
@@ -4208,6 +4630,7 @@ static void parse_function(const char *name, int ret_type) {
                         if (symbols[ti].var_type == CONST_VAR_FLAG) {
                             tsize = symbols[ti].const_value;
                             if (symbols[ti].is_unsigned) unsigned_type = 1;
+                            td_fnptr = symbols[ti].is_fnptr;
                         }
                     }
                 }
@@ -4216,25 +4639,57 @@ static void parse_function(const char *name, int ret_type) {
                 int nstars = 0;
                 while (tok == '*') { nstars = nstars + 1; next_token(); }
                 int is_ptr = nstars > 0;
-                if (tok != T_ID) error("expected parameter name");
-                int nlen = strlen(token);
+                int is_fn = 0;
+                int fn_arr = 0;
+                char fn_name[MAX_IDENT_LEN];
+                if (tok == '(') {
+                    parse_fnptr_declarator(fn_name, &fn_arr);
+                    is_fn = 1;
+                    is_ptr = 1;
+                } else {
+                    if (tok != T_ID) error("expected parameter name");
+                    if (td_fnptr && nstars == 0) {
+                        int fnl = strlen(token);
+                        if (fnl >= MAX_IDENT_LEN) fnl = MAX_IDENT_LEN - 1;
+                        memcpy(fn_name, token, fnl);
+                        fn_name[fnl] = '\0';
+                        next_token();
+                        is_fn = 1;
+                        is_ptr = 1;
+                    }
+                }
+                int nlen = strlen(is_fn ? fn_name : token);
                 if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(param_names[param_count], token, nlen);
+                memcpy(param_names[param_count], is_fn ? fn_name : token, nlen);
                 param_names[param_count][nlen] = '\0';
-                int psize = is_ptr ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : (ptype == T_INT ? tsize : 8)));
+                int psize = 8;
+                int pointed_type = 0;
+                int vt = (ptype == T_INT || ptype == T_VOID) ? 0 : ptype;
+                int pelem = 0;
+                if (!is_fn) {
+                    psize = is_ptr ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : (ptype == T_INT ? tsize : 8)));
+                    if (nstars >= 1) pointed_type = ptype;
+                    pelem = is_ptr ? ((nstars >= 2) ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : tsize))) : 0;
+                }
                 /* Pointee type after one dereference: char* points at char
                    (movsbq, stride 1); with two or more stars the first
                    subscript yields another pointer (stride 8) whose pointee
                    is still the base type, so char** keeps char as the
                    pointee and elem_ptr marks the 8-byte first stride. */
-                int pointed_type = 0;
-                int vt = (ptype == T_INT || ptype == T_VOID) ? 0 : ptype;
-                if (nstars >= 1) pointed_type = ptype;
-                add_symbol(token, 0, psize, pointed_type, 0, is_ptr ? ((nstars >= 2) ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : tsize))) : 0);
+                add_symbol(is_fn ? fn_name : token, 0, psize, pointed_type, 0, pelem);
                 symbols[symbol_count - 1].var_type = vt;
-                symbols[symbol_count - 1].elem_ptr = (nstars >= 2);
+                symbols[symbol_count - 1].elem_ptr = (!is_fn && nstars >= 2);
+                symbols[symbol_count - 1].is_fnptr = is_fn;
+                if (param_count >= 6) {
+                    Symbol *ps = &symbols[symbol_count - 1];
+                    stack_size -= 16;
+                    if (stack_size < outer_stack)
+                        stack_size = outer_stack;
+                    ps->offset = 16 + 8 * (param_count - 6);
+                }
                 param_count++;
-                next_token();
+                if (!is_fn)
+                    next_token();
                 if (tok == ',') next_token();
             } else if (tok == '.') {
                 next_token(); if (tok == '.') next_token(); if (tok == '.') next_token();
@@ -4257,6 +4712,7 @@ static void parse_function(const char *name, int ret_type) {
     }
 
     if (tok != '{') error("expected function body");
+    note_defined_func(name);
 
     int param_stack = stack_size - outer_stack;
 
@@ -4382,6 +4838,7 @@ static void parse_enum(void) {
         s->elem_size = 0;
         s->elem_size2 = 0;
         s->var_type = 0;
+        s->is_fnptr = 0;
         s->next_hash = -1;
         {
             int h = hash_name(s->name);
@@ -4404,8 +4861,31 @@ static void parse_enum(void) {
 }
 
 static void skip_struct_fields(int fsize, int funs, int ffloat) {
+    int list_uns = unsigned_type;
+    unsigned_type = 0;
     while (tok != ';' && tok != '}' && tok != T_EOF) {
-        if (tok == T_ID) {
+        if (tok == '(') {
+            char fn_name[MAX_IDENT_LEN];
+            int fn_arr = 0;
+            int nlen;
+            parse_fnptr_declarator(fn_name, &fn_arr);
+            if (fn_arr > 0)
+                error("function pointer arrays are not struct members");
+            if (struct_member_count < MAX_STRUCT_MEMBERS) {
+                nlen = strlen(fn_name);
+                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                memcpy(struct_member_names[struct_member_count], fn_name, nlen);
+                struct_member_names[struct_member_count][nlen] = '\0';
+                struct_member_offsets[struct_member_count] = struct_total_size;
+                struct_member_sizes[struct_member_count] = 8;
+                struct_member_elem_sizes[struct_member_count] = 8;
+                struct_member_unsigned[struct_member_count] = 0;
+                struct_member_is_float[struct_member_count] = 0;
+                struct_member_is_fnptr[struct_member_count] = 1;
+                struct_member_count++;
+            }
+            struct_total_size += 8;
+        } else if (tok == T_ID) {
             if (struct_member_count < MAX_STRUCT_MEMBERS) {
                 int nlen = strlen(token);
                 if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
@@ -4414,8 +4894,9 @@ static void skip_struct_fields(int fsize, int funs, int ffloat) {
                 struct_member_offsets[struct_member_count] = struct_total_size;
                 struct_member_sizes[struct_member_count] = fsize;
                 struct_member_elem_sizes[struct_member_count] = fsize;
-                struct_member_unsigned[struct_member_count] = funs;
+                struct_member_unsigned[struct_member_count] = funs || list_uns;
                 struct_member_is_float[struct_member_count] = ffloat;
+                struct_member_is_fnptr[struct_member_count] = 0;
                 struct_member_count++;
             }
             next_token();
@@ -4459,6 +4940,7 @@ static void skip_struct(void) {
         }
         if (tok == T_INT || tok == T_CHAR || tok == T_FLOAT || tok == T_DOUBLE) {
             int ftype = tok;
+            int is_long = (tok == T_INT && strcmp(token, "long") == 0);
             next_token();
             int is_ptr = 0;
             while (tok == '*') { is_ptr = 1; next_token(); }
@@ -4467,7 +4949,7 @@ static void skip_struct(void) {
             else if (ftype == T_CHAR) fsize = 1;
             else if (ftype == T_FLOAT) fsize = 4;
             else if (ftype == T_DOUBLE) fsize = 8;
-            else fsize = 4;
+            else fsize = is_long ? 8 : 4;
 
             skip_struct_fields(fsize, muns, ftype == T_FLOAT ? 1 : 0);
             muns = 0;
@@ -4501,20 +4983,140 @@ static void skip_struct(void) {
     match('}');
 }
 
+static int td_stash_valid = 0;
+static int td_stash_size = 8;
+static int td_stash_uns = 0;
+static int td_stash_fnptr = 0;
+
+static void record_typedef_alias(const char *name, int size, int uns, int fnptr) {    if (!name || !name[0])
+        return;
+    if (symbol_count >= MAX_SYMBOLS)
+        error("too many symbols");
+    Symbol *s = &symbols[symbol_count];
+    char *d = s->name;
+    symbol_count++;
+    int nlen = strlen(name);
+    if (nlen >= MAX_IDENT_LEN)
+        nlen = MAX_IDENT_LEN - 1;
+    memcpy(d, name, nlen);
+    d[nlen] = '\0';
+    s->is_const = 1;
+    s->is_global = 0;
+    s->size = 8;
+    s->pointed = 0;
+    s->is_array = 0;
+    s->elem_size = 0;
+    s->elem_size2 = 0;
+    s->is_unsigned = uns;
+    s->var_type = CONST_VAR_FLAG;
+    s->is_fnptr = fnptr;
+    s->next_hash = -1;
+    s->const_value = size;
+    {
+        int h = hash_name(name);
+        s->next_hash = hash_table[h];
+        hash_table[h] = symbol_count - 1;
+    }
+}
+
 static void skip_typedef(void) {
     next_token(); /* skip 'typedef' */
+    td_stash_valid = 0;
     if (tok == T_STRUCT) {
         next_token();
         skip_struct();
     } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_FLOAT || tok == T_DOUBLE) {
+        int tuns = unsigned_type;
+        unsigned_type = 0;
+        int tsize = 8;
+        int base_size = 8;
+        if (tok == T_CHAR) {
+            tsize = 1;
+            base_size = 1;
+        } else if (tok == T_FLOAT) {
+            tsize = 4;
+            base_size = 4;
+        }
         next_token();
-        while (tok == '*') next_token();
-        if (tok == T_ID) next_token();
+        while (tok == '*') {
+            tsize = 8;
+            next_token();
+        }
+        if (tok == '(') {
+            char fn_name[MAX_IDENT_LEN];
+            int fn_arr = 0;
+            parse_fnptr_declarator(fn_name, &fn_arr);
+            if (fn_arr > 0)
+                error("array of function pointers is not a typedef");
+            record_typedef_alias(fn_name, 8, tuns, 1);
+            td_stash_valid = 1;
+            td_stash_size = base_size;
+            td_stash_uns = tuns;
+            td_stash_fnptr = 0;
+        } else if (tok == T_ID) {
+            char td_name[MAX_IDENT_LEN];
+            int nlen = strlen(token);
+            if (nlen >= MAX_IDENT_LEN)
+                nlen = MAX_IDENT_LEN - 1;
+            memcpy(td_name, token, nlen);
+            td_name[nlen] = '\0';
+            next_token();
+            if (tok == '[') {
+                int cnt = 0;
+                next_token();
+                if (tok == T_NUM) {
+                    cnt = (int)safe_strtoll(token);
+                    next_token();
+                } else if (tok == T_ID) {
+                    int mi = find_macro(token);
+                    if (mi < 0)
+                        error("undefined macro");
+                    cnt = macros[mi].value;
+                    next_token();
+                } else {
+                    error("expected array size");
+                }
+                match(']');
+                if (cnt <= 0)
+                    error("typedef array needs a positive size");
+                tsize = tsize * cnt;
+            }
+            record_typedef_alias(td_name, tsize, tuns, 0);
+            td_stash_valid = 1;
+            td_stash_size = base_size;
+            td_stash_uns = tuns;
+            td_stash_fnptr = 0;
+        }
+    } else if (tok == T_ID) {
+        int ti = find_symbol(token);
+        if (ti >= 0 && symbols[ti].is_const && symbols[ti].var_type == CONST_VAR_FLAG) {
+            int tz = symbols[ti].const_value;
+            int tu = symbols[ti].is_unsigned;
+            int tf = symbols[ti].is_fnptr;
+            char src_name[MAX_IDENT_LEN];
+            safe_strcpy(src_name, token, MAX_IDENT_LEN);
+            next_token();
+            while (tok == '*') {
+                tz = 8;
+                tf = 0;
+                next_token();
+            }
+            if (tok == T_ID) {
+                record_typedef_alias(token, tz, tu, tf);
+                td_stash_valid = 1;
+                td_stash_size = tz;
+                td_stash_uns = tu;
+                td_stash_fnptr = tf;
+                next_token();
+            }
+        }
     }
     /* skip to semicolon, recording the last identifier as the typedef name */
     char last_name[MAX_IDENT_LEN] = "";
     int last_uns = 0;
     while (tok != ';' && tok != T_EOF) {
+        if (tok == '[')
+            error("array continuation in typedef needs its own declaration");
         if (tok == T_ID) {
             int nlen = strlen(token);
             if (strcmp(token, "unsigned") == 0) last_uns = 1;
@@ -4526,35 +5128,41 @@ static void skip_typedef(void) {
         next_token();
     }
     if (last_name[0]) {
-        /* Store as constant (just a placeholder - size 8) */
-        if (symbol_count >= MAX_SYMBOLS) error("too many symbols");
-        Symbol *s = &symbols[symbol_count];
-        char *d = s->name;
-        symbol_count++;
-        int nlen = strlen(last_name);
-        if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-        memcpy(d, last_name, nlen);
-        d[nlen] = '\0';
-        s->is_const = 1;
-        s->is_global = 0;
-        s->size = 8;
-        s->pointed = 0;
-        s->is_array = 0;
-        s->elem_size = 0;
-        s->elem_size2 = 0;
-        s->is_unsigned = last_uns;
-        s->var_type = CONST_VAR_FLAG;
-        s->next_hash = -1;
-        s->const_value = 8;  /* just a marker */
-        /* If a struct was just parsed, store its size */
-        if (struct_total_size > 0)
-            s->const_value = struct_total_size;
-        {
-            int h = hash_name(last_name);
-            s->next_hash = hash_table[h];
-            hash_table[h] = symbol_count - 1;
+        if (td_stash_valid) {
+            record_typedef_alias(last_name, td_stash_size, td_stash_uns, td_stash_fnptr);
+        } else {
+            /* Store as constant (just a placeholder - size 8) */
+            if (symbol_count >= MAX_SYMBOLS) error("too many symbols");
+            Symbol *s = &symbols[symbol_count];
+            char *d = s->name;
+            symbol_count++;
+            int nlen = strlen(last_name);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(d, last_name, nlen);
+            d[nlen] = '\0';
+            s->is_const = 1;
+            s->is_global = 0;
+            s->size = 8;
+            s->pointed = 0;
+            s->is_array = 0;
+            s->elem_size = 0;
+            s->elem_size2 = 0;
+            s->is_unsigned = last_uns;
+            s->var_type = CONST_VAR_FLAG;
+            s->is_fnptr = 0;
+            s->next_hash = -1;
+            s->const_value = 8;  /* just a marker */
+            /* If a struct was just parsed, store its size */
+            if (struct_total_size > 0)
+                s->const_value = struct_total_size;
+            {
+                int h = hash_name(last_name);
+                s->next_hash = hash_table[h];
+                hash_table[h] = symbol_count - 1;
+            }
         }
     }
+    td_stash_valid = 0;
     match(';');
 }
 
@@ -4740,24 +5348,39 @@ static void parse_program(void) {
             int is_ptr = 0;
             int nstars = 0;
             while (tok == '*') { nstars++; is_ptr = 1; next_token(); }
-            if (tok != T_ID) error("expected identifier");
+            int is_fn = 0;
+            int fn_arr = 0;
             char fname[MAX_IDENT_LEN];
-            int nlen = strlen(token);
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(fname, token, nlen);
-            fname[nlen] = '\0';
-            next_token();
             if (tok == '(') {
+                parse_fnptr_declarator(fname, &fn_arr);
+                is_fn = 1;
+                is_ptr = 1;
+            } else {
+                if (tok != T_ID) error("expected identifier");
+                int nlen = strlen(token);
+                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                memcpy(fname, token, nlen);
+                fname[nlen] = '\0';
+                next_token();
+            }
+            if (tok == '(' && !is_fn) {
                 pending_align = 0;
                 parse_function(fname, type);
             } else {
-                int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
+                int gsize = 8;
                 int vt = (type == T_INT || type == T_VOID) ? 0 : type;
                 int is_arr = 0;
-                int elem_size = is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : gsize;
+                int elem_size = 8;
                 int elem_size2 = 0;
                 int ndims = 0;
-                while (tok == '[') {
+                if (!is_fn) {
+                    gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
+                    elem_size = is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : gsize;
+                } else if (fn_arr > 0) {
+                    gsize = 8 * fn_arr;
+                    is_arr = 1;
+                }
+                if (!is_fn) while (tok == '[') {
                     is_arr = 1;
                     next_token();
                     int cnt = 0;
@@ -4786,14 +5409,17 @@ static void parse_program(void) {
                     elem_size2 = 0;
                 }
                 parse_trailing_align();
-                add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr, elem_size);
+                add_symbol(fname, 1, gsize, (!is_fn && is_ptr) ? type : 0, is_arr, elem_size);
                 global_emit_deferred = 0;
                 symbols[symbol_count - 1].var_type = vt;
+                symbols[symbol_count - 1].is_fnptr = is_fn;
                 if (elem_size2 > 0) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
                 }
                 parse_trailing_align();
+                if (is_fn && tok == '=')
+                    error("function pointer globals need assignment, not initializers");
                 if (tok == '=') {
                     next_token();
                     if (was_extern) {
@@ -4823,25 +5449,40 @@ static void parse_program(void) {
             int nstars = 0;
             while (tok == '*') { nstars++; next_token(); }
             int is_ptr = nstars > 0;
-            if (tok != T_ID) error("expected identifier");
+            int is_fn = 0;
+            int fn_arr = 0;
             char fname[MAX_IDENT_LEN];
-            int nlen = strlen(token);
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(fname, token, nlen);
-            fname[nlen] = '\0';
-            next_token();
             if (tok == '(') {
+                parse_fnptr_declarator(fname, &fn_arr);
+                is_fn = 1;
+                is_ptr = 1;
+            } else {
+                if (tok != T_ID) error("expected identifier");
+                int nlen = strlen(token);
+                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                memcpy(fname, token, nlen);
+                fname[nlen] = '\0';
+                next_token();
+            }
+            if (tok == '(' && !is_fn) {
                 static_flag = 0;
                 extern_flag = 0;
                 pending_align = 0;
                 parse_function(fname, T_INT);
             } else {
-            int gsize = is_ptr ? 8 : type_size;
+            int gsize = 8;
             int is_arr = 0;
-            int elem_size = type_size;
+            int elem_size = 8;
             int elem_size2 = 0;
             int ndims = 0;
-            while (tok == '[') {
+            if (!is_fn) {
+                gsize = is_ptr ? 8 : type_size;
+                elem_size = type_size;
+            } else if (fn_arr > 0) {
+                gsize = 8 * fn_arr;
+                is_arr = 1;
+            }
+            if (!is_fn) while (tok == '[') {
                 is_arr = 1;
                 next_token();
                 int cnt = 0;
@@ -4867,11 +5508,14 @@ static void parse_program(void) {
                     elem_size2 = 0;
                 }
                 parse_trailing_align();
-                add_symbol(fname, 1, gsize, is_ptr ? T_INT : 0, is_arr, elem_size);
+                add_symbol(fname, 1, gsize, (!is_fn && is_ptr) ? T_INT : 0, is_arr, elem_size);
+                symbols[symbol_count - 1].is_fnptr = is_fn;
             if (elem_size2 > 0) {
                 Symbol *s2 = &symbols[symbol_count - 1];
                 s2->elem_size2 = elem_size2;
             }
+            if (is_fn && tok == '=')
+                error("function pointer globals need assignment, not initializers");
             if (tok == ';') next_token();
             else error("expected ';' or '(' after global");
             }
@@ -4985,6 +5629,7 @@ int main(int argc, char **argv) {
             s->elem_size2 = 0;
             s->is_unsigned = (strcmp(gname, "size_t") == 0) ? 1 : 0;
             s->var_type = s->is_const ? CONST_VAR_FLAG : 0;
+            s->is_fnptr = 0;
             s->next_hash = -1;
             {
                 int h = hash_name(gname);
@@ -5026,6 +5671,7 @@ int main(int argc, char **argv) {
             s->elem_size2 = 0;
             s->is_unsigned = tuns;
             s->var_type = CONST_VAR_FLAG;
+            s->is_fnptr = 0;
             s->next_hash = -1;
             h = hash_name(tname);
             s->next_hash = hash_table[h];

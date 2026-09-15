@@ -143,8 +143,14 @@ run_test sizeof
 run_test recursion
 run_test globinit
 run_test args
+run_test args7
+run_test unsigned
+run_test struct_ul
+run_test longlong
 run_test asm
 run_test asm3
+run_test asm_ds
+run_test fnptr
 run_test stdint
 run_test attr
 run_test sync
@@ -157,6 +163,14 @@ run_neg float "invalid float constant"
 run_neg asm "unsupported asm output constraint"
 run_neg asm2 "duplicate asm register"
 run_neg asm3 "unsupported asm output constraint"
+run_neg asm_ds "too many register asm operands"
+run_neg fnptr "arithmetic on function pointer"
+run_neg fnptr_call "cannot call non-function"
+run_neg fnptr_cmp "cannot call non-function"
+run_neg fnptr_cmp0 "cannot call non-function"
+run_neg fnptr_tern "cannot call non-function"
+run_neg fnptr_globalinit "need assignment, not initializers"
+run_neg typedef_arrcont "needs its own declaration"
 run_neg attr "needs a positive power of two"
 run_neg va "va_start outside variadic function"
 

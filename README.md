@@ -23,7 +23,17 @@ MiniGCC is an educational, **self-hosting** C compiler that translates a substan
 Fully capable of compiling its own source code to reach complete technical sovereignty. Verified through 3+ generation bootstrapping where the compiler reaches a fixed point (identical output).
 
 ### Supported Types
-- Primitive types: `int`, `char`, `float`, `double`, `void`
+- Primitive types: `int`, `char`, `float`, `double`, `void`, plus
+  `unsigned` / `signed` qualifiers in every position (bare `unsigned` is
+  `int`; `unsigned`/`signed` fold `long`/`int`/`char` runs; `short`
+  abandons to the `short` typedef). Multi-declarator sharing holds:
+  `unsigned char a = 250, b = 150` keeps every declarator unsigned,
+  including `for`-init and block-scope typedefs. Proved by
+  `tests/t_unsigned.c` (shared large values so a signedness drop is
+  observable, chained `typedef u32 uword` with 32-bit wrap print,
+  `signed char` load extension) with 12 scoped mutants dead
+- `long long` is an 8-byte integer in all positions (locals, globals,
+  members, params, returns, casts). Proved by `tests/t_longlong.c`
 - Fixed-width integers with true 1/2/4/8-byte storage: `int8_t`, `int16_t`,
   `int32_t`, `int64_t`, `uint8_t`, `uint16_t`, `uint32_t`, `uint64_t`,
   `uintptr_t`, `intptr_t`, plus `short` / `unsigned short`. Loads
@@ -31,9 +41,17 @@ Fully capable of compiling its own source code to reach complete technical sover
   comparisons are exact, unsigned included; stores narrow to the width
 - Pointers (single and multi-level)
 - Arrays (including 2D arrays)
+- Typedefs: user scalar aliases record the base size and unsignedness
+  (`char` 1, `float` 4, else 8) and chained aliases copy size, unsignedness
+  and fnptr-ness (`typedef u32 uword`, `typedef ureg_t ureg2`); struct
+  members capture a leading `unsigned`/`signed` and size `long` as 8.
+  Array continuations still need their own declaration (fail-closed).
+  Proved by `tests/t_struct_ul.c` (signed-tag vs unsigned-tag member,
+  truncated vs full `long` base, alias-sized array stride),
+  `typedef struct {...} Name`, chained function types, and the
+  `neg_typedef_arrcont.c` diagnostic
 - Structs with member access (`.` and `->` operators)
 - Enums
-- Typedefs (including `typedef struct {...} Name` and chained function types)
 
 ### Control Flow
 - `if` / `else`
@@ -62,7 +80,28 @@ Fully capable of compiling its own source code to reach complete technical sover
 
 ### Functions
 - Function definitions and calls
-- Up to 6 integer/pointer parameters passed via registers (System V AMD64 ABI)
+- Any fixed argument count (System V AMD64 ABI): the first 6
+  integer/pointer arguments ride registers, the rest spill on the stack
+  in order with static parity padding, so `rsp` is 16-aligned at every
+  `call` and stack parameters land at `rbp+16, rbp+24, ...`. Proved by
+  `tests/t_args7.c` (7- and 8-arg direct and indirect calls) plus the
+  `tools/test_call_align.py` probe (direct 6/7/8 and indirect 7 report
+  the ABI-mandated alignment); arity mismatches stay caller bugs, never
+  compiler errors
+- Function pointers: `ret (*name)(params)` declarators for locals, globals,
+  parameters, struct members and arrays; calls through variables, table
+  elements and struct members (`f(x)`, `tbl[i](x)`, `s.op(x)`, `p->op(x)`,
+  `(*f)(x)`); bare designators and `&f` decay to addresses of defined
+  functions (define-before-use); `NULL` assignment and comparison work;
+  arithmetic, bitwise and shift on function pointers is a fail-closed
+  `arithmetic on function pointer` error and calling a non-function value
+  is `cannot call non-function`. Pointee signatures are unchecked
+  (K&R-style): arity mismatches are caller bugs, not compiler errors.
+  Boundaries, all fail-closed with diagnostics: no function-pointer
+  typedefs, no `(*f)[N]` arrays-of vs pointers-to disambiguation beyond
+  the `(*name[N])(params)` form, no member arrays of function pointers,
+  no initializers on static/global declarators (assign at runtime),
+  prototypes do not register designators
 - Variadic definitions (`int kprintf(const char *fmt, ...)`) with
   `va_list` / `__builtin_va_list` and `va_start` / `va_arg` / `va_end`
   (plus the `__builtin_` spellings); every vararg rides a uniform 8-byte slot
@@ -80,9 +119,18 @@ Fully capable of compiling its own source code to reach complete technical sover
 - Basic `asm` (`asm` / `__asm` / `__asm__`, optional `volatile`) in function
   bodies and at top level, emitted verbatim (including multi-line templates
   built from adjacent string literals)
-- Extended `asm` with operands: inputs `r a b c d m Nd`, outputs
-  `=r =a =b =c =d =m`, `%0`-`%9` / `%%` / `%=` substitution, `memory` / `cc` /
-  register clobbers. Anything else is a fail-closed parse error
+- Extended `asm` with operands: inputs `r a b c d D S m Nd`, outputs
+  `=r =a =b =c =d =D =S =m` (with optional `&` earlyclobber, accepted with
+  identical codegen because every operand already owns a distinct home),
+  `%0`-`%9` / `%%` / `%=` substitution, `memory` / `cc` /
+  register clobbers. Anything else is a fail-closed parse error.
+  `D`/`S` pin `%rdi`/`%rsi` (homes 10/11); the scratch pool (`%r10` `%r8`
+  `%r9` `%rsi` `%rdi`) excludes a pinned register, and a template that
+  needs more scratch than remains is a fail-closed `too many register
+  asm operands` error, never a silent alias. Template `%N` references
+  always expand full-width: sub-width output stores (`movb`/`movw`/`movl`
+  through `%%dil`/`%%di`/`%%edi` written literally) are the supported
+  narrow-output form, matching the existing `t_asm3` style
 
 ### Atomic Builtins
 - `__sync_fetch_and_add` (`lock xaddq`, returns the old value),
@@ -121,26 +169,30 @@ Fully capable of compiling its own source code to reach complete technical sover
 
 ## Limitations
 
-- Function calls limited to 6 total arguments (fixed plus variadic); no
-  stack spill handling
-- No support for `long long`, `long double`, or bitfields
+- No support for `long double` or bitfields
 - No standard library linkage; programs must use only built-in types and direct system calls
-- The compiler uses 8-byte `int` internally but `skip_struct` treats plain
-  `int` members as 4 bytes (matching GCC's x86-64 ABI)
+- The compiler uses 8-byte `int` internally (`sizeof(int) == 8`) while
+  struct plain-`int` members stay 4 bytes (matching GCC's x86-64 ABI), so
+  `unsigned int` wraparound is 64-bit instead of LP64 32-bit. The kernel
+  needs LP64 (`minifs.h` superblock `unsigned int` fields are 4 bytes on
+  disk), so this gates the kernel self-host milestone and is tracked as
+  its own follow-up, not deferred silently
 - 64-bit `uint64_t` values at or above 2^63 still use signed operations
+  (integer `<`/`>` always take the signed jump); sub-64 values are exact
+  because loads zero-extend
 - `static` locals re-initialize on every entry (no persistence); `static`
   globals persist correctly
-- Chained typedefs lose their base size (`typedef unsigned char u8`
-  registers size 8); only the predefined stdint names carry exact sizes.
-  Typedef'd globals accept no initializer
+- Typedef'd globals accept no initializer; the final stash record only
+  serves struct aliases and unexercised multi-name scalars, so its
+  unsignedness argument is intentionally unpinned (equivalent mutant,
+  documented here instead of killed)
 - Pointer arithmetic and `++`/`--` on multi-byte pointers are unscaled
   (correct only for `char *`); array subscripting scales correctly
-- No function pointers
 - No unions (parsed but members accumulate in global struct table)
 - Global initializers accept constants only: no address-of, no arithmetic on
   symbols, and no nested brace lists for 2D arrays
-- Extended `asm` has no read-write (`+`) operands, no `D`/`S` constraints,
-  and fixed homes are full-width registers; `char *` globals initialized
+- Extended `asm` has no read-write (`+`) operands, and fixed homes are
+  full-width registers; `char *` globals initialized
   with a string literal only materialize when linked with the sibling `ld`
 
 ## Building the Bootstrap (Generation 1)
