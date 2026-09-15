@@ -24,11 +24,16 @@ Fully capable of compiling its own source code to reach complete technical sover
 
 ### Supported Types
 - Primitive types: `int`, `char`, `float`, `double`, `void`
+- Fixed-width integers with true 1/2/4/8-byte storage: `int8_t`, `int16_t`,
+  `int32_t`, `int64_t`, `uint8_t`, `uint16_t`, `uint32_t`, `uint64_t`,
+  `uintptr_t`, `intptr_t`, plus `short` / `unsigned short`. Loads
+  sign- or zero-extend to 64 bits, so sub-64 arithmetic, shifts and
+  comparisons are exact, unsigned included; stores narrow to the width
 - Pointers (single and multi-level)
 - Arrays (including 2D arrays)
 - Structs with member access (`.` and `->` operators)
 - Enums
-- Typedefs
+- Typedefs (including `typedef struct {...} Name` and chained function types)
 
 ### Control Flow
 - `if` / `else`
@@ -45,7 +50,8 @@ Fully capable of compiling its own source code to reach complete technical sover
 - Comparison: `<`, `<=`, `>`, `>=`, `==`, `!=`
 - Logical: `&&`, `||`, `!`
 - Bitwise: `&`, `|`, `^`, `~`, `<<`, `>>`
-- Assignment: `=`, `+=`, `-=`, `++`, `--`
+- Assignment: `=`, `+=`, `-=`, `*=`, `/=`, `%=`, `&=`, `|=`, `^=`,
+  `<<=`, `>>=`, `++`, `--`
 - Ternary: `? :`
 - Array subscripting: `arr[i]`
 - Struct member access: `s.field` and `ptr->field`
@@ -57,15 +63,43 @@ Fully capable of compiling its own source code to reach complete technical sover
 ### Functions
 - Function definitions and calls
 - Up to 6 integer/pointer parameters passed via registers (System V AMD64 ABI)
+- Variadic definitions (`int kprintf(const char *fmt, ...)`) with
+  `va_list` / `__builtin_va_list` and `va_start` / `va_arg` / `va_end`
+  (plus the `__builtin_` spellings); every vararg rides a uniform 8-byte slot
 - Recursive functions supported
 - Proper stack alignment (16-byte) per ABI
 
 ### Storage Class & Linkage
 - `static` variables (local file scope)
 - `extern` declarations (no assembly emission, link-time resolution)
+- `inline` / `__inline` / `__inline__` (accepted, always emitted out-of-line)
+- `volatile` / `__volatile__` qualifiers (accepted, fully spilled codegen)
 - Global variables (`.bss` section, `.globl` exported)
 
+### Inline Assembly
+- Basic `asm` (`asm` / `__asm` / `__asm__`, optional `volatile`) in function
+  bodies and at top level, emitted verbatim (including multi-line templates
+  built from adjacent string literals)
+- Extended `asm` with operands: inputs `r a b c d m Nd`, outputs
+  `=r =a =b =c =d =m`, `%0`-`%9` / `%%` / `%=` substitution, `memory` / `cc` /
+  register clobbers. Anything else is a fail-closed parse error
+
+### Atomic Builtins
+- `__sync_fetch_and_add` (`lock xaddq`, returns the old value),
+  `__sync_lock_test_and_set` (plain `xchgq`), `__sync_lock_release`
+  (store 0), `__sync_synchronize` (`mfence`), with arity checks. 64-bit only,
+  matching the 8-byte int model
+
+### Attributes
+- `__attribute__` / `__attribute`: `packed` (layout is already packed),
+  `aligned(N)` on trailing declarators (emits `.balign N`; locals already
+  satisfy it), `noreturn` / `returns_twice` / `always_inline` accepted;
+  unknown attributes warn, a non-power-of-two alignment is an error
+
 ### Other Features
+- Integer literals: decimal, octal `0...` and hex `0x...` (normalized, so
+  every consumer keeps working), with `uUlL` suffixes; floats with exponents
+  and `fFlL` suffixes (stripped before `.rodata` emission, which GAS accepts)
 - String literals and character constants
 - Full escape sequences in strings and chars (`\n`, `\t`, `\r`, `\f`, `\v`, `\a`, `\b`, `\0`, `\\`, `\"`, `\'`, `\xNN`, octal `\NNN`)
 - Simple macro definitions via `#define`, with constant-expression folding so `#define N (1 << 8)` and `#define CH 'A'` evaluate to real values (not 0)
@@ -87,16 +121,27 @@ Fully capable of compiling its own source code to reach complete technical sover
 
 ## Limitations
 
-- Function calls limited to 6 arguments (no stack spill handling)
-- No support for `long long`, `short`, `long double`, or bitfields
-- No variadic functions (no `...` parameter support, `printf`/`scanf` must be externally linked)
+- Function calls limited to 6 total arguments (fixed plus variadic); no
+  stack spill handling
+- No support for `long long`, `long double`, or bitfields
 - No standard library linkage; programs must use only built-in types and direct system calls
-- The compiler uses 8-byte `int` internally but `skip_struct` treats `int` as 4 bytes (matching GCC's x86-64 ABI)
-- No hex (0x) / octal (0) integer literal parsing in self-hosted mode (planned, blocked by codegen bug in bootstrap)
+- The compiler uses 8-byte `int` internally but `skip_struct` treats plain
+  `int` members as 4 bytes (matching GCC's x86-64 ABI)
+- 64-bit `uint64_t` values at or above 2^63 still use signed operations
+- `static` locals re-initialize on every entry (no persistence); `static`
+  globals persist correctly
+- Chained typedefs lose their base size (`typedef unsigned char u8`
+  registers size 8); only the predefined stdint names carry exact sizes.
+  Typedef'd globals accept no initializer
+- Pointer arithmetic and `++`/`--` on multi-byte pointers are unscaled
+  (correct only for `char *`); array subscripting scales correctly
 - No function pointers
 - No unions (parsed but members accumulate in global struct table)
 - Global initializers accept constants only: no address-of, no arithmetic on
   symbols, and no nested brace lists for 2D arrays
+- Extended `asm` has no read-write (`+`) operands, no `D`/`S` constraints,
+  and fixed homes are full-width registers; `char *` globals initialized
+  with a string literal only materialize when linked with the sibling `ld`
 
 ## Building the Bootstrap (Generation 1)
 
@@ -151,6 +196,20 @@ plus behavioural equivalence with generation 1) and runs as part of
 ramdisk.
 
 > **Note:** The current version has been verified to bootstrap correctly through both chains — `g3.s` and `g4.s` are identical.
+
+## Testing
+
+```bash
+make test     # bootstrap chain (test.sh) + feature suite (test_all.sh)
+```
+
+`test_all.sh` compiles every `tests/t_*.c` with both host gcc (reference)
+and miniGCC and requires byte-identical stdout (30 runtime tests), plus
+negative tests that must fail compilation with a diagnostic (10 tests):
+arithmetic, control flow, pointers, arrays, strings, structs, enums,
+typedefs, floats, hex/octal/suffixes, compound assignment, `inline`,
+`#include`, macros, `sizeof`, recursion, global initializers, argv, basic
+and extended `asm`, fixed-width integers, attributes, atomics and variadics.
 
 ## Usage
 
