@@ -1,17 +1,17 @@
 {
   "tool": "readmenator",
-  "generated_at": "2026-09-14T23:13:50Z",
+  "generated_at": "2026-09-15T00:30:02Z",
   "project_root": "/home/grisun0/src_note/c/boot/repo/miniGCC",
-  "files": 10,
-  "symbols": 617,
-  "imports": 7,
-  "resolved_imports": 1,
+  "files": 45,
+  "symbols": 718,
+  "imports": 36,
+  "resolved_imports": 4,
   "security_findings": 0,
   "languages": {
-    "c": 4,
+    "c": 35,
     "s": 3,
-    "h": 1,
-    "sh": 2
+    "h": 4,
+    "sh": 3
   },
   "entrypoints": [],
   "start_here": "INDEX.md",

@@ -3,22 +3,34 @@
     "god_nodes": [
       [
         "minigccg2.s",
-        16.1
+        16.3
       ],
       [
         "minigccg3.s",
-        16.1
+        16.3
       ],
       [
         "minigccg4.s",
-        16.1
+        16.3
       ],
       [
         "minigcc.c",
-        12.5
+        12.700000000000001
+      ],
+      [
+        "tests/t_outer_h.h",
+        4.2
+      ],
+      [
+        "tests/t_inline.c",
+        2.5
       ],
       [
         "test_include.c",
+        2.3
+      ],
+      [
+        "tests/t_inner_h.h",
         2.3
       ],
       [
@@ -26,20 +38,8 @@
         2.2
       ],
       [
-        "test_ld_selfhost.sh",
-        0.2
-      ],
-      [
-        "test.c",
-        0.1
-      ],
-      [
-        "test_for.c",
-        0.1
-      ],
-      [
-        "test.sh",
-        0.0
+        "tests/t_include.c",
+        2.2
       ]
     ],
     "communities": [
@@ -52,6 +52,27 @@
         ],
         "cohesion": 1.0,
         "size": 2
+      },
+      {
+        "id": 1,
+        "label": "tests",
+        "file_ids": [
+          "tests/t_include.c",
+          "tests/t_outer_h.h",
+          "tests/t_inner_h.h"
+        ],
+        "cohesion": 1.0,
+        "size": 3
+      },
+      {
+        "id": 2,
+        "label": "tests",
+        "file_ids": [
+          "tests/t_inline.c",
+          "tests/t_inline_h.h"
+        ],
+        "cohesion": 1.0,
+        "size": 2
       }
     ],
     "surprising_connections": [],
@@ -59,8 +80,8 @@
       "What does minigccg2.s depend on, and what depends on it? (0 connections)",
       "What does minigccg3.s depend on, and what depends on it? (0 connections)",
       "What does minigccg4.s depend on, and what depends on it? (0 connections)",
-      "What is FileContext in minigcc.c and how is it used?",
-      "What is the overall architecture of this codebase?"
+      "How are the 3 files in 'tests' related to each other?",
+      "What is FileContext in minigcc.c and how is it used?"
     ]
   },
   "layers": {
@@ -71,9 +92,44 @@
     "my_library.h": "utility",
     "test.c": "testing",
     "test.sh": "testing",
+    "test_all.sh": "testing",
     "test_for.c": "testing",
     "test_include.c": "testing",
-    "test_ld_selfhost.sh": "testing"
+    "test_ld_selfhost.sh": "testing",
+    "tests/neg_asm.c": "testing",
+    "tests/neg_comment.c": "testing",
+    "tests/neg_float.c": "testing",
+    "tests/neg_hex.c": "testing",
+    "tests/neg_octal.c": "testing",
+    "tests/t_args.c": "testing",
+    "tests/t_arith.c": "testing",
+    "tests/t_arrays.c": "testing",
+    "tests/t_asm.c": "testing",
+    "tests/t_compound.c": "testing",
+    "tests/t_dowhile.c": "testing",
+    "tests/t_enum.c": "testing",
+    "tests/t_float.c": "testing",
+    "tests/t_for.c": "testing",
+    "tests/t_globinit.c": "testing",
+    "tests/t_goto.c": "testing",
+    "tests/t_hexoct.c": "testing",
+    "tests/t_if.c": "testing",
+    "tests/t_include.c": "testing",
+    "tests/t_inline.c": "testing",
+    "tests/t_inline_h.h": "testing",
+    "tests/t_inner_h.h": "testing",
+    "tests/t_logic.c": "business_logic",
+    "tests/t_macros.c": "testing",
+    "tests/t_outer_h.h": "testing",
+    "tests/t_pointers.c": "testing",
+    "tests/t_recursion.c": "testing",
+    "tests/t_scope.c": "testing",
+    "tests/t_sizeof.c": "testing",
+    "tests/t_strings.c": "testing",
+    "tests/t_struct.c": "testing",
+    "tests/t_switch.c": "testing",
+    "tests/t_typedef.c": "testing",
+    "tests/t_while.c": "testing"
   },
   "security": {
     "findings": []

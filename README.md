@@ -103,7 +103,8 @@ Fully capable of compiling its own source code to reach complete technical sover
 The compiler itself is a single C file that can be bootstrapped using any standard C compiler:
 
 ```bash
-gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c
+make          # same as: gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c
+make test     # bootstrap chain (test.sh) + feature suite (test_all.sh)
 ```
 
 ## Bootstrapping & Self-Hosting Verification

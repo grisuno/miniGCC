@@ -10,9 +10,11 @@ All ints are 8 bytes internally. Generates standalone ELF with `_start`.
 2. **TDD (Test-Driven Development):** Write test case -> verify failure -> implement -> verify pass.
 3. **BDD (Behavior-Driven Development):** Test behavior via bootstrap + test suite.
 4. **Boy Scout Rule:** Fix any technical debt or security issue encountered; never out of scope.
-5. **Validation:** After every change: `gcc -std=c99 -Wall -Wextra -O2 -o minigcc minigcc.c` must succeed, then `./test.sh` must pass.
-   `bash test_all.sh` (25 runtime tests + 4 negative lexer tests in `tests/`,
-   each diffed against a gcc reference) must report 29 passed, 0 failed.
+5. **Validation:** After every change: `make test` must pass — it builds
+   with `gcc -std=c99 -Wall -Wextra -O2`, then runs `test.sh` (bootstrap
+   fixed point + ld self-host chain) and `test_all.sh` (26 runtime tests +
+   5 negative tests in `tests/`, each diffed against a gcc reference:
+   31 passed, 0 failed).
 
 ## Code Standards
 - No comments, no emojis.
