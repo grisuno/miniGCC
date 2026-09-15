@@ -145,6 +145,7 @@ run_test globinit
 run_test args
 run_test asm
 run_test asm3
+run_test stdint
 
 run_neg octal "invalid octal constant"
 run_neg hex "invalid hex constant"

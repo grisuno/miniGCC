@@ -11,6 +11,11 @@ int main(void) {
     b[2] = 3;
     int s = b[0] + b[1] + b[2];
     printf("%d\n", s);
+    int neg[3];
+    neg[0] = 0 - 9;
+    neg[1] = 7;
+    neg[2] = 0 - 1;
+    printf("%d %d %d\n", neg[0], neg[2], neg[0] < 0);
     int m[2][3];
     m[0][0] = 1;
     m[0][1] = 2;

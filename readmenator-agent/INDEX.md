@@ -2,10 +2,10 @@
 
 | File | Purpose | Subsystem | Symbols |
 |------|---------|-----------|---------|
-| `minigcc.c` | - | root | 140 |
-| `minigccg2.s` | - | root | 183 |
-| `minigccg3.s` | - | root | 183 |
-| `minigccg4.s` | - | root | 183 |
+| `minigcc.c` | - | root | 144 |
+| `minigccg2.s` | - | root | 192 |
+| `minigccg3.s` | - | root | 192 |
+| `minigccg4.s` | - | root | 192 |
 | `my_library.h` | ifndef MY_LIBRARY_H define MY_LIBRARY_H  Test function to verify that inclusion  | root | 2 |
 | `test.c` | - | root | 1 |
 | `test.sh` | Cleaning env | root | 0 |
@@ -45,6 +45,7 @@
 | `tests/t_recursion.c` | include <stdio.h> | tests | 4 |
 | `tests/t_scope.c` | include <stdio.h> | tests | 3 |
 | `tests/t_sizeof.c` | include <stdio.h> | tests | 2 |
+| `tests/t_stdint.c` | include <stdio.h> include <stdint.h> | tests | 7 |
 | `tests/t_strings.c` | include <stdio.h> | tests | 2 |
 | `tests/t_struct.c` | include <stdio.h> | tests | 4 |
 | `tests/t_switch.c` | include <stdio.h> | tests | 3 |

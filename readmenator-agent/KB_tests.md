@@ -272,6 +272,19 @@
   - `main` (function, line 2) `int main(void)`
   - `printf` (function, line 4) `printf("%d %d %d\n", sizeof(char), sizeof(float), sizeof(double));`
 
+## tests/t_stdint.c
+- Layer: infrastructure
+- Doc: include <stdio.h> include <stdint.h>
+- Language: c
+- Symbols:
+  - `idtr_t` (struct, line 4)
+  - `loads_u8` (function, line 21) `uint8_t loads_u8(uint8_t v)`
+  - `loads_s16` (function, line 25) `int16_t loads_s16(int16_t v)`
+  - `loads_u32` (function, line 29) `uint32_t loads_u32(uint32_t v)`
+  - `add_shorts` (function, line 33) `short add_shorts(short a, short b)`
+  - `main` (function, line 37) `int main(void)`
+  - `printf` (function, line 49) `printf("%d %d %d\n", gu8, gi8, gu16);`
+
 ## tests/t_strings.c
 - Layer: testing
 - Doc: include <stdio.h>

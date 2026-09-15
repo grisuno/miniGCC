@@ -17,9 +17,10 @@ int manhattan(Point *p) {
 
 int main(void) {
     origin.x = 3;
-    origin.y = 4;
+    origin.y = 0 - 4;
     Point *pp = &origin;
     printf("%d %d\n", pp->x, pp->y);
+    printf("%d\n", pp->y < 0);
     pp->x = 30;
     printf("%d %d\n", origin.x, manhattan(pp));
     Point local;

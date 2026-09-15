@@ -3,19 +3,19 @@
     "god_nodes": [
       [
         "minigccg2.s",
-        18.3
+        19.200000000000003
       ],
       [
         "minigccg3.s",
-        18.3
+        19.200000000000003
       ],
       [
         "minigccg4.s",
-        18.3
+        19.200000000000003
       ],
       [
         "minigcc.c",
-        14.0
+        14.4
       ],
       [
         "tests/t_outer_h.h",
@@ -47,8 +47,8 @@
         "id": 0,
         "label": "root",
         "file_ids": [
-          "test_include.c",
-          "my_library.h"
+          "my_library.h",
+          "test_include.c"
         ],
         "cohesion": 1.0,
         "size": 2
@@ -58,8 +58,8 @@
         "label": "tests",
         "file_ids": [
           "tests/t_inner_h.h",
-          "tests/t_include.c",
-          "tests/t_outer_h.h"
+          "tests/t_outer_h.h",
+          "tests/t_include.c"
         ],
         "cohesion": 1.0,
         "size": 3
@@ -128,6 +128,7 @@
     "tests/t_recursion.c": "testing",
     "tests/t_scope.c": "testing",
     "tests/t_sizeof.c": "testing",
+    "tests/t_stdint.c": "infrastructure",
     "tests/t_strings.c": "testing",
     "tests/t_struct.c": "testing",
     "tests/t_switch.c": "testing",

@@ -12,9 +12,9 @@ All ints are 8 bytes internally. Generates standalone ELF with `_start`.
 4. **Boy Scout Rule:** Fix any technical debt or security issue encountered; never out of scope.
 5. **Validation:** After every change: `make test` must pass — it builds
    with `gcc -std=c99 -Wall -Wextra -O2`, then runs `test.sh` (bootstrap
-   fixed point + ld self-host chain) and `test_all.sh` (27 runtime tests +
+   fixed point + ld self-host chain) and `test_all.sh` (28 runtime tests +
    7 negative tests in `tests/`, each diffed against a gcc reference:
-   34 passed, 0 failed).
+   35 passed, 0 failed).
 
 ## Code Standards
 - No comments, no emojis.
@@ -64,6 +64,12 @@ whenever `../ld/ld.c` exists.
 - Control: if/else, while, for, do/while, switch/case/default, break, continue, goto, return
 - Operators: +, -, *, /, %, <, <=, >, >=, ==, !=, &&, ||, !, &, |, ^, ~, <<, >>, =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=, ++, --, ?:, [], ., ->, sizeof(type-name)
 - Literals: decimal, octal `0...` and hex `0x...` integers with `uUlL` suffixes, floats with exponent and `fFlL` suffixes
+- Fixed-width integers: `int8/16/32/64_t`, `uint8/16/32/64_t`, `uintptr_t`,
+  `intptr_t` and `short` are predefined typedefs with true 1/2/4/8 sizes;
+  loads sign- or zero-extend to 64 bits (C promotion for free, so all
+  sub-64 arithmetic, shifts and comparisons are exact, unsigned included),
+  stores narrow, `sizeof` and struct members honor widths. Only 64-bit
+  `uint64_t` arithmetic above 2^63 still uses signed ops.
 - `inline` / `__inline` / `__inline__` accepted as a no-op qualifier and
   skipped by the parser (functions always emit out-of-line, so a plain
   `inline` definition links like a normal global instead of following the
@@ -153,6 +159,10 @@ still bootstraps it.
 13. `char *` globals initialized with a string literal only materialize when
     linked with the sibling `ld` (the weak `_start` fill loses to crt1 under
     a gcc link); `char[]` globals work everywhere
+14. Chained typedefs lose their base size (`typedef unsigned char u8` or
+    `typedef uint32_t U32` registers size 8); only the predefined stdint
+    names and single-level `typedef struct` carry exact sizes. Typedef'd
+    globals accept no initializer; typedef'd functions and parameters work
 
 <!-- readmenator-agent-kb-link -->
 ## Project Knowledge Base (MUST read before coding)

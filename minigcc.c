@@ -144,6 +144,9 @@ static int assign_size = 8;
 static int expr_pointed = 0;
 static int current_elem_size = 0;
 static int current_elem_size2 = 0;
+static int current_elem_unsigned = 0;
+static int deref_w = 0;
+static int deref_u = 0;
 static int no_postfix_deref = 0;
 static int expr_type = 0;
 static int static_flag = 0;
@@ -194,6 +197,8 @@ static char struct_member_names[MAX_STRUCT_MEMBERS][MAX_IDENT_LEN];
 static int struct_member_offsets[MAX_STRUCT_MEMBERS];
 static int struct_member_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_elem_sizes[MAX_STRUCT_MEMBERS];
+static int struct_member_unsigned[MAX_STRUCT_MEMBERS];
+static int struct_member_is_float[MAX_STRUCT_MEMBERS];
 static int struct_member_count = 0;
 
 #define MAX_IF_NESTING 64
@@ -212,6 +217,9 @@ typedef struct {
     int expr_pointed;
     int current_elem_size;
     int current_elem_size2;
+    int current_elem_unsigned;
+    int deref_w;
+    int deref_u;
     int no_postfix_deref;
     int symbol_count;
     int stack_size;
@@ -237,6 +245,9 @@ static void save_parser_state(ParserState *state) {
     state->expr_pointed = expr_pointed;
     state->current_elem_size = current_elem_size;
     state->current_elem_size2 = current_elem_size2;
+    state->current_elem_unsigned = current_elem_unsigned;
+    state->deref_w = deref_w;
+    state->deref_u = deref_u;
     state->no_postfix_deref = no_postfix_deref;
     state->symbol_count = symbol_count;
     state->stack_size = stack_size;
@@ -262,6 +273,9 @@ static void restore_parser_state(ParserState *state) {
     expr_pointed = state->expr_pointed;
     current_elem_size = state->current_elem_size;
     current_elem_size2 = state->current_elem_size2;
+    current_elem_unsigned = state->current_elem_unsigned;
+    deref_w = state->deref_w;
+    deref_u = state->deref_u;
     no_postfix_deref = state->no_postfix_deref;
     /* Clean up hash table entries for symbols added since the saved state */
     if (state->symbol_count < symbol_count)
@@ -1654,11 +1668,52 @@ static const char *libc_global_name(int i) {
     return NULL;
 }
 
+static const char *typedef_name(int i) {
+    if (i == 0) return "int8_t";
+    if (i == 1) return "uint8_t";
+    if (i == 2) return "int16_t";
+    if (i == 3) return "uint16_t";
+    if (i == 4) return "int32_t";
+    if (i == 5) return "uint32_t";
+    if (i == 6) return "int64_t";
+    if (i == 7) return "uint64_t";
+    if (i == 8) return "uintptr_t";
+    if (i == 9) return "intptr_t";
+    if (i == 10) return "short";
+    return NULL;
+}
+
+static int typedef_size(int i) {
+    if (i == 0) return 1;
+    if (i == 1) return 1;
+    if (i == 2) return 2;
+    if (i == 3) return 2;
+    if (i == 4) return 4;
+    if (i == 5) return 4;
+    if (i == 6) return 8;
+    if (i == 7) return 8;
+    if (i == 8) return 8;
+    if (i == 9) return 8;
+    if (i == 10) return 2;
+    return 8;
+}
+
+static int typedef_uns(int i) {
+    if (i == 1) return 1;
+    if (i == 3) return 1;
+    if (i == 5) return 1;
+    if (i == 7) return 1;
+    if (i == 8) return 1;
+    return 0;
+}
+
 static void unary(void) {
     if (tok == T_NUM) {
         emit_s("    movq $%s, %%rax", token);
         expr_pointed = 0;
         expr_type = 0;
+        deref_w = 0;
+        deref_u = 0;
         next_token();
     } else if (tok == T_FLOAT_NUM) {
         int fcidx = float_const_count - 1;
@@ -1674,6 +1729,8 @@ static void unary(void) {
             expr_type = T_DOUBLE;
         }
         expr_pointed = 0;
+        deref_w = 0;
+        deref_u = 0;
         next_token();
     } else if (tok == T_ID) {
         char id_name[MAX_IDENT_LEN];
@@ -1714,6 +1771,8 @@ static void unary(void) {
             emit("    popq %%r12");
             
             expr_pointed = 0;
+            deref_w = 0;
+            deref_u = 0;
         } else {
             int idx = find_symbol(id_name);
             if (idx < 0) error("undefined variable");
@@ -1723,6 +1782,8 @@ static void unary(void) {
                 int cv = s->const_value;
                 emit_i("    movq $%d, %%rax", cv);
                 expr_pointed = 0;
+                deref_w = 0;
+                deref_u = 0;
             } else if (s->is_array || (s->pointed && s->size > 8)) {
                 int sg = s->is_global;
                 int sa = s->is_array;
@@ -1730,6 +1791,12 @@ static void unary(void) {
                 int se2 = sa ? s->elem_size2 : 0;
                 current_elem_size = se;
                 current_elem_size2 = se2;
+                current_elem_unsigned = s->is_unsigned;
+                deref_w = se;
+                deref_u = s->is_unsigned;
+                current_elem_unsigned = s->is_unsigned;
+                deref_w = se;
+                deref_u = s->is_unsigned;
                 if (sg)
                     emit_s("    leaq %s(%%rip), %%rax", id_name);
                 else
@@ -1739,13 +1806,18 @@ static void unary(void) {
                 int sg = s->is_global;
                 int sz = s->size;
                 int sv = s->var_type;
+                int su = s->is_unsigned;
                 int dot_after = (tok == '.') && !s->pointed;
                 expr_pointed = s->pointed;
                 current_elem_size2 = 0;
-                if (s->pointed)
-                    current_elem_size =
-                        (s->pointed == T_CHAR && !s->elem_ptr) ? 1 : 8;
-                else current_elem_size = 0;
+                if (s->pointed) {
+                    current_elem_size = s->elem_size > 0 ? s->elem_size :
+                        ((s->pointed == T_CHAR && !s->elem_ptr) ? 1 : 8);
+                    current_elem_unsigned = su;
+                    deref_w = current_elem_size;
+                    deref_u = su;
+                } else {
+                }
                 expr_type = sv;
                 
                 if (sv == T_FLOAT) {
@@ -1764,13 +1836,49 @@ static void unary(void) {
                     if (sg) {
                         if (dot_after)
                             emit_s("    leaq %s(%%rip), %%rax", id_name);
+                        else if (su)
+                            emit_s("    movzbq %s(%%rip), %%rax", id_name);
                         else
                             emit_s("    movsbq %s(%%rip), %%rax", id_name);
                     } else {
                         if (dot_after)
                             emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                        else if (su)
+                            emit_i("    movzbq %d(%%rbp), %%rax", s->offset);
                         else
                             emit_i("    movsbq %d(%%rbp), %%rax", s->offset);
+                    }
+                } else if (sz == 2) {
+                    if (sg) {
+                        if (dot_after)
+                            emit_s("    leaq %s(%%rip), %%rax", id_name);
+                        else if (su)
+                            emit_s("    movzwq %s(%%rip), %%rax", id_name);
+                        else
+                            emit_s("    movswq %s(%%rip), %%rax", id_name);
+                    } else {
+                        if (dot_after)
+                            emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                        else if (su)
+                            emit_i("    movzwq %d(%%rbp), %%rax", s->offset);
+                        else
+                            emit_i("    movswq %d(%%rbp), %%rax", s->offset);
+                    }
+                } else if (sz == 4 && sv != T_FLOAT) {
+                    if (sg) {
+                        if (dot_after)
+                            emit_s("    leaq %s(%%rip), %%rax", id_name);
+                        else if (su)
+                            emit_s("    movl %s(%%rip), %%eax", id_name);
+                        else
+                            emit_s("    movslq %s(%%rip), %%rax", id_name);
+                    } else {
+                        if (dot_after)
+                            emit_i("    leaq %d(%%rbp), %%rax", s->offset);
+                        else if (su)
+                            emit_i("    movl %d(%%rbp), %%eax", s->offset);
+                        else
+                            emit_i("    movslq %d(%%rbp), %%rax", s->offset);
                     }
                 } else {
                     if (sg) {
@@ -1820,7 +1928,18 @@ static void unary(void) {
     } else if (tok == '*') {
         next_token();
         unary();
-        if (expr_pointed == T_CHAR)
+        if (expr_pointed == T_CHAR && deref_w == 0)
+            emit("    movsbq (%%rax), %%rax");
+        else if (deref_w == 1) {
+            if (deref_u) emit("    movzbq (%%rax), %%rax");
+            else emit("    movsbq (%%rax), %%rax");
+        } else if (deref_w == 2) {
+            if (deref_u) emit("    movzwq (%%rax), %%rax");
+            else emit("    movswq (%%rax), %%rax");
+        } else if (deref_w == 4) {
+            if (deref_u) emit("    movl (%%rax), %%eax");
+            else emit("    movslq (%%rax), %%rax");
+        } else if (expr_pointed == T_CHAR)
             emit("    movsbq (%%rax), %%rax");
         else if (expr_pointed == T_FLOAT) {
             emit("    movl (%%rax), %%eax");
@@ -1830,6 +1949,8 @@ static void unary(void) {
             expr_type = T_DOUBLE;
         } else
             emit("    movq (%%rax), %%rax");
+        deref_w = 0;
+        deref_u = 0;
     } else if (tok == '&') {
         next_token();
         if (tok != T_ID) error("expected identifier after '&'");
@@ -1840,8 +1961,12 @@ static void unary(void) {
         else if (s->var_type == T_FLOAT) expr_pointed = T_FLOAT;
         else if (s->var_type == T_DOUBLE) expr_pointed = T_DOUBLE;
         else expr_pointed = T_INT;
+        deref_w = s->is_array ? s->elem_size : (s->size > 8 ? 8 : s->size);
+        if (deref_w != 1 && deref_w != 2 && deref_w != 4 && deref_w != 8) deref_w = 8;
+        deref_u = s->is_unsigned;
         current_elem_size = s->is_array ? s->elem_size : 0;
         current_elem_size2 = s->is_array ? s->elem_size2 : 0;
+        current_elem_unsigned = s->is_unsigned;
         no_postfix_deref = 1;
         if (s->is_global)
             emit_s("    leaq %s(%%rip), %%rax", token);
@@ -1904,8 +2029,11 @@ static void unary(void) {
             }
         } else if (tok == T_ID) {
             int idx = find_symbol(token);
-            if (idx >= 0) sz = symbols[idx].size;
-            else error("sizeof: undefined variable");
+            if (idx < 0) error("sizeof: undefined variable");
+            if (symbols[idx].is_const && symbols[idx].var_type == CONST_VAR_FLAG)
+                sz = symbols[idx].const_value;
+            else
+                sz = symbols[idx].size;
             next_token();
         } else {
             int old_emit = emit_enabled;
@@ -1936,14 +2064,19 @@ static void lvalue_address(void) {
         if (s->is_array || (s->pointed && s->size > 8)) {
             current_elem_size = s->is_array ? s->elem_size : 8;
             current_elem_size2 = s->is_array ? s->elem_size2 : 0;
+            current_elem_unsigned = s->is_unsigned;
             expr_pointed = s->pointed ? s->pointed : T_INT;
         } else {
             current_elem_size2 = 0;
             expr_pointed = s->pointed;
-            if (s->pointed)
-                current_elem_size =
-                    (s->pointed == T_CHAR && !s->elem_ptr) ? 1 : 8;
-            else current_elem_size = 0;
+            if (s->pointed) {
+                current_elem_size = s->elem_size > 0 ? s->elem_size :
+                    ((s->pointed == T_CHAR && !s->elem_ptr) ? 1 : 8);
+                current_elem_unsigned = s->is_unsigned;
+            } else {
+                current_elem_size = 0;
+                current_elem_unsigned = 0;
+            }
         }
         int need_ptr_value = (s->pointed && s->size == 8);
         next_token();
@@ -1988,6 +2121,7 @@ static void handle_postfix(int is_lvalue) {
 			int saved_ep = expr_pointed;
 			int saved_ces = current_elem_size;
 			int saved_ces2 = current_elem_size2;
+			int saved_ceu = current_elem_unsigned;
 			int saved_as = assign_size;       // <--- ¡FALTABA ESTE!
 			int saved_npd = no_postfix_deref;
 			
@@ -1997,13 +2131,18 @@ static void handle_postfix(int is_lvalue) {
 			expr_pointed = saved_ep;
 			current_elem_size = saved_ces;
 			current_elem_size2 = saved_ces2;
+			current_elem_unsigned = saved_ceu;
 			assign_size = saved_as;           // <--- ¡RESTAURADO!
 			no_postfix_deref = saved_npd;
 			// ------------------------------------------
 
 			emit("    popq %%rcx");
 			int elem_size = current_elem_size;
-			if (elem_size == 0) elem_size = (expr_pointed == T_CHAR) ? 1 : 8;
+			int elem_uns = current_elem_unsigned;
+			if (elem_size == 0) {
+				elem_size = (expr_pointed == T_CHAR) ? 1 : 8;
+				elem_uns = 0;
+			}
 			if (elem_size > 1) emit_i("    imulq $%d, %%rax", elem_size);
 			emit("    addq %%rcx, %%rax");
 			current_elem_size = elem_size;
@@ -2023,11 +2162,16 @@ static void handle_postfix(int is_lvalue) {
 				   type: elements of a char*[] array are 8-byte pointers even
 				   though they point to char. Only genuine 1-byte elements
 				   (char[]) use a sign-extending byte load. */
-				if (elem_size == 1)
-					emit("    movsbq (%%rax), %%rax");
-				else if (elem_size == 4)
-					emit("    movl (%%rax), %%eax");
-				else
+				if (elem_size == 1) {
+					if (elem_uns) emit("    movzbq (%%rax), %%rax");
+					else emit("    movsbq (%%rax), %%rax");
+				} else if (elem_size == 2) {
+					if (elem_uns) emit("    movzwq (%%rax), %%rax");
+					else emit("    movswq (%%rax), %%rax");
+				} else if (elem_size == 4) {
+					if (elem_uns) emit("    movl (%%rax), %%eax");
+					else emit("    movslq (%%rax), %%rax");
+				} else
 					emit("    movq (%%rax), %%rax");
 				if (elem_size == 8 && saved_ep) {
 					/* The loaded element is itself a pointer: the value in
@@ -2043,12 +2187,14 @@ static void handle_postfix(int is_lvalue) {
 			match(']');
 		} else if (tok == '.') {
 			next_token();
-			int off = 0, msize = 8, mesize = 8;
+			int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0;
 			for (int i = 0; i < struct_member_count; i++) {
 				if (strcmp(token, struct_member_names[i]) == 0) {
 					off = struct_member_offsets[i];
 					msize = struct_member_sizes[i];
 					mesize = struct_member_elem_sizes[i];
+					muns = struct_member_unsigned[i];
+					mfloat = struct_member_is_float[i];
 					break;
 				}
 			}
@@ -2057,31 +2203,39 @@ static void handle_postfix(int is_lvalue) {
 			assign_size = msize;
 			current_elem_size = mesize;
 			current_elem_size2 = 0;
+			current_elem_unsigned = muns;
 			if (is_lvalue || no_postfix_deref) {
-				if (msize == 1) expr_pointed = T_CHAR;
-				else if (msize == 4) expr_pointed = T_FLOAT;
+				if (msize == 1 && !muns) expr_pointed = T_CHAR;
+				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
 				else expr_pointed = (msize > 8) ? T_INT : 0;
 			} else {
 				if (msize > 8) {
 					expr_pointed = (msize > 0) ? T_INT : 0;
 				} else {
-					if (msize == 1)
-						emit("    movsbq (%%rax), %%rax");
-					else if (msize == 4)
-						emit("    movslq (%%rax), %%rax");
-					else
+					if (msize == 1) {
+						if (muns) emit("    movzbq (%%rax), %%rax");
+						else emit("    movsbq (%%rax), %%rax");
+					} else if (msize == 2) {
+						if (muns) emit("    movzwq (%%rax), %%rax");
+						else emit("    movswq (%%rax), %%rax");
+					} else if (msize == 4) {
+						if (muns) emit("    movl (%%rax), %%eax");
+						else emit("    movslq (%%rax), %%rax");
+					} else
 						emit("    movq (%%rax), %%rax");
 					expr_pointed = 0;
 				}
 			}
 		} else if (tok == T_ARROW) {
 			next_token();
-			int off = 0, msize = 8, mesize = 8;
+			int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0;
 			for (int i = 0; i < struct_member_count; i++) {
 				if (strcmp(token, struct_member_names[i]) == 0) {
 					off = struct_member_offsets[i];
 					msize = struct_member_sizes[i];
 					mesize = struct_member_elem_sizes[i];
+					muns = struct_member_unsigned[i];
+					mfloat = struct_member_is_float[i];
 					break;
 				}
 			}
@@ -2090,19 +2244,25 @@ static void handle_postfix(int is_lvalue) {
 			assign_size = msize;
 			current_elem_size = mesize;
 			current_elem_size2 = 0;
+			current_elem_unsigned = muns;
 			if (is_lvalue || no_postfix_deref) {
-				if (msize == 1) expr_pointed = T_CHAR;
-				else if (msize == 4) expr_pointed = T_FLOAT;
+				if (msize == 1 && !muns) expr_pointed = T_CHAR;
+				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
 				else expr_pointed = (msize > 8) ? T_INT : 0;
 			} else {
 				if (msize > 8) {
 					expr_pointed = (msize > 0) ? T_INT : 0;
 				} else {
-					if (msize == 1)
-						emit("    movsbq (%%rax), %%rax");
-					else if (msize == 4)
-						emit("    movslq (%%rax), %%rax");
-					else
+					if (msize == 1) {
+						if (muns) emit("    movzbq (%%rax), %%rax");
+						else emit("    movsbq (%%rax), %%rax");
+					} else if (msize == 2) {
+						if (muns) emit("    movzwq (%%rax), %%rax");
+						else emit("    movswq (%%rax), %%rax");
+					} else if (msize == 4) {
+						if (muns) emit("    movl (%%rax), %%eax");
+						else emit("    movslq (%%rax), %%rax");
+					} else
 						emit("    movq (%%rax), %%rax");
 					expr_pointed = 0;
 				}
@@ -2198,7 +2358,13 @@ static void additive_expr(void) {
         next_token();
         emit("    pushq %%rax");
         int left_type = expr_type;
+        int save_dw = deref_w;
+        int save_du = deref_u;
         multiplicative_expr();
+        if (save_dw) {
+            deref_w = save_dw;
+            deref_u = save_du;
+        }
         int right_type = expr_type;
         emit("    popq %%rcx");
         
@@ -2563,7 +2729,7 @@ static void assignment_expr(void) {
             lvalue_address(); match('='); emit("    pushq %%rax");
             int saved_as = assign_size; assignment_expr(); emit("    popq %%rcx");
             assign_size = saved_as;
-            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type == 4) {
             tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
@@ -2571,6 +2737,7 @@ static void assignment_expr(void) {
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
             if (assign_size == 1) { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else if (assign_size == 2) { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movw %%ax, (%%rcx)"); }
             else if (assign_size == 4) { emit("    addl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
             else { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
@@ -2580,6 +2747,7 @@ static void assignment_expr(void) {
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
             if (assign_size == 1) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else if (assign_size == 2) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movw %%ax, (%%rcx)"); }
             else if (assign_size == 4) { emit("    subl %%eax, %%ecx"); emit("    movl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
             else { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
@@ -2591,7 +2759,7 @@ static void assignment_expr(void) {
             emit("    pushq %%rax"); cop = tok; next_token(); assignment_expr(); emit("    popq %%rcx");
             emit_compound_op(cop, assign_size);
             emit("    popq %%rcx");
-            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type != 0) {
             int op = tok == T_INC ? T_INC : T_DEC;
@@ -2618,6 +2786,9 @@ static void assignment_expr(void) {
         int saved_expr_pointed = expr_pointed;
         int saved_current_elem_size = current_elem_size;
         int saved_current_elem_size2 = current_elem_size2;
+        int saved_current_elem_unsigned = current_elem_unsigned;
+        int saved_deref_w = deref_w;
+        int saved_deref_u = deref_u;
         int saved_no_postfix_deref = no_postfix_deref;
 
         int saved_emit = emit_enabled;
@@ -2630,6 +2801,9 @@ static void assignment_expr(void) {
         expr_pointed = saved_expr_pointed;
         current_elem_size = saved_current_elem_size;
         current_elem_size2 = saved_current_elem_size2;
+        current_elem_unsigned = saved_current_elem_unsigned;
+        deref_w = saved_deref_w;
+        deref_u = saved_deref_u;
         no_postfix_deref = saved_no_postfix_deref;
         
         /* NOTA: NO restauramos label_counter ni string_count para evitar duplicados */
@@ -2658,13 +2832,14 @@ static void assignment_expr(void) {
             lvalue_address(); match('='); emit("    pushq %%rax");
             int saved_as = assign_size; assignment_expr(); emit("    popq %%rcx");
             assign_size = saved_as;
-            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type == 4) {
             lvalue_address(); emit("    pushq %%rax");
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
             if (assign_size == 1) { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else if (assign_size == 2) { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movw %%ax, (%%rcx)"); }
             else if (assign_size == 4) { emit("    addl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
             else { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
@@ -2673,6 +2848,7 @@ static void assignment_expr(void) {
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
             if (assign_size == 1) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movb %%al, (%%rcx)"); }
+            else if (assign_size == 2) { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movw %%ax, (%%rcx)"); }
             else if (assign_size == 4) { emit("    subl %%eax, %%ecx"); emit("    movl %%ecx, %%eax"); emit("    popq %%rcx"); emit("    movl %%eax, (%%rcx)"); }
             else { emit("    subq %%rax, %%rcx"); emit("    movq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
@@ -2683,7 +2859,7 @@ static void assignment_expr(void) {
             emit("    pushq %%rax"); cop = tok; next_token(); assignment_expr(); emit("    popq %%rcx");
             emit_compound_op(cop, assign_size);
             emit("    popq %%rcx");
-            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
+            if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type != 0) {
             lvalue_address();
@@ -2741,6 +2917,16 @@ static void asm_reg_sized(int home, int size, char *buf) {
         else if (home == 6) safe_strcpy(buf, "%r9b", ASM_TXT_SZ);
         else if (home == 7) safe_strcpy(buf, "%sil", ASM_TXT_SZ);
         else safe_strcpy(buf, "%dil", ASM_TXT_SZ);
+    } else if (size == 2) {
+        if (home == 0) safe_strcpy(buf, "%ax", ASM_TXT_SZ);
+        else if (home == 1) safe_strcpy(buf, "%bx", ASM_TXT_SZ);
+        else if (home == 2) safe_strcpy(buf, "%cx", ASM_TXT_SZ);
+        else if (home == 3) safe_strcpy(buf, "%dx", ASM_TXT_SZ);
+        else if (home == 4) safe_strcpy(buf, "%r10w", ASM_TXT_SZ);
+        else if (home == 5) safe_strcpy(buf, "%r8w", ASM_TXT_SZ);
+        else if (home == 6) safe_strcpy(buf, "%r9w", ASM_TXT_SZ);
+        else if (home == 7) safe_strcpy(buf, "%si", ASM_TXT_SZ);
+        else safe_strcpy(buf, "%di", ASM_TXT_SZ);
     } else if (size == 4) {
         if (home == 0) safe_strcpy(buf, "%eax", ASM_TXT_SZ);
         else if (home == 1) safe_strcpy(buf, "%ebx", ASM_TXT_SZ);
@@ -2986,6 +3172,8 @@ static void asm_emit_all(void) {
             if (asm_slot[i] < 0) {
                 if (asm_size[i] == 1)
                     asm_emit_ss("    movb %s, %s", reg, asm_mem[i]);
+                else if (asm_size[i] == 2)
+                    asm_emit_ss("    movw %s, %s", reg, asm_mem[i]);
                 else if (asm_size[i] == 4)
                     asm_emit_ss("    movl %s, %s", reg, asm_mem[i]);
                 else
@@ -2995,6 +3183,8 @@ static void asm_emit_all(void) {
                 emit_is("    movq %d(%%rsp), %%r11", off, "");
                 if (asm_size[i] == 1)
                     emit_s("    movb %s, (%%r11)", reg);
+                else if (asm_size[i] == 2)
+                    emit_s("    movw %s, (%%r11)", reg);
                 else if (asm_size[i] == 4)
                     emit_s("    movl %s, (%%r11)", reg);
                 else
@@ -3117,8 +3307,9 @@ static void statement(void) {
             while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
             
             while (tok != ';' && tok != T_EOF) {
-                int is_ptr = 0;
-                while (tok == '*') { is_ptr = 1; next_token(); }
+                int nstars = 0;
+                while (tok == '*') { nstars++; next_token(); }
+                int is_ptr = nstars > 0;
                 if (tok != T_ID) error("expected variable name");
                 char varname[MAX_IDENT_LEN];
                 int nlen = strlen(token);
@@ -3128,7 +3319,7 @@ static void statement(void) {
                 next_token();
                 int vsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
                 int vt = (type == T_INT) ? 0 : type;
-                add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0, 0);
+                add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0, is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : 0);
                 symbols[symbol_count - 1].var_type = vt;
                 if (tok == '=') {
                     next_token();
@@ -3501,10 +3692,12 @@ static void statement(void) {
                 int ti = find_symbol(token);
                 if (ti < 0 || !symbols[ti].is_const) { statement(); continue; }
                 int type_size = symbols[ti].const_value;
+                if (symbols[ti].is_unsigned) unsigned_type = 1;
                 next_token();
                 restart_typedef: ;
-                int is_ptr = 0;
-                while (tok == '*') { is_ptr = 1; next_token(); }
+                int nstars = 0;
+                while (tok == '*') { nstars++; next_token(); }
+                int is_ptr = nstars > 0;
                 if (tok != T_ID) error("expected variable name");
                 char varname[MAX_IDENT_LEN];
                 int nlen = strlen(token);
@@ -3514,7 +3707,7 @@ static void statement(void) {
                 next_token();
                 int size = is_ptr ? 8 : type_size;
                 int is_arr = 0;
-                int elem_size = size;
+                int elem_size = (is_ptr && nstars >= 2) ? 8 : type_size;
                 int elem_size2 = 0;
                 int ndims = 0;
                 while (tok == '[') {
@@ -3536,6 +3729,10 @@ static void statement(void) {
                         elem_size = elem_size * (cnt > 0 ? cnt : 1);
                     }
                 }
+                if (is_ptr && is_arr) {
+                    elem_size = 8;
+                    elem_size2 = 0;
+                }
                 add_symbol(varname, 0, size, is_ptr ? T_INT : 0, is_arr, elem_size);
                 if (elem_size2 > 0) {
                     Symbol *s2 = &symbols[symbol_count - 1];
@@ -3553,6 +3750,8 @@ static void statement(void) {
                             int off = s->offset + elem_idx * elem_size;
                             if (elem_size == 1)
                                 emit_i("    movb %%al, %d(%%rbp)", off);
+                            else if (elem_size == 2)
+                                emit_i("    movw %%ax, %d(%%rbp)", off);
                             else if (elem_size == 4)
                                 emit_i("    movl %%eax, %d(%%rbp)", off);
                             else
@@ -3602,8 +3801,9 @@ static void statement(void) {
                 /* FIX: saltar 'long' extra para 'long long', 'long int', etc. */
                 while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
                 restart_int: ;
-                int is_ptr = 0;
-                while (tok == '*') { is_ptr = 1; next_token(); }
+                int nstars = 0;
+                while (tok == '*') { nstars++; next_token(); }
+                int is_ptr = nstars > 0;
                 if (tok != T_ID) error("expected variable name");
                 char varname[MAX_IDENT_LEN];
                 int nlen = strlen(token);
@@ -3614,7 +3814,7 @@ static void statement(void) {
                 int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
                 int vt = (type == T_INT || type == T_VOID) ? 0 : type;
                 int is_arr = 0;
-                int elem_size = gsize; // <--- REVERTIR A ESTO (Debe ser 'gsize', no 1)
+                int elem_size = is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : gsize; // <--- REVERTIR A ESTO (Debe ser 'gsize', no 1)
                 int elem_size2 = 0;
                 while (tok == '[') {
                     is_arr = 1;
@@ -3637,6 +3837,10 @@ static void statement(void) {
                         elem_size = elem_size * (cnt > 0 ? cnt : 1);
                     }
                 }
+                if (is_ptr && is_arr) {
+                    elem_size = 8;
+                    elem_size2 = 0;
+                }
                 add_symbol(varname, 0, gsize, is_ptr ? type : 0, is_arr, elem_size);
                 symbols[symbol_count - 1].var_type = vt;
                 if (elem_size2 > 0) {
@@ -3655,6 +3859,8 @@ static void statement(void) {
                             int off = s->offset + elem_idx * elem_size;
                             if (elem_size == 1)
                                 emit_i("    movb %%al, %d(%%rbp)", off);
+                            else if (elem_size == 2)
+                                emit_i("    movw %%ax, %d(%%rbp)", off);
                             else if (elem_size == 4)
                                 emit_i("    movl %%eax, %d(%%rbp)", off);
                             else
@@ -3760,9 +3966,16 @@ static void parse_function(const char *name, int ret_type) {
             }
             if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_FLOAT || tok == T_DOUBLE || tok == T_ID) {
                 int ptype = (tok == T_ID) ? T_INT : tok;
+                int tsize = 8;
                 if (tok == T_ID) {
                     int ti = find_symbol(token);
-                    if (ti >= 0 && symbols[ti].is_const) ptype = T_INT;
+                    if (ti >= 0 && symbols[ti].is_const) {
+                        ptype = T_INT;
+                        if (symbols[ti].var_type == CONST_VAR_FLAG) {
+                            tsize = symbols[ti].const_value;
+                            if (symbols[ti].is_unsigned) unsigned_type = 1;
+                        }
+                    }
                 }
                 next_token();
                 while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
@@ -3774,7 +3987,7 @@ static void parse_function(const char *name, int ret_type) {
                 if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
                 memcpy(param_names[param_count], token, nlen);
                 param_names[param_count][nlen] = '\0';
-                int psize = is_ptr ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : 8));
+                int psize = is_ptr ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : (ptype == T_INT ? tsize : 8)));
                 /* Pointee type after one dereference: char* points at char
                    (movsbq, stride 1); with two or more stars the first
                    subscript yields another pointer (stride 8) whose pointee
@@ -3783,7 +3996,7 @@ static void parse_function(const char *name, int ret_type) {
                 int pointed_type = 0;
                 int vt = (ptype == T_INT || ptype == T_VOID) ? 0 : ptype;
                 if (nstars >= 1) pointed_type = ptype;
-                add_symbol(token, 0, psize, pointed_type, 0, 0);
+                add_symbol(token, 0, psize, pointed_type, 0, is_ptr ? ((nstars >= 2) ? 8 : (ptype == T_CHAR ? 1 : (ptype == T_FLOAT ? 4 : tsize))) : 0);
                 symbols[symbol_count - 1].var_type = vt;
                 symbols[symbol_count - 1].elem_ptr = (nstars >= 2);
                 param_count++;
@@ -3935,6 +4148,41 @@ static void parse_enum(void) {
     match(';');
 }
 
+static void skip_struct_fields(int fsize, int funs, int ffloat) {
+    while (tok != ';' && tok != '}' && tok != T_EOF) {
+        if (tok == T_ID) {
+            if (struct_member_count < MAX_STRUCT_MEMBERS) {
+                int nlen = strlen(token);
+                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+                memcpy(struct_member_names[struct_member_count], token, nlen);
+                struct_member_names[struct_member_count][nlen] = '\0';
+                struct_member_offsets[struct_member_count] = struct_total_size;
+                struct_member_sizes[struct_member_count] = fsize;
+                struct_member_elem_sizes[struct_member_count] = fsize;
+                struct_member_unsigned[struct_member_count] = funs;
+                struct_member_is_float[struct_member_count] = ffloat;
+                struct_member_count++;
+            }
+            next_token();
+            if (tok == '[') {
+                next_token();
+                int count = 1;
+                if (tok == T_NUM) { count = (int)safe_strtoll(token); next_token(); }
+                match(']');
+                struct_total_size += fsize * count;
+                if (struct_member_count > 0) {
+                    struct_member_sizes[struct_member_count - 1] = fsize * count;
+                }
+            } else {
+                struct_total_size += fsize;
+            }
+        } else {
+            next_token();
+        }
+    }
+    match(';');
+}
+
 static void skip_struct(void) {
     /* skip optional tag */
     if (tok == T_ID) next_token();
@@ -3947,7 +4195,12 @@ static void skip_struct(void) {
        (Los offsets son por-struct porque struct_total_size si se resetea.) */
     struct_total_size = 0;
 
+    int muns = 0;
     while (tok != '}' && tok != T_EOF) {
+        if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
+            muns = (strcmp(token, "unsigned") == 0);
+            next_token();
+        }
         if (tok == T_INT || tok == T_CHAR || tok == T_FLOAT || tok == T_DOUBLE) {
             int ftype = tok;
             next_token();
@@ -3960,39 +4213,32 @@ static void skip_struct(void) {
             else if (ftype == T_DOUBLE) fsize = 8;
             else fsize = 4;
 
-            while (tok != ';' && tok != '}' && tok != T_EOF) {
-                if (tok == T_ID) {
-                    if (struct_member_count < MAX_STRUCT_MEMBERS) {
-                        int nlen = strlen(token);
-                        if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                        memcpy(struct_member_names[struct_member_count], token, nlen);
-                        struct_member_names[struct_member_count][nlen] = '\0';
-                        struct_member_offsets[struct_member_count] = struct_total_size;
-                        struct_member_sizes[struct_member_count] = fsize;
-                        struct_member_elem_sizes[struct_member_count] = fsize;
-                        struct_member_count++;
-                    }
-                    next_token();
-                    if (tok == '[') {
-                        next_token();
-                        int count = 1;
-                        if (tok == T_NUM) { count = (int)safe_strtoll(token); next_token(); }
-                        match(']');
-                        struct_total_size += fsize * count;
-                        if (struct_member_count > 0) {
-                            struct_member_sizes[struct_member_count - 1] = fsize * count;
-                        }
-                    } else {
-                        struct_total_size += fsize;
-                    }
-                } else {
-                    next_token();
-                }
+            skip_struct_fields(fsize, muns, ftype == T_FLOAT ? 1 : 0);
+            muns = 0;
+        } else if (tok == T_ID) {
+            int ti = find_symbol(token);
+            int fsize;
+            int funs;
+            if (ti < 0 || !symbols[ti].is_const || symbols[ti].var_type != CONST_VAR_FLAG) {
+                muns = 0;
+                next_token();
+                continue;
             }
-            match(';');
+            fsize = symbols[ti].const_value;
+            if (fsize <= 0) fsize = 8;
+            funs = muns || symbols[ti].is_unsigned;
+            next_token();
+            while (tok == '*') {
+                fsize = 8;
+                funs = 0;
+                next_token();
+            }
+            skip_struct_fields(fsize, funs, 0);
+            muns = 0;
         } else if (tok == '}') {
             break;
         } else {
+            muns = 0;
             next_token();
         }
     }
@@ -4011,9 +4257,12 @@ static void skip_typedef(void) {
     }
     /* skip to semicolon, recording the last identifier as the typedef name */
     char last_name[MAX_IDENT_LEN] = "";
+    int last_uns = 0;
     while (tok != ';' && tok != T_EOF) {
         if (tok == T_ID) {
             int nlen = strlen(token);
+            if (strcmp(token, "unsigned") == 0) last_uns = 1;
+            if (strcmp(token, "signed") == 0) last_uns = 0;
             if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
             memcpy(last_name, token, nlen);
             last_name[nlen] = '\0';
@@ -4037,7 +4286,8 @@ static void skip_typedef(void) {
         s->is_array = 0;
         s->elem_size = 0;
         s->elem_size2 = 0;
-        s->var_type = 0;
+        s->is_unsigned = last_uns;
+        s->var_type = CONST_VAR_FLAG;
         s->next_hash = -1;
         s->const_value = 8;  /* just a marker */
         /* If a struct was just parsed, store its size */
@@ -4219,7 +4469,8 @@ static void parse_program(void) {
             /* FIX: saltar 'long' extra para 'long long', 'long int', etc. */
             while (tok == T_INT && (strcmp(token, "long") == 0 || strcmp(token, "int") == 0)) next_token();
             int is_ptr = 0;
-            while (tok == '*') { is_ptr = 1; next_token(); }
+            int nstars = 0;
+            while (tok == '*') { nstars++; is_ptr = 1; next_token(); }
             if (tok != T_ID) error("expected identifier");
             char fname[MAX_IDENT_LEN];
             int nlen = strlen(token);
@@ -4233,7 +4484,7 @@ static void parse_program(void) {
                 int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
                 int vt = (type == T_INT || type == T_VOID) ? 0 : type;
                 int is_arr = 0;
-                int elem_size = gsize;
+                int elem_size = is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : gsize;
                 int elem_size2 = 0;
                 int ndims = 0;
                 while (tok == '[') {
@@ -4260,6 +4511,10 @@ static void parse_program(void) {
                 int was_extern = extern_flag;
                 int was_static = static_flag;
                 global_emit_deferred = 1;
+                if (is_ptr && is_arr) {
+                    elem_size = 8;
+                    elem_size2 = 0;
+                }
                 add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr, elem_size);
                 global_emit_deferred = 0;
                 symbols[symbol_count - 1].var_type = vt;
@@ -4288,10 +4543,14 @@ static void parse_program(void) {
             /* Fallback: treat unknown identifier as a type name (e.g. FILE) */
             int type_size = 8;
             int ti = find_symbol(token);
-            if (ti >= 0 && symbols[ti].is_const) type_size = symbols[ti].const_value;
+            if (ti >= 0 && symbols[ti].is_const) {
+                type_size = symbols[ti].const_value;
+                if (symbols[ti].is_unsigned) unsigned_type = 1;
+            }
             next_token();
-            int is_ptr = 0;
-            while (tok == '*') { is_ptr = 1; next_token(); }
+            int nstars = 0;
+            while (tok == '*') { nstars++; next_token(); }
+            int is_ptr = nstars > 0;
             if (tok != T_ID) error("expected identifier");
             char fname[MAX_IDENT_LEN];
             int nlen = strlen(token);
@@ -4299,9 +4558,14 @@ static void parse_program(void) {
             memcpy(fname, token, nlen);
             fname[nlen] = '\0';
             next_token();
+            if (tok == '(') {
+                static_flag = 0;
+                extern_flag = 0;
+                parse_function(fname, T_INT);
+            } else {
             int gsize = is_ptr ? 8 : type_size;
             int is_arr = 0;
-            int elem_size = gsize;
+            int elem_size = type_size;
             int elem_size2 = 0;
             int ndims = 0;
             while (tok == '[') {
@@ -4317,21 +4581,26 @@ static void parse_program(void) {
                     else error("undefined macro");
                     next_token();
                 }
-                match(']');
-                gsize = gsize * (cnt > 0 ? cnt : 1);
-                ndims++;
-                if (ndims == 2) {
-                    elem_size2 = elem_size;
-                    elem_size = elem_size * (cnt > 0 ? cnt : 1);
+                    match(']');
+                    gsize = gsize * (cnt > 0 ? cnt : 1);
+                    ndims++;
+                    if (ndims == 2) {
+                        elem_size2 = elem_size;
+                        elem_size = elem_size * (cnt > 0 ? cnt : 1);
+                    }
                 }
-            }
-            add_symbol(fname, 1, gsize, 0, is_arr, elem_size);
+                if (is_ptr && is_arr) {
+                    elem_size = 8;
+                    elem_size2 = 0;
+                }
+                add_symbol(fname, 1, gsize, is_ptr ? T_INT : 0, is_arr, elem_size);
             if (elem_size2 > 0) {
                 Symbol *s2 = &symbols[symbol_count - 1];
                 s2->elem_size2 = elem_size2;
             }
             if (tok == ';') next_token();
             else error("expected ';' or '(' after global");
+            }
         } else {
             error("global must be int, char, float, or double");
         }
@@ -4440,13 +4709,53 @@ int main(int argc, char **argv) {
             s->is_array = 0;
             s->elem_size = 0;
             s->elem_size2 = 0;
-    s->var_type = const_flag ? CONST_VAR_FLAG : 0;
+            s->is_unsigned = (strcmp(gname, "size_t") == 0) ? 1 : 0;
+            s->var_type = s->is_const ? CONST_VAR_FLAG : 0;
             s->next_hash = -1;
             {
                 int h = hash_name(gname);
                 s->next_hash = hash_table[h];
                 hash_table[h] = symbol_count - 1;
             }
+            i++;
+        }
+    }
+
+    {
+        int i = 0;
+        while (1) {
+            const char *tname = typedef_name(i);
+            int tsize;
+            int tuns;
+            Symbol *s;
+            char *d;
+            int nlen;
+            int h;
+            if (tname == NULL) break;
+            tsize = typedef_size(i);
+            tuns = typedef_uns(i);
+            s = &symbols[symbol_count];
+            d = s->name;
+            symbol_count++;
+            nlen = strlen(tname);
+            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+            memcpy(d, tname, nlen);
+            d[nlen] = '\0';
+            s->offset = 0;
+            s->is_global = 1;
+            s->size = 8;
+            s->pointed = 0;
+            s->is_const = 1;
+            s->const_value = tsize;
+            s->is_array = 0;
+            s->elem_size = 0;
+            s->elem_size2 = 0;
+            s->is_unsigned = tuns;
+            s->var_type = CONST_VAR_FLAG;
+            s->next_hash = -1;
+            h = hash_name(tname);
+            s->next_hash = hash_table[h];
+            hash_table[h] = symbol_count - 1;
             i++;
         }
     }

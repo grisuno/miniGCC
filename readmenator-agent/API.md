@@ -3,359 +3,371 @@
 ## minigcc.c
 
 ### save_parser_state (function) `static void save_parser_state(ParserState *state)`
-- Defined: `minigcc.c:234`
+- Defined: `minigcc.c:242`
 
 ### restore_parser_state (function) `static void restore_parser_state(ParserState *state)`
-- Defined: `minigcc.c:259`
+- Defined: `minigcc.c:270`
 
 ### find_macro (function) `static int find_macro(const char *name)`
-- Defined: `minigcc.c:295`
+- Defined: `minigcc.c:309`
 
 ### add_macro (function) `static void add_macro(const char *name, int value)`
-- Defined: `minigcc.c:304`
+- Defined: `minigcc.c:318`
 
 ### macro_skipws (function) `static void macro_skipws(void)`
-- Defined: `minigcc.c:331`
+- Defined: `minigcc.c:345`
 
 ### macro_hex_digit (function) `static int macro_hex_digit(int c)`
-- Defined: `minigcc.c:335`
-
-### macro_digit_val (function) `static int macro_digit_val(int c)`
-- Defined: `minigcc.c:342`
-
-### macro_primary (function) `static int macro_primary(void)`
 - Defined: `minigcc.c:349`
 
+### macro_digit_val (function) `static int macro_digit_val(int c)`
+- Defined: `minigcc.c:356`
+
+### macro_primary (function) `static int macro_primary(void)`
+- Defined: `minigcc.c:363`
+
 ### macro_unary (function) `static int macro_unary(void)`
-- Defined: `minigcc.c:423`
+- Defined: `minigcc.c:437`
 
 ### macro_mul (function) `static int macro_mul(void)`
-- Defined: `minigcc.c:432`
+- Defined: `minigcc.c:446`
 
 ### macro_add (function) `static int macro_add(void)`
-- Defined: `minigcc.c:457`
+- Defined: `minigcc.c:471`
 
 ### macro_shift (function) `static int macro_shift(void)`
-- Defined: `minigcc.c:474`
+- Defined: `minigcc.c:488`
 
 ### macro_cmp (function) `static int macro_cmp(void)`
-- Defined: `minigcc.c:491`
+- Defined: `minigcc.c:505`
 
 ### macro_eq (function) `static int macro_eq(void)`
-- Defined: `minigcc.c:514`
+- Defined: `minigcc.c:528`
 
 ### macro_bitand (function) `static int macro_bitand(void)`
-- Defined: `minigcc.c:531`
-
-### macro_bitxor (function) `static int macro_bitxor(void)`
 - Defined: `minigcc.c:545`
 
-### macro_bitor (function) `static int macro_bitor(void)`
+### macro_bitxor (function) `static int macro_bitxor(void)`
 - Defined: `minigcc.c:559`
 
-### macro_logand (function) `static int macro_logand(void)`
+### macro_bitor (function) `static int macro_bitor(void)`
 - Defined: `minigcc.c:573`
 
-### macro_or_expr (function) `static int macro_or_expr(void)`
+### macro_logand (function) `static int macro_logand(void)`
 - Defined: `minigcc.c:587`
 
-### macro_fold (function) `static int macro_fold(void)`
+### macro_or_expr (function) `static int macro_or_expr(void)`
 - Defined: `minigcc.c:601`
 
+### macro_fold (function) `static int macro_fold(void)`
+- Defined: `minigcc.c:615`
+
 ### error (function) `static void error(const char *msg)`
-- Defined: `minigcc.c:606`
+- Defined: `minigcc.c:620`
 
 ### safe_malloc (function) `static void *safe_malloc(size_t size)`
-- Defined: `minigcc.c:612`
+- Defined: `minigcc.c:626`
 
 ### safe_strcpy (function) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
-- Defined: `minigcc.c:621`
+- Defined: `minigcc.c:635`
 
 ### safe_strtoll (function) `static long safe_strtoll(const char *s)`
-- Defined: `minigcc.c:630`
+- Defined: `minigcc.c:644`
 
 ### is_file_processed (function) `static int is_file_processed(const char *path)`
-- Defined: `minigcc.c:643`
+- Defined: `minigcc.c:657`
 
 ### mark_file_processed (function) `static void mark_file_processed(const char *path)`
-- Defined: `minigcc.c:652`
+- Defined: `minigcc.c:666`
 
 ### get_dir_from_path (function) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
-- Defined: `minigcc.c:664`
+- Defined: `minigcc.c:678`
 
 ### resolve_local_include (function) `static char *resolve_local_include(const char *target)`
-- Defined: `minigcc.c:683`
+- Defined: `minigcc.c:697`
 
 ### read_include_file (function) `static char *read_include_file(const char *path)`
-- Defined: `minigcc.c:722`
+- Defined: `minigcc.c:736`
 
 ### hash_name (function) `static int hash_name(const char *name)`
-- Defined: `minigcc.c:747`
+- Defined: `minigcc.c:761`
 - Doc: Must produce identical results under gcc (32-bit int) and under the compiler's own model (64-bit int), so avoid multipli
 
 ### hash_init (function) `static void hash_init(void)`
-- Defined: `minigcc.c:756`
+- Defined: `minigcc.c:770`
 
 ### push_scope (function) `static void push_scope(void)`
-- Defined: `minigcc.c:761`
+- Defined: `minigcc.c:775`
 
 ### pop_scope (function) `static void pop_scope(void)`
-- Defined: `minigcc.c:769`
+- Defined: `minigcc.c:783`
 
 ### truncate_symbols (function) `static void truncate_symbols(int start_idx)`
-- Defined: `minigcc.c:799`
+- Defined: `minigcc.c:813`
 - Doc: Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (
 
 ### my_isspace (function) `static int my_isspace(int c)`
-- Defined: `minigcc.c:817`
+- Defined: `minigcc.c:831`
 
 ### my_isalpha (function) `static int my_isalpha(int c)`
-- Defined: `minigcc.c:827`
+- Defined: `minigcc.c:841`
 
 ### my_isdigit (function) `static int my_isdigit(int c)`
-- Defined: `minigcc.c:833`
+- Defined: `minigcc.c:847`
 
 ### my_isalnum (function) `static int my_isalnum(int c)`
-- Defined: `minigcc.c:838`
+- Defined: `minigcc.c:852`
 
 ### lex_fail (function) `static void lex_fail(const char *msg, char *start, char *end)`
-- Defined: `minigcc.c:844`
+- Defined: `minigcc.c:858`
 
 ### lex_kw_add (function) `static void lex_kw_add(const char *name, int id)`
-- Defined: `minigcc.c:854`
+- Defined: `minigcc.c:868`
 
 ### lex_init_keywords (function) `static void lex_init_keywords(void)`
-- Defined: `minigcc.c:867`
+- Defined: `minigcc.c:881`
 
 ### lex_kw_lookup (function) `static int lex_kw_lookup(void)`
-- Defined: `minigcc.c:905`
+- Defined: `minigcc.c:919`
 
 ### lex_match_op (function) `static int lex_match_op(const char *op, int id)`
-- Defined: `minigcc.c:917`
+- Defined: `minigcc.c:931`
 
 ### lex_hex_val (function) `static int lex_hex_val(int c)`
-- Defined: `minigcc.c:929`
+- Defined: `minigcc.c:943`
 
 ### lex_is_int_suffix (function) `static int lex_is_int_suffix(int c)`
-- Defined: `minigcc.c:936`
+- Defined: `minigcc.c:950`
 
 ### lex_number (function) `static void lex_number(void)`
-- Defined: `minigcc.c:942`
+- Defined: `minigcc.c:956`
 
 ### next_token (function) `static void next_token(void)`
-- Defined: `minigcc.c:1061`
+- Defined: `minigcc.c:1075`
 - Doc: float_const_is_float[float_const_count] = (sfx == 'f' || sfx == 'F') ? 1 : 0; safe_strcpy(float_const_str[float_const_co
 
 ### match (function) `static void match(int expected)`
-- Defined: `minigcc.c:1489`
+- Defined: `minigcc.c:1503`
 
 ### emit (function) `static void emit(const char *s)`
-- Defined: `minigcc.c:1494`
-
-### emit_i (function) `static void emit_i(const char *fmt, int v)`
 - Defined: `minigcc.c:1508`
 
+### emit_i (function) `static void emit_i(const char *fmt, int v)`
+- Defined: `minigcc.c:1522`
+
 ### emit_s (function) `static void emit_s(const char *fmt, const char *s)`
-- Defined: `minigcc.c:1514`
+- Defined: `minigcc.c:1528`
 
 ### emit_is (function) `static void emit_is(const char *fmt, int v, const char *s)`
-- Defined: `minigcc.c:1520`
+- Defined: `minigcc.c:1534`
 
 ### emit_si (function) `static void emit_si(const char *fmt, const char *s, int v)`
-- Defined: `minigcc.c:1526`
+- Defined: `minigcc.c:1540`
 
 ### emit_asciz_body (function) `static void emit_asciz_body(const char *s)`
-- Defined: `minigcc.c:1536`
+- Defined: `minigcc.c:1550`
 - Doc: Write a C string as the body of a .asciz directive, escaping everything the assembler cannot take literally. Shared by t
 
 ### emit_label (function) `static void emit_label(int label)`
-- Defined: `minigcc.c:1554`
+- Defined: `minigcc.c:1568`
 
 ### find_symbol (function) `static int find_symbol(const char *name)`
-- Defined: `minigcc.c:1561`
+- Defined: `minigcc.c:1575`
 - Doc: else if (c == '\a') fprintf(output, "\\a"); else if (c == '\b') fprintf(output, "\\b"); else if (c >= 32 && c <= 126) fp
 
 ### add_symbol (function) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
-- Defined: `minigcc.c:1571`
+- Defined: `minigcc.c:1585`
 
 ### arg_reg (function) `static const char *arg_reg(int i)`
-- Defined: `minigcc.c:1634`
+- Defined: `minigcc.c:1648`
 - Doc: Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compi
 
 ### libc_global_name (function) `static const char *libc_global_name(int i)`
-- Defined: `minigcc.c:1644`
+- Defined: `minigcc.c:1658`
 - Doc: Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compi
 
+### typedef_name (function) `static const char *typedef_name(int i)`
+- Defined: `minigcc.c:1670`
+
+### typedef_size (function) `static int typedef_size(int i)`
+- Defined: `minigcc.c:1685`
+
+### typedef_uns (function) `static int typedef_uns(int i)`
+- Defined: `minigcc.c:1700`
+
 ### unary (function) `static void unary(void)`
-- Defined: `minigcc.c:1656`
+- Defined: `minigcc.c:1709`
 
 ### lvalue_address (function) `static void lvalue_address(void)`
-- Defined: `minigcc.c:1928`
+- Defined: `minigcc.c:2056`
 
 ### handle_postfix (function) `static void handle_postfix(int is_lvalue)`
-- Defined: `minigcc.c:1980`
+- Defined: `minigcc.c:2113`
 
 ### unary_expr (function) `static void unary_expr(void)`
-- Defined: `minigcc.c:2114`
+- Defined: `minigcc.c:2274`
 
 ### multiplicative_expr (function) `static void multiplicative_expr(void)`
-- Defined: `minigcc.c:2129`
+- Defined: `minigcc.c:2289`
 
 ### additive_expr (function) `static void additive_expr(void)`
-- Defined: `minigcc.c:2193`
+- Defined: `minigcc.c:2353`
 
 ### shift_expr (function) `static void shift_expr(void)`
-- Defined: `minigcc.c:2248`
+- Defined: `minigcc.c:2414`
 
 ### relational_expr (function) `static void relational_expr(void)`
-- Defined: `minigcc.c:2267`
+- Defined: `minigcc.c:2433`
 
 ### equality_expr (function) `static void equality_expr(void)`
-- Defined: `minigcc.c:2320`
+- Defined: `minigcc.c:2486`
 
 ### bitwise_and_expr (function) `static void bitwise_and_expr(void)`
-- Defined: `minigcc.c:2369`
+- Defined: `minigcc.c:2535`
 
 ### bitwise_xor_expr (function) `static void bitwise_xor_expr(void)`
-- Defined: `minigcc.c:2381`
+- Defined: `minigcc.c:2547`
 
 ### bitwise_or_expr (function) `static void bitwise_or_expr(void)`
-- Defined: `minigcc.c:2393`
+- Defined: `minigcc.c:2559`
 
 ### logical_and_expr (function) `static void logical_and_expr(void)`
-- Defined: `minigcc.c:2405`
+- Defined: `minigcc.c:2571`
 
 ### logical_or_expr (function) `static void logical_or_expr(void)`
-- Defined: `minigcc.c:2425`
+- Defined: `minigcc.c:2591`
 
 ### conditional_expr (function) `static void conditional_expr(void)`
-- Defined: `minigcc.c:2445`
+- Defined: `minigcc.c:2611`
 
 ### emit_compound_op (function) `static void emit_compound_op(int op, int asize)`
-- Defined: `minigcc.c:2463`
+- Defined: `minigcc.c:2629`
 
 ### assignment_expr (function) `static void assignment_expr(void)`
-- Defined: `minigcc.c:2504`
+- Defined: `minigcc.c:2670`
 
 ### asm_scratch (function) `static const char *asm_scratch(int i)`
-- Defined: `minigcc.c:2715`
+- Defined: `minigcc.c:2891`
 
 ### asm_home_text (function) `static void asm_home_text(int home, char *buf)`
-- Defined: `minigcc.c:2724`
+- Defined: `minigcc.c:2900`
 
 ### asm_reg_sized (function) `static void asm_reg_sized(int home, int size, char *buf)`
-- Defined: `minigcc.c:2732`
+- Defined: `minigcc.c:2908`
 
 ### asm_fixed_home (function) `static int asm_fixed_home(int c)`
-- Defined: `minigcc.c:2758`
+- Defined: `minigcc.c:2944`
 
 ### asm_emit_template (function) `static void asm_emit_template(void)`
-- Defined: `minigcc.c:2766`
+- Defined: `minigcc.c:2952`
 
 ### asm_parse_mem (function) `static void asm_parse_mem(int idx, int is_out)`
-- Defined: `minigcc.c:2793`
+- Defined: `minigcc.c:2979`
 
 ### asm_emit_ss (function) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
-- Defined: `minigcc.c:2851`
+- Defined: `minigcc.c:3037`
 
 ### asm_parse_one (function) `static void asm_parse_one(int idx, int is_out)`
-- Defined: `minigcc.c:2857`
+- Defined: `minigcc.c:3043`
 
 ### asm_assign_homes (function) `static void asm_assign_homes(void)`
-- Defined: `minigcc.c:2921`
+- Defined: `minigcc.c:3107`
 
 ### asm_emit_all (function) `static void asm_emit_all(void)`
-- Defined: `minigcc.c:2966`
+- Defined: `minigcc.c:3152`
 
 ### parse_asm_block (function) `static void parse_asm_block(void)`
-- Defined: `minigcc.c:3010`
+- Defined: `minigcc.c:3200`
 
 ### statement (function) `static void statement(void)`
-- Defined: `minigcc.c:3074`
+- Defined: `minigcc.c:3264`
 
 ### parse_function (function) `static void parse_function(const char *name, int ret_type)`
-- Defined: `minigcc.c:3741`
+- Defined: `minigcc.c:3947`
 
 ### parse_enum (function) `static void parse_enum(void)`
-- Defined: `minigcc.c:3888`
+- Defined: `minigcc.c:4101`
+
+### skip_struct_fields (function) `static void skip_struct_fields(int fsize, int funs, int ffloat)`
+- Defined: `minigcc.c:4150`
 
 ### skip_struct (function) `static void skip_struct(void)`
-- Defined: `minigcc.c:3937`
+- Defined: `minigcc.c:4185`
 
 ### skip_typedef (function) `static void skip_typedef(void)`
-- Defined: `minigcc.c:4001`
+- Defined: `minigcc.c:4247`
 
 ### data_directive (function) `static const char *data_directive(int size)`
-- Defined: `minigcc.c:4056`
+- Defined: `minigcc.c:4306`
 - Doc: s->const_value = 8;  /* just a marker /* If a struct was just parsed, store its size if (struct_total_size > 0) s->const
 
 ### emit_global_bss (function) `static void emit_global_bss(const char *name, int is_static, int size)`
-- Defined: `minigcc.c:4064`
+- Defined: `minigcc.c:4314`
 - Doc: } } match(';'); } /* Storage directive for a datum of `size` bytes. static const char *data_directive(int size) { if (si
 
 ### emit_global_data_head (function) `static void emit_global_data_head(const char *name, int is_static)`
-- Defined: `minigcc.c:4071`
+- Defined: `minigcc.c:4321`
 
 ### parse_const_int (function) `static int parse_const_int(long long *out)`
-- Defined: `minigcc.c:4081`
+- Defined: `minigcc.c:4331`
 - Doc: Parse an integer constant usable as a static initializer: an optionally signed numeric or character literal, or a macro 
 
 ### intern_string (function) `static int intern_string(const char *text)`
-- Defined: `minigcc.c:4104`
+- Defined: `minigcc.c:4354`
 - Doc: } if (tok == T_ID) { int mi = find_macro(token); if (mi >= 0) { long long v = macros[mi].value; next_token(); out = neg 
 
 ### emit_global_initializer (function) `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...`
-- Defined: `minigcc.c:4121`
+- Defined: `minigcc.c:4371`
 - Doc: Emit the definition of a global that carries an initializer. On entry the current token is the one after '='. `size` is 
 
 ### parse_program (function) `static void parse_program(void)`
-- Defined: `minigcc.c:4185`
+- Defined: `minigcc.c:4435`
 
 ### emit_float_consts (function) `static void emit_float_consts(void)`
-- Defined: `minigcc.c:4340`
+- Defined: `minigcc.c:4609`
 
 ### emit_string_pool (function) `static void emit_string_pool(void)`
-- Defined: `minigcc.c:4350`
+- Defined: `minigcc.c:4619`
 
 ### main (function) `int main(int argc, char **argv)`
-- Defined: `minigcc.c:4360`
+- Defined: `minigcc.c:4629`
 
 ### fprintf (function) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
-- Defined: `minigcc.c:608`
+- Defined: `minigcc.c:622`
 
 ### exit (function) `exit(EXIT_FAILURE);`
-- Defined: `minigcc.c:610`
+- Defined: `minigcc.c:624`
 
 ### fclose (function) `fclose(f);`
-- Defined: `minigcc.c:687`
+- Defined: `minigcc.c:701`
 
 ### fseek (function) `fseek(f, 0, SEEK_END);`
-- Defined: `minigcc.c:726`
+- Defined: `minigcc.c:740`
 
 ### rewind (function) `rewind(f);`
-- Defined: `minigcc.c:732`
+- Defined: `minigcc.c:746`
 
 ### free (function) `free(buf);`
-- Defined: `minigcc.c:736`
+- Defined: `minigcc.c:750`
 
 ### snprintf (function) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
-- Defined: `minigcc.c:957`
+- Defined: `minigcc.c:971`
 
 ### fputc (function) `fputc('%', output);`
-- Defined: `minigcc.c:1499`
+- Defined: `minigcc.c:1513`
 
 ### strncpy (function) `strncpy(d, name, MAX_IDENT_LEN - 1);`
-- Defined: `minigcc.c:1577`
+- Defined: `minigcc.c:1591`
 
 ### strcpy (function) `strcpy(saved_token, token);`
-- Defined: `minigcc.c:2509`
+- Defined: `minigcc.c:2675`
 
 ### fputs (function) `fputs(asm_text[oi], output);`
-- Defined: `minigcc.c:2782`
+- Defined: `minigcc.c:2968`
 
 ### memcpy (function) `memcpy(varname, token, nlen);`
-- Defined: `minigcc.c:3126`
+- Defined: `minigcc.c:3317`
 
 ## minigccg2.s
 
@@ -449,464 +461,491 @@
 ### current_elem_size2 (function)
 - Defined: `minigccg2.s:119`
 
-### no_postfix_deref (function)
+### current_elem_unsigned (function)
 - Defined: `minigccg2.s:123`
 
-### expr_type (function)
+### deref_w (function)
 - Defined: `minigccg2.s:127`
 
-### static_flag (function)
+### deref_u (function)
 - Defined: `minigccg2.s:131`
 
-### unsigned_type (function)
+### no_postfix_deref (function)
 - Defined: `minigccg2.s:135`
 
-### const_flag (function)
+### expr_type (function)
 - Defined: `minigccg2.s:139`
 
-### extern_flag (function)
+### static_flag (function)
 - Defined: `minigccg2.s:143`
 
-### global_emit_deferred (function)
+### unsigned_type (function)
 - Defined: `minigccg2.s:147`
 
-### float_const_str (function)
+### const_flag (function)
 - Defined: `minigccg2.s:151`
 
-### float_const_is_float (function)
+### extern_flag (function)
 - Defined: `minigccg2.s:155`
 
-### float_const_count (function)
+### global_emit_deferred (function)
 - Defined: `minigccg2.s:159`
 
-### switch_case_values (function)
+### float_const_str (function)
 - Defined: `minigccg2.s:163`
 
-### switch_case_labels (function)
+### float_const_is_float (function)
 - Defined: `minigccg2.s:167`
 
-### switch_case_count (function)
+### float_const_count (function)
 - Defined: `minigccg2.s:171`
 
-### switch_has_default (function)
+### switch_case_values (function)
 - Defined: `minigccg2.s:175`
 
-### switch_default_label (function)
+### switch_case_labels (function)
 - Defined: `minigccg2.s:179`
 
-### break_target (function)
+### switch_case_count (function)
 - Defined: `minigccg2.s:183`
 
-### break_target_valid (function)
+### switch_has_default (function)
 - Defined: `minigccg2.s:187`
 
-### continue_target (function)
+### switch_default_label (function)
 - Defined: `minigccg2.s:191`
 
-### continue_target_valid (function)
+### break_target (function)
 - Defined: `minigccg2.s:195`
 
-### str_label_counter (function)
+### break_target_valid (function)
 - Defined: `minigccg2.s:199`
 
-### string_pool (function)
+### continue_target (function)
 - Defined: `minigccg2.s:203`
 
-### string_count (function)
+### continue_target_valid (function)
 - Defined: `minigccg2.s:207`
 
-### ptr_init_name (function)
+### str_label_counter (function)
 - Defined: `minigccg2.s:211`
 
-### ptr_init_label (function)
+### string_pool (function)
 - Defined: `minigccg2.s:215`
 
-### ptr_init_count (function)
+### string_count (function)
 - Defined: `minigccg2.s:219`
 
-### struct_total_size (function)
+### ptr_init_name (function)
 - Defined: `minigccg2.s:223`
 
-### struct_member_names (function)
+### ptr_init_label (function)
 - Defined: `minigccg2.s:227`
 
-### struct_member_offsets (function)
+### ptr_init_count (function)
 - Defined: `minigccg2.s:231`
 
-### struct_member_sizes (function)
+### struct_total_size (function)
 - Defined: `minigccg2.s:235`
 
-### struct_member_elem_sizes (function)
+### struct_member_names (function)
 - Defined: `minigccg2.s:239`
 
-### struct_member_count (function)
+### struct_member_offsets (function)
 - Defined: `minigccg2.s:243`
 
-### if_nest (function)
+### struct_member_sizes (function)
 - Defined: `minigccg2.s:247`
 
-### if_depth (function)
+### struct_member_elem_sizes (function)
 - Defined: `minigccg2.s:251`
 
+### struct_member_unsigned (function)
+- Defined: `minigccg2.s:255`
+
+### struct_member_is_float (function)
+- Defined: `minigccg2.s:259`
+
+### struct_member_count (function)
+- Defined: `minigccg2.s:263`
+
+### if_nest (function)
+- Defined: `minigccg2.s:267`
+
+### if_depth (function)
+- Defined: `minigccg2.s:271`
+
 ### macro_count (function)
-- Defined: `minigccg2.s:256`
+- Defined: `minigccg2.s:276`
 
 ### save_parser_state (function)
-- Defined: `minigccg2.s:260`
+- Defined: `minigccg2.s:280`
 
 ### restore_parser_state (function)
-- Defined: `minigccg2.s:399`
+- Defined: `minigccg2.s:437`
 
 ### macros (function)
-- Defined: `minigccg2.s:587`
+- Defined: `minigccg2.s:646`
 
 ### find_macro (function)
-- Defined: `minigccg2.s:591`
+- Defined: `minigccg2.s:650`
 
 ### add_macro (function)
-- Defined: `minigccg2.s:655`
+- Defined: `minigccg2.s:714`
 
 ### macro_p (function)
-- Defined: `minigccg2.s:785`
+- Defined: `minigccg2.s:844`
 
 ### macro_ok (function)
-- Defined: `minigccg2.s:789`
+- Defined: `minigccg2.s:848`
 
 ### macro_skipws (function)
-- Defined: `minigccg2.s:793`
+- Defined: `minigccg2.s:852`
 
 ### macro_hex_digit (function)
-- Defined: `minigccg2.s:834`
+- Defined: `minigccg2.s:893`
 
 ### macro_digit_val (function)
-- Defined: `minigccg2.s:932`
+- Defined: `minigccg2.s:991`
 
 ### macro_primary (function)
-- Defined: `minigccg2.s:1053`
+- Defined: `minigccg2.s:1112`
 
 ### macro_unary (function)
-- Defined: `minigccg2.s:1851`
+- Defined: `minigccg2.s:1910`
 
 ### macro_mul (function)
-- Defined: `minigccg2.s:1979`
+- Defined: `minigccg2.s:2038`
 
 ### macro_add (function)
-- Defined: `minigccg2.s:2182`
+- Defined: `minigccg2.s:2241`
 
 ### macro_shift (function)
-- Defined: `minigccg2.s:2280`
+- Defined: `minigccg2.s:2339`
 
 ### macro_cmp (function)
-- Defined: `minigccg2.s:2433`
+- Defined: `minigccg2.s:2492`
 
 ### macro_eq (function)
-- Defined: `minigccg2.s:2654`
+- Defined: `minigccg2.s:2713`
 
 ### macro_bitand (function)
-- Defined: `minigccg2.s:2807`
+- Defined: `minigccg2.s:2866`
 
 ### macro_bitxor (function)
-- Defined: `minigccg2.s:2893`
+- Defined: `minigccg2.s:2952`
 
 ### macro_bitor (function)
-- Defined: `minigccg2.s:2958`
+- Defined: `minigccg2.s:3017`
 
 ### macro_logand (function)
-- Defined: `minigccg2.s:3044`
+- Defined: `minigccg2.s:3103`
 
 ### macro_or_expr (function)
-- Defined: `minigccg2.s:3141`
+- Defined: `minigccg2.s:3200`
 
 ### macro_fold (function)
-- Defined: `minigccg2.s:3238`
+- Defined: `minigccg2.s:3297`
 
 ### error (function)
-- Defined: `minigccg2.s:3259`
+- Defined: `minigccg2.s:3318`
 
 ### safe_malloc (function)
-- Defined: `minigccg2.s:3311`
+- Defined: `minigccg2.s:3370`
 
 ### safe_strcpy (function)
-- Defined: `minigccg2.s:3366`
+- Defined: `minigccg2.s:3425`
 
 ### safe_strtoll (function)
-- Defined: `minigccg2.s:3443`
+- Defined: `minigccg2.s:3502`
 
 ### is_file_processed (function)
-- Defined: `minigccg2.s:3558`
+- Defined: `minigccg2.s:3617`
 
 ### mark_file_processed (function)
-- Defined: `minigccg2.s:3619`
+- Defined: `minigccg2.s:3678`
 
 ### get_dir_from_path (function)
-- Defined: `minigccg2.s:3731`
+- Defined: `minigccg2.s:3790`
 
 ### resolve_local_include (function)
-- Defined: `minigccg2.s:3874`
+- Defined: `minigccg2.s:3933`
 
 ### read_include_file (function)
-- Defined: `minigccg2.s:4324`
+- Defined: `minigccg2.s:4383`
 
 ### hash_name (function)
-- Defined: `minigccg2.s:4532`
+- Defined: `minigccg2.s:4591`
 
 ### hash_init (function)
-- Defined: `minigccg2.s:4590`
+- Defined: `minigccg2.s:4649`
 
 ### push_scope (function)
-- Defined: `minigccg2.s:4629`
+- Defined: `minigccg2.s:4688`
 
 ### pop_scope (function)
-- Defined: `minigccg2.s:4681`
+- Defined: `minigccg2.s:4740`
 
 ### truncate_symbols (function)
-- Defined: `minigccg2.s:4877`
+- Defined: `minigccg2.s:4936`
 
 ### my_isspace (function)
-- Defined: `minigccg2.s:5030`
+- Defined: `minigccg2.s:5089`
 
 ### my_isalpha (function)
-- Defined: `minigccg2.s:5119`
+- Defined: `minigccg2.s:5178`
 
 ### my_isdigit (function)
-- Defined: `minigccg2.s:5188`
+- Defined: `minigccg2.s:5247`
 
 ### my_isalnum (function)
-- Defined: `minigccg2.s:5228`
+- Defined: `minigccg2.s:5287`
 
 ### lex_fail (function)
-- Defined: `minigccg2.s:5273`
+- Defined: `minigccg2.s:5332`
 
 ### lex_kw_add (function)
-- Defined: `minigccg2.s:5377`
+- Defined: `minigccg2.s:5436`
 
 ### lex_init_keywords (function)
-- Defined: `minigccg2.s:5540`
+- Defined: `minigccg2.s:5599`
 
 ### lex_kw_lookup (function)
-- Defined: `minigccg2.s:6035`
+- Defined: `minigccg2.s:6094`
 
 ### lex_match_op (function)
-- Defined: `minigccg2.s:6129`
+- Defined: `minigccg2.s:6188`
 
 ### lex_hex_val (function)
-- Defined: `minigccg2.s:6212`
+- Defined: `minigccg2.s:6271`
 
 ### lex_is_int_suffix (function)
-- Defined: `minigccg2.s:6334`
+- Defined: `minigccg2.s:6393`
 
 ### lex_number (function)
-- Defined: `minigccg2.s:6403`
+- Defined: `minigccg2.s:6462`
 
 ### next_token (function)
-- Defined: `minigccg2.s:7933`
+- Defined: `minigccg2.s:7992`
 
 ### restart (function)
-- Defined: `minigccg2.s:7937`
+- Defined: `minigccg2.s:7996`
 
 ### match (function)
-- Defined: `minigccg2.s:12616`
+- Defined: `minigccg2.s:12675`
 
 ### emit (function)
-- Defined: `minigccg2.s:12654`
+- Defined: `minigccg2.s:12713`
 
 ### emit_i (function)
-- Defined: `minigccg2.s:12768`
+- Defined: `minigccg2.s:12827`
 
 ### emit_s (function)
-- Defined: `minigccg2.s:12817`
+- Defined: `minigccg2.s:12876`
 
 ### emit_is (function)
-- Defined: `minigccg2.s:12866`
+- Defined: `minigccg2.s:12925`
 
 ### emit_si (function)
-- Defined: `minigccg2.s:12919`
+- Defined: `minigccg2.s:12978`
 
 ### emit_asciz_body (function)
-- Defined: `minigccg2.s:12972`
+- Defined: `minigccg2.s:13031`
 
 ### emit_label (function)
-- Defined: `minigccg2.s:13296`
+- Defined: `minigccg2.s:13355`
 
 ### find_symbol (function)
-- Defined: `minigccg2.s:13325`
+- Defined: `minigccg2.s:13384`
 
 ### add_symbol (function)
-- Defined: `minigccg2.s:13412`
+- Defined: `minigccg2.s:13471`
 
 ### arg_reg (function)
-- Defined: `minigccg2.s:13786`
+- Defined: `minigccg2.s:13845`
 
 ### libc_global_name (function)
-- Defined: `minigccg2.s:13862`
+- Defined: `minigccg2.s:13921`
+
+### typedef_name (function)
+- Defined: `minigccg2.s:14049`
+
+### typedef_size (function)
+- Defined: `minigccg2.s:14203`
+
+### typedef_uns (function)
+- Defined: `minigccg2.s:14357`
 
 ### unary (function)
-- Defined: `minigccg2.s:13990`
+- Defined: `minigccg2.s:14433`
 
 ### lvalue_address (function)
-- Defined: `minigccg2.s:16683`
+- Defined: `minigccg2.s:17882`
 
 ### handle_postfix (function)
-- Defined: `minigccg2.s:17208`
+- Defined: `minigccg2.s:18443`
 
 ### unary_expr (function)
-- Defined: `minigccg2.s:18230`
+- Defined: `minigccg2.s:19809`
 
 ### multiplicative_expr (function)
-- Defined: `minigccg2.s:18255`
+- Defined: `minigccg2.s:19834`
 
 ### additive_expr (function)
-- Defined: `minigccg2.s:18877`
+- Defined: `minigccg2.s:20456`
 
 ### shift_expr (function)
-- Defined: `minigccg2.s:19372`
+- Defined: `minigccg2.s:20969`
 
 ### relational_expr (function)
-- Defined: `minigccg2.s:19518`
+- Defined: `minigccg2.s:21115`
 
 ### equality_expr (function)
-- Defined: `minigccg2.s:20120`
+- Defined: `minigccg2.s:21717`
 
 ### bitwise_and_expr (function)
-- Defined: `minigccg2.s:20598`
+- Defined: `minigccg2.s:22195`
 
 ### bitwise_xor_expr (function)
-- Defined: `minigccg2.s:20676`
+- Defined: `minigccg2.s:22273`
 
 ### bitwise_or_expr (function)
-- Defined: `minigccg2.s:20754`
+- Defined: `minigccg2.s:22351`
 
 ### logical_and_expr (function)
-- Defined: `minigccg2.s:20832`
+- Defined: `minigccg2.s:22429`
 
 ### logical_or_expr (function)
-- Defined: `minigccg2.s:20995`
+- Defined: `minigccg2.s:22592`
 
 ### conditional_expr (function)
-- Defined: `minigccg2.s:21158`
+- Defined: `minigccg2.s:22755`
 
 ### emit_compound_op (function)
-- Defined: `minigccg2.s:21290`
+- Defined: `minigccg2.s:22887`
 
 ### assignment_expr (function)
-- Defined: `minigccg2.s:21792`
+- Defined: `minigccg2.s:23389`
 
 ### asm_tmpl (function)
-- Defined: `minigccg2.s:25107`
+- Defined: `minigccg2.s:27019`
 
 ### asm_text (function)
-- Defined: `minigccg2.s:25111`
+- Defined: `minigccg2.s:27023`
 
 ### asm_mem (function)
-- Defined: `minigccg2.s:25115`
+- Defined: `minigccg2.s:27027`
 
 ### asm_is_out (function)
-- Defined: `minigccg2.s:25119`
+- Defined: `minigccg2.s:27031`
 
 ### asm_home (function)
-- Defined: `minigccg2.s:25123`
+- Defined: `minigccg2.s:27035`
 
 ### asm_slot (function)
-- Defined: `minigccg2.s:25127`
+- Defined: `minigccg2.s:27039`
 
 ### asm_size (function)
-- Defined: `minigccg2.s:25131`
+- Defined: `minigccg2.s:27043`
 
 ### asm_nops (function)
-- Defined: `minigccg2.s:25135`
+- Defined: `minigccg2.s:27047`
 
 ### asm_nslots (function)
-- Defined: `minigccg2.s:25139`
+- Defined: `minigccg2.s:27051`
 
 ### asm_unique (function)
-- Defined: `minigccg2.s:25143`
+- Defined: `minigccg2.s:27055`
 
 ### asm_scratch (function)
-- Defined: `minigccg2.s:25147`
+- Defined: `minigccg2.s:27059`
 
 ### asm_home_text (function)
-- Defined: `minigccg2.s:25223`
+- Defined: `minigccg2.s:27135`
 
 ### asm_reg_sized (function)
-- Defined: `minigccg2.s:25380`
+- Defined: `minigccg2.s:27292`
 
 ### asm_fixed_home (function)
-- Defined: `minigccg2.s:25926`
+- Defined: `minigccg2.s:28099`
 
 ### asm_emit_template (function)
-- Defined: `minigccg2.s:25990`
+- Defined: `minigccg2.s:28163`
 
 ### asm_parse_mem (function)
-- Defined: `minigccg2.s:26230`
+- Defined: `minigccg2.s:28403`
 
 ### asm_emit_ss (function)
-- Defined: `minigccg2.s:26791`
+- Defined: `minigccg2.s:28964`
 
 ### asm_parse_one (function)
-- Defined: `minigccg2.s:26844`
+- Defined: `minigccg2.s:29017`
 
 ### asm_assign_homes (function)
-- Defined: `minigccg2.s:27815`
+- Defined: `minigccg2.s:29988`
 
 ### asm_emit_all (function)
-- Defined: `minigccg2.s:28260`
+- Defined: `minigccg2.s:30433`
 
 ### parse_asm_block (function)
-- Defined: `minigccg2.s:28770`
+- Defined: `minigccg2.s:31015`
 
 ### statement (function)
-- Defined: `minigccg2.s:29339`
+- Defined: `minigccg2.s:31584`
 
 ### restart_typedef (function)
-- Defined: `minigccg2.s:32858`
+- Defined: `minigccg2.s:35172`
 
 ### restart_int (function)
-- Defined: `minigccg2.s:33890`
+- Defined: `minigccg2.s:36284`
 
 ### parse_function (function)
-- Defined: `minigccg2.s:35049`
+- Defined: `minigccg2.s:37546`
 
 ### parse_enum (function)
-- Defined: `minigccg2.s:36514`
+- Defined: `minigccg2.s:39117`
+
+### skip_struct_fields (function)
+- Defined: `minigccg2.s:39529`
 
 ### skip_struct (function)
-- Defined: `minigccg2.s:36926`
+- Defined: `minigccg2.s:39867`
 
 ### skip_typedef (function)
-- Defined: `minigccg2.s:37512`
+- Defined: `minigccg2.s:40483`
 
 ### data_directive (function)
-- Defined: `minigccg2.s:38002`
+- Defined: `minigccg2.s:41037`
 
 ### emit_global_bss (function)
-- Defined: `minigccg2.s:38052`
+- Defined: `minigccg2.s:41087`
 
 ### emit_global_data_head (function)
-- Defined: `minigccg2.s:38143`
+- Defined: `minigccg2.s:41178`
 
 ### parse_const_int (function)
-- Defined: `minigccg2.s:38198`
+- Defined: `minigccg2.s:41233`
 
 ### intern_string (function)
-- Defined: `minigccg2.s:38361`
+- Defined: `minigccg2.s:41396`
 
 ### emit_global_initializer (function)
-- Defined: `minigccg2.s:38454`
+- Defined: `minigccg2.s:41489`
 
 ### parse_program (function)
-- Defined: `minigccg2.s:39171`
+- Defined: `minigccg2.s:42206`
 
 ### emit_float_consts (function)
-- Defined: `minigccg2.s:40976`
+- Defined: `minigccg2.s:44177`
 
 ### emit_string_pool (function)
-- Defined: `minigccg2.s:41075`
+- Defined: `minigccg2.s:44276`
 
 ### main (function)
-- Defined: `minigccg2.s:41177`
+- Defined: `minigccg2.s:44378`
 
 ### _start (function)
-- Defined: `minigccg2.s:45151`
+- Defined: `minigccg2.s:48970`
 
 ## minigccg3.s
 
@@ -1000,464 +1039,491 @@
 ### current_elem_size2 (function)
 - Defined: `minigccg3.s:119`
 
-### no_postfix_deref (function)
+### current_elem_unsigned (function)
 - Defined: `minigccg3.s:123`
 
-### expr_type (function)
+### deref_w (function)
 - Defined: `minigccg3.s:127`
 
-### static_flag (function)
+### deref_u (function)
 - Defined: `minigccg3.s:131`
 
-### unsigned_type (function)
+### no_postfix_deref (function)
 - Defined: `minigccg3.s:135`
 
-### const_flag (function)
+### expr_type (function)
 - Defined: `minigccg3.s:139`
 
-### extern_flag (function)
+### static_flag (function)
 - Defined: `minigccg3.s:143`
 
-### global_emit_deferred (function)
+### unsigned_type (function)
 - Defined: `minigccg3.s:147`
 
-### float_const_str (function)
+### const_flag (function)
 - Defined: `minigccg3.s:151`
 
-### float_const_is_float (function)
+### extern_flag (function)
 - Defined: `minigccg3.s:155`
 
-### float_const_count (function)
+### global_emit_deferred (function)
 - Defined: `minigccg3.s:159`
 
-### switch_case_values (function)
+### float_const_str (function)
 - Defined: `minigccg3.s:163`
 
-### switch_case_labels (function)
+### float_const_is_float (function)
 - Defined: `minigccg3.s:167`
 
-### switch_case_count (function)
+### float_const_count (function)
 - Defined: `minigccg3.s:171`
 
-### switch_has_default (function)
+### switch_case_values (function)
 - Defined: `minigccg3.s:175`
 
-### switch_default_label (function)
+### switch_case_labels (function)
 - Defined: `minigccg3.s:179`
 
-### break_target (function)
+### switch_case_count (function)
 - Defined: `minigccg3.s:183`
 
-### break_target_valid (function)
+### switch_has_default (function)
 - Defined: `minigccg3.s:187`
 
-### continue_target (function)
+### switch_default_label (function)
 - Defined: `minigccg3.s:191`
 
-### continue_target_valid (function)
+### break_target (function)
 - Defined: `minigccg3.s:195`
 
-### str_label_counter (function)
+### break_target_valid (function)
 - Defined: `minigccg3.s:199`
 
-### string_pool (function)
+### continue_target (function)
 - Defined: `minigccg3.s:203`
 
-### string_count (function)
+### continue_target_valid (function)
 - Defined: `minigccg3.s:207`
 
-### ptr_init_name (function)
+### str_label_counter (function)
 - Defined: `minigccg3.s:211`
 
-### ptr_init_label (function)
+### string_pool (function)
 - Defined: `minigccg3.s:215`
 
-### ptr_init_count (function)
+### string_count (function)
 - Defined: `minigccg3.s:219`
 
-### struct_total_size (function)
+### ptr_init_name (function)
 - Defined: `minigccg3.s:223`
 
-### struct_member_names (function)
+### ptr_init_label (function)
 - Defined: `minigccg3.s:227`
 
-### struct_member_offsets (function)
+### ptr_init_count (function)
 - Defined: `minigccg3.s:231`
 
-### struct_member_sizes (function)
+### struct_total_size (function)
 - Defined: `minigccg3.s:235`
 
-### struct_member_elem_sizes (function)
+### struct_member_names (function)
 - Defined: `minigccg3.s:239`
 
-### struct_member_count (function)
+### struct_member_offsets (function)
 - Defined: `minigccg3.s:243`
 
-### if_nest (function)
+### struct_member_sizes (function)
 - Defined: `minigccg3.s:247`
 
-### if_depth (function)
+### struct_member_elem_sizes (function)
 - Defined: `minigccg3.s:251`
 
+### struct_member_unsigned (function)
+- Defined: `minigccg3.s:255`
+
+### struct_member_is_float (function)
+- Defined: `minigccg3.s:259`
+
+### struct_member_count (function)
+- Defined: `minigccg3.s:263`
+
+### if_nest (function)
+- Defined: `minigccg3.s:267`
+
+### if_depth (function)
+- Defined: `minigccg3.s:271`
+
 ### macro_count (function)
-- Defined: `minigccg3.s:256`
+- Defined: `minigccg3.s:276`
 
 ### save_parser_state (function)
-- Defined: `minigccg3.s:260`
+- Defined: `minigccg3.s:280`
 
 ### restore_parser_state (function)
-- Defined: `minigccg3.s:399`
+- Defined: `minigccg3.s:437`
 
 ### macros (function)
-- Defined: `minigccg3.s:587`
+- Defined: `minigccg3.s:646`
 
 ### find_macro (function)
-- Defined: `minigccg3.s:591`
+- Defined: `minigccg3.s:650`
 
 ### add_macro (function)
-- Defined: `minigccg3.s:655`
+- Defined: `minigccg3.s:714`
 
 ### macro_p (function)
-- Defined: `minigccg3.s:785`
+- Defined: `minigccg3.s:844`
 
 ### macro_ok (function)
-- Defined: `minigccg3.s:789`
+- Defined: `minigccg3.s:848`
 
 ### macro_skipws (function)
-- Defined: `minigccg3.s:793`
+- Defined: `minigccg3.s:852`
 
 ### macro_hex_digit (function)
-- Defined: `minigccg3.s:834`
+- Defined: `minigccg3.s:893`
 
 ### macro_digit_val (function)
-- Defined: `minigccg3.s:932`
+- Defined: `minigccg3.s:991`
 
 ### macro_primary (function)
-- Defined: `minigccg3.s:1053`
+- Defined: `minigccg3.s:1112`
 
 ### macro_unary (function)
-- Defined: `minigccg3.s:1851`
+- Defined: `minigccg3.s:1910`
 
 ### macro_mul (function)
-- Defined: `minigccg3.s:1979`
+- Defined: `minigccg3.s:2038`
 
 ### macro_add (function)
-- Defined: `minigccg3.s:2182`
+- Defined: `minigccg3.s:2241`
 
 ### macro_shift (function)
-- Defined: `minigccg3.s:2280`
+- Defined: `minigccg3.s:2339`
 
 ### macro_cmp (function)
-- Defined: `minigccg3.s:2433`
+- Defined: `minigccg3.s:2492`
 
 ### macro_eq (function)
-- Defined: `minigccg3.s:2654`
+- Defined: `minigccg3.s:2713`
 
 ### macro_bitand (function)
-- Defined: `minigccg3.s:2807`
+- Defined: `minigccg3.s:2866`
 
 ### macro_bitxor (function)
-- Defined: `minigccg3.s:2893`
+- Defined: `minigccg3.s:2952`
 
 ### macro_bitor (function)
-- Defined: `minigccg3.s:2958`
+- Defined: `minigccg3.s:3017`
 
 ### macro_logand (function)
-- Defined: `minigccg3.s:3044`
+- Defined: `minigccg3.s:3103`
 
 ### macro_or_expr (function)
-- Defined: `minigccg3.s:3141`
+- Defined: `minigccg3.s:3200`
 
 ### macro_fold (function)
-- Defined: `minigccg3.s:3238`
+- Defined: `minigccg3.s:3297`
 
 ### error (function)
-- Defined: `minigccg3.s:3259`
+- Defined: `minigccg3.s:3318`
 
 ### safe_malloc (function)
-- Defined: `minigccg3.s:3311`
+- Defined: `minigccg3.s:3370`
 
 ### safe_strcpy (function)
-- Defined: `minigccg3.s:3366`
+- Defined: `minigccg3.s:3425`
 
 ### safe_strtoll (function)
-- Defined: `minigccg3.s:3443`
+- Defined: `minigccg3.s:3502`
 
 ### is_file_processed (function)
-- Defined: `minigccg3.s:3558`
+- Defined: `minigccg3.s:3617`
 
 ### mark_file_processed (function)
-- Defined: `minigccg3.s:3619`
+- Defined: `minigccg3.s:3678`
 
 ### get_dir_from_path (function)
-- Defined: `minigccg3.s:3731`
+- Defined: `minigccg3.s:3790`
 
 ### resolve_local_include (function)
-- Defined: `minigccg3.s:3874`
+- Defined: `minigccg3.s:3933`
 
 ### read_include_file (function)
-- Defined: `minigccg3.s:4324`
+- Defined: `minigccg3.s:4383`
 
 ### hash_name (function)
-- Defined: `minigccg3.s:4532`
+- Defined: `minigccg3.s:4591`
 
 ### hash_init (function)
-- Defined: `minigccg3.s:4590`
+- Defined: `minigccg3.s:4649`
 
 ### push_scope (function)
-- Defined: `minigccg3.s:4629`
+- Defined: `minigccg3.s:4688`
 
 ### pop_scope (function)
-- Defined: `minigccg3.s:4681`
+- Defined: `minigccg3.s:4740`
 
 ### truncate_symbols (function)
-- Defined: `minigccg3.s:4877`
+- Defined: `minigccg3.s:4936`
 
 ### my_isspace (function)
-- Defined: `minigccg3.s:5030`
+- Defined: `minigccg3.s:5089`
 
 ### my_isalpha (function)
-- Defined: `minigccg3.s:5119`
+- Defined: `minigccg3.s:5178`
 
 ### my_isdigit (function)
-- Defined: `minigccg3.s:5188`
+- Defined: `minigccg3.s:5247`
 
 ### my_isalnum (function)
-- Defined: `minigccg3.s:5228`
+- Defined: `minigccg3.s:5287`
 
 ### lex_fail (function)
-- Defined: `minigccg3.s:5273`
+- Defined: `minigccg3.s:5332`
 
 ### lex_kw_add (function)
-- Defined: `minigccg3.s:5377`
+- Defined: `minigccg3.s:5436`
 
 ### lex_init_keywords (function)
-- Defined: `minigccg3.s:5540`
+- Defined: `minigccg3.s:5599`
 
 ### lex_kw_lookup (function)
-- Defined: `minigccg3.s:6035`
+- Defined: `minigccg3.s:6094`
 
 ### lex_match_op (function)
-- Defined: `minigccg3.s:6129`
+- Defined: `minigccg3.s:6188`
 
 ### lex_hex_val (function)
-- Defined: `minigccg3.s:6212`
+- Defined: `minigccg3.s:6271`
 
 ### lex_is_int_suffix (function)
-- Defined: `minigccg3.s:6334`
+- Defined: `minigccg3.s:6393`
 
 ### lex_number (function)
-- Defined: `minigccg3.s:6403`
+- Defined: `minigccg3.s:6462`
 
 ### next_token (function)
-- Defined: `minigccg3.s:7933`
+- Defined: `minigccg3.s:7992`
 
 ### restart (function)
-- Defined: `minigccg3.s:7937`
+- Defined: `minigccg3.s:7996`
 
 ### match (function)
-- Defined: `minigccg3.s:12616`
+- Defined: `minigccg3.s:12675`
 
 ### emit (function)
-- Defined: `minigccg3.s:12654`
+- Defined: `minigccg3.s:12713`
 
 ### emit_i (function)
-- Defined: `minigccg3.s:12768`
+- Defined: `minigccg3.s:12827`
 
 ### emit_s (function)
-- Defined: `minigccg3.s:12817`
+- Defined: `minigccg3.s:12876`
 
 ### emit_is (function)
-- Defined: `minigccg3.s:12866`
+- Defined: `minigccg3.s:12925`
 
 ### emit_si (function)
-- Defined: `minigccg3.s:12919`
+- Defined: `minigccg3.s:12978`
 
 ### emit_asciz_body (function)
-- Defined: `minigccg3.s:12972`
+- Defined: `minigccg3.s:13031`
 
 ### emit_label (function)
-- Defined: `minigccg3.s:13296`
+- Defined: `minigccg3.s:13355`
 
 ### find_symbol (function)
-- Defined: `minigccg3.s:13325`
+- Defined: `minigccg3.s:13384`
 
 ### add_symbol (function)
-- Defined: `minigccg3.s:13412`
+- Defined: `minigccg3.s:13471`
 
 ### arg_reg (function)
-- Defined: `minigccg3.s:13786`
+- Defined: `minigccg3.s:13845`
 
 ### libc_global_name (function)
-- Defined: `minigccg3.s:13862`
+- Defined: `minigccg3.s:13921`
+
+### typedef_name (function)
+- Defined: `minigccg3.s:14049`
+
+### typedef_size (function)
+- Defined: `minigccg3.s:14203`
+
+### typedef_uns (function)
+- Defined: `minigccg3.s:14357`
 
 ### unary (function)
-- Defined: `minigccg3.s:13990`
+- Defined: `minigccg3.s:14433`
 
 ### lvalue_address (function)
-- Defined: `minigccg3.s:16683`
+- Defined: `minigccg3.s:17882`
 
 ### handle_postfix (function)
-- Defined: `minigccg3.s:17208`
+- Defined: `minigccg3.s:18443`
 
 ### unary_expr (function)
-- Defined: `minigccg3.s:18230`
+- Defined: `minigccg3.s:19809`
 
 ### multiplicative_expr (function)
-- Defined: `minigccg3.s:18255`
+- Defined: `minigccg3.s:19834`
 
 ### additive_expr (function)
-- Defined: `minigccg3.s:18877`
+- Defined: `minigccg3.s:20456`
 
 ### shift_expr (function)
-- Defined: `minigccg3.s:19372`
+- Defined: `minigccg3.s:20969`
 
 ### relational_expr (function)
-- Defined: `minigccg3.s:19518`
+- Defined: `minigccg3.s:21115`
 
 ### equality_expr (function)
-- Defined: `minigccg3.s:20120`
+- Defined: `minigccg3.s:21717`
 
 ### bitwise_and_expr (function)
-- Defined: `minigccg3.s:20598`
+- Defined: `minigccg3.s:22195`
 
 ### bitwise_xor_expr (function)
-- Defined: `minigccg3.s:20676`
+- Defined: `minigccg3.s:22273`
 
 ### bitwise_or_expr (function)
-- Defined: `minigccg3.s:20754`
+- Defined: `minigccg3.s:22351`
 
 ### logical_and_expr (function)
-- Defined: `minigccg3.s:20832`
+- Defined: `minigccg3.s:22429`
 
 ### logical_or_expr (function)
-- Defined: `minigccg3.s:20995`
+- Defined: `minigccg3.s:22592`
 
 ### conditional_expr (function)
-- Defined: `minigccg3.s:21158`
+- Defined: `minigccg3.s:22755`
 
 ### emit_compound_op (function)
-- Defined: `minigccg3.s:21290`
+- Defined: `minigccg3.s:22887`
 
 ### assignment_expr (function)
-- Defined: `minigccg3.s:21792`
+- Defined: `minigccg3.s:23389`
 
 ### asm_tmpl (function)
-- Defined: `minigccg3.s:25107`
+- Defined: `minigccg3.s:27019`
 
 ### asm_text (function)
-- Defined: `minigccg3.s:25111`
+- Defined: `minigccg3.s:27023`
 
 ### asm_mem (function)
-- Defined: `minigccg3.s:25115`
+- Defined: `minigccg3.s:27027`
 
 ### asm_is_out (function)
-- Defined: `minigccg3.s:25119`
+- Defined: `minigccg3.s:27031`
 
 ### asm_home (function)
-- Defined: `minigccg3.s:25123`
+- Defined: `minigccg3.s:27035`
 
 ### asm_slot (function)
-- Defined: `minigccg3.s:25127`
+- Defined: `minigccg3.s:27039`
 
 ### asm_size (function)
-- Defined: `minigccg3.s:25131`
+- Defined: `minigccg3.s:27043`
 
 ### asm_nops (function)
-- Defined: `minigccg3.s:25135`
+- Defined: `minigccg3.s:27047`
 
 ### asm_nslots (function)
-- Defined: `minigccg3.s:25139`
+- Defined: `minigccg3.s:27051`
 
 ### asm_unique (function)
-- Defined: `minigccg3.s:25143`
+- Defined: `minigccg3.s:27055`
 
 ### asm_scratch (function)
-- Defined: `minigccg3.s:25147`
+- Defined: `minigccg3.s:27059`
 
 ### asm_home_text (function)
-- Defined: `minigccg3.s:25223`
+- Defined: `minigccg3.s:27135`
 
 ### asm_reg_sized (function)
-- Defined: `minigccg3.s:25380`
+- Defined: `minigccg3.s:27292`
 
 ### asm_fixed_home (function)
-- Defined: `minigccg3.s:25926`
+- Defined: `minigccg3.s:28099`
 
 ### asm_emit_template (function)
-- Defined: `minigccg3.s:25990`
+- Defined: `minigccg3.s:28163`
 
 ### asm_parse_mem (function)
-- Defined: `minigccg3.s:26230`
+- Defined: `minigccg3.s:28403`
 
 ### asm_emit_ss (function)
-- Defined: `minigccg3.s:26791`
+- Defined: `minigccg3.s:28964`
 
 ### asm_parse_one (function)
-- Defined: `minigccg3.s:26844`
+- Defined: `minigccg3.s:29017`
 
 ### asm_assign_homes (function)
-- Defined: `minigccg3.s:27815`
+- Defined: `minigccg3.s:29988`
 
 ### asm_emit_all (function)
-- Defined: `minigccg3.s:28260`
+- Defined: `minigccg3.s:30433`
 
 ### parse_asm_block (function)
-- Defined: `minigccg3.s:28770`
+- Defined: `minigccg3.s:31015`
 
 ### statement (function)
-- Defined: `minigccg3.s:29339`
+- Defined: `minigccg3.s:31584`
 
 ### restart_typedef (function)
-- Defined: `minigccg3.s:32858`
+- Defined: `minigccg3.s:35172`
 
 ### restart_int (function)
-- Defined: `minigccg3.s:33890`
+- Defined: `minigccg3.s:36284`
 
 ### parse_function (function)
-- Defined: `minigccg3.s:35049`
+- Defined: `minigccg3.s:37546`
 
 ### parse_enum (function)
-- Defined: `minigccg3.s:36514`
+- Defined: `minigccg3.s:39117`
+
+### skip_struct_fields (function)
+- Defined: `minigccg3.s:39529`
 
 ### skip_struct (function)
-- Defined: `minigccg3.s:36926`
+- Defined: `minigccg3.s:39867`
 
 ### skip_typedef (function)
-- Defined: `minigccg3.s:37512`
+- Defined: `minigccg3.s:40483`
 
 ### data_directive (function)
-- Defined: `minigccg3.s:38002`
+- Defined: `minigccg3.s:41037`
 
 ### emit_global_bss (function)
-- Defined: `minigccg3.s:38052`
+- Defined: `minigccg3.s:41087`
 
 ### emit_global_data_head (function)
-- Defined: `minigccg3.s:38143`
+- Defined: `minigccg3.s:41178`
 
 ### parse_const_int (function)
-- Defined: `minigccg3.s:38198`
+- Defined: `minigccg3.s:41233`
 
 ### intern_string (function)
-- Defined: `minigccg3.s:38361`
+- Defined: `minigccg3.s:41396`
 
 ### emit_global_initializer (function)
-- Defined: `minigccg3.s:38454`
+- Defined: `minigccg3.s:41489`
 
 ### parse_program (function)
-- Defined: `minigccg3.s:39171`
+- Defined: `minigccg3.s:42206`
 
 ### emit_float_consts (function)
-- Defined: `minigccg3.s:40976`
+- Defined: `minigccg3.s:44177`
 
 ### emit_string_pool (function)
-- Defined: `minigccg3.s:41075`
+- Defined: `minigccg3.s:44276`
 
 ### main (function)
-- Defined: `minigccg3.s:41177`
+- Defined: `minigccg3.s:44378`
 
 ### _start (function)
-- Defined: `minigccg3.s:45151`
+- Defined: `minigccg3.s:48970`
 
 ## minigccg4.s
 
@@ -1551,464 +1617,491 @@
 ### current_elem_size2 (function)
 - Defined: `minigccg4.s:119`
 
-### no_postfix_deref (function)
+### current_elem_unsigned (function)
 - Defined: `minigccg4.s:123`
 
-### expr_type (function)
+### deref_w (function)
 - Defined: `minigccg4.s:127`
 
-### static_flag (function)
+### deref_u (function)
 - Defined: `minigccg4.s:131`
 
-### unsigned_type (function)
+### no_postfix_deref (function)
 - Defined: `minigccg4.s:135`
 
-### const_flag (function)
+### expr_type (function)
 - Defined: `minigccg4.s:139`
 
-### extern_flag (function)
+### static_flag (function)
 - Defined: `minigccg4.s:143`
 
-### global_emit_deferred (function)
+### unsigned_type (function)
 - Defined: `minigccg4.s:147`
 
-### float_const_str (function)
+### const_flag (function)
 - Defined: `minigccg4.s:151`
 
-### float_const_is_float (function)
+### extern_flag (function)
 - Defined: `minigccg4.s:155`
 
-### float_const_count (function)
+### global_emit_deferred (function)
 - Defined: `minigccg4.s:159`
 
-### switch_case_values (function)
+### float_const_str (function)
 - Defined: `minigccg4.s:163`
 
-### switch_case_labels (function)
+### float_const_is_float (function)
 - Defined: `minigccg4.s:167`
 
-### switch_case_count (function)
+### float_const_count (function)
 - Defined: `minigccg4.s:171`
 
-### switch_has_default (function)
+### switch_case_values (function)
 - Defined: `minigccg4.s:175`
 
-### switch_default_label (function)
+### switch_case_labels (function)
 - Defined: `minigccg4.s:179`
 
-### break_target (function)
+### switch_case_count (function)
 - Defined: `minigccg4.s:183`
 
-### break_target_valid (function)
+### switch_has_default (function)
 - Defined: `minigccg4.s:187`
 
-### continue_target (function)
+### switch_default_label (function)
 - Defined: `minigccg4.s:191`
 
-### continue_target_valid (function)
+### break_target (function)
 - Defined: `minigccg4.s:195`
 
-### str_label_counter (function)
+### break_target_valid (function)
 - Defined: `minigccg4.s:199`
 
-### string_pool (function)
+### continue_target (function)
 - Defined: `minigccg4.s:203`
 
-### string_count (function)
+### continue_target_valid (function)
 - Defined: `minigccg4.s:207`
 
-### ptr_init_name (function)
+### str_label_counter (function)
 - Defined: `minigccg4.s:211`
 
-### ptr_init_label (function)
+### string_pool (function)
 - Defined: `minigccg4.s:215`
 
-### ptr_init_count (function)
+### string_count (function)
 - Defined: `minigccg4.s:219`
 
-### struct_total_size (function)
+### ptr_init_name (function)
 - Defined: `minigccg4.s:223`
 
-### struct_member_names (function)
+### ptr_init_label (function)
 - Defined: `minigccg4.s:227`
 
-### struct_member_offsets (function)
+### ptr_init_count (function)
 - Defined: `minigccg4.s:231`
 
-### struct_member_sizes (function)
+### struct_total_size (function)
 - Defined: `minigccg4.s:235`
 
-### struct_member_elem_sizes (function)
+### struct_member_names (function)
 - Defined: `minigccg4.s:239`
 
-### struct_member_count (function)
+### struct_member_offsets (function)
 - Defined: `minigccg4.s:243`
 
-### if_nest (function)
+### struct_member_sizes (function)
 - Defined: `minigccg4.s:247`
 
-### if_depth (function)
+### struct_member_elem_sizes (function)
 - Defined: `minigccg4.s:251`
 
+### struct_member_unsigned (function)
+- Defined: `minigccg4.s:255`
+
+### struct_member_is_float (function)
+- Defined: `minigccg4.s:259`
+
+### struct_member_count (function)
+- Defined: `minigccg4.s:263`
+
+### if_nest (function)
+- Defined: `minigccg4.s:267`
+
+### if_depth (function)
+- Defined: `minigccg4.s:271`
+
 ### macro_count (function)
-- Defined: `minigccg4.s:256`
+- Defined: `minigccg4.s:276`
 
 ### save_parser_state (function)
-- Defined: `minigccg4.s:260`
+- Defined: `minigccg4.s:280`
 
 ### restore_parser_state (function)
-- Defined: `minigccg4.s:399`
+- Defined: `minigccg4.s:437`
 
 ### macros (function)
-- Defined: `minigccg4.s:587`
+- Defined: `minigccg4.s:646`
 
 ### find_macro (function)
-- Defined: `minigccg4.s:591`
+- Defined: `minigccg4.s:650`
 
 ### add_macro (function)
-- Defined: `minigccg4.s:655`
+- Defined: `minigccg4.s:714`
 
 ### macro_p (function)
-- Defined: `minigccg4.s:785`
+- Defined: `minigccg4.s:844`
 
 ### macro_ok (function)
-- Defined: `minigccg4.s:789`
+- Defined: `minigccg4.s:848`
 
 ### macro_skipws (function)
-- Defined: `minigccg4.s:793`
+- Defined: `minigccg4.s:852`
 
 ### macro_hex_digit (function)
-- Defined: `minigccg4.s:834`
+- Defined: `minigccg4.s:893`
 
 ### macro_digit_val (function)
-- Defined: `minigccg4.s:932`
+- Defined: `minigccg4.s:991`
 
 ### macro_primary (function)
-- Defined: `minigccg4.s:1053`
+- Defined: `minigccg4.s:1112`
 
 ### macro_unary (function)
-- Defined: `minigccg4.s:1851`
+- Defined: `minigccg4.s:1910`
 
 ### macro_mul (function)
-- Defined: `minigccg4.s:1979`
+- Defined: `minigccg4.s:2038`
 
 ### macro_add (function)
-- Defined: `minigccg4.s:2182`
+- Defined: `minigccg4.s:2241`
 
 ### macro_shift (function)
-- Defined: `minigccg4.s:2280`
+- Defined: `minigccg4.s:2339`
 
 ### macro_cmp (function)
-- Defined: `minigccg4.s:2433`
+- Defined: `minigccg4.s:2492`
 
 ### macro_eq (function)
-- Defined: `minigccg4.s:2654`
+- Defined: `minigccg4.s:2713`
 
 ### macro_bitand (function)
-- Defined: `minigccg4.s:2807`
+- Defined: `minigccg4.s:2866`
 
 ### macro_bitxor (function)
-- Defined: `minigccg4.s:2893`
+- Defined: `minigccg4.s:2952`
 
 ### macro_bitor (function)
-- Defined: `minigccg4.s:2958`
+- Defined: `minigccg4.s:3017`
 
 ### macro_logand (function)
-- Defined: `minigccg4.s:3044`
+- Defined: `minigccg4.s:3103`
 
 ### macro_or_expr (function)
-- Defined: `minigccg4.s:3141`
+- Defined: `minigccg4.s:3200`
 
 ### macro_fold (function)
-- Defined: `minigccg4.s:3238`
+- Defined: `minigccg4.s:3297`
 
 ### error (function)
-- Defined: `minigccg4.s:3259`
+- Defined: `minigccg4.s:3318`
 
 ### safe_malloc (function)
-- Defined: `minigccg4.s:3311`
+- Defined: `minigccg4.s:3370`
 
 ### safe_strcpy (function)
-- Defined: `minigccg4.s:3366`
+- Defined: `minigccg4.s:3425`
 
 ### safe_strtoll (function)
-- Defined: `minigccg4.s:3443`
+- Defined: `minigccg4.s:3502`
 
 ### is_file_processed (function)
-- Defined: `minigccg4.s:3558`
+- Defined: `minigccg4.s:3617`
 
 ### mark_file_processed (function)
-- Defined: `minigccg4.s:3619`
+- Defined: `minigccg4.s:3678`
 
 ### get_dir_from_path (function)
-- Defined: `minigccg4.s:3731`
+- Defined: `minigccg4.s:3790`
 
 ### resolve_local_include (function)
-- Defined: `minigccg4.s:3874`
+- Defined: `minigccg4.s:3933`
 
 ### read_include_file (function)
-- Defined: `minigccg4.s:4324`
+- Defined: `minigccg4.s:4383`
 
 ### hash_name (function)
-- Defined: `minigccg4.s:4532`
+- Defined: `minigccg4.s:4591`
 
 ### hash_init (function)
-- Defined: `minigccg4.s:4590`
+- Defined: `minigccg4.s:4649`
 
 ### push_scope (function)
-- Defined: `minigccg4.s:4629`
+- Defined: `minigccg4.s:4688`
 
 ### pop_scope (function)
-- Defined: `minigccg4.s:4681`
+- Defined: `minigccg4.s:4740`
 
 ### truncate_symbols (function)
-- Defined: `minigccg4.s:4877`
+- Defined: `minigccg4.s:4936`
 
 ### my_isspace (function)
-- Defined: `minigccg4.s:5030`
+- Defined: `minigccg4.s:5089`
 
 ### my_isalpha (function)
-- Defined: `minigccg4.s:5119`
+- Defined: `minigccg4.s:5178`
 
 ### my_isdigit (function)
-- Defined: `minigccg4.s:5188`
+- Defined: `minigccg4.s:5247`
 
 ### my_isalnum (function)
-- Defined: `minigccg4.s:5228`
+- Defined: `minigccg4.s:5287`
 
 ### lex_fail (function)
-- Defined: `minigccg4.s:5273`
+- Defined: `minigccg4.s:5332`
 
 ### lex_kw_add (function)
-- Defined: `minigccg4.s:5377`
+- Defined: `minigccg4.s:5436`
 
 ### lex_init_keywords (function)
-- Defined: `minigccg4.s:5540`
+- Defined: `minigccg4.s:5599`
 
 ### lex_kw_lookup (function)
-- Defined: `minigccg4.s:6035`
+- Defined: `minigccg4.s:6094`
 
 ### lex_match_op (function)
-- Defined: `minigccg4.s:6129`
+- Defined: `minigccg4.s:6188`
 
 ### lex_hex_val (function)
-- Defined: `minigccg4.s:6212`
+- Defined: `minigccg4.s:6271`
 
 ### lex_is_int_suffix (function)
-- Defined: `minigccg4.s:6334`
+- Defined: `minigccg4.s:6393`
 
 ### lex_number (function)
-- Defined: `minigccg4.s:6403`
+- Defined: `minigccg4.s:6462`
 
 ### next_token (function)
-- Defined: `minigccg4.s:7933`
+- Defined: `minigccg4.s:7992`
 
 ### restart (function)
-- Defined: `minigccg4.s:7937`
+- Defined: `minigccg4.s:7996`
 
 ### match (function)
-- Defined: `minigccg4.s:12616`
+- Defined: `minigccg4.s:12675`
 
 ### emit (function)
-- Defined: `minigccg4.s:12654`
+- Defined: `minigccg4.s:12713`
 
 ### emit_i (function)
-- Defined: `minigccg4.s:12768`
+- Defined: `minigccg4.s:12827`
 
 ### emit_s (function)
-- Defined: `minigccg4.s:12817`
+- Defined: `minigccg4.s:12876`
 
 ### emit_is (function)
-- Defined: `minigccg4.s:12866`
+- Defined: `minigccg4.s:12925`
 
 ### emit_si (function)
-- Defined: `minigccg4.s:12919`
+- Defined: `minigccg4.s:12978`
 
 ### emit_asciz_body (function)
-- Defined: `minigccg4.s:12972`
+- Defined: `minigccg4.s:13031`
 
 ### emit_label (function)
-- Defined: `minigccg4.s:13296`
+- Defined: `minigccg4.s:13355`
 
 ### find_symbol (function)
-- Defined: `minigccg4.s:13325`
+- Defined: `minigccg4.s:13384`
 
 ### add_symbol (function)
-- Defined: `minigccg4.s:13412`
+- Defined: `minigccg4.s:13471`
 
 ### arg_reg (function)
-- Defined: `minigccg4.s:13786`
+- Defined: `minigccg4.s:13845`
 
 ### libc_global_name (function)
-- Defined: `minigccg4.s:13862`
+- Defined: `minigccg4.s:13921`
+
+### typedef_name (function)
+- Defined: `minigccg4.s:14049`
+
+### typedef_size (function)
+- Defined: `minigccg4.s:14203`
+
+### typedef_uns (function)
+- Defined: `minigccg4.s:14357`
 
 ### unary (function)
-- Defined: `minigccg4.s:13990`
+- Defined: `minigccg4.s:14433`
 
 ### lvalue_address (function)
-- Defined: `minigccg4.s:16683`
+- Defined: `minigccg4.s:17882`
 
 ### handle_postfix (function)
-- Defined: `minigccg4.s:17208`
+- Defined: `minigccg4.s:18443`
 
 ### unary_expr (function)
-- Defined: `minigccg4.s:18230`
+- Defined: `minigccg4.s:19809`
 
 ### multiplicative_expr (function)
-- Defined: `minigccg4.s:18255`
+- Defined: `minigccg4.s:19834`
 
 ### additive_expr (function)
-- Defined: `minigccg4.s:18877`
+- Defined: `minigccg4.s:20456`
 
 ### shift_expr (function)
-- Defined: `minigccg4.s:19372`
+- Defined: `minigccg4.s:20969`
 
 ### relational_expr (function)
-- Defined: `minigccg4.s:19518`
+- Defined: `minigccg4.s:21115`
 
 ### equality_expr (function)
-- Defined: `minigccg4.s:20120`
+- Defined: `minigccg4.s:21717`
 
 ### bitwise_and_expr (function)
-- Defined: `minigccg4.s:20598`
+- Defined: `minigccg4.s:22195`
 
 ### bitwise_xor_expr (function)
-- Defined: `minigccg4.s:20676`
+- Defined: `minigccg4.s:22273`
 
 ### bitwise_or_expr (function)
-- Defined: `minigccg4.s:20754`
+- Defined: `minigccg4.s:22351`
 
 ### logical_and_expr (function)
-- Defined: `minigccg4.s:20832`
+- Defined: `minigccg4.s:22429`
 
 ### logical_or_expr (function)
-- Defined: `minigccg4.s:20995`
+- Defined: `minigccg4.s:22592`
 
 ### conditional_expr (function)
-- Defined: `minigccg4.s:21158`
+- Defined: `minigccg4.s:22755`
 
 ### emit_compound_op (function)
-- Defined: `minigccg4.s:21290`
+- Defined: `minigccg4.s:22887`
 
 ### assignment_expr (function)
-- Defined: `minigccg4.s:21792`
+- Defined: `minigccg4.s:23389`
 
 ### asm_tmpl (function)
-- Defined: `minigccg4.s:25107`
+- Defined: `minigccg4.s:27019`
 
 ### asm_text (function)
-- Defined: `minigccg4.s:25111`
+- Defined: `minigccg4.s:27023`
 
 ### asm_mem (function)
-- Defined: `minigccg4.s:25115`
+- Defined: `minigccg4.s:27027`
 
 ### asm_is_out (function)
-- Defined: `minigccg4.s:25119`
+- Defined: `minigccg4.s:27031`
 
 ### asm_home (function)
-- Defined: `minigccg4.s:25123`
+- Defined: `minigccg4.s:27035`
 
 ### asm_slot (function)
-- Defined: `minigccg4.s:25127`
+- Defined: `minigccg4.s:27039`
 
 ### asm_size (function)
-- Defined: `minigccg4.s:25131`
+- Defined: `minigccg4.s:27043`
 
 ### asm_nops (function)
-- Defined: `minigccg4.s:25135`
+- Defined: `minigccg4.s:27047`
 
 ### asm_nslots (function)
-- Defined: `minigccg4.s:25139`
+- Defined: `minigccg4.s:27051`
 
 ### asm_unique (function)
-- Defined: `minigccg4.s:25143`
+- Defined: `minigccg4.s:27055`
 
 ### asm_scratch (function)
-- Defined: `minigccg4.s:25147`
+- Defined: `minigccg4.s:27059`
 
 ### asm_home_text (function)
-- Defined: `minigccg4.s:25223`
+- Defined: `minigccg4.s:27135`
 
 ### asm_reg_sized (function)
-- Defined: `minigccg4.s:25380`
+- Defined: `minigccg4.s:27292`
 
 ### asm_fixed_home (function)
-- Defined: `minigccg4.s:25926`
+- Defined: `minigccg4.s:28099`
 
 ### asm_emit_template (function)
-- Defined: `minigccg4.s:25990`
+- Defined: `minigccg4.s:28163`
 
 ### asm_parse_mem (function)
-- Defined: `minigccg4.s:26230`
+- Defined: `minigccg4.s:28403`
 
 ### asm_emit_ss (function)
-- Defined: `minigccg4.s:26791`
+- Defined: `minigccg4.s:28964`
 
 ### asm_parse_one (function)
-- Defined: `minigccg4.s:26844`
+- Defined: `minigccg4.s:29017`
 
 ### asm_assign_homes (function)
-- Defined: `minigccg4.s:27815`
+- Defined: `minigccg4.s:29988`
 
 ### asm_emit_all (function)
-- Defined: `minigccg4.s:28260`
+- Defined: `minigccg4.s:30433`
 
 ### parse_asm_block (function)
-- Defined: `minigccg4.s:28770`
+- Defined: `minigccg4.s:31015`
 
 ### statement (function)
-- Defined: `minigccg4.s:29339`
+- Defined: `minigccg4.s:31584`
 
 ### restart_typedef (function)
-- Defined: `minigccg4.s:32858`
+- Defined: `minigccg4.s:35172`
 
 ### restart_int (function)
-- Defined: `minigccg4.s:33890`
+- Defined: `minigccg4.s:36284`
 
 ### parse_function (function)
-- Defined: `minigccg4.s:35049`
+- Defined: `minigccg4.s:37546`
 
 ### parse_enum (function)
-- Defined: `minigccg4.s:36514`
+- Defined: `minigccg4.s:39117`
+
+### skip_struct_fields (function)
+- Defined: `minigccg4.s:39529`
 
 ### skip_struct (function)
-- Defined: `minigccg4.s:36926`
+- Defined: `minigccg4.s:39867`
 
 ### skip_typedef (function)
-- Defined: `minigccg4.s:37512`
+- Defined: `minigccg4.s:40483`
 
 ### data_directive (function)
-- Defined: `minigccg4.s:38002`
+- Defined: `minigccg4.s:41037`
 
 ### emit_global_bss (function)
-- Defined: `minigccg4.s:38052`
+- Defined: `minigccg4.s:41087`
 
 ### emit_global_data_head (function)
-- Defined: `minigccg4.s:38143`
+- Defined: `minigccg4.s:41178`
 
 ### parse_const_int (function)
-- Defined: `minigccg4.s:38198`
+- Defined: `minigccg4.s:41233`
 
 ### intern_string (function)
-- Defined: `minigccg4.s:38361`
+- Defined: `minigccg4.s:41396`
 
 ### emit_global_initializer (function)
-- Defined: `minigccg4.s:38454`
+- Defined: `minigccg4.s:41489`
 
 ### parse_program (function)
-- Defined: `minigccg4.s:39171`
+- Defined: `minigccg4.s:42206`
 
 ### emit_float_consts (function)
-- Defined: `minigccg4.s:40976`
+- Defined: `minigccg4.s:44177`
 
 ### emit_string_pool (function)
-- Defined: `minigccg4.s:41075`
+- Defined: `minigccg4.s:44276`
 
 ### main (function)
-- Defined: `minigccg4.s:41177`
+- Defined: `minigccg4.s:44378`
 
 ### _start (function)
-- Defined: `minigccg4.s:45151`
+- Defined: `minigccg4.s:48970`
 
 ## my_library.h
 
@@ -2358,6 +2451,26 @@
 
 ### printf (function) `printf("%d %d %d\n", sizeof(char), sizeof(float), sizeof(double));`
 - Defined: `tests/t_sizeof.c:4`
+
+## tests/t_stdint.c
+
+### loads_u8 (function) `uint8_t loads_u8(uint8_t v)`
+- Defined: `tests/t_stdint.c:21`
+
+### loads_s16 (function) `int16_t loads_s16(int16_t v)`
+- Defined: `tests/t_stdint.c:25`
+
+### loads_u32 (function) `uint32_t loads_u32(uint32_t v)`
+- Defined: `tests/t_stdint.c:29`
+
+### add_shorts (function) `short add_shorts(short a, short b)`
+- Defined: `tests/t_stdint.c:33`
+
+### main (function) `int main(void)`
+- Defined: `tests/t_stdint.c:37`
+
+### printf (function) `printf("%d %d %d\n", gu8, gi8, gu16);`
+- Defined: `tests/t_stdint.c:49`
 
 ## tests/t_strings.c
 
