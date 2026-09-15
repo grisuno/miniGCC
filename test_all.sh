@@ -147,6 +147,8 @@ run_test asm
 run_test asm3
 run_test stdint
 run_test attr
+run_test sync
+run_test variadic
 
 run_neg octal "invalid octal constant"
 run_neg hex "invalid hex constant"
@@ -156,6 +158,7 @@ run_neg asm "unsupported asm output constraint"
 run_neg asm2 "duplicate asm register"
 run_neg asm3 "unsupported asm output constraint"
 run_neg attr "needs a positive power of two"
+run_neg va "va_start outside variadic function"
 
 echo "=== test_all summary: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]

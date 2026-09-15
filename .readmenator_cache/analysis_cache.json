@@ -3,19 +3,19 @@
     "god_nodes": [
       [
         "minigccg2.s",
-        19.200000000000003
+        20.200000000000003
       ],
       [
         "minigccg3.s",
-        19.200000000000003
+        20.200000000000003
       ],
       [
         "minigccg4.s",
-        19.200000000000003
+        20.200000000000003
       ],
       [
         "minigcc.c",
-        14.4
+        15.4
       ],
       [
         "tests/t_outer_h.h",
@@ -58,8 +58,8 @@
         "label": "tests",
         "file_ids": [
           "tests/t_inner_h.h",
-          "tests/t_outer_h.h",
-          "tests/t_include.c"
+          "tests/t_include.c",
+          "tests/t_outer_h.h"
         ],
         "cohesion": 1.0,
         "size": 3
@@ -68,8 +68,8 @@
         "id": 2,
         "label": "tests",
         "file_ids": [
-          "tests/t_inline.c",
-          "tests/t_inline_h.h"
+          "tests/t_inline_h.h",
+          "tests/t_inline.c"
         ],
         "cohesion": 1.0,
         "size": 2
@@ -99,15 +99,18 @@
     "tests/neg_asm.c": "testing",
     "tests/neg_asm2.c": "testing",
     "tests/neg_asm3.c": "testing",
+    "tests/neg_attr.c": "testing",
     "tests/neg_comment.c": "testing",
     "tests/neg_float.c": "testing",
     "tests/neg_hex.c": "testing",
     "tests/neg_octal.c": "testing",
+    "tests/neg_va.c": "testing",
     "tests/t_args.c": "testing",
     "tests/t_arith.c": "testing",
     "tests/t_arrays.c": "testing",
     "tests/t_asm.c": "testing",
     "tests/t_asm3.c": "testing",
+    "tests/t_attr.c": "testing",
     "tests/t_compound.c": "testing",
     "tests/t_dowhile.c": "testing",
     "tests/t_enum.c": "testing",
@@ -132,7 +135,9 @@
     "tests/t_strings.c": "testing",
     "tests/t_struct.c": "testing",
     "tests/t_switch.c": "testing",
+    "tests/t_sync.c": "testing",
     "tests/t_typedef.c": "testing",
+    "tests/t_variadic.c": "infrastructure",
     "tests/t_while.c": "testing"
   },
   "security": {

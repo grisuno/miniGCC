@@ -156,6 +156,9 @@ static int const_flag = 0;
 static int extern_flag = 0;
 static int global_emit_deferred = 0;
 static int pending_align = 0;
+static int func_is_variadic = 0;
+static int vararg_nfixed = -1;
+static int vararg_save_off = 0;
 
 #define MAX_FLOAT_CONSTS 2048
 static char float_const_str[MAX_FLOAT_CONSTS][MAX_TOKEN_LEN];
@@ -1646,6 +1649,10 @@ static void statement(void);
 static void lvalue_address(void);
 static void handle_postfix(int is_lvalue);
 static void assignment_expr(void);
+static void parse_sync_call(const char *name);
+static void parse_va_start(void);
+static void parse_va_arg(void);
+static void parse_va_end(void);
 static void parse_enum(void);
 static void skip_struct(void);
 static void skip_typedef(void);
@@ -1691,6 +1698,7 @@ static const char *typedef_name(int i) {
     if (i == 8) return "uintptr_t";
     if (i == 9) return "intptr_t";
     if (i == 10) return "short";
+    if (i == 11) return "__builtin_va_list";
     return NULL;
 }
 
@@ -1706,6 +1714,7 @@ static int typedef_size(int i) {
     if (i == 8) return 8;
     if (i == 9) return 8;
     if (i == 10) return 2;
+    if (i == 11) return 8;
     return 8;
 }
 
@@ -1748,6 +1757,21 @@ static void unary(void) {
         safe_strcpy(id_name, token, MAX_IDENT_LEN);
         next_token();
         if (tok == '(') {
+            if (strcmp(id_name, "__sync_fetch_and_add") == 0 ||
+                strcmp(id_name, "__sync_lock_test_and_set") == 0 ||
+                strcmp(id_name, "__sync_lock_release") == 0 ||
+                strcmp(id_name, "__sync_synchronize") == 0) {
+                parse_sync_call(id_name);
+            } else if (strcmp(id_name, "__builtin_va_start") == 0 ||
+                       strcmp(id_name, "va_start") == 0) {
+                parse_va_start();
+            } else if (strcmp(id_name, "__builtin_va_end") == 0 ||
+                       strcmp(id_name, "va_end") == 0) {
+                parse_va_end();
+            } else if (strcmp(id_name, "__builtin_va_arg") == 0 ||
+                       strcmp(id_name, "va_arg") == 0) {
+                parse_va_arg();
+            } else {
             /* Function call */
             next_token();
             int argc = 0;
@@ -1784,6 +1808,7 @@ static void unary(void) {
             expr_pointed = 0;
             deref_w = 0;
             deref_u = 0;
+            }
         } else {
             int idx = find_symbol(id_name);
             if (idx < 0) error("undefined variable");
@@ -2063,6 +2088,138 @@ static void unary(void) {
     } else {
         error("invalid primary expression");
     }
+}
+
+static void parse_sync_call(const char *name) {
+    int is_add = strcmp(name, "__sync_fetch_and_add") == 0;
+    int is_xchg = strcmp(name, "__sync_lock_test_and_set") == 0;
+    int is_release = strcmp(name, "__sync_lock_release") == 0;
+    int nargs = (is_add || is_xchg) ? 2 : (is_release ? 1 : 0);
+    int i;
+    next_token();
+    for (i = 0; i < nargs; i++) {
+        assignment_expr();
+        emit("    pushq %%rax");
+        if (i + 1 < nargs) match(',');
+    }
+    match(')');
+    if (nargs == 0) {
+        emit("    mfence");
+    } else if (nargs == 1) {
+        emit("    popq %%rcx");
+        emit("    movq $0, (%%rcx)");
+    } else {
+        emit("    popq %%rax");
+        emit("    popq %%rcx");
+        if (is_add) {
+            emit("    lock");
+            emit("    xaddq %%rax, (%%rcx)");
+        } else {
+            emit("    xchgq %%rax, (%%rcx)");
+        }
+    }
+    expr_pointed = 0;
+    expr_type = 0;
+    deref_w = 0;
+    deref_u = 0;
+}
+
+static void parse_va_start(void) {
+    char apname[MAX_IDENT_LEN];
+    int nlen;
+    int ai;
+    next_token();
+    if (tok != T_ID) error("va_start needs a variable");
+    nlen = strlen(token);
+    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+    memcpy(apname, token, nlen);
+    apname[nlen] = '\0';
+    next_token();
+    match(',');
+    if (tok != T_ID) error("va_start needs a parameter name");
+    {
+        int li = find_symbol(token);
+        if (li < 0) error("va_start: unknown parameter");
+    }
+    next_token();
+    match(')');
+    ai = find_symbol(apname);
+    if (ai < 0) error("va_start: unknown variable");
+    if (vararg_nfixed < 0) error("va_start outside variadic function");
+    emit_i("    leaq %d(%%rbp), %%rax", 0 - (vararg_save_off + 8 + 8 * vararg_nfixed));
+    if (symbols[ai].is_global)
+        emit_s("    movq %%rax, %s(%%rip)", apname);
+    else
+        emit_i("    movq %%rax, %d(%%rbp)", symbols[ai].offset);
+    expr_pointed = 0;
+    expr_type = 0;
+    deref_w = 0;
+    deref_u = 0;
+}
+
+static void parse_va_arg(void) {
+    char apname[MAX_IDENT_LEN];
+    int nlen;
+    int ai;
+    int depth;
+    int saw;
+    next_token();
+    if (tok != T_ID) error("va_arg needs a variable");
+    nlen = strlen(token);
+    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
+    memcpy(apname, token, nlen);
+    apname[nlen] = '\0';
+    next_token();
+    match(',');
+    depth = 0;
+    saw = 0;
+    for (;;) {
+        if (tok == T_EOF) error("expected type in va_arg");
+        if (tok == '(') depth++;
+        else if (tok == ')') {
+            if (depth == 0) break;
+            depth--;
+        } else if (depth == 0) {
+            if (tok != T_INT && tok != T_CHAR && tok != T_VOID &&
+                tok != T_FLOAT && tok != T_DOUBLE && tok != T_ID && tok != '*')
+                error("expected type in va_arg");
+            saw = 1;
+        }
+        next_token();
+    }
+    if (!saw) error("expected type in va_arg");
+    match(')');
+    ai = find_symbol(apname);
+    if (ai < 0) error("va_arg: unknown variable");
+    if (symbols[ai].is_global)
+        emit_s("    movq %s(%%rip), %%rcx", apname);
+    else
+        emit_i("    movq %d(%%rbp), %%rcx", symbols[ai].offset);
+    emit("    movq (%%rcx), %%rax");
+    emit("    subq $8, %%rcx");
+    if (symbols[ai].is_global)
+        emit_s("    movq %%rcx, %s(%%rip)", apname);
+    else
+        emit_i("    movq %%rcx, %d(%%rbp)", symbols[ai].offset);
+    expr_pointed = 0;
+    expr_type = 0;
+    deref_w = 0;
+    deref_u = 0;
+}
+
+static void parse_va_end(void) {
+    next_token();
+    if (tok != T_ID) error("va_end needs a variable");
+    {
+        int ai = find_symbol(token);
+        if (ai < 0) error("va_end: unknown variable");
+    }
+    next_token();
+    match(')');
+    expr_pointed = 0;
+    expr_type = 0;
+    deref_w = 0;
+    deref_u = 0;
 }
 
 static void lvalue_address(void) {
@@ -4023,6 +4180,8 @@ static void statement(void) {
 static void parse_function(const char *name, int ret_type) {
     (void)ret_type;
     int outer_stack = stack_size;
+    func_is_variadic = 0;
+    vararg_nfixed = -1;
     push_scope();
 
     match('(');
@@ -4079,6 +4238,8 @@ static void parse_function(const char *name, int ret_type) {
                 if (tok == ',') next_token();
             } else if (tok == '.') {
                 next_token(); if (tok == '.') next_token(); if (tok == '.') next_token();
+                func_is_variadic = 1;
+                vararg_nfixed = param_count;
                 break;
             } else {
                 next_token();
@@ -4118,6 +4279,12 @@ static void parse_function(const char *name, int ret_type) {
     emit_enabled = 0;
     max_func_stack = param_stack;
     stack_size = param_stack;
+    if (func_is_variadic) {
+        vararg_save_off = stack_size;
+        stack_size += 48;
+        if (stack_size > max_func_stack)
+            max_func_stack = stack_size;
+    }
     function_has_return = 0;
     lex_pass_top = ctx_top;
 
@@ -4161,9 +4328,19 @@ static void parse_function(const char *name, int ret_type) {
             emit_si("    movq %s, %d(%%rbp)", arg_reg(i), s->offset);
         }
     }
+    if (func_is_variadic) {
+        emit_i("    movq %%rdi, %d(%%rbp)", 0 - (vararg_save_off + 8));
+        emit_i("    movq %%rsi, %d(%%rbp)", 0 - (vararg_save_off + 16));
+        emit_i("    movq %%rdx, %d(%%rbp)", 0 - (vararg_save_off + 24));
+        emit_i("    movq %%rcx, %d(%%rbp)", 0 - (vararg_save_off + 32));
+        emit_i("    movq %%r8, %d(%%rbp)", 0 - (vararg_save_off + 40));
+        emit_i("    movq %%r9, %d(%%rbp)", 0 - (vararg_save_off + 48));
+    }
 
     /* Segunda pasada: generar código */
     stack_size = param_stack;
+    if (func_is_variadic)
+        stack_size = vararg_save_off + 48;
     function_has_return = 0;
     statement();
 

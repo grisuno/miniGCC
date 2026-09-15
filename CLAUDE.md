@@ -12,9 +12,9 @@ All ints are 8 bytes internally. Generates standalone ELF with `_start`.
 4. **Boy Scout Rule:** Fix any technical debt or security issue encountered; never out of scope.
 5. **Validation:** After every change: `make test` must pass — it builds
    with `gcc -std=c99 -Wall -Wextra -O2`, then runs `test.sh` (bootstrap
-   fixed point + ld self-host chain) and `test_all.sh` (28 runtime tests +
-   9 negative tests in `tests/`, each diffed against a gcc reference:
-   37 passed, 0 failed).
+   fixed point + ld self-host chain) and `test_all.sh` (30 runtime tests +
+   10 negative tests in `tests/`, each diffed against a gcc reference:
+   40 passed, 0 failed).
 
 ## Code Standards
 - No comments, no emojis.
@@ -77,7 +77,19 @@ whenever `../ld/ld.c` exists.
 - Basic `asm` (`asm` / `__asm` / `__asm__`, optional `volatile`) in function
   bodies and at top level: the template string is parsed structurally and
   emitted verbatim by a dedicated raw emitter (LLVM InlineAsm-style
-  separation); extended operand sections are boss 3 below.
+  separation); extended operand sections are covered below.
+- Variadic definitions (`int kprintf(const char *fmt, ...)`) with
+  `va_list` / `__builtin_va_list`, `va_start` / `__builtin_va_start`,
+  `va_arg` / `__builtin_va_arg`, `va_end` / `__builtin_va_end`: the prologue
+  spills all six GP arg registers to reserved frame slots, `va_start(ap,
+  last)` points past the fixed params, `va_arg` reads 8 bytes down the
+  descending save area (uniform slot model: every vararg rides 8 bytes).
+  Max 6 total args (pre-existing call limit); `va_start` outside a
+  variadic function is a fail-closed error
+- `__sync_fetch_and_add` / `__sync_lock_test_and_set` (lock-prefixed
+  `xaddq` / plain `xchgq`, old value in `%rax`), `__sync_lock_release`
+  (store 0) and `__sync_synchronize` (`mfence`) compile as intercepted calls
+  with arity checks; 64-bit only, matching the 8-byte int model
 - `__attribute__` / `__attribute`: structured skip with validation —
   `packed` is a no-op (layout is already packed), `aligned(N)` on a trailing
   declarator emits `.balign N` (locals already satisfy it via 16-byte slots;

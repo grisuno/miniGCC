@@ -21,6 +21,12 @@
   - `main` (function, line 1) `int main(void)`
   - `volatile` (function, line 3) `__asm__ volatile("nop" : "+r"(a));`
 
+## tests/neg_attr.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 2) `int main(void)`
+
 ## tests/neg_comment.c
 - Layer: testing
 - Language: c
@@ -44,6 +50,14 @@
 - Language: c
 - Symbols:
   - `main` (function, line 1) `int main(void)`
+
+## tests/neg_va.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 1) `int main(void)`
+  - `__builtin_va_start` (function, line 3) `__builtin_va_start(ap, ap);`
+  - `__builtin_va_end` (function, line 4) `__builtin_va_end(ap);`
 
 ## tests/t_args.c
 - Layer: testing
@@ -88,6 +102,19 @@
   - `main` (function, line 5) `int main(void)`
   - `volatile` (function, line 9) `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));`
   - `printf` (function, line 10) `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);`
+
+## tests/t_attr.c
+- Layer: testing
+- Doc: include <stdio.h> include <stdint.h>
+- Language: c
+- Symbols:
+  - `limit` (type_alias, line 3) `typedef struct __attribute__((packed)) { uint16_t limit;`
+  - `__attribute__` (function, line 3) `typedef struct __attribute__((packed))`
+  - `__attribute__` (function, line 11) `__attribute__((always_inline)) static inline int sq(int x)`
+  - `ksetjmp` (function, line 17) `int ksetjmp(long buf)`
+  - `knoreturn` (function, line 22) `void knoreturn(void)`
+  - `main` (function, line 24) `int main(void)`
+  - `printf` (function, line 31) `printf("%d %d %d %d %d\n", id.limit, id.base == 200, arr[0], g, sq(6));`
 
 ## tests/t_compound.c
 - Layer: testing
@@ -312,6 +339,16 @@
   - `main` (function, line 13) `int main(void)`
   - `printf` (function, line 15) `printf("%d %d %d\n", classify(1), classify(2), classify(3));`
 
+## tests/t_sync.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `main` (function, line 5) `int main(void)`
+  - `printf` (function, line 11) `printf("%d %d %d\n", a, b, ctr);`
+  - `__sync_lock_release` (function, line 16) `__sync_lock_release(&flag);`
+  - `__sync_synchronize` (function, line 27) `__sync_synchronize();`
+
 ## tests/t_typedef.c
 - Layer: testing
 - Doc: include <stdio.h>
@@ -321,6 +358,20 @@
   - `myint` (type_alias, line 2) `typedef int myint;`
   - `main` (function, line 15) `int main(void)`
   - `printf` (function, line 18) `printf("%d\n", shared + 2);`
+
+## tests/t_variadic.c
+- Layer: infrastructure
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `mini_puts` (function, line 4) `void mini_puts(const char *s)`
+  - `mini_kprintf` (function, line 11) `void mini_kprintf(const char *fmt, ...)`
+  - `vsum` (function, line 45) `long vsum(int n, ...)`
+  - `main` (function, line 58) `int main(void)`
+  - `putchar` (function, line 2) `int putchar(int c);`
+  - `__builtin_va_start` (function, line 14) `__builtin_va_start(ap, fmt);`
+  - `__builtin_va_end` (function, line 43) `__builtin_va_end(ap);`
+  - `printf` (function, line 68) `printf("%d %d\n", vsum(3, 10L, 20L, 30L), vsum(1, 99L));`
 
 ## tests/t_while.c
 - Layer: testing

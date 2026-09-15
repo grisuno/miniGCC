@@ -2,10 +2,10 @@
 
 | File | Purpose | Subsystem | Symbols |
 |------|---------|-----------|---------|
-| `minigcc.c` | - | root | 144 |
-| `minigccg2.s` | - | root | 192 |
-| `minigccg3.s` | - | root | 192 |
-| `minigccg4.s` | - | root | 192 |
+| `minigcc.c` | - | root | 154 |
+| `minigccg2.s` | - | root | 202 |
+| `minigccg3.s` | - | root | 202 |
+| `minigccg4.s` | - | root | 202 |
 | `my_library.h` | ifndef MY_LIBRARY_H define MY_LIBRARY_H  Test function to verify that inclusion  | root | 2 |
 | `test.c` | - | root | 1 |
 | `test.sh` | Cleaning env | root | 0 |
@@ -16,15 +16,18 @@
 | `tests/neg_asm.c` | - | tests | 2 |
 | `tests/neg_asm2.c` | - | tests | 2 |
 | `tests/neg_asm3.c` | - | tests | 2 |
+| `tests/neg_attr.c` | - | tests | 1 |
 | `tests/neg_comment.c` | - | tests | 1 |
 | `tests/neg_float.c` | - | tests | 1 |
 | `tests/neg_hex.c` | - | tests | 1 |
 | `tests/neg_octal.c` | - | tests | 1 |
+| `tests/neg_va.c` | - | tests | 3 |
 | `tests/t_args.c` | include <stdio.h> | tests | 2 |
 | `tests/t_arith.c` | include <stdio.h> | tests | 2 |
 | `tests/t_arrays.c` | include <stdio.h> | tests | 2 |
 | `tests/t_asm.c` | include <stdio.h> | tests | 5 |
 | `tests/t_asm3.c` | include <stdio.h> | tests | 3 |
+| `tests/t_attr.c` | include <stdio.h> include <stdint.h> | tests | 7 |
 | `tests/t_compound.c` | include <stdio.h> | tests | 2 |
 | `tests/t_dowhile.c` | include <stdio.h> | tests | 2 |
 | `tests/t_enum.c` | include <stdio.h> | tests | 4 |
@@ -49,5 +52,7 @@
 | `tests/t_strings.c` | include <stdio.h> | tests | 2 |
 | `tests/t_struct.c` | include <stdio.h> | tests | 4 |
 | `tests/t_switch.c` | include <stdio.h> | tests | 3 |
+| `tests/t_sync.c` | include <stdio.h> | tests | 4 |
 | `tests/t_typedef.c` | include <stdio.h> | tests | 4 |
+| `tests/t_variadic.c` | include <stdio.h> | tests | 8 |
 | `tests/t_while.c` | include <stdio.h> | tests | 2 |
