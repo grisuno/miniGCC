@@ -8,7 +8,7 @@
 **Total Files Parsed:** 48 | **Total Symbols Extracted:** 798 | **Total Imports:** 37
  | **Resolved Imports:** 4
 
-<!-- ranking_model: v1.0 | weights: {ppr:0.45,auth:0.2,test:0.15,doc:0.1,fresh:0.1} | alpha:0.85 | commit:0c83af4 | date:2026-07-18 -->
+<!-- ranking_model: v1.0 | weights: {ppr:0.45,auth:0.2,test:0.15,doc:0.1,fresh:0.1} | alpha:0.85 | commit:b3ca3bb | date:2026-07-18 -->
 
 
 ## Table of Contents
