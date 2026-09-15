@@ -1,14 +1,14 @@
 {
   "tool": "readmenator",
-  "generated_at": "2026-09-15T00:30:02Z",
+  "generated_at": "2026-09-15T00:51:20Z",
   "project_root": "/home/grisun0/src_note/c/boot/repo/miniGCC",
-  "files": 45,
-  "symbols": 718,
-  "imports": 36,
+  "files": 48,
+  "symbols": 798,
+  "imports": 37,
   "resolved_imports": 4,
   "security_findings": 0,
   "languages": {
-    "c": 35,
+    "c": 38,
     "s": 3,
     "h": 4,
     "sh": 3

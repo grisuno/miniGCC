@@ -179,117 +179,147 @@
 - Defined: `minigcc.c:1571`
 
 ### arg_reg (function) `static const char *arg_reg(int i)`
-- Defined: `minigcc.c:1633`
+- Defined: `minigcc.c:1634`
 - Doc: Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compi
 
 ### libc_global_name (function) `static const char *libc_global_name(int i)`
-- Defined: `minigcc.c:1643`
+- Defined: `minigcc.c:1644`
 - Doc: Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compi
 
 ### unary (function) `static void unary(void)`
-- Defined: `minigcc.c:1655`
+- Defined: `minigcc.c:1656`
 
 ### lvalue_address (function) `static void lvalue_address(void)`
-- Defined: `minigcc.c:1927`
+- Defined: `minigcc.c:1928`
 
 ### handle_postfix (function) `static void handle_postfix(int is_lvalue)`
-- Defined: `minigcc.c:1979`
+- Defined: `minigcc.c:1980`
 
 ### unary_expr (function) `static void unary_expr(void)`
-- Defined: `minigcc.c:2113`
+- Defined: `minigcc.c:2114`
 
 ### multiplicative_expr (function) `static void multiplicative_expr(void)`
-- Defined: `minigcc.c:2128`
+- Defined: `minigcc.c:2129`
 
 ### additive_expr (function) `static void additive_expr(void)`
-- Defined: `minigcc.c:2192`
+- Defined: `minigcc.c:2193`
 
 ### shift_expr (function) `static void shift_expr(void)`
-- Defined: `minigcc.c:2247`
+- Defined: `minigcc.c:2248`
 
 ### relational_expr (function) `static void relational_expr(void)`
-- Defined: `minigcc.c:2266`
+- Defined: `minigcc.c:2267`
 
 ### equality_expr (function) `static void equality_expr(void)`
-- Defined: `minigcc.c:2319`
+- Defined: `minigcc.c:2320`
 
 ### bitwise_and_expr (function) `static void bitwise_and_expr(void)`
-- Defined: `minigcc.c:2368`
+- Defined: `minigcc.c:2369`
 
 ### bitwise_xor_expr (function) `static void bitwise_xor_expr(void)`
-- Defined: `minigcc.c:2380`
+- Defined: `minigcc.c:2381`
 
 ### bitwise_or_expr (function) `static void bitwise_or_expr(void)`
-- Defined: `minigcc.c:2392`
+- Defined: `minigcc.c:2393`
 
 ### logical_and_expr (function) `static void logical_and_expr(void)`
-- Defined: `minigcc.c:2404`
+- Defined: `minigcc.c:2405`
 
 ### logical_or_expr (function) `static void logical_or_expr(void)`
-- Defined: `minigcc.c:2424`
+- Defined: `minigcc.c:2425`
 
 ### conditional_expr (function) `static void conditional_expr(void)`
-- Defined: `minigcc.c:2444`
+- Defined: `minigcc.c:2445`
 
 ### emit_compound_op (function) `static void emit_compound_op(int op, int asize)`
-- Defined: `minigcc.c:2462`
+- Defined: `minigcc.c:2463`
 
 ### assignment_expr (function) `static void assignment_expr(void)`
-- Defined: `minigcc.c:2503`
+- Defined: `minigcc.c:2504`
+
+### asm_scratch (function) `static const char *asm_scratch(int i)`
+- Defined: `minigcc.c:2715`
+
+### asm_home_text (function) `static void asm_home_text(int home, char *buf)`
+- Defined: `minigcc.c:2724`
+
+### asm_reg_sized (function) `static void asm_reg_sized(int home, int size, char *buf)`
+- Defined: `minigcc.c:2732`
+
+### asm_fixed_home (function) `static int asm_fixed_home(int c)`
+- Defined: `minigcc.c:2758`
+
+### asm_emit_template (function) `static void asm_emit_template(void)`
+- Defined: `minigcc.c:2766`
+
+### asm_parse_mem (function) `static void asm_parse_mem(int idx, int is_out)`
+- Defined: `minigcc.c:2793`
+
+### asm_emit_ss (function) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
+- Defined: `minigcc.c:2851`
+
+### asm_parse_one (function) `static void asm_parse_one(int idx, int is_out)`
+- Defined: `minigcc.c:2857`
+
+### asm_assign_homes (function) `static void asm_assign_homes(void)`
+- Defined: `minigcc.c:2921`
+
+### asm_emit_all (function) `static void asm_emit_all(void)`
+- Defined: `minigcc.c:2966`
 
 ### parse_asm_block (function) `static void parse_asm_block(void)`
-- Defined: `minigcc.c:2699`
+- Defined: `minigcc.c:3010`
 
 ### statement (function) `static void statement(void)`
-- Defined: `minigcc.c:2714`
+- Defined: `minigcc.c:3074`
 
 ### parse_function (function) `static void parse_function(const char *name, int ret_type)`
-- Defined: `minigcc.c:3381`
+- Defined: `minigcc.c:3741`
 
 ### parse_enum (function) `static void parse_enum(void)`
-- Defined: `minigcc.c:3528`
+- Defined: `minigcc.c:3888`
 
 ### skip_struct (function) `static void skip_struct(void)`
-- Defined: `minigcc.c:3577`
+- Defined: `minigcc.c:3937`
 
 ### skip_typedef (function) `static void skip_typedef(void)`
-- Defined: `minigcc.c:3641`
+- Defined: `minigcc.c:4001`
 
 ### data_directive (function) `static const char *data_directive(int size)`
-- Defined: `minigcc.c:3696`
+- Defined: `minigcc.c:4056`
 - Doc: s->const_value = 8;  /* just a marker /* If a struct was just parsed, store its size if (struct_total_size > 0) s->const
 
 ### emit_global_bss (function) `static void emit_global_bss(const char *name, int is_static, int size)`
-- Defined: `minigcc.c:3704`
+- Defined: `minigcc.c:4064`
 - Doc: } } match(';'); } /* Storage directive for a datum of `size` bytes. static const char *data_directive(int size) { if (si
 
 ### emit_global_data_head (function) `static void emit_global_data_head(const char *name, int is_static)`
-- Defined: `minigcc.c:3711`
+- Defined: `minigcc.c:4071`
 
 ### parse_const_int (function) `static int parse_const_int(long long *out)`
-- Defined: `minigcc.c:3721`
+- Defined: `minigcc.c:4081`
 - Doc: Parse an integer constant usable as a static initializer: an optionally signed numeric or character literal, or a macro 
 
 ### intern_string (function) `static int intern_string(const char *text)`
-- Defined: `minigcc.c:3744`
+- Defined: `minigcc.c:4104`
 - Doc: } if (tok == T_ID) { int mi = find_macro(token); if (mi >= 0) { long long v = macros[mi].value; next_token(); out = neg 
 
 ### emit_global_initializer (function) `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...`
-- Defined: `minigcc.c:3761`
+- Defined: `minigcc.c:4121`
 - Doc: Emit the definition of a global that carries an initializer. On entry the current token is the one after '='. `size` is 
 
 ### parse_program (function) `static void parse_program(void)`
-- Defined: `minigcc.c:3825`
+- Defined: `minigcc.c:4185`
 
 ### emit_float_consts (function) `static void emit_float_consts(void)`
-- Defined: `minigcc.c:3980`
+- Defined: `minigcc.c:4340`
 
 ### emit_string_pool (function) `static void emit_string_pool(void)`
-- Defined: `minigcc.c:3990`
+- Defined: `minigcc.c:4350`
 
 ### main (function) `int main(int argc, char **argv)`
-- Defined: `minigcc.c:4000`
+- Defined: `minigcc.c:4360`
 
 ### fprintf (function) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
 - Defined: `minigcc.c:608`
@@ -319,13 +349,13 @@
 - Defined: `minigcc.c:1577`
 
 ### strcpy (function) `strcpy(saved_token, token);`
-- Defined: `minigcc.c:2508`
+- Defined: `minigcc.c:2509`
 
-### fputs (function) `fputs(token, output);`
-- Defined: `minigcc.c:2706`
+### fputs (function) `fputs(asm_text[oi], output);`
+- Defined: `minigcc.c:2782`
 
 ### memcpy (function) `memcpy(varname, token, nlen);`
-- Defined: `minigcc.c:2766`
+- Defined: `minigcc.c:3126`
 
 ## minigccg2.s
 
@@ -761,62 +791,122 @@
 ### assignment_expr (function)
 - Defined: `minigccg2.s:21792`
 
-### parse_asm_block (function)
+### asm_tmpl (function)
 - Defined: `minigccg2.s:25107`
 
+### asm_text (function)
+- Defined: `minigccg2.s:25111`
+
+### asm_mem (function)
+- Defined: `minigccg2.s:25115`
+
+### asm_is_out (function)
+- Defined: `minigccg2.s:25119`
+
+### asm_home (function)
+- Defined: `minigccg2.s:25123`
+
+### asm_slot (function)
+- Defined: `minigccg2.s:25127`
+
+### asm_size (function)
+- Defined: `minigccg2.s:25131`
+
+### asm_nops (function)
+- Defined: `minigccg2.s:25135`
+
+### asm_nslots (function)
+- Defined: `minigccg2.s:25139`
+
+### asm_unique (function)
+- Defined: `minigccg2.s:25143`
+
+### asm_scratch (function)
+- Defined: `minigccg2.s:25147`
+
+### asm_home_text (function)
+- Defined: `minigccg2.s:25223`
+
+### asm_reg_sized (function)
+- Defined: `minigccg2.s:25380`
+
+### asm_fixed_home (function)
+- Defined: `minigccg2.s:25926`
+
+### asm_emit_template (function)
+- Defined: `minigccg2.s:25990`
+
+### asm_parse_mem (function)
+- Defined: `minigccg2.s:26230`
+
+### asm_emit_ss (function)
+- Defined: `minigccg2.s:26791`
+
+### asm_parse_one (function)
+- Defined: `minigccg2.s:26844`
+
+### asm_assign_homes (function)
+- Defined: `minigccg2.s:27815`
+
+### asm_emit_all (function)
+- Defined: `minigccg2.s:28260`
+
+### parse_asm_block (function)
+- Defined: `minigccg2.s:28770`
+
 ### statement (function)
-- Defined: `minigccg2.s:25254`
+- Defined: `minigccg2.s:29339`
 
 ### restart_typedef (function)
-- Defined: `minigccg2.s:28773`
+- Defined: `minigccg2.s:32858`
 
 ### restart_int (function)
-- Defined: `minigccg2.s:29805`
+- Defined: `minigccg2.s:33890`
 
 ### parse_function (function)
-- Defined: `minigccg2.s:30964`
+- Defined: `minigccg2.s:35049`
 
 ### parse_enum (function)
-- Defined: `minigccg2.s:32429`
+- Defined: `minigccg2.s:36514`
 
 ### skip_struct (function)
-- Defined: `minigccg2.s:32841`
+- Defined: `minigccg2.s:36926`
 
 ### skip_typedef (function)
-- Defined: `minigccg2.s:33427`
+- Defined: `minigccg2.s:37512`
 
 ### data_directive (function)
-- Defined: `minigccg2.s:33917`
+- Defined: `minigccg2.s:38002`
 
 ### emit_global_bss (function)
-- Defined: `minigccg2.s:33967`
+- Defined: `minigccg2.s:38052`
 
 ### emit_global_data_head (function)
-- Defined: `minigccg2.s:34058`
+- Defined: `minigccg2.s:38143`
 
 ### parse_const_int (function)
-- Defined: `minigccg2.s:34113`
+- Defined: `minigccg2.s:38198`
 
 ### intern_string (function)
-- Defined: `minigccg2.s:34276`
+- Defined: `minigccg2.s:38361`
 
 ### emit_global_initializer (function)
-- Defined: `minigccg2.s:34369`
+- Defined: `minigccg2.s:38454`
 
 ### parse_program (function)
-- Defined: `minigccg2.s:35086`
+- Defined: `minigccg2.s:39171`
 
 ### emit_float_consts (function)
-- Defined: `minigccg2.s:36891`
+- Defined: `minigccg2.s:40976`
 
 ### emit_string_pool (function)
-- Defined: `minigccg2.s:36990`
+- Defined: `minigccg2.s:41075`
 
 ### main (function)
-- Defined: `minigccg2.s:37092`
+- Defined: `minigccg2.s:41177`
 
 ### _start (function)
-- Defined: `minigccg2.s:40790`
+- Defined: `minigccg2.s:45151`
 
 ## minigccg3.s
 
@@ -1252,62 +1342,122 @@
 ### assignment_expr (function)
 - Defined: `minigccg3.s:21792`
 
-### parse_asm_block (function)
+### asm_tmpl (function)
 - Defined: `minigccg3.s:25107`
 
+### asm_text (function)
+- Defined: `minigccg3.s:25111`
+
+### asm_mem (function)
+- Defined: `minigccg3.s:25115`
+
+### asm_is_out (function)
+- Defined: `minigccg3.s:25119`
+
+### asm_home (function)
+- Defined: `minigccg3.s:25123`
+
+### asm_slot (function)
+- Defined: `minigccg3.s:25127`
+
+### asm_size (function)
+- Defined: `minigccg3.s:25131`
+
+### asm_nops (function)
+- Defined: `minigccg3.s:25135`
+
+### asm_nslots (function)
+- Defined: `minigccg3.s:25139`
+
+### asm_unique (function)
+- Defined: `minigccg3.s:25143`
+
+### asm_scratch (function)
+- Defined: `minigccg3.s:25147`
+
+### asm_home_text (function)
+- Defined: `minigccg3.s:25223`
+
+### asm_reg_sized (function)
+- Defined: `minigccg3.s:25380`
+
+### asm_fixed_home (function)
+- Defined: `minigccg3.s:25926`
+
+### asm_emit_template (function)
+- Defined: `minigccg3.s:25990`
+
+### asm_parse_mem (function)
+- Defined: `minigccg3.s:26230`
+
+### asm_emit_ss (function)
+- Defined: `minigccg3.s:26791`
+
+### asm_parse_one (function)
+- Defined: `minigccg3.s:26844`
+
+### asm_assign_homes (function)
+- Defined: `minigccg3.s:27815`
+
+### asm_emit_all (function)
+- Defined: `minigccg3.s:28260`
+
+### parse_asm_block (function)
+- Defined: `minigccg3.s:28770`
+
 ### statement (function)
-- Defined: `minigccg3.s:25254`
+- Defined: `minigccg3.s:29339`
 
 ### restart_typedef (function)
-- Defined: `minigccg3.s:28773`
+- Defined: `minigccg3.s:32858`
 
 ### restart_int (function)
-- Defined: `minigccg3.s:29805`
+- Defined: `minigccg3.s:33890`
 
 ### parse_function (function)
-- Defined: `minigccg3.s:30964`
+- Defined: `minigccg3.s:35049`
 
 ### parse_enum (function)
-- Defined: `minigccg3.s:32429`
+- Defined: `minigccg3.s:36514`
 
 ### skip_struct (function)
-- Defined: `minigccg3.s:32841`
+- Defined: `minigccg3.s:36926`
 
 ### skip_typedef (function)
-- Defined: `minigccg3.s:33427`
+- Defined: `minigccg3.s:37512`
 
 ### data_directive (function)
-- Defined: `minigccg3.s:33917`
+- Defined: `minigccg3.s:38002`
 
 ### emit_global_bss (function)
-- Defined: `minigccg3.s:33967`
+- Defined: `minigccg3.s:38052`
 
 ### emit_global_data_head (function)
-- Defined: `minigccg3.s:34058`
+- Defined: `minigccg3.s:38143`
 
 ### parse_const_int (function)
-- Defined: `minigccg3.s:34113`
+- Defined: `minigccg3.s:38198`
 
 ### intern_string (function)
-- Defined: `minigccg3.s:34276`
+- Defined: `minigccg3.s:38361`
 
 ### emit_global_initializer (function)
-- Defined: `minigccg3.s:34369`
+- Defined: `minigccg3.s:38454`
 
 ### parse_program (function)
-- Defined: `minigccg3.s:35086`
+- Defined: `minigccg3.s:39171`
 
 ### emit_float_consts (function)
-- Defined: `minigccg3.s:36891`
+- Defined: `minigccg3.s:40976`
 
 ### emit_string_pool (function)
-- Defined: `minigccg3.s:36990`
+- Defined: `minigccg3.s:41075`
 
 ### main (function)
-- Defined: `minigccg3.s:37092`
+- Defined: `minigccg3.s:41177`
 
 ### _start (function)
-- Defined: `minigccg3.s:40790`
+- Defined: `minigccg3.s:45151`
 
 ## minigccg4.s
 
@@ -1743,62 +1893,122 @@
 ### assignment_expr (function)
 - Defined: `minigccg4.s:21792`
 
-### parse_asm_block (function)
+### asm_tmpl (function)
 - Defined: `minigccg4.s:25107`
 
+### asm_text (function)
+- Defined: `minigccg4.s:25111`
+
+### asm_mem (function)
+- Defined: `minigccg4.s:25115`
+
+### asm_is_out (function)
+- Defined: `minigccg4.s:25119`
+
+### asm_home (function)
+- Defined: `minigccg4.s:25123`
+
+### asm_slot (function)
+- Defined: `minigccg4.s:25127`
+
+### asm_size (function)
+- Defined: `minigccg4.s:25131`
+
+### asm_nops (function)
+- Defined: `minigccg4.s:25135`
+
+### asm_nslots (function)
+- Defined: `minigccg4.s:25139`
+
+### asm_unique (function)
+- Defined: `minigccg4.s:25143`
+
+### asm_scratch (function)
+- Defined: `minigccg4.s:25147`
+
+### asm_home_text (function)
+- Defined: `minigccg4.s:25223`
+
+### asm_reg_sized (function)
+- Defined: `minigccg4.s:25380`
+
+### asm_fixed_home (function)
+- Defined: `minigccg4.s:25926`
+
+### asm_emit_template (function)
+- Defined: `minigccg4.s:25990`
+
+### asm_parse_mem (function)
+- Defined: `minigccg4.s:26230`
+
+### asm_emit_ss (function)
+- Defined: `minigccg4.s:26791`
+
+### asm_parse_one (function)
+- Defined: `minigccg4.s:26844`
+
+### asm_assign_homes (function)
+- Defined: `minigccg4.s:27815`
+
+### asm_emit_all (function)
+- Defined: `minigccg4.s:28260`
+
+### parse_asm_block (function)
+- Defined: `minigccg4.s:28770`
+
 ### statement (function)
-- Defined: `minigccg4.s:25254`
+- Defined: `minigccg4.s:29339`
 
 ### restart_typedef (function)
-- Defined: `minigccg4.s:28773`
+- Defined: `minigccg4.s:32858`
 
 ### restart_int (function)
-- Defined: `minigccg4.s:29805`
+- Defined: `minigccg4.s:33890`
 
 ### parse_function (function)
-- Defined: `minigccg4.s:30964`
+- Defined: `minigccg4.s:35049`
 
 ### parse_enum (function)
-- Defined: `minigccg4.s:32429`
+- Defined: `minigccg4.s:36514`
 
 ### skip_struct (function)
-- Defined: `minigccg4.s:32841`
+- Defined: `minigccg4.s:36926`
 
 ### skip_typedef (function)
-- Defined: `minigccg4.s:33427`
+- Defined: `minigccg4.s:37512`
 
 ### data_directive (function)
-- Defined: `minigccg4.s:33917`
+- Defined: `minigccg4.s:38002`
 
 ### emit_global_bss (function)
-- Defined: `minigccg4.s:33967`
+- Defined: `minigccg4.s:38052`
 
 ### emit_global_data_head (function)
-- Defined: `minigccg4.s:34058`
+- Defined: `minigccg4.s:38143`
 
 ### parse_const_int (function)
-- Defined: `minigccg4.s:34113`
+- Defined: `minigccg4.s:38198`
 
 ### intern_string (function)
-- Defined: `minigccg4.s:34276`
+- Defined: `minigccg4.s:38361`
 
 ### emit_global_initializer (function)
-- Defined: `minigccg4.s:34369`
+- Defined: `minigccg4.s:38454`
 
 ### parse_program (function)
-- Defined: `minigccg4.s:35086`
+- Defined: `minigccg4.s:39171`
 
 ### emit_float_consts (function)
-- Defined: `minigccg4.s:36891`
+- Defined: `minigccg4.s:40976`
 
 ### emit_string_pool (function)
-- Defined: `minigccg4.s:36990`
+- Defined: `minigccg4.s:41075`
 
 ### main (function)
-- Defined: `minigccg4.s:37092`
+- Defined: `minigccg4.s:41177`
 
 ### _start (function)
-- Defined: `minigccg4.s:40790`
+- Defined: `minigccg4.s:45151`
 
 ## my_library.h
 
@@ -1860,8 +2070,24 @@
 ### main (function) `int main(void)`
 - Defined: `tests/neg_asm.c:1`
 
-### volatile (function) `__asm__ volatile("mov %0, %%eax" : "=r"(x));`
+### volatile (function) `__asm__ volatile("mov %0, %%rax" : "=z"(x));`
 - Defined: `tests/neg_asm.c:3`
+
+## tests/neg_asm2.c
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_asm2.c:1`
+
+### volatile (function) `__asm__ volatile("nop" : "=a"(a), "=a"(b));`
+- Defined: `tests/neg_asm2.c:4`
+
+## tests/neg_asm3.c
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_asm3.c:1`
+
+### volatile (function) `__asm__ volatile("nop" : "+r"(a));`
+- Defined: `tests/neg_asm3.c:3`
 
 ## tests/neg_comment.c
 
@@ -1926,6 +2152,17 @@
 
 ### printf (function) `printf("%d %d\n", probe, v);`
 - Defined: `tests/t_asm.c:11`
+
+## tests/t_asm3.c
+
+### main (function) `int main(void)`
+- Defined: `tests/t_asm3.c:5`
+
+### volatile (function) `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));`
+- Defined: `tests/t_asm3.c:9`
+
+### printf (function) `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);`
+- Defined: `tests/t_asm3.c:10`
 
 ## tests/t_compound.c
 

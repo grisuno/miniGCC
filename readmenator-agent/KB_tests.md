@@ -5,7 +5,21 @@
 - Language: c
 - Symbols:
   - `main` (function, line 1) `int main(void)`
-  - `volatile` (function, line 3) `__asm__ volatile("mov %0, %%eax" : "=r"(x));`
+  - `volatile` (function, line 3) `__asm__ volatile("mov %0, %%rax" : "=z"(x));`
+
+## tests/neg_asm2.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 1) `int main(void)`
+  - `volatile` (function, line 4) `__asm__ volatile("nop" : "=a"(a), "=a"(b));`
+
+## tests/neg_asm3.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 1) `int main(void)`
+  - `volatile` (function, line 3) `__asm__ volatile("nop" : "+r"(a));`
 
 ## tests/neg_comment.c
 - Layer: testing
@@ -65,6 +79,15 @@
   - `__asm` (function, line 7) `__asm("nop");`
   - `__asm__` (function, line 8) `__asm__("nop");`
   - `printf` (function, line 11) `printf("%d %d\n", probe, v);`
+
+## tests/t_asm3.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `main` (function, line 5) `int main(void)`
+  - `volatile` (function, line 9) `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));`
+  - `printf` (function, line 10) `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);`
 
 ## tests/t_compound.c
 - Layer: testing

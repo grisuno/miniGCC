@@ -4,10 +4,10 @@
 
 These files have the most connections. Changes here have high blast radius.
 
-- `minigccg2.s` (score: 16.30)
-- `minigccg3.s` (score: 16.30)
-- `minigccg4.s` (score: 16.30)
-- `minigcc.c` (score: 12.70)
+- `minigccg2.s` (score: 18.30)
+- `minigccg3.s` (score: 18.30)
+- `minigccg4.s` (score: 18.30)
+- `minigcc.c` (score: 14.00)
 - `tests/t_outer_h.h` (score: 4.20)
 - `tests/t_inline.c` (score: 2.50)
 - `test_include.c` (score: 2.30)

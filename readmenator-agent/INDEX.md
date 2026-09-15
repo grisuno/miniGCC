@@ -2,10 +2,10 @@
 
 | File | Purpose | Subsystem | Symbols |
 |------|---------|-----------|---------|
-| `minigcc.c` | - | root | 127 |
-| `minigccg2.s` | - | root | 163 |
-| `minigccg3.s` | - | root | 163 |
-| `minigccg4.s` | - | root | 163 |
+| `minigcc.c` | - | root | 140 |
+| `minigccg2.s` | - | root | 183 |
+| `minigccg3.s` | - | root | 183 |
+| `minigccg4.s` | - | root | 183 |
 | `my_library.h` | ifndef MY_LIBRARY_H define MY_LIBRARY_H  Test function to verify that inclusion  | root | 2 |
 | `test.c` | - | root | 1 |
 | `test.sh` | Cleaning env | root | 0 |
@@ -14,6 +14,8 @@
 | `test_include.c` | include <stdio.h> include "my_library.h" | root | 3 |
 | `test_ld_selfhost.sh` | Self-host test: miniGCC bootstraps itself with the sibling 'ld' repository as th | root | 2 |
 | `tests/neg_asm.c` | - | tests | 2 |
+| `tests/neg_asm2.c` | - | tests | 2 |
+| `tests/neg_asm3.c` | - | tests | 2 |
 | `tests/neg_comment.c` | - | tests | 1 |
 | `tests/neg_float.c` | - | tests | 1 |
 | `tests/neg_hex.c` | - | tests | 1 |
@@ -22,6 +24,7 @@
 | `tests/t_arith.c` | include <stdio.h> | tests | 2 |
 | `tests/t_arrays.c` | include <stdio.h> | tests | 2 |
 | `tests/t_asm.c` | include <stdio.h> | tests | 5 |
+| `tests/t_asm3.c` | include <stdio.h> | tests | 3 |
 | `tests/t_compound.c` | include <stdio.h> | tests | 2 |
 | `tests/t_dowhile.c` | include <stdio.h> | tests | 2 |
 | `tests/t_enum.c` | include <stdio.h> | tests | 4 |

@@ -19,6 +19,7 @@
 - `tests/t_arith.c` -> `stdio.h`
 - `tests/t_arrays.c` -> `stdio.h`
 - `tests/t_asm.c` -> `stdio.h`
+- `tests/t_asm3.c` -> `stdio.h`
 - `tests/t_compound.c` -> `stdio.h`
 - `tests/t_dowhile.c` -> `stdio.h`
 - `tests/t_enum.c` -> `stdio.h`

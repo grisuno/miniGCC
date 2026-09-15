@@ -65,42 +65,52 @@
   - `emit_label` (function, line 1554) `static void emit_label(int label)`
   - `find_symbol` (function, line 1561) `static int find_symbol(const char *name)`
   - `add_symbol` (function, line 1571) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
-  - `arg_reg` (function, line 1633) `static const char *arg_reg(int i)`
-  - `libc_global_name` (function, line 1643) `static const char *libc_global_name(int i)`
-  - `unary` (function, line 1655) `static void unary(void)`
-  - `lvalue_address` (function, line 1927) `static void lvalue_address(void)`
-  - `handle_postfix` (function, line 1979) `static void handle_postfix(int is_lvalue)`
-  - `unary_expr` (function, line 2113) `static void unary_expr(void)`
-  - `multiplicative_expr` (function, line 2128) `static void multiplicative_expr(void)`
-  - `additive_expr` (function, line 2192) `static void additive_expr(void)`
-  - `shift_expr` (function, line 2247) `static void shift_expr(void)`
-  - `relational_expr` (function, line 2266) `static void relational_expr(void)`
-  - `equality_expr` (function, line 2319) `static void equality_expr(void)`
-  - `bitwise_and_expr` (function, line 2368) `static void bitwise_and_expr(void)`
-  - `bitwise_xor_expr` (function, line 2380) `static void bitwise_xor_expr(void)`
-  - `bitwise_or_expr` (function, line 2392) `static void bitwise_or_expr(void)`
-  - `logical_and_expr` (function, line 2404) `static void logical_and_expr(void)`
-  - `logical_or_expr` (function, line 2424) `static void logical_or_expr(void)`
-  - `conditional_expr` (function, line 2444) `static void conditional_expr(void)`
-  - `emit_compound_op` (function, line 2462) `static void emit_compound_op(int op, int asize)`
-  - `assignment_expr` (function, line 2503) `static void assignment_expr(void)`
-  - `parse_asm_block` (function, line 2699) `static void parse_asm_block(void)`
-  - `statement` (function, line 2714) `static void statement(void)`
-  - `parse_function` (function, line 3381) `static void parse_function(const char *name, int ret_type)`
-  - `parse_enum` (function, line 3528) `static void parse_enum(void)`
-  - `skip_struct` (function, line 3577) `static void skip_struct(void)`
-  - `skip_typedef` (function, line 3641) `static void skip_typedef(void)`
-  - `data_directive` (function, line 3696) `static const char *data_directive(int size)`
-  - `emit_global_bss` (function, line 3704) `static void emit_global_bss(const char *name, int is_static, int size)`
-  - `emit_global_data_head` (function, line 3711) `static void emit_global_data_head(const char *name, int is_static)`
-  - `parse_const_int` (function, line 3721) `static int parse_const_int(long long *out)`
-  - `intern_string` (function, line 3744) `static int intern_string(const char *text)`
-  - `emit_global_initializer` (function, line 3761) `static int emit_global_initializer(const char *name, int is_static, int *size,
+  - `arg_reg` (function, line 1634) `static const char *arg_reg(int i)`
+  - `libc_global_name` (function, line 1644) `static const char *libc_global_name(int i)`
+  - `unary` (function, line 1656) `static void unary(void)`
+  - `lvalue_address` (function, line 1928) `static void lvalue_address(void)`
+  - `handle_postfix` (function, line 1980) `static void handle_postfix(int is_lvalue)`
+  - `unary_expr` (function, line 2114) `static void unary_expr(void)`
+  - `multiplicative_expr` (function, line 2129) `static void multiplicative_expr(void)`
+  - `additive_expr` (function, line 2193) `static void additive_expr(void)`
+  - `shift_expr` (function, line 2248) `static void shift_expr(void)`
+  - `relational_expr` (function, line 2267) `static void relational_expr(void)`
+  - `equality_expr` (function, line 2320) `static void equality_expr(void)`
+  - `bitwise_and_expr` (function, line 2369) `static void bitwise_and_expr(void)`
+  - `bitwise_xor_expr` (function, line 2381) `static void bitwise_xor_expr(void)`
+  - `bitwise_or_expr` (function, line 2393) `static void bitwise_or_expr(void)`
+  - `logical_and_expr` (function, line 2405) `static void logical_and_expr(void)`
+  - `logical_or_expr` (function, line 2425) `static void logical_or_expr(void)`
+  - `conditional_expr` (function, line 2445) `static void conditional_expr(void)`
+  - `emit_compound_op` (function, line 2463) `static void emit_compound_op(int op, int asize)`
+  - `assignment_expr` (function, line 2504) `static void assignment_expr(void)`
+  - `asm_scratch` (function, line 2715) `static const char *asm_scratch(int i)`
+  - `asm_home_text` (function, line 2724) `static void asm_home_text(int home, char *buf)`
+  - `asm_reg_sized` (function, line 2732) `static void asm_reg_sized(int home, int size, char *buf)`
+  - `asm_fixed_home` (function, line 2758) `static int asm_fixed_home(int c)`
+  - `asm_emit_template` (function, line 2766) `static void asm_emit_template(void)`
+  - `asm_parse_mem` (function, line 2793) `static void asm_parse_mem(int idx, int is_out)`
+  - `asm_emit_ss` (function, line 2851) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
+  - `asm_parse_one` (function, line 2857) `static void asm_parse_one(int idx, int is_out)`
+  - `asm_assign_homes` (function, line 2921) `static void asm_assign_homes(void)`
+  - `asm_emit_all` (function, line 2966) `static void asm_emit_all(void)`
+  - `parse_asm_block` (function, line 3010) `static void parse_asm_block(void)`
+  - `statement` (function, line 3074) `static void statement(void)`
+  - `parse_function` (function, line 3741) `static void parse_function(const char *name, int ret_type)`
+  - `parse_enum` (function, line 3888) `static void parse_enum(void)`
+  - `skip_struct` (function, line 3937) `static void skip_struct(void)`
+  - `skip_typedef` (function, line 4001) `static void skip_typedef(void)`
+  - `data_directive` (function, line 4056) `static const char *data_directive(int size)`
+  - `emit_global_bss` (function, line 4064) `static void emit_global_bss(const char *name, int is_static, int size)`
+  - `emit_global_data_head` (function, line 4071) `static void emit_global_data_head(const char *name, int is_static)`
+  - `parse_const_int` (function, line 4081) `static int parse_const_int(long long *out)`
+  - `intern_string` (function, line 4104) `static int intern_string(const char *text)`
+  - `emit_global_initializer` (function, line 4121) `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...`
-  - `parse_program` (function, line 3825) `static void parse_program(void)`
-  - `emit_float_consts` (function, line 3980) `static void emit_float_consts(void)`
-  - `emit_string_pool` (function, line 3990) `static void emit_string_pool(void)`
-  - `main` (function, line 4000) `int main(int argc, char **argv)`
+  - `parse_program` (function, line 4185) `static void parse_program(void)`
+  - `emit_float_consts` (function, line 4340) `static void emit_float_consts(void)`
+  - `emit_string_pool` (function, line 4350) `static void emit_string_pool(void)`
+  - `main` (function, line 4360) `int main(int argc, char **argv)`
   - `fprintf` (function, line 608) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
   - `exit` (function, line 610) `exit(EXIT_FAILURE);`
   - `fclose` (function, line 687) `fclose(f);`
@@ -110,9 +120,9 @@
   - `snprintf` (function, line 957) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
   - `fputc` (function, line 1499) `fputc('%', output);`
   - `strncpy` (function, line 1577) `strncpy(d, name, MAX_IDENT_LEN - 1);`
-  - `strcpy` (function, line 2508) `strcpy(saved_token, token);`
-  - `fputs` (function, line 2706) `fputs(token, output);`
-  - `memcpy` (function, line 2766) `memcpy(varname, token, nlen);`
+  - `strcpy` (function, line 2509) `strcpy(saved_token, token);`
+  - `fputs` (function, line 2782) `fputs(asm_text[oi], output);`
+  - `memcpy` (function, line 3126) `memcpy(varname, token, nlen);`
   - `MAX_TOKEN_LEN` (macro, line 14) `#define MAX_TOKEN_LEN`
   - `MAX_SYMBOLS` (macro, line 16) `#define MAX_SYMBOLS`
   - `MAX_IDENT_LEN` (macro, line 17) `#define MAX_IDENT_LEN`
@@ -132,6 +142,9 @@
   - `MAX_IF_NESTING` (macro, line 198) `#define MAX_IF_NESTING`
   - `CONST_VAR_FLAG` (macro, line 200) `#define CONST_VAR_FLAG`
   - `MAX_MACROS` (macro, line 206) `#define MAX_MACROS`
+  - `ASM_MAX_OPS` (macro, line 2700) `#define ASM_MAX_OPS`
+  - `ASM_TMPL_SZ` (macro, line 2702) `#define ASM_TMPL_SZ`
+  - `ASM_TXT_SZ` (macro, line 2703) `#define ASM_TXT_SZ`
 
 ## minigccg2.s
 - Layer: utility
@@ -281,25 +294,45 @@
   - `conditional_expr` (function, line 21158)
   - `emit_compound_op` (function, line 21290)
   - `assignment_expr` (function, line 21792)
-  - `parse_asm_block` (function, line 25107)
-  - `statement` (function, line 25254)
-  - `restart_typedef` (function, line 28773)
-  - `restart_int` (function, line 29805)
-  - `parse_function` (function, line 30964)
-  - `parse_enum` (function, line 32429)
-  - `skip_struct` (function, line 32841)
-  - `skip_typedef` (function, line 33427)
-  - `data_directive` (function, line 33917)
-  - `emit_global_bss` (function, line 33967)
-  - `emit_global_data_head` (function, line 34058)
-  - `parse_const_int` (function, line 34113)
-  - `intern_string` (function, line 34276)
-  - `emit_global_initializer` (function, line 34369)
-  - `parse_program` (function, line 35086)
-  - `emit_float_consts` (function, line 36891)
-  - `emit_string_pool` (function, line 36990)
-  - `main` (function, line 37092)
-  - `_start` (function, line 40790)
+  - `asm_tmpl` (function, line 25107)
+  - `asm_text` (function, line 25111)
+  - `asm_mem` (function, line 25115)
+  - `asm_is_out` (function, line 25119)
+  - `asm_home` (function, line 25123)
+  - `asm_slot` (function, line 25127)
+  - `asm_size` (function, line 25131)
+  - `asm_nops` (function, line 25135)
+  - `asm_nslots` (function, line 25139)
+  - `asm_unique` (function, line 25143)
+  - `asm_scratch` (function, line 25147)
+  - `asm_home_text` (function, line 25223)
+  - `asm_reg_sized` (function, line 25380)
+  - `asm_fixed_home` (function, line 25926)
+  - `asm_emit_template` (function, line 25990)
+  - `asm_parse_mem` (function, line 26230)
+  - `asm_emit_ss` (function, line 26791)
+  - `asm_parse_one` (function, line 26844)
+  - `asm_assign_homes` (function, line 27815)
+  - `asm_emit_all` (function, line 28260)
+  - `parse_asm_block` (function, line 28770)
+  - `statement` (function, line 29339)
+  - `restart_typedef` (function, line 32858)
+  - `restart_int` (function, line 33890)
+  - `parse_function` (function, line 35049)
+  - `parse_enum` (function, line 36514)
+  - `skip_struct` (function, line 36926)
+  - `skip_typedef` (function, line 37512)
+  - `data_directive` (function, line 38002)
+  - `emit_global_bss` (function, line 38052)
+  - `emit_global_data_head` (function, line 38143)
+  - `parse_const_int` (function, line 38198)
+  - `intern_string` (function, line 38361)
+  - `emit_global_initializer` (function, line 38454)
+  - `parse_program` (function, line 39171)
+  - `emit_float_consts` (function, line 40976)
+  - `emit_string_pool` (function, line 41075)
+  - `main` (function, line 41177)
+  - `_start` (function, line 45151)
 
 ## minigccg3.s
 - Layer: utility
@@ -449,25 +482,45 @@
   - `conditional_expr` (function, line 21158)
   - `emit_compound_op` (function, line 21290)
   - `assignment_expr` (function, line 21792)
-  - `parse_asm_block` (function, line 25107)
-  - `statement` (function, line 25254)
-  - `restart_typedef` (function, line 28773)
-  - `restart_int` (function, line 29805)
-  - `parse_function` (function, line 30964)
-  - `parse_enum` (function, line 32429)
-  - `skip_struct` (function, line 32841)
-  - `skip_typedef` (function, line 33427)
-  - `data_directive` (function, line 33917)
-  - `emit_global_bss` (function, line 33967)
-  - `emit_global_data_head` (function, line 34058)
-  - `parse_const_int` (function, line 34113)
-  - `intern_string` (function, line 34276)
-  - `emit_global_initializer` (function, line 34369)
-  - `parse_program` (function, line 35086)
-  - `emit_float_consts` (function, line 36891)
-  - `emit_string_pool` (function, line 36990)
-  - `main` (function, line 37092)
-  - `_start` (function, line 40790)
+  - `asm_tmpl` (function, line 25107)
+  - `asm_text` (function, line 25111)
+  - `asm_mem` (function, line 25115)
+  - `asm_is_out` (function, line 25119)
+  - `asm_home` (function, line 25123)
+  - `asm_slot` (function, line 25127)
+  - `asm_size` (function, line 25131)
+  - `asm_nops` (function, line 25135)
+  - `asm_nslots` (function, line 25139)
+  - `asm_unique` (function, line 25143)
+  - `asm_scratch` (function, line 25147)
+  - `asm_home_text` (function, line 25223)
+  - `asm_reg_sized` (function, line 25380)
+  - `asm_fixed_home` (function, line 25926)
+  - `asm_emit_template` (function, line 25990)
+  - `asm_parse_mem` (function, line 26230)
+  - `asm_emit_ss` (function, line 26791)
+  - `asm_parse_one` (function, line 26844)
+  - `asm_assign_homes` (function, line 27815)
+  - `asm_emit_all` (function, line 28260)
+  - `parse_asm_block` (function, line 28770)
+  - `statement` (function, line 29339)
+  - `restart_typedef` (function, line 32858)
+  - `restart_int` (function, line 33890)
+  - `parse_function` (function, line 35049)
+  - `parse_enum` (function, line 36514)
+  - `skip_struct` (function, line 36926)
+  - `skip_typedef` (function, line 37512)
+  - `data_directive` (function, line 38002)
+  - `emit_global_bss` (function, line 38052)
+  - `emit_global_data_head` (function, line 38143)
+  - `parse_const_int` (function, line 38198)
+  - `intern_string` (function, line 38361)
+  - `emit_global_initializer` (function, line 38454)
+  - `parse_program` (function, line 39171)
+  - `emit_float_consts` (function, line 40976)
+  - `emit_string_pool` (function, line 41075)
+  - `main` (function, line 41177)
+  - `_start` (function, line 45151)
 
 ## minigccg4.s
 - Layer: utility
@@ -617,25 +670,45 @@
   - `conditional_expr` (function, line 21158)
   - `emit_compound_op` (function, line 21290)
   - `assignment_expr` (function, line 21792)
-  - `parse_asm_block` (function, line 25107)
-  - `statement` (function, line 25254)
-  - `restart_typedef` (function, line 28773)
-  - `restart_int` (function, line 29805)
-  - `parse_function` (function, line 30964)
-  - `parse_enum` (function, line 32429)
-  - `skip_struct` (function, line 32841)
-  - `skip_typedef` (function, line 33427)
-  - `data_directive` (function, line 33917)
-  - `emit_global_bss` (function, line 33967)
-  - `emit_global_data_head` (function, line 34058)
-  - `parse_const_int` (function, line 34113)
-  - `intern_string` (function, line 34276)
-  - `emit_global_initializer` (function, line 34369)
-  - `parse_program` (function, line 35086)
-  - `emit_float_consts` (function, line 36891)
-  - `emit_string_pool` (function, line 36990)
-  - `main` (function, line 37092)
-  - `_start` (function, line 40790)
+  - `asm_tmpl` (function, line 25107)
+  - `asm_text` (function, line 25111)
+  - `asm_mem` (function, line 25115)
+  - `asm_is_out` (function, line 25119)
+  - `asm_home` (function, line 25123)
+  - `asm_slot` (function, line 25127)
+  - `asm_size` (function, line 25131)
+  - `asm_nops` (function, line 25135)
+  - `asm_nslots` (function, line 25139)
+  - `asm_unique` (function, line 25143)
+  - `asm_scratch` (function, line 25147)
+  - `asm_home_text` (function, line 25223)
+  - `asm_reg_sized` (function, line 25380)
+  - `asm_fixed_home` (function, line 25926)
+  - `asm_emit_template` (function, line 25990)
+  - `asm_parse_mem` (function, line 26230)
+  - `asm_emit_ss` (function, line 26791)
+  - `asm_parse_one` (function, line 26844)
+  - `asm_assign_homes` (function, line 27815)
+  - `asm_emit_all` (function, line 28260)
+  - `parse_asm_block` (function, line 28770)
+  - `statement` (function, line 29339)
+  - `restart_typedef` (function, line 32858)
+  - `restart_int` (function, line 33890)
+  - `parse_function` (function, line 35049)
+  - `parse_enum` (function, line 36514)
+  - `skip_struct` (function, line 36926)
+  - `skip_typedef` (function, line 37512)
+  - `data_directive` (function, line 38002)
+  - `emit_global_bss` (function, line 38052)
+  - `emit_global_data_head` (function, line 38143)
+  - `parse_const_int` (function, line 38198)
+  - `intern_string` (function, line 38361)
+  - `emit_global_initializer` (function, line 38454)
+  - `parse_program` (function, line 39171)
+  - `emit_float_consts` (function, line 40976)
+  - `emit_string_pool` (function, line 41075)
+  - `main` (function, line 41177)
+  - `_start` (function, line 45151)
 
 ## my_library.h
 - Layer: utility

@@ -2,6 +2,9 @@
 
 | Symbol | Kind | File:Line | Signature |
 |--------|------|-----------|-----------|
+| `ASM_MAX_OPS` | macro | `minigcc.c:2700` | `#define ASM_MAX_OPS` |
+| `ASM_TMPL_SZ` | macro | `minigcc.c:2702` | `#define ASM_TMPL_SZ` |
+| `ASM_TXT_SZ` | macro | `minigcc.c:2703` | `#define ASM_TXT_SZ` |
 | `CONST_VAR_FLAG` | macro | `minigcc.c:200` | `#define CONST_VAR_FLAG` |
 | `FileContext` | struct | `minigcc.c:95` | `` |
 | `HASH_TABLE_SIZE` | macro | `minigcc.c:130` | `#define HASH_TABLE_SIZE` |
@@ -27,29 +30,39 @@
 | `Symbol` | struct | `minigcc.c:108` | `` |
 | `add_macro` | function | `minigcc.c:304` | `static void add_macro(const char *name, int value)` |
 | `add_symbol` | function | `minigcc.c:1571` | `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...` |
-| `additive_expr` | function | `minigcc.c:2192` | `static void additive_expr(void)` |
-| `arg_reg` | function | `minigcc.c:1633` | `static const char *arg_reg(int i)` |
-| `assignment_expr` | function | `minigcc.c:2503` | `static void assignment_expr(void)` |
-| `bitwise_and_expr` | function | `minigcc.c:2368` | `static void bitwise_and_expr(void)` |
-| `bitwise_or_expr` | function | `minigcc.c:2392` | `static void bitwise_or_expr(void)` |
-| `bitwise_xor_expr` | function | `minigcc.c:2380` | `static void bitwise_xor_expr(void)` |
-| `conditional_expr` | function | `minigcc.c:2444` | `static void conditional_expr(void)` |
-| `data_directive` | function | `minigcc.c:3696` | `static const char *data_directive(int size)` |
+| `additive_expr` | function | `minigcc.c:2193` | `static void additive_expr(void)` |
+| `arg_reg` | function | `minigcc.c:1634` | `static const char *arg_reg(int i)` |
+| `asm_assign_homes` | function | `minigcc.c:2921` | `static void asm_assign_homes(void)` |
+| `asm_emit_all` | function | `minigcc.c:2966` | `static void asm_emit_all(void)` |
+| `asm_emit_ss` | function | `minigcc.c:2851` | `static void asm_emit_ss(const char *fmt, const char *a, const char *b)` |
+| `asm_emit_template` | function | `minigcc.c:2766` | `static void asm_emit_template(void)` |
+| `asm_fixed_home` | function | `minigcc.c:2758` | `static int asm_fixed_home(int c)` |
+| `asm_home_text` | function | `minigcc.c:2724` | `static void asm_home_text(int home, char *buf)` |
+| `asm_parse_mem` | function | `minigcc.c:2793` | `static void asm_parse_mem(int idx, int is_out)` |
+| `asm_parse_one` | function | `minigcc.c:2857` | `static void asm_parse_one(int idx, int is_out)` |
+| `asm_reg_sized` | function | `minigcc.c:2732` | `static void asm_reg_sized(int home, int size, char *buf)` |
+| `asm_scratch` | function | `minigcc.c:2715` | `static const char *asm_scratch(int i)` |
+| `assignment_expr` | function | `minigcc.c:2504` | `static void assignment_expr(void)` |
+| `bitwise_and_expr` | function | `minigcc.c:2369` | `static void bitwise_and_expr(void)` |
+| `bitwise_or_expr` | function | `minigcc.c:2393` | `static void bitwise_or_expr(void)` |
+| `bitwise_xor_expr` | function | `minigcc.c:2381` | `static void bitwise_xor_expr(void)` |
+| `conditional_expr` | function | `minigcc.c:2445` | `static void conditional_expr(void)` |
+| `data_directive` | function | `minigcc.c:4056` | `static const char *data_directive(int size)` |
 | `emit` | function | `minigcc.c:1494` | `static void emit(const char *s)` |
 | `emit_asciz_body` | function | `minigcc.c:1536` | `static void emit_asciz_body(const char *s)` |
-| `emit_compound_op` | function | `minigcc.c:2462` | `static void emit_compound_op(int op, int asize)` |
-| `emit_float_consts` | function | `minigcc.c:3980` | `static void emit_float_consts(void)` |
-| `emit_global_bss` | function | `minigcc.c:3704` | `static void emit_global_bss(const char *name, int is_static, int size)` |
-| `emit_global_data_head` | function | `minigcc.c:3711` | `static void emit_global_data_head(const char *name, int is_static)` |
-| `emit_global_initializer` | function | `minigcc.c:3761` | `static int emit_global_initializer(const char *name, int is_static, int *size,
+| `emit_compound_op` | function | `minigcc.c:2463` | `static void emit_compound_op(int op, int asize)` |
+| `emit_float_consts` | function | `minigcc.c:4340` | `static void emit_float_consts(void)` |
+| `emit_global_bss` | function | `minigcc.c:4064` | `static void emit_global_bss(const char *name, int is_static, int size)` |
+| `emit_global_data_head` | function | `minigcc.c:4071` | `static void emit_global_data_head(const char *name, int is_static)` |
+| `emit_global_initializer` | function | `minigcc.c:4121` | `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...` |
 | `emit_i` | function | `minigcc.c:1508` | `static void emit_i(const char *fmt, int v)` |
 | `emit_is` | function | `minigcc.c:1520` | `static void emit_is(const char *fmt, int v, const char *s)` |
 | `emit_label` | function | `minigcc.c:1554` | `static void emit_label(int label)` |
 | `emit_s` | function | `minigcc.c:1514` | `static void emit_s(const char *fmt, const char *s)` |
 | `emit_si` | function | `minigcc.c:1526` | `static void emit_si(const char *fmt, const char *s, int v)` |
-| `emit_string_pool` | function | `minigcc.c:3990` | `static void emit_string_pool(void)` |
-| `equality_expr` | function | `minigcc.c:2319` | `static void equality_expr(void)` |
+| `emit_string_pool` | function | `minigcc.c:4350` | `static void emit_string_pool(void)` |
+| `equality_expr` | function | `minigcc.c:2320` | `static void equality_expr(void)` |
 | `error` | function | `minigcc.c:606` | `static void error(const char *msg)` |
 | `exit` | function | `minigcc.c:610` | `exit(EXIT_FAILURE);` |
 | `fclose` | function | `minigcc.c:687` | `fclose(f);` |
@@ -57,14 +70,14 @@
 | `find_symbol` | function | `minigcc.c:1561` | `static int find_symbol(const char *name)` |
 | `fprintf` | function | `minigcc.c:608` | `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);` |
 | `fputc` | function | `minigcc.c:1499` | `fputc('%', output);` |
-| `fputs` | function | `minigcc.c:2706` | `fputs(token, output);` |
+| `fputs` | function | `minigcc.c:2782` | `fputs(asm_text[oi], output);` |
 | `free` | function | `minigcc.c:736` | `free(buf);` |
 | `fseek` | function | `minigcc.c:726` | `fseek(f, 0, SEEK_END);` |
 | `get_dir_from_path` | function | `minigcc.c:664` | `static void get_dir_from_path(const char *path, char *dir, int dir_sz)` |
-| `handle_postfix` | function | `minigcc.c:1979` | `static void handle_postfix(int is_lvalue)` |
+| `handle_postfix` | function | `minigcc.c:1980` | `static void handle_postfix(int is_lvalue)` |
 | `hash_init` | function | `minigcc.c:756` | `static void hash_init(void)` |
 | `hash_name` | function | `minigcc.c:747` | `static int hash_name(const char *name)` |
-| `intern_string` | function | `minigcc.c:3744` | `static int intern_string(const char *text)` |
+| `intern_string` | function | `minigcc.c:4104` | `static int intern_string(const char *text)` |
 | `is_file_processed` | function | `minigcc.c:643` | `static int is_file_processed(const char *path)` |
 | `lex_fail` | function | `minigcc.c:844` | `static void lex_fail(const char *msg, char *start, char *end)` |
 | `lex_hex_val` | function | `minigcc.c:929` | `static int lex_hex_val(int c)` |
@@ -74,10 +87,10 @@
 | `lex_kw_lookup` | function | `minigcc.c:905` | `static int lex_kw_lookup(void)` |
 | `lex_match_op` | function | `minigcc.c:917` | `static int lex_match_op(const char *op, int id)` |
 | `lex_number` | function | `minigcc.c:942` | `static void lex_number(void)` |
-| `libc_global_name` | function | `minigcc.c:1643` | `static const char *libc_global_name(int i)` |
-| `logical_and_expr` | function | `minigcc.c:2404` | `static void logical_and_expr(void)` |
-| `logical_or_expr` | function | `minigcc.c:2424` | `static void logical_or_expr(void)` |
-| `lvalue_address` | function | `minigcc.c:1927` | `static void lvalue_address(void)` |
+| `libc_global_name` | function | `minigcc.c:1644` | `static const char *libc_global_name(int i)` |
+| `logical_and_expr` | function | `minigcc.c:2405` | `static void logical_and_expr(void)` |
+| `logical_or_expr` | function | `minigcc.c:2425` | `static void logical_or_expr(void)` |
+| `lvalue_address` | function | `minigcc.c:1928` | `static void lvalue_address(void)` |
 | `macro_add` | function | `minigcc.c:457` | `static int macro_add(void)` |
 | `macro_bitand` | function | `minigcc.c:531` | `static int macro_bitand(void)` |
 | `macro_bitor` | function | `minigcc.c:559` | `static int macro_bitor(void)` |
@@ -94,25 +107,25 @@
 | `macro_shift` | function | `minigcc.c:474` | `static int macro_shift(void)` |
 | `macro_skipws` | function | `minigcc.c:331` | `static void macro_skipws(void)` |
 | `macro_unary` | function | `minigcc.c:423` | `static int macro_unary(void)` |
-| `main` | function | `minigcc.c:4000` | `int main(int argc, char **argv)` |
+| `main` | function | `minigcc.c:4360` | `int main(int argc, char **argv)` |
 | `mark_file_processed` | function | `minigcc.c:652` | `static void mark_file_processed(const char *path)` |
 | `match` | function | `minigcc.c:1489` | `static void match(int expected)` |
-| `memcpy` | function | `minigcc.c:2766` | `memcpy(varname, token, nlen);` |
-| `multiplicative_expr` | function | `minigcc.c:2128` | `static void multiplicative_expr(void)` |
+| `memcpy` | function | `minigcc.c:3126` | `memcpy(varname, token, nlen);` |
+| `multiplicative_expr` | function | `minigcc.c:2129` | `static void multiplicative_expr(void)` |
 | `my_isalnum` | function | `minigcc.c:838` | `static int my_isalnum(int c)` |
 | `my_isalpha` | function | `minigcc.c:827` | `static int my_isalpha(int c)` |
 | `my_isdigit` | function | `minigcc.c:833` | `static int my_isdigit(int c)` |
 | `my_isspace` | function | `minigcc.c:817` | `static int my_isspace(int c)` |
 | `next_token` | function | `minigcc.c:1061` | `static void next_token(void)` |
-| `parse_asm_block` | function | `minigcc.c:2699` | `static void parse_asm_block(void)` |
-| `parse_const_int` | function | `minigcc.c:3721` | `static int parse_const_int(long long *out)` |
-| `parse_enum` | function | `minigcc.c:3528` | `static void parse_enum(void)` |
-| `parse_function` | function | `minigcc.c:3381` | `static void parse_function(const char *name, int ret_type)` |
-| `parse_program` | function | `minigcc.c:3825` | `static void parse_program(void)` |
+| `parse_asm_block` | function | `minigcc.c:3010` | `static void parse_asm_block(void)` |
+| `parse_const_int` | function | `minigcc.c:4081` | `static int parse_const_int(long long *out)` |
+| `parse_enum` | function | `minigcc.c:3888` | `static void parse_enum(void)` |
+| `parse_function` | function | `minigcc.c:3741` | `static void parse_function(const char *name, int ret_type)` |
+| `parse_program` | function | `minigcc.c:4185` | `static void parse_program(void)` |
 | `pop_scope` | function | `minigcc.c:769` | `static void pop_scope(void)` |
 | `push_scope` | function | `minigcc.c:761` | `static void push_scope(void)` |
 | `read_include_file` | function | `minigcc.c:722` | `static char *read_include_file(const char *path)` |
-| `relational_expr` | function | `minigcc.c:2266` | `static void relational_expr(void)` |
+| `relational_expr` | function | `minigcc.c:2267` | `static void relational_expr(void)` |
 | `resolve_local_include` | function | `minigcc.c:683` | `static char *resolve_local_include(const char *target)` |
 | `restore_parser_state` | function | `minigcc.c:259` | `static void restore_parser_state(ParserState *state)` |
 | `rewind` | function | `minigcc.c:732` | `rewind(f);` |
@@ -120,21 +133,41 @@
 | `safe_strcpy` | function | `minigcc.c:621` | `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)` |
 | `safe_strtoll` | function | `minigcc.c:630` | `static long safe_strtoll(const char *s)` |
 | `save_parser_state` | function | `minigcc.c:234` | `static void save_parser_state(ParserState *state)` |
-| `shift_expr` | function | `minigcc.c:2247` | `static void shift_expr(void)` |
-| `skip_struct` | function | `minigcc.c:3577` | `static void skip_struct(void)` |
-| `skip_typedef` | function | `minigcc.c:3641` | `static void skip_typedef(void)` |
+| `shift_expr` | function | `minigcc.c:2248` | `static void shift_expr(void)` |
+| `skip_struct` | function | `minigcc.c:3937` | `static void skip_struct(void)` |
+| `skip_typedef` | function | `minigcc.c:4001` | `static void skip_typedef(void)` |
 | `snprintf` | function | `minigcc.c:957` | `snprintf(token, MAX_TOKEN_LEN, "%ld", v);` |
-| `statement` | function | `minigcc.c:2714` | `static void statement(void)` |
-| `strcpy` | function | `minigcc.c:2508` | `strcpy(saved_token, token);` |
+| `statement` | function | `minigcc.c:3074` | `static void statement(void)` |
+| `strcpy` | function | `minigcc.c:2509` | `strcpy(saved_token, token);` |
 | `strncpy` | function | `minigcc.c:1577` | `strncpy(d, name, MAX_IDENT_LEN - 1);` |
 | `truncate_symbols` | function | `minigcc.c:799` | `static void truncate_symbols(int start_idx)` |
-| `unary` | function | `minigcc.c:1655` | `static void unary(void)` |
-| `unary_expr` | function | `minigcc.c:2113` | `static void unary_expr(void)` |
-| `_start` | function | `minigccg2.s:40790` | `` |
+| `unary` | function | `minigcc.c:1656` | `static void unary(void)` |
+| `unary_expr` | function | `minigcc.c:2114` | `static void unary_expr(void)` |
+| `_start` | function | `minigccg2.s:45151` | `` |
 | `add_macro` | function | `minigccg2.s:655` | `` |
 | `add_symbol` | function | `minigccg2.s:13412` | `` |
 | `additive_expr` | function | `minigccg2.s:18877` | `` |
 | `arg_reg` | function | `minigccg2.s:13786` | `` |
+| `asm_assign_homes` | function | `minigccg2.s:27815` | `` |
+| `asm_emit_all` | function | `minigccg2.s:28260` | `` |
+| `asm_emit_ss` | function | `minigccg2.s:26791` | `` |
+| `asm_emit_template` | function | `minigccg2.s:25990` | `` |
+| `asm_fixed_home` | function | `minigccg2.s:25926` | `` |
+| `asm_home` | function | `minigccg2.s:25123` | `` |
+| `asm_home_text` | function | `minigccg2.s:25223` | `` |
+| `asm_is_out` | function | `minigccg2.s:25119` | `` |
+| `asm_mem` | function | `minigccg2.s:25115` | `` |
+| `asm_nops` | function | `minigccg2.s:25135` | `` |
+| `asm_nslots` | function | `minigccg2.s:25139` | `` |
+| `asm_parse_mem` | function | `minigccg2.s:26230` | `` |
+| `asm_parse_one` | function | `minigccg2.s:26844` | `` |
+| `asm_reg_sized` | function | `minigccg2.s:25380` | `` |
+| `asm_scratch` | function | `minigccg2.s:25147` | `` |
+| `asm_size` | function | `minigccg2.s:25131` | `` |
+| `asm_slot` | function | `minigccg2.s:25127` | `` |
+| `asm_text` | function | `minigccg2.s:25111` | `` |
+| `asm_tmpl` | function | `minigccg2.s:25107` | `` |
+| `asm_unique` | function | `minigccg2.s:25143` | `` |
 | `assign_size` | function | `minigccg2.s:107` | `` |
 | `assignment_expr` | function | `minigccg2.s:21792` | `` |
 | `bitwise_and_expr` | function | `minigccg2.s:20598` | `` |
@@ -151,21 +184,21 @@
 | `current_elem_size` | function | `minigccg2.s:115` | `` |
 | `current_elem_size2` | function | `minigccg2.s:119` | `` |
 | `current_file` | function | `minigccg2.s:51` | `` |
-| `data_directive` | function | `minigccg2.s:33917` | `` |
+| `data_directive` | function | `minigccg2.s:38002` | `` |
 | `emit` | function | `minigccg2.s:12654` | `` |
 | `emit_asciz_body` | function | `minigccg2.s:12972` | `` |
 | `emit_compound_op` | function | `minigccg2.s:21290` | `` |
 | `emit_enabled` | function | `minigccg2.s:99` | `` |
-| `emit_float_consts` | function | `minigccg2.s:36891` | `` |
-| `emit_global_bss` | function | `minigccg2.s:33967` | `` |
-| `emit_global_data_head` | function | `minigccg2.s:34058` | `` |
-| `emit_global_initializer` | function | `minigccg2.s:34369` | `` |
+| `emit_float_consts` | function | `minigccg2.s:40976` | `` |
+| `emit_global_bss` | function | `minigccg2.s:38052` | `` |
+| `emit_global_data_head` | function | `minigccg2.s:38143` | `` |
+| `emit_global_initializer` | function | `minigccg2.s:38454` | `` |
 | `emit_i` | function | `minigccg2.s:12768` | `` |
 | `emit_is` | function | `minigccg2.s:12866` | `` |
 | `emit_label` | function | `minigccg2.s:13296` | `` |
 | `emit_s` | function | `minigccg2.s:12817` | `` |
 | `emit_si` | function | `minigccg2.s:12919` | `` |
-| `emit_string_pool` | function | `minigccg2.s:36990` | `` |
+| `emit_string_pool` | function | `minigccg2.s:41075` | `` |
 | `equality_expr` | function | `minigccg2.s:20120` | `` |
 | `error` | function | `minigccg2.s:3259` | `` |
 | `expr_pointed` | function | `minigccg2.s:111` | `` |
@@ -186,7 +219,7 @@
 | `if_depth` | function | `minigccg2.s:251` | `` |
 | `if_nest` | function | `minigccg2.s:247` | `` |
 | `input_ptr` | function | `minigccg2.s:19` | `` |
-| `intern_string` | function | `minigccg2.s:34276` | `` |
+| `intern_string` | function | `minigccg2.s:38361` | `` |
 | `is_file_processed` | function | `minigccg2.s:3558` | `` |
 | `label_counter` | function | `minigccg2.s:91` | `` |
 | `lex_fail` | function | `minigccg2.s:5273` | `` |
@@ -226,7 +259,7 @@
 | `macro_skipws` | function | `minigccg2.s:793` | `` |
 | `macro_unary` | function | `minigccg2.s:1851` | `` |
 | `macros` | function | `minigccg2.s:587` | `` |
-| `main` | function | `minigccg2.s:37092` | `` |
+| `main` | function | `minigccg2.s:41177` | `` |
 | `mark_file_processed` | function | `minigccg2.s:3619` | `` |
 | `match` | function | `minigccg2.s:12616` | `` |
 | `max_func_stack` | function | `minigccg2.s:103` | `` |
@@ -238,11 +271,11 @@
 | `next_token` | function | `minigccg2.s:7933` | `` |
 | `no_postfix_deref` | function | `minigccg2.s:123` | `` |
 | `output` | function | `minigccg2.s:39` | `` |
-| `parse_asm_block` | function | `minigccg2.s:25107` | `` |
-| `parse_const_int` | function | `minigccg2.s:34113` | `` |
-| `parse_enum` | function | `minigccg2.s:32429` | `` |
-| `parse_function` | function | `minigccg2.s:30964` | `` |
-| `parse_program` | function | `minigccg2.s:35086` | `` |
+| `parse_asm_block` | function | `minigccg2.s:28770` | `` |
+| `parse_const_int` | function | `minigccg2.s:38198` | `` |
+| `parse_enum` | function | `minigccg2.s:36514` | `` |
+| `parse_function` | function | `minigccg2.s:35049` | `` |
+| `parse_program` | function | `minigccg2.s:39171` | `` |
 | `pop_scope` | function | `minigccg2.s:4681` | `` |
 | `processed_count` | function | `minigccg2.s:59` | `` |
 | `processed_files` | function | `minigccg2.s:55` | `` |
@@ -254,8 +287,8 @@
 | `relational_expr` | function | `minigccg2.s:19518` | `` |
 | `resolve_local_include` | function | `minigccg2.s:3874` | `` |
 | `restart` | function | `minigccg2.s:7937` | `` |
-| `restart_int` | function | `minigccg2.s:29805` | `` |
-| `restart_typedef` | function | `minigccg2.s:28773` | `` |
+| `restart_int` | function | `minigccg2.s:33890` | `` |
+| `restart_typedef` | function | `minigccg2.s:32858` | `` |
 | `restore_parser_state` | function | `minigccg2.s:399` | `` |
 | `safe_malloc` | function | `minigccg2.s:3311` | `` |
 | `safe_strcpy` | function | `minigccg2.s:3366` | `` |
@@ -265,11 +298,11 @@
 | `scope_stack_stk` | function | `minigccg2.s:79` | `` |
 | `scope_stack_sym` | function | `minigccg2.s:75` | `` |
 | `shift_expr` | function | `minigccg2.s:19372` | `` |
-| `skip_struct` | function | `minigccg2.s:32841` | `` |
-| `skip_typedef` | function | `minigccg2.s:33427` | `` |
+| `skip_struct` | function | `minigccg2.s:36926` | `` |
+| `skip_typedef` | function | `minigccg2.s:37512` | `` |
 | `source_start` | function | `minigccg2.s:23` | `` |
 | `stack_size` | function | `minigccg2.s:87` | `` |
-| `statement` | function | `minigccg2.s:25254` | `` |
+| `statement` | function | `minigccg2.s:29339` | `` |
 | `static_flag` | function | `minigccg2.s:131` | `` |
 | `str_label_counter` | function | `minigccg2.s:199` | `` |
 | `string_count` | function | `minigccg2.s:207` | `` |
@@ -293,11 +326,31 @@
 | `unary` | function | `minigccg2.s:13990` | `` |
 | `unary_expr` | function | `minigccg2.s:18230` | `` |
 | `unsigned_type` | function | `minigccg2.s:135` | `` |
-| `_start` | function | `minigccg3.s:40790` | `` |
+| `_start` | function | `minigccg3.s:45151` | `` |
 | `add_macro` | function | `minigccg3.s:655` | `` |
 | `add_symbol` | function | `minigccg3.s:13412` | `` |
 | `additive_expr` | function | `minigccg3.s:18877` | `` |
 | `arg_reg` | function | `minigccg3.s:13786` | `` |
+| `asm_assign_homes` | function | `minigccg3.s:27815` | `` |
+| `asm_emit_all` | function | `minigccg3.s:28260` | `` |
+| `asm_emit_ss` | function | `minigccg3.s:26791` | `` |
+| `asm_emit_template` | function | `minigccg3.s:25990` | `` |
+| `asm_fixed_home` | function | `minigccg3.s:25926` | `` |
+| `asm_home` | function | `minigccg3.s:25123` | `` |
+| `asm_home_text` | function | `minigccg3.s:25223` | `` |
+| `asm_is_out` | function | `minigccg3.s:25119` | `` |
+| `asm_mem` | function | `minigccg3.s:25115` | `` |
+| `asm_nops` | function | `minigccg3.s:25135` | `` |
+| `asm_nslots` | function | `minigccg3.s:25139` | `` |
+| `asm_parse_mem` | function | `minigccg3.s:26230` | `` |
+| `asm_parse_one` | function | `minigccg3.s:26844` | `` |
+| `asm_reg_sized` | function | `minigccg3.s:25380` | `` |
+| `asm_scratch` | function | `minigccg3.s:25147` | `` |
+| `asm_size` | function | `minigccg3.s:25131` | `` |
+| `asm_slot` | function | `minigccg3.s:25127` | `` |
+| `asm_text` | function | `minigccg3.s:25111` | `` |
+| `asm_tmpl` | function | `minigccg3.s:25107` | `` |
+| `asm_unique` | function | `minigccg3.s:25143` | `` |
 | `assign_size` | function | `minigccg3.s:107` | `` |
 | `assignment_expr` | function | `minigccg3.s:21792` | `` |
 | `bitwise_and_expr` | function | `minigccg3.s:20598` | `` |
@@ -314,21 +367,21 @@
 | `current_elem_size` | function | `minigccg3.s:115` | `` |
 | `current_elem_size2` | function | `minigccg3.s:119` | `` |
 | `current_file` | function | `minigccg3.s:51` | `` |
-| `data_directive` | function | `minigccg3.s:33917` | `` |
+| `data_directive` | function | `minigccg3.s:38002` | `` |
 | `emit` | function | `minigccg3.s:12654` | `` |
 | `emit_asciz_body` | function | `minigccg3.s:12972` | `` |
 | `emit_compound_op` | function | `minigccg3.s:21290` | `` |
 | `emit_enabled` | function | `minigccg3.s:99` | `` |
-| `emit_float_consts` | function | `minigccg3.s:36891` | `` |
-| `emit_global_bss` | function | `minigccg3.s:33967` | `` |
-| `emit_global_data_head` | function | `minigccg3.s:34058` | `` |
-| `emit_global_initializer` | function | `minigccg3.s:34369` | `` |
+| `emit_float_consts` | function | `minigccg3.s:40976` | `` |
+| `emit_global_bss` | function | `minigccg3.s:38052` | `` |
+| `emit_global_data_head` | function | `minigccg3.s:38143` | `` |
+| `emit_global_initializer` | function | `minigccg3.s:38454` | `` |
 | `emit_i` | function | `minigccg3.s:12768` | `` |
 | `emit_is` | function | `minigccg3.s:12866` | `` |
 | `emit_label` | function | `minigccg3.s:13296` | `` |
 | `emit_s` | function | `minigccg3.s:12817` | `` |
 | `emit_si` | function | `minigccg3.s:12919` | `` |
-| `emit_string_pool` | function | `minigccg3.s:36990` | `` |
+| `emit_string_pool` | function | `minigccg3.s:41075` | `` |
 | `equality_expr` | function | `minigccg3.s:20120` | `` |
 | `error` | function | `minigccg3.s:3259` | `` |
 | `expr_pointed` | function | `minigccg3.s:111` | `` |
@@ -349,7 +402,7 @@
 | `if_depth` | function | `minigccg3.s:251` | `` |
 | `if_nest` | function | `minigccg3.s:247` | `` |
 | `input_ptr` | function | `minigccg3.s:19` | `` |
-| `intern_string` | function | `minigccg3.s:34276` | `` |
+| `intern_string` | function | `minigccg3.s:38361` | `` |
 | `is_file_processed` | function | `minigccg3.s:3558` | `` |
 | `label_counter` | function | `minigccg3.s:91` | `` |
 | `lex_fail` | function | `minigccg3.s:5273` | `` |
@@ -389,7 +442,7 @@
 | `macro_skipws` | function | `minigccg3.s:793` | `` |
 | `macro_unary` | function | `minigccg3.s:1851` | `` |
 | `macros` | function | `minigccg3.s:587` | `` |
-| `main` | function | `minigccg3.s:37092` | `` |
+| `main` | function | `minigccg3.s:41177` | `` |
 | `mark_file_processed` | function | `minigccg3.s:3619` | `` |
 | `match` | function | `minigccg3.s:12616` | `` |
 | `max_func_stack` | function | `minigccg3.s:103` | `` |
@@ -401,11 +454,11 @@
 | `next_token` | function | `minigccg3.s:7933` | `` |
 | `no_postfix_deref` | function | `minigccg3.s:123` | `` |
 | `output` | function | `minigccg3.s:39` | `` |
-| `parse_asm_block` | function | `minigccg3.s:25107` | `` |
-| `parse_const_int` | function | `minigccg3.s:34113` | `` |
-| `parse_enum` | function | `minigccg3.s:32429` | `` |
-| `parse_function` | function | `minigccg3.s:30964` | `` |
-| `parse_program` | function | `minigccg3.s:35086` | `` |
+| `parse_asm_block` | function | `minigccg3.s:28770` | `` |
+| `parse_const_int` | function | `minigccg3.s:38198` | `` |
+| `parse_enum` | function | `minigccg3.s:36514` | `` |
+| `parse_function` | function | `minigccg3.s:35049` | `` |
+| `parse_program` | function | `minigccg3.s:39171` | `` |
 | `pop_scope` | function | `minigccg3.s:4681` | `` |
 | `processed_count` | function | `minigccg3.s:59` | `` |
 | `processed_files` | function | `minigccg3.s:55` | `` |
@@ -417,8 +470,8 @@
 | `relational_expr` | function | `minigccg3.s:19518` | `` |
 | `resolve_local_include` | function | `minigccg3.s:3874` | `` |
 | `restart` | function | `minigccg3.s:7937` | `` |
-| `restart_int` | function | `minigccg3.s:29805` | `` |
-| `restart_typedef` | function | `minigccg3.s:28773` | `` |
+| `restart_int` | function | `minigccg3.s:33890` | `` |
+| `restart_typedef` | function | `minigccg3.s:32858` | `` |
 | `restore_parser_state` | function | `minigccg3.s:399` | `` |
 | `safe_malloc` | function | `minigccg3.s:3311` | `` |
 | `safe_strcpy` | function | `minigccg3.s:3366` | `` |
@@ -428,11 +481,11 @@
 | `scope_stack_stk` | function | `minigccg3.s:79` | `` |
 | `scope_stack_sym` | function | `minigccg3.s:75` | `` |
 | `shift_expr` | function | `minigccg3.s:19372` | `` |
-| `skip_struct` | function | `minigccg3.s:32841` | `` |
-| `skip_typedef` | function | `minigccg3.s:33427` | `` |
+| `skip_struct` | function | `minigccg3.s:36926` | `` |
+| `skip_typedef` | function | `minigccg3.s:37512` | `` |
 | `source_start` | function | `minigccg3.s:23` | `` |
 | `stack_size` | function | `minigccg3.s:87` | `` |
-| `statement` | function | `minigccg3.s:25254` | `` |
+| `statement` | function | `minigccg3.s:29339` | `` |
 | `static_flag` | function | `minigccg3.s:131` | `` |
 | `str_label_counter` | function | `minigccg3.s:199` | `` |
 | `string_count` | function | `minigccg3.s:207` | `` |
@@ -456,11 +509,31 @@
 | `unary` | function | `minigccg3.s:13990` | `` |
 | `unary_expr` | function | `minigccg3.s:18230` | `` |
 | `unsigned_type` | function | `minigccg3.s:135` | `` |
-| `_start` | function | `minigccg4.s:40790` | `` |
+| `_start` | function | `minigccg4.s:45151` | `` |
 | `add_macro` | function | `minigccg4.s:655` | `` |
 | `add_symbol` | function | `minigccg4.s:13412` | `` |
 | `additive_expr` | function | `minigccg4.s:18877` | `` |
 | `arg_reg` | function | `minigccg4.s:13786` | `` |
+| `asm_assign_homes` | function | `minigccg4.s:27815` | `` |
+| `asm_emit_all` | function | `minigccg4.s:28260` | `` |
+| `asm_emit_ss` | function | `minigccg4.s:26791` | `` |
+| `asm_emit_template` | function | `minigccg4.s:25990` | `` |
+| `asm_fixed_home` | function | `minigccg4.s:25926` | `` |
+| `asm_home` | function | `minigccg4.s:25123` | `` |
+| `asm_home_text` | function | `minigccg4.s:25223` | `` |
+| `asm_is_out` | function | `minigccg4.s:25119` | `` |
+| `asm_mem` | function | `minigccg4.s:25115` | `` |
+| `asm_nops` | function | `minigccg4.s:25135` | `` |
+| `asm_nslots` | function | `minigccg4.s:25139` | `` |
+| `asm_parse_mem` | function | `minigccg4.s:26230` | `` |
+| `asm_parse_one` | function | `minigccg4.s:26844` | `` |
+| `asm_reg_sized` | function | `minigccg4.s:25380` | `` |
+| `asm_scratch` | function | `minigccg4.s:25147` | `` |
+| `asm_size` | function | `minigccg4.s:25131` | `` |
+| `asm_slot` | function | `minigccg4.s:25127` | `` |
+| `asm_text` | function | `minigccg4.s:25111` | `` |
+| `asm_tmpl` | function | `minigccg4.s:25107` | `` |
+| `asm_unique` | function | `minigccg4.s:25143` | `` |
 | `assign_size` | function | `minigccg4.s:107` | `` |
 | `assignment_expr` | function | `minigccg4.s:21792` | `` |
 | `bitwise_and_expr` | function | `minigccg4.s:20598` | `` |
@@ -477,21 +550,21 @@
 | `current_elem_size` | function | `minigccg4.s:115` | `` |
 | `current_elem_size2` | function | `minigccg4.s:119` | `` |
 | `current_file` | function | `minigccg4.s:51` | `` |
-| `data_directive` | function | `minigccg4.s:33917` | `` |
+| `data_directive` | function | `minigccg4.s:38002` | `` |
 | `emit` | function | `minigccg4.s:12654` | `` |
 | `emit_asciz_body` | function | `minigccg4.s:12972` | `` |
 | `emit_compound_op` | function | `minigccg4.s:21290` | `` |
 | `emit_enabled` | function | `minigccg4.s:99` | `` |
-| `emit_float_consts` | function | `minigccg4.s:36891` | `` |
-| `emit_global_bss` | function | `minigccg4.s:33967` | `` |
-| `emit_global_data_head` | function | `minigccg4.s:34058` | `` |
-| `emit_global_initializer` | function | `minigccg4.s:34369` | `` |
+| `emit_float_consts` | function | `minigccg4.s:40976` | `` |
+| `emit_global_bss` | function | `minigccg4.s:38052` | `` |
+| `emit_global_data_head` | function | `minigccg4.s:38143` | `` |
+| `emit_global_initializer` | function | `minigccg4.s:38454` | `` |
 | `emit_i` | function | `minigccg4.s:12768` | `` |
 | `emit_is` | function | `minigccg4.s:12866` | `` |
 | `emit_label` | function | `minigccg4.s:13296` | `` |
 | `emit_s` | function | `minigccg4.s:12817` | `` |
 | `emit_si` | function | `minigccg4.s:12919` | `` |
-| `emit_string_pool` | function | `minigccg4.s:36990` | `` |
+| `emit_string_pool` | function | `minigccg4.s:41075` | `` |
 | `equality_expr` | function | `minigccg4.s:20120` | `` |
 | `error` | function | `minigccg4.s:3259` | `` |
 | `expr_pointed` | function | `minigccg4.s:111` | `` |
@@ -512,7 +585,7 @@
 | `if_depth` | function | `minigccg4.s:251` | `` |
 | `if_nest` | function | `minigccg4.s:247` | `` |
 | `input_ptr` | function | `minigccg4.s:19` | `` |
-| `intern_string` | function | `minigccg4.s:34276` | `` |
+| `intern_string` | function | `minigccg4.s:38361` | `` |
 | `is_file_processed` | function | `minigccg4.s:3558` | `` |
 | `label_counter` | function | `minigccg4.s:91` | `` |
 | `lex_fail` | function | `minigccg4.s:5273` | `` |
@@ -552,7 +625,7 @@
 | `macro_skipws` | function | `minigccg4.s:793` | `` |
 | `macro_unary` | function | `minigccg4.s:1851` | `` |
 | `macros` | function | `minigccg4.s:587` | `` |
-| `main` | function | `minigccg4.s:37092` | `` |
+| `main` | function | `minigccg4.s:41177` | `` |
 | `mark_file_processed` | function | `minigccg4.s:3619` | `` |
 | `match` | function | `minigccg4.s:12616` | `` |
 | `max_func_stack` | function | `minigccg4.s:103` | `` |
@@ -564,11 +637,11 @@
 | `next_token` | function | `minigccg4.s:7933` | `` |
 | `no_postfix_deref` | function | `minigccg4.s:123` | `` |
 | `output` | function | `minigccg4.s:39` | `` |
-| `parse_asm_block` | function | `minigccg4.s:25107` | `` |
-| `parse_const_int` | function | `minigccg4.s:34113` | `` |
-| `parse_enum` | function | `minigccg4.s:32429` | `` |
-| `parse_function` | function | `minigccg4.s:30964` | `` |
-| `parse_program` | function | `minigccg4.s:35086` | `` |
+| `parse_asm_block` | function | `minigccg4.s:28770` | `` |
+| `parse_const_int` | function | `minigccg4.s:38198` | `` |
+| `parse_enum` | function | `minigccg4.s:36514` | `` |
+| `parse_function` | function | `minigccg4.s:35049` | `` |
+| `parse_program` | function | `minigccg4.s:39171` | `` |
 | `pop_scope` | function | `minigccg4.s:4681` | `` |
 | `processed_count` | function | `minigccg4.s:59` | `` |
 | `processed_files` | function | `minigccg4.s:55` | `` |
@@ -580,8 +653,8 @@
 | `relational_expr` | function | `minigccg4.s:19518` | `` |
 | `resolve_local_include` | function | `minigccg4.s:3874` | `` |
 | `restart` | function | `minigccg4.s:7937` | `` |
-| `restart_int` | function | `minigccg4.s:29805` | `` |
-| `restart_typedef` | function | `minigccg4.s:28773` | `` |
+| `restart_int` | function | `minigccg4.s:33890` | `` |
+| `restart_typedef` | function | `minigccg4.s:32858` | `` |
 | `restore_parser_state` | function | `minigccg4.s:399` | `` |
 | `safe_malloc` | function | `minigccg4.s:3311` | `` |
 | `safe_strcpy` | function | `minigccg4.s:3366` | `` |
@@ -591,11 +664,11 @@
 | `scope_stack_stk` | function | `minigccg4.s:79` | `` |
 | `scope_stack_sym` | function | `minigccg4.s:75` | `` |
 | `shift_expr` | function | `minigccg4.s:19372` | `` |
-| `skip_struct` | function | `minigccg4.s:32841` | `` |
-| `skip_typedef` | function | `minigccg4.s:33427` | `` |
+| `skip_struct` | function | `minigccg4.s:36926` | `` |
+| `skip_typedef` | function | `minigccg4.s:37512` | `` |
 | `source_start` | function | `minigccg4.s:23` | `` |
 | `stack_size` | function | `minigccg4.s:87` | `` |
-| `statement` | function | `minigccg4.s:25254` | `` |
+| `statement` | function | `minigccg4.s:29339` | `` |
 | `static_flag` | function | `minigccg4.s:131` | `` |
 | `str_label_counter` | function | `minigccg4.s:199` | `` |
 | `string_count` | function | `minigccg4.s:207` | `` |
@@ -633,7 +706,11 @@
 | `fail` | function | `test_ld_selfhost.sh:32` | `` |
 | `pass` | function | `test_ld_selfhost.sh:27` | `` |
 | `main` | function | `tests/neg_asm.c:1` | `int main(void)` |
-| `volatile` | function | `tests/neg_asm.c:3` | `__asm__ volatile("mov %0, %%eax" : "=r"(x));` |
+| `volatile` | function | `tests/neg_asm.c:3` | `__asm__ volatile("mov %0, %%rax" : "=z"(x));` |
+| `main` | function | `tests/neg_asm2.c:1` | `int main(void)` |
+| `volatile` | function | `tests/neg_asm2.c:4` | `__asm__ volatile("nop" : "=a"(a), "=a"(b));` |
+| `main` | function | `tests/neg_asm3.c:1` | `int main(void)` |
+| `volatile` | function | `tests/neg_asm3.c:3` | `__asm__ volatile("nop" : "+r"(a));` |
 | `main` | function | `tests/neg_comment.c:1` | `int main(void)` |
 | `main` | function | `tests/neg_float.c:1` | `int main(void)` |
 | `main` | function | `tests/neg_hex.c:1` | `int main(void)` |
@@ -649,6 +726,9 @@
 | `main` | function | `tests/t_asm.c:4` | `int main(void)` |
 | `printf` | function | `tests/t_asm.c:11` | `printf("%d %d\n", probe, v);` |
 | `volatile` | function | `tests/t_asm.c:6` | `__asm__ volatile("nop");` |
+| `main` | function | `tests/t_asm3.c:5` | `int main(void)` |
+| `printf` | function | `tests/t_asm3.c:10` | `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);` |
+| `volatile` | function | `tests/t_asm3.c:9` | `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));` |
 | `main` | function | `tests/t_compound.c:2` | `int main(void)` |
 | `printf` | function | `tests/t_compound.c:8` | `printf("%d\n", m);` |
 | `main` | function | `tests/t_dowhile.c:2` | `int main(void)` |

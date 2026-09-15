@@ -3,19 +3,19 @@
     "god_nodes": [
       [
         "minigccg2.s",
-        16.3
+        18.3
       ],
       [
         "minigccg3.s",
-        16.3
+        18.3
       ],
       [
         "minigccg4.s",
-        16.3
+        18.3
       ],
       [
         "minigcc.c",
-        12.700000000000001
+        14.0
       ],
       [
         "tests/t_outer_h.h",
@@ -57,9 +57,9 @@
         "id": 1,
         "label": "tests",
         "file_ids": [
+          "tests/t_inner_h.h",
           "tests/t_include.c",
-          "tests/t_outer_h.h",
-          "tests/t_inner_h.h"
+          "tests/t_outer_h.h"
         ],
         "cohesion": 1.0,
         "size": 3
@@ -97,6 +97,8 @@
     "test_include.c": "testing",
     "test_ld_selfhost.sh": "testing",
     "tests/neg_asm.c": "testing",
+    "tests/neg_asm2.c": "testing",
+    "tests/neg_asm3.c": "testing",
     "tests/neg_comment.c": "testing",
     "tests/neg_float.c": "testing",
     "tests/neg_hex.c": "testing",
@@ -105,6 +107,7 @@
     "tests/t_arith.c": "testing",
     "tests/t_arrays.c": "testing",
     "tests/t_asm.c": "testing",
+    "tests/t_asm3.c": "testing",
     "tests/t_compound.c": "testing",
     "tests/t_dowhile.c": "testing",
     "tests/t_enum.c": "testing",
