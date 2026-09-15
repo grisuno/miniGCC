@@ -71,6 +71,7 @@ enum {
     T_SHR_ASSIGN,
     T_ASM,
     T_VOLATILE,
+    T_ATTRIBUTE,
     T_INLINE,
     T_UNION,
     T_EXTERN,
@@ -154,6 +155,7 @@ static int unsigned_type = 0;
 static int const_flag = 0;
 static int extern_flag = 0;
 static int global_emit_deferred = 0;
+static int pending_align = 0;
 
 #define MAX_FLOAT_CONSTS 2048
 static char float_const_str[MAX_FLOAT_CONSTS][MAX_TOKEN_LEN];
@@ -912,6 +914,8 @@ static void lex_init_keywords(void) {
     lex_kw_add("__asm__", T_ASM);
     lex_kw_add("volatile", T_VOLATILE);
     lex_kw_add("__volatile__", T_VOLATILE);
+    lex_kw_add("__attribute__", T_ATTRIBUTE);
+    lex_kw_add("__attribute", T_ATTRIBUTE);
     lex_kw_add("inline", T_INLINE);
     lex_kw_add("__inline", T_INLINE);
     lex_kw_add("__inline__", T_INLINE);
@@ -1610,8 +1614,13 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
         s->offset = 0;
         if (extern_flag) {
             extern_flag = 0;
+            pending_align = 0;
         } else if (!global_emit_deferred) {
             emit("    .bss");
+            if (pending_align) {
+                emit_i("    .balign %d", pending_align);
+                pending_align = 0;
+            }
             if (!s->is_static)
                 emit_s("    .globl %s", name);
             emit_s("%s:", name);
@@ -1620,6 +1629,7 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
             emit("    .text");
         }
     } else {
+        pending_align = 0;
         stack_size = (stack_size + size + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1);
         s->offset = -stack_size;
         if (stack_size > max_func_stack)
@@ -1641,6 +1651,7 @@ static void skip_struct(void);
 static void skip_typedef(void);
 static void parse_asm_block(void);
 static int parse_const_int(long long *out);
+static int skip_gcc_attribute(void);
 
 /* Argument/parameter register names by ABI index. Written as a function
    instead of a local array literal because the compiler does not allocate
@@ -3198,6 +3209,63 @@ static void asm_emit_all(void) {
     emit("    popq %%rbx");
 }
 
+static int skip_gcc_attribute(void) {
+    int align = 0;
+    next_token();
+    match('(');
+    match('(');
+    for (;;) {
+        if (tok == T_ID) {
+            if (strcmp(token, "packed") == 0) {
+                next_token();
+            } else if (strcmp(token, "aligned") == 0) {
+                long long av = 0;
+                long p2 = 1;
+                next_token();
+                match('(');
+                if (!parse_const_int(&av)) error("aligned attribute needs an integer constant");
+                while (p2 < av) p2 = p2 * 2;
+                if (p2 != av || av <= 0) error("aligned attribute needs a positive power of two");
+                align = (int)av;
+                match(')');
+            } else if (strcmp(token, "noreturn") == 0 ||
+                       strcmp(token, "returns_twice") == 0 ||
+                       strcmp(token, "always_inline") == 0) {
+                next_token();
+            } else {
+                fprintf(stderr, "%s:%d: Warning: unknown attribute '%s'\n",
+                        current_file ? current_file : "(unknown)", line, token);
+                next_token();
+                if (tok == '(') {
+                    int depth = 0;
+                    while (tok != T_EOF) {
+                        if (tok == '(') depth++;
+                        else if (tok == ')') {
+                            depth--;
+                            if (depth < 0) break;
+                        }
+                        next_token();
+                    }
+                }
+            }
+        } else if (tok == ',') {
+            next_token();
+        } else {
+            break;
+        }
+    }
+    match(')');
+    match(')');
+    return align;
+}
+
+static void parse_trailing_align(void) {
+    while (tok == T_ATTRIBUTE) {
+        int a = skip_gcc_attribute();
+        if (a > 0) pending_align = a;
+    }
+}
+
 static void parse_asm_block(void) {
     int tlen;
     next_token();
@@ -3321,6 +3389,7 @@ static void statement(void) {
                 int vt = (type == T_INT) ? 0 : type;
                 add_symbol(varname, 0, vsize, is_ptr ? type : 0, 0, is_ptr ? (nstars >= 2 ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8))) : 0);
                 symbols[symbol_count - 1].var_type = vt;
+                parse_trailing_align();
                 if (tok == '=') {
                     next_token();
                     assignment_expr();
@@ -3668,6 +3737,10 @@ static void statement(void) {
             } else if (tok == T_VOLATILE) {
                 next_token();
                 continue;
+            } else if (tok == T_ATTRIBUTE) {
+                int a = skip_gcc_attribute();
+                if (a > 0) pending_align = a;
+                continue;
             } else if (tok == T_CONST) {
                 next_token();
                 continue;
@@ -3738,6 +3811,7 @@ static void statement(void) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
                 }
+                parse_trailing_align();
                 if (tok == '=') {
                     next_token();
                     if (tok == '{') {
@@ -3847,6 +3921,7 @@ static void statement(void) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
                 }
+                parse_trailing_align();
                 if (tok == '=') {
                     next_token();
                     if (tok == '{') {
@@ -4012,6 +4087,8 @@ static void parse_function(const char *name, int ret_type) {
     }
     match(')');
 
+    while (tok == T_ATTRIBUTE) skip_gcc_attribute();
+
     if (tok == ';') {
         pop_scope();
         next_token();
@@ -4100,10 +4177,11 @@ static void parse_function(const char *name, int ret_type) {
 }
 
 static void parse_enum(void) {
-    next_token(); /* skip 'enum' */
+    next_token();
     if (tok == T_ID) {
-        next_token(); /* skip optional tag */
+        next_token();
     }
+    while (tok == T_ATTRIBUTE) skip_gcc_attribute();
     if (tok != '{') error("expected '{' after enum");
     next_token();
     int val = 0;
@@ -4184,8 +4262,9 @@ static void skip_struct_fields(int fsize, int funs, int ffloat) {
 }
 
 static void skip_struct(void) {
-    /* skip optional tag */
+    while (tok == T_ATTRIBUTE) skip_gcc_attribute();
     if (tok == T_ID) next_token();
+    while (tok == T_ATTRIBUTE) skip_gcc_attribute();
     if (tok != '{') error("expected '{' in struct");
     next_token();
 
@@ -4313,6 +4392,10 @@ static const char *data_directive(int size) {
 /* Reserve zero-initialized storage for a global. */
 static void emit_global_bss(const char *name, int is_static, int size) {
     emit("    .bss");
+    if (pending_align) {
+        emit_i("    .balign %d", pending_align);
+        pending_align = 0;
+    }
     if (!is_static) emit_s("    .globl %s", name);
     emit_s("%s:", name);
     if (size > 0) emit_i("    .space %d", size);
@@ -4321,6 +4404,10 @@ static void emit_global_bss(const char *name, int is_static, int size) {
 
 static void emit_global_data_head(const char *name, int is_static) {
     emit("    .data");
+    if (pending_align) {
+        emit_i("    .balign %d", pending_align);
+        pending_align = 0;
+    }
     if (!is_static) emit_s("    .globl %s", name);
     emit_s("%s:", name);
 }
@@ -4437,6 +4524,10 @@ static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
         while (tok == T_INLINE || tok == T_VOLATILE) next_token();
+        while (tok == T_ATTRIBUTE) {
+            int a = skip_gcc_attribute();
+            if (a > 0) pending_align = a;
+        }
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
             unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
@@ -4451,6 +4542,7 @@ static void parse_program(void) {
             next_token();
         }
         while (tok == T_INLINE || tok == T_VOLATILE) next_token();
+        while (tok == T_ATTRIBUTE) skip_gcc_attribute();
         if (tok == T_CONST) {
             next_token();
             continue;
@@ -4479,6 +4571,7 @@ static void parse_program(void) {
             fname[nlen] = '\0';
             next_token();
             if (tok == '(') {
+                pending_align = 0;
                 parse_function(fname, type);
             } else {
                 int gsize = is_ptr ? 8 : (type == T_CHAR ? 1 : (type == T_FLOAT ? 4 : 8));
@@ -4515,6 +4608,7 @@ static void parse_program(void) {
                     elem_size = 8;
                     elem_size2 = 0;
                 }
+                parse_trailing_align();
                 add_symbol(fname, 1, gsize, is_ptr ? type : 0, is_arr, elem_size);
                 global_emit_deferred = 0;
                 symbols[symbol_count - 1].var_type = vt;
@@ -4522,6 +4616,7 @@ static void parse_program(void) {
                     Symbol *s2 = &symbols[symbol_count - 1];
                     s2->elem_size2 = elem_size2;
                 }
+                parse_trailing_align();
                 if (tok == '=') {
                     next_token();
                     if (was_extern) {
@@ -4561,6 +4656,7 @@ static void parse_program(void) {
             if (tok == '(') {
                 static_flag = 0;
                 extern_flag = 0;
+                pending_align = 0;
                 parse_function(fname, T_INT);
             } else {
             int gsize = is_ptr ? 8 : type_size;
@@ -4593,6 +4689,7 @@ static void parse_program(void) {
                     elem_size = 8;
                     elem_size2 = 0;
                 }
+                parse_trailing_align();
                 add_symbol(fname, 1, gsize, is_ptr ? T_INT : 0, is_arr, elem_size);
             if (elem_size2 > 0) {
                 Symbol *s2 = &symbols[symbol_count - 1];

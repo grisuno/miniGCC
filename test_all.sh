@@ -146,6 +146,7 @@ run_test args
 run_test asm
 run_test asm3
 run_test stdint
+run_test attr
 
 run_neg octal "invalid octal constant"
 run_neg hex "invalid hex constant"
@@ -154,6 +155,7 @@ run_neg float "invalid float constant"
 run_neg asm "unsupported asm output constraint"
 run_neg asm2 "duplicate asm register"
 run_neg asm3 "unsupported asm output constraint"
+run_neg attr "needs a positive power of two"
 
 echo "=== test_all summary: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]

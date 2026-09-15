@@ -13,8 +13,8 @@ All ints are 8 bytes internally. Generates standalone ELF with `_start`.
 5. **Validation:** After every change: `make test` must pass — it builds
    with `gcc -std=c99 -Wall -Wextra -O2`, then runs `test.sh` (bootstrap
    fixed point + ld self-host chain) and `test_all.sh` (28 runtime tests +
-   7 negative tests in `tests/`, each diffed against a gcc reference:
-   35 passed, 0 failed).
+   9 negative tests in `tests/`, each diffed against a gcc reference:
+   37 passed, 0 failed).
 
 ## Code Standards
 - No comments, no emojis.
@@ -77,7 +77,13 @@ whenever `../ld/ld.c` exists.
 - Basic `asm` (`asm` / `__asm` / `__asm__`, optional `volatile`) in function
   bodies and at top level: the template string is parsed structurally and
   emitted verbatim by a dedicated raw emitter (LLVM InlineAsm-style
-  separation); any `:` operand section is a fail-closed parse error.
+  separation); extended operand sections are boss 3 below.
+- `__attribute__` / `__attribute`: structured skip with validation —
+  `packed` is a no-op (layout is already packed), `aligned(N)` on a trailing
+  declarator emits `.balign N` (locals already satisfy it via 16-byte slots;
+  function-suffix and type positions ignore it), `noreturn` /
+  `returns_twice` / `always_inline` parse clean, anything else warns and
+  skips; a non-power-of-two alignment is a fail-closed error
   `volatile` / `__volatile__` are also skipped as declaration qualifiers.
   Adjacent string literals concatenate in the lexer (translation phase 6),
   which top-level `__asm__` blocks rely on
