@@ -11,5 +11,7 @@ int main(void) {
     printf("%d %d\n", '0', 'z');
     char *s = "world";
     printf("%s %s\n", "hi", s);
+    printf("%s\n", "con" "cat");
+    printf("x" "y" "z\n");
     return 0;
 }

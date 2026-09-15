@@ -69,14 +69,16 @@ enum {
     T_XOR_ASSIGN,
     T_SHL_ASSIGN,
     T_SHR_ASSIGN,
+    T_ASM,
+    T_VOLATILE,
     T_INLINE,
     T_UNION,
     T_EXTERN,
     T_EOF
 };
 
-#define LEX_KW_CAP 32
-#define LEX_KW_BLOB 256
+#define LEX_KW_CAP 48
+#define LEX_KW_BLOB 320
 
 static char lex_kw_blob[LEX_KW_BLOB];
 static int lex_kw_ids[LEX_KW_CAP];
@@ -891,6 +893,11 @@ static void lex_init_keywords(void) {
     lex_kw_add("sizeof", T_SIZEOF);
     lex_kw_add("union", T_UNION);
     lex_kw_add("extern", T_EXTERN);
+    lex_kw_add("asm", T_ASM);
+    lex_kw_add("__asm", T_ASM);
+    lex_kw_add("__asm__", T_ASM);
+    lex_kw_add("volatile", T_VOLATILE);
+    lex_kw_add("__volatile__", T_VOLATILE);
     lex_kw_add("inline", T_INLINE);
     lex_kw_add("__inline", T_INLINE);
     lex_kw_add("__inline__", T_INLINE);
@@ -1294,8 +1301,9 @@ static void next_token(void) {
     if (c == '"') {
         char *p = token;
         int len = 0;
-        input_ptr++;
-        while (*input_ptr && *input_ptr != '"' && len < MAX_TOKEN_LEN - 2) {
+        for (;;) {
+            input_ptr++;
+            while (*input_ptr && *input_ptr != '"' && len < MAX_TOKEN_LEN - 2) {
             if (*input_ptr == '\\' && input_ptr[1]) {
                 switch (input_ptr[1]) {
                     case 'n': *p = '\n'; break;
@@ -1350,8 +1358,14 @@ static void next_token(void) {
             }
         }
         *p = '\0';
-        if (*input_ptr == '"') input_ptr++;
-        else error("unterminated string literal");
+        if (*input_ptr != '"') error("unterminated string literal");
+        input_ptr++;
+        while (my_isspace(*input_ptr)) {
+            if (*input_ptr == '\n') line++;
+            input_ptr++;
+        }
+        if (*input_ptr != '"') break;
+        }
         tok = T_STRING;
         return;
     }
@@ -1611,6 +1625,7 @@ static void assignment_expr(void);
 static void parse_enum(void);
 static void skip_struct(void);
 static void skip_typedef(void);
+static void parse_asm_block(void);
 
 /* Argument/parameter register names by ABI index. Written as a function
    instead of a local array literal because the compiler does not allocate
@@ -2682,7 +2697,26 @@ static void assignment_expr(void) {
     }
 }
 
+static void parse_asm_block(void) {
+    next_token();
+    while (tok == T_VOLATILE) next_token();
+    match('(');
+    if (tok != T_STRING) error("expected string literal in asm");
+    if (emit_enabled) {
+        fputs(token, output);
+        fputc('\n', output);
+    }
+    next_token();
+    if (tok == ':') error("extended asm with operands is not supported");
+    match(')');
+    match(';');
+}
+
 static void statement(void) {
+    if (tok == T_ASM) {
+        parse_asm_block();
+        return;
+    }
     if (tok == T_IF) {
         next_token();
         match('(');
@@ -2711,7 +2745,7 @@ static void statement(void) {
         push_scope();
         
         /* init */
-        if (tok == T_CONST) { next_token(); }
+        if (tok == T_CONST || tok == T_VOLATILE) { next_token(); }
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
             unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
@@ -3080,6 +3114,9 @@ static void statement(void) {
             } else if (tok == T_INLINE) {
                 next_token();
                 continue;
+            } else if (tok == T_VOLATILE) {
+                next_token();
+                continue;
             } else if (tok == T_CONST) {
                 next_token();
                 continue;
@@ -3355,7 +3392,7 @@ static void parse_function(const char *name, int ret_type) {
         next_token();
     } else {
         while (tok != ')' && tok != T_EOF) {
-            if (tok == T_CONST) { next_token(); continue; }
+            if (tok == T_CONST || tok == T_VOLATILE) { next_token(); continue; }
             if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
                 unsigned_type = (strcmp(token, "unsigned") == 0);
                 next_token();
@@ -3789,7 +3826,7 @@ static int emit_global_initializer(const char *name, int is_static, int *size,
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
-        while (tok == T_INLINE) next_token();
+        while (tok == T_INLINE || tok == T_VOLATILE) next_token();
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
             unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
@@ -3803,7 +3840,7 @@ static void parse_program(void) {
             static_flag = 1;
             next_token();
         }
-        while (tok == T_INLINE) next_token();
+        while (tok == T_INLINE || tok == T_VOLATILE) next_token();
         if (tok == T_CONST) {
             next_token();
             continue;
@@ -3814,6 +3851,8 @@ static void parse_program(void) {
             skip_struct();
         } else if (tok == T_ENUM) {
             parse_enum();
+        } else if (tok == T_ASM) {
+            parse_asm_block();
         } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_FLOAT || tok == T_DOUBLE) {
             int type = tok;
             next_token();

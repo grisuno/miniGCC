@@ -143,11 +143,13 @@ run_test sizeof
 run_test recursion
 run_test globinit
 run_test args
+run_test asm
 
 run_neg octal "invalid octal constant"
 run_neg hex "invalid hex constant"
 run_neg comment "unterminated comment"
 run_neg float "invalid float constant"
+run_neg asm "extended asm with operands is not supported"
 
 echo "=== test_all summary: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]

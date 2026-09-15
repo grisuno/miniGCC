@@ -66,6 +66,13 @@ whenever `../ld/ld.c` exists.
   skipped by the parser (functions always emit out-of-line, so a plain
   `inline` definition links like a normal global instead of following the
   C99 no-emit rule)
+- Basic `asm` (`asm` / `__asm` / `__asm__`, optional `volatile`) in function
+  bodies and at top level: the template string is parsed structurally and
+  emitted verbatim by a dedicated raw emitter (LLVM InlineAsm-style
+  separation); any `:` operand section is a fail-closed parse error.
+  `volatile` / `__volatile__` are also skipped as declaration qualifiers.
+  Adjacent string literals concatenate in the lexer (translation phase 6),
+  which top-level `__asm__` blocks rely on
 - Function definitions in headers work: pass 1 of the two-pass body sizing
   is clamped to its include level (`lex_pass_top`), so the over-read past
   the closing `}` can no longer POP an include and strand the rewind on a
@@ -118,8 +125,9 @@ still bootstraps it.
 5. No compound literals or designated initializers
 6. Global initializers accept constants only: no address-of, no arithmetic on
    symbols, and no nested brace lists for 2D arrays
-7. No `asm` inline (lexer groundwork done: a future `T_ASM` keyword must be
-   wired through the parser to emit the string body verbatim)
+7. Extended `asm` with operands (`: "=r"(x)`) is rejected fail-closed at
+   parse time; only basic templates assemble (boss 3 of the self-host road:
+   boss 1 `inline` and boss 2 basic `asm` are done)
 8. Structs only through `typedef struct {...} Name;` with single-level
    `ptr->field` / `value.field` access; chained member access (`a.b.c`),
    `enum` used as a declared type, and `typedef` names for locals are
