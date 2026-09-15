@@ -12,9 +12,9 @@ All ints are 8 bytes internally. Generates standalone ELF with `_start`.
 4. **Boy Scout Rule:** Fix any technical debt or security issue encountered; never out of scope.
 5. **Validation:** After every change: `make test` must pass — it builds
    with `gcc -std=c99 -Wall -Wextra -O2`, then runs `test.sh` (bootstrap
-   fixed point + ld self-host chain) and `test_all.sh` (26 runtime tests +
-   5 negative tests in `tests/`, each diffed against a gcc reference:
-   31 passed, 0 failed).
+   fixed point + ld self-host chain) and `test_all.sh` (27 runtime tests +
+   7 negative tests in `tests/`, each diffed against a gcc reference:
+   34 passed, 0 failed).
 
 ## Code Standards
 - No comments, no emojis.
@@ -127,9 +127,16 @@ still bootstraps it.
 5. No compound literals or designated initializers
 6. Global initializers accept constants only: no address-of, no arithmetic on
    symbols, and no nested brace lists for 2D arrays
-7. Extended `asm` with operands (`: "=r"(x)`) is rejected fail-closed at
-   parse time; only basic templates assemble (boss 3 of the self-host road:
-   boss 1 `inline` and boss 2 basic `asm` are done)
+7. Extended `asm` supports exactly the kernel's constraint set — inputs
+   `r a b c d m Nd`, outputs `=r =a =b =c =d =m` — with `%0`-`%9`/`%%`/`%=`
+   substitution, `memory`/`cc`/register clobbers accepted and satisfied by
+   the spill-everything model (`rbx` saved/restored around every block).
+   Fixed homes are full-width (`%rax`, never `%eax`: the 8-byte int model);
+   `char` stores narrow at write-back. Anything else (`+` read-write, `D`/`S`
+   constraints, `%x` modifiers, >8 operands) is a fail-closed parse error.
+   Operand values and addresses ride the stack; homes come from
+   rax/rbx/rcx/rdx plus the `r10 r8 r9 rsi rdi` scratch pool (`r11` is the
+   address temp and never allocated)
 8. Structs only through `typedef struct {...} Name;` with single-level
    `ptr->field` / `value.field` access; chained member access (`a.b.c`),
    `enum` used as a declared type, and `typedef` names for locals are

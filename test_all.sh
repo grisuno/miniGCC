@@ -144,12 +144,15 @@ run_test recursion
 run_test globinit
 run_test args
 run_test asm
+run_test asm3
 
 run_neg octal "invalid octal constant"
 run_neg hex "invalid hex constant"
 run_neg comment "unterminated comment"
 run_neg float "invalid float constant"
-run_neg asm "extended asm with operands is not supported"
+run_neg asm "unsupported asm output constraint"
+run_neg asm2 "duplicate asm register"
+run_neg asm3 "unsupported asm output constraint"
 
 echo "=== test_all summary: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]

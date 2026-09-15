@@ -1626,6 +1626,7 @@ static void parse_enum(void);
 static void skip_struct(void);
 static void skip_typedef(void);
 static void parse_asm_block(void);
+static int parse_const_int(long long *out);
 
 /* Argument/parameter register names by ABI index. Written as a function
    instead of a local array literal because the compiler does not allocate
@@ -2697,19 +2698,378 @@ static void assignment_expr(void) {
     }
 }
 
+#define ASM_MAX_OPS 8
+#define ASM_TMPL_SZ 1024
+#define ASM_TXT_SZ 64
+
+static char asm_tmpl[ASM_TMPL_SZ];
+static char asm_text[ASM_MAX_OPS][ASM_TXT_SZ];
+static char asm_mem[ASM_MAX_OPS][ASM_TXT_SZ];
+static int asm_is_out[ASM_MAX_OPS];
+static int asm_home[ASM_MAX_OPS];
+static int asm_slot[ASM_MAX_OPS];
+static int asm_size[ASM_MAX_OPS];
+static int asm_nops;
+static int asm_nslots;
+static int asm_unique = 0;
+
+static const char *asm_scratch(int i) {
+    if (i == 0) return "%r10";
+    if (i == 1) return "%r8";
+    if (i == 2) return "%r9";
+    if (i == 3) return "%rsi";
+    if (i == 4) return "%rdi";
+    return "%r10";
+}
+
+static void asm_home_text(int home, char *buf) {
+    if (home == 0) safe_strcpy(buf, "%rax", ASM_TXT_SZ);
+    else if (home == 1) safe_strcpy(buf, "%rbx", ASM_TXT_SZ);
+    else if (home == 2) safe_strcpy(buf, "%rcx", ASM_TXT_SZ);
+    else if (home == 3) safe_strcpy(buf, "%rdx", ASM_TXT_SZ);
+    else safe_strcpy(buf, asm_scratch(home - 4), ASM_TXT_SZ);
+}
+
+static void asm_reg_sized(int home, int size, char *buf) {
+    if (size == 1) {
+        if (home == 0) safe_strcpy(buf, "%al", ASM_TXT_SZ);
+        else if (home == 1) safe_strcpy(buf, "%bl", ASM_TXT_SZ);
+        else if (home == 2) safe_strcpy(buf, "%cl", ASM_TXT_SZ);
+        else if (home == 3) safe_strcpy(buf, "%dl", ASM_TXT_SZ);
+        else if (home == 4) safe_strcpy(buf, "%r10b", ASM_TXT_SZ);
+        else if (home == 5) safe_strcpy(buf, "%r8b", ASM_TXT_SZ);
+        else if (home == 6) safe_strcpy(buf, "%r9b", ASM_TXT_SZ);
+        else if (home == 7) safe_strcpy(buf, "%sil", ASM_TXT_SZ);
+        else safe_strcpy(buf, "%dil", ASM_TXT_SZ);
+    } else if (size == 4) {
+        if (home == 0) safe_strcpy(buf, "%eax", ASM_TXT_SZ);
+        else if (home == 1) safe_strcpy(buf, "%ebx", ASM_TXT_SZ);
+        else if (home == 2) safe_strcpy(buf, "%ecx", ASM_TXT_SZ);
+        else if (home == 3) safe_strcpy(buf, "%edx", ASM_TXT_SZ);
+        else if (home == 4) safe_strcpy(buf, "%r10d", ASM_TXT_SZ);
+        else if (home == 5) safe_strcpy(buf, "%r8d", ASM_TXT_SZ);
+        else if (home == 6) safe_strcpy(buf, "%r9d", ASM_TXT_SZ);
+        else if (home == 7) safe_strcpy(buf, "%esi", ASM_TXT_SZ);
+        else safe_strcpy(buf, "%edi", ASM_TXT_SZ);
+    } else {
+        asm_home_text(home, buf);
+    }
+}
+
+static int asm_fixed_home(int c) {
+    if (c == 'a') return 0;
+    if (c == 'b') return 1;
+    if (c == 'c') return 2;
+    if (c == 'd') return 3;
+    return -1;
+}
+
+static void asm_emit_template(void) {
+    char *p = asm_tmpl;
+    while (*p) {
+        if (*p == '%') {
+            p++;
+            if (*p == '%') {
+                fputc('%', output);
+                p++;
+            } else if (*p == '=') {
+                fprintf(output, "%d", asm_unique);
+                p++;
+            } else if (*p >= '0' && *p <= '9') {
+                int oi = *p - '0';
+                p++;
+                if (oi < 0 || oi >= asm_nops) error("asm operand number out of range");
+                fputs(asm_text[oi], output);
+            } else {
+                error("unsupported asm template modifier");
+            }
+        } else {
+            fputc(*p, output);
+            p++;
+        }
+    }
+    fputc('\n', output);
+}
+
+static void asm_parse_mem(int idx, int is_out) {
+    if (tok == T_ID) {
+        char vname[MAX_IDENT_LEN];
+        char *save_src = input_ptr;
+        int save_line = line;
+        int save_tok = tok;
+        char save_token[MAX_TOKEN_LEN];
+        int vi;
+        strcpy(save_token, token);
+        vi = 0;
+        while (vi < MAX_IDENT_LEN - 1 && token[vi]) {
+            vname[vi] = token[vi];
+            vi++;
+        }
+        vname[vi] = '\0';
+        next_token();
+        if (tok == ',' || tok == ':' || tok == ')') {
+            int ti = find_symbol(vname);
+            int sz;
+            if (ti < 0) error("undefined variable in asm");
+            sz = symbols[ti].size;
+            if (sz <= 0) sz = 8;
+            asm_slot[idx] = -1;
+            asm_size[idx] = sz;
+            asm_mem[idx][0] = '\0';
+            if (asm_home[idx] == -4) {
+                if (symbols[ti].is_global) {
+                    snprintf(asm_text[idx], ASM_TXT_SZ, "%s(%%rip)", vname);
+                } else {
+                    snprintf(asm_text[idx], ASM_TXT_SZ, "%d(%%rbp)", symbols[ti].offset);
+                }
+            } else {
+                if (symbols[ti].is_global) {
+                    snprintf(asm_mem[idx], ASM_TXT_SZ, "%s(%%rip)", vname);
+                } else {
+                    snprintf(asm_mem[idx], ASM_TXT_SZ, "%d(%%rbp)", symbols[ti].offset);
+                }
+            }
+            return;
+        }
+        input_ptr = save_src;
+        line = save_line;
+        tok = save_tok;
+        strcpy(token, save_token);
+    }
+    lvalue_address();
+    if (is_out && asm_home[idx] == -4)
+        error("complex asm output address needs a register constraint");
+    emit("    pushq %%rax");
+    asm_slot[idx] = asm_nslots;
+    asm_nslots++;
+    asm_size[idx] = assign_size;
+    if (asm_size[idx] <= 0) asm_size[idx] = 8;
+    if (!is_out) {
+        asm_home[idx] = -2;
+    }
+}
+
+static void asm_emit_ss(const char *fmt, const char *a, const char *b) {
+    if (!emit_enabled) return;
+    fprintf(output, fmt, a, b);
+    fputc('\n', output);
+}
+
+static void asm_parse_one(int idx, int is_out) {
+    char cbuf[16];
+    int ci;
+    long long cval;
+    if (tok != T_STRING) error("expected constraint string in asm");
+    ci = 0;
+    while (token[ci] && ci < 15) {
+        cbuf[ci] = token[ci];
+        ci++;
+    }
+    cbuf[ci] = '\0';
+    next_token();
+    match('(');
+    if (asm_nops >= ASM_MAX_OPS) error("too many asm operands");
+    asm_is_out[idx] = is_out;
+    asm_home[idx] = 9;
+    asm_slot[idx] = -1;
+    asm_size[idx] = 8;
+    if (is_out) {
+        int eq = 0;
+        int k = 0;
+        if (cbuf[0] == '=') {
+            eq = 1;
+            k = 1;
+        }
+        if (!eq || cbuf[1] == '+' || cbuf[k] == '\0')
+            error("unsupported asm output constraint");
+        if (cbuf[k] == 'r' || cbuf[k] == 'a' || cbuf[k] == 'b' ||
+            cbuf[k] == 'c' || cbuf[k] == 'd') {
+            asm_home[idx] = -3;
+            asm_text[idx][0] = cbuf[k];
+            asm_text[idx][1] = '\0';
+        } else if (cbuf[k] == 'm') {
+            asm_home[idx] = -4;
+        } else {
+            error("unsupported asm output constraint");
+        }
+        if (cbuf[k + 1] != '\0') error("unsupported asm output constraint");
+        asm_parse_mem(idx, 1);
+    } else {
+        if (cbuf[0] == '+' || cbuf[0] == '=') error("read-write asm operands are not supported");
+        if ((cbuf[0] == 'r' || cbuf[0] == 'a' || cbuf[0] == 'b' ||
+             cbuf[0] == 'c' || cbuf[0] == 'd') && cbuf[1] == '\0') {
+            asm_home[idx] = -3;
+            asm_text[idx][0] = cbuf[0];
+            asm_text[idx][1] = '\0';
+            assignment_expr();
+            emit("    pushq %%rax");
+            asm_slot[idx] = asm_nslots;
+            asm_nslots++;
+        } else if (cbuf[0] == 'm' && cbuf[1] == '\0') {
+            asm_home[idx] = -4;
+            asm_parse_mem(idx, 0);
+        } else if ((cbuf[0] == 'N' && cbuf[1] == 'd' && cbuf[2] == '\0')) {
+            if (!parse_const_int(&cval)) error("asm Nd operand needs an integer constant");
+            if (cval < 0 || cval > 255) error("asm Nd operand out of range");
+            snprintf(asm_text[idx], ASM_TXT_SZ, "$%d", (int)cval);
+        } else {
+            error("unsupported asm input constraint");
+        }
+    }
+    match(')');
+}
+
+static void asm_assign_homes(void) {
+    int fixed_out[4];
+    int fixed_in[4];
+    int si;
+    int i;
+    fixed_out[0] = 0;
+    fixed_out[1] = 0;
+    fixed_out[2] = 0;
+    fixed_out[3] = 0;
+    fixed_in[0] = 0;
+    fixed_in[1] = 0;
+    fixed_in[2] = 0;
+    fixed_in[3] = 0;
+    si = 0;
+    i = 0;
+    while (i < asm_nops) {
+        if (asm_home[i] == -3) {
+            int fh = asm_fixed_home(asm_text[i][0]);
+            if (fh < 0) {
+                if (si > 4) error("too many register asm operands");
+                asm_home[i] = 4 + si;
+                si++;
+            } else {
+                if (asm_is_out[i]) {
+                    if (fixed_out[fh]) error("duplicate asm register");
+                    fixed_out[fh] = 1;
+                } else {
+                    if (fixed_in[fh]) error("duplicate asm register");
+                    fixed_in[fh] = 1;
+                }
+                asm_home[i] = fh;
+            }
+            asm_home_text(asm_home[i], asm_text[i]);
+        } else if (asm_home[i] == -4) {
+            asm_home[i] = 9;
+        } else if (asm_home[i] == -2) {
+            if (si > 4) error("too many register asm operands");
+            asm_home[i] = 4 + si;
+            si++;
+            snprintf(asm_text[i], ASM_TXT_SZ, "(%s)", asm_scratch(asm_home[i] - 4));
+        }
+        i++;
+    }
+}
+
+static void asm_emit_all(void) {
+    int i;
+    emit("    pushq %%rbx");
+    i = 0;
+    while (i < asm_nops) {
+        if (!asm_is_out[i] && asm_slot[i] >= 0 && asm_home[i] != 9) {
+            char reg[ASM_TXT_SZ];
+            int off = (asm_nslots - asm_slot[i]) * 8;
+            asm_home_text(asm_home[i], reg);
+            emit_is("    movq %d(%%rsp), %s", off, reg);
+        }
+        i++;
+    }
+    asm_emit_template();
+    i = 0;
+    while (i < asm_nops) {
+        if (asm_is_out[i] && asm_home[i] != 9) {
+            char reg[ASM_TXT_SZ];
+            asm_reg_sized(asm_home[i], asm_size[i], reg);
+            if (asm_slot[i] < 0) {
+                if (asm_size[i] == 1)
+                    asm_emit_ss("    movb %s, %s", reg, asm_mem[i]);
+                else if (asm_size[i] == 4)
+                    asm_emit_ss("    movl %s, %s", reg, asm_mem[i]);
+                else
+                    asm_emit_ss("    movq %s, %s", reg, asm_mem[i]);
+            } else {
+                int off = (asm_nslots - asm_slot[i]) * 8;
+                emit_is("    movq %d(%%rsp), %%r11", off, "");
+                if (asm_size[i] == 1)
+                    emit_s("    movb %s, (%%r11)", reg);
+                else if (asm_size[i] == 4)
+                    emit_s("    movl %s, (%%r11)", reg);
+                else
+                    emit_s("    movq %s, (%%r11)", reg);
+            }
+        }
+        i++;
+    }
+    if (asm_nslots > 0)
+        emit_i("    addq $%d, %%rsp", asm_nslots * 8);
+    emit("    popq %%rbx");
+}
+
 static void parse_asm_block(void) {
+    int tlen;
     next_token();
     while (tok == T_VOLATILE) next_token();
     match('(');
     if (tok != T_STRING) error("expected string literal in asm");
-    if (emit_enabled) {
-        fputs(token, output);
-        fputc('\n', output);
-    }
+    tlen = strlen(token);
+    if (tlen >= ASM_TMPL_SZ) error("asm template too long");
+    safe_strcpy(asm_tmpl, token, ASM_TMPL_SZ);
     next_token();
-    if (tok == ':') error("extended asm with operands is not supported");
+    if (tok != ':') {
+        if (emit_enabled) {
+            fputs(asm_tmpl, output);
+            fputc('\n', output);
+        }
+        match(')');
+        match(';');
+        return;
+    }
+    asm_nops = 0;
+    asm_nslots = 0;
+    asm_unique++;
+    next_token();
+    if (tok != ':' && tok != ')') {
+        for (;;) {
+            asm_parse_one(asm_nops, 1);
+            asm_nops++;
+            if (tok == ',') {
+                next_token();
+                continue;
+            }
+            if (tok == ':' || tok == ')') break;
+            error("expected ',' or ':' in asm");
+        }
+    }
+    if (tok == ':') {
+        next_token();
+        if (tok != ':' && tok != ')') {
+            for (;;) {
+                asm_parse_one(asm_nops, 0);
+                asm_nops++;
+                if (tok == ',') {
+                    next_token();
+                    continue;
+                }
+                if (tok == ':' || tok == ')') break;
+                error("expected ',' or ':' in asm");
+            }
+        }
+    }
+    if (tok == ':') {
+        next_token();
+        while (tok != ')' && tok != T_EOF) {
+            if (tok != T_STRING) error("expected clobber string in asm");
+            next_token();
+            if (tok == ',') next_token();
+        }
+    }
     match(')');
     match(';');
+    asm_assign_homes();
+    if (emit_enabled) asm_emit_all();
 }
 
 static void statement(void) {
