@@ -21,6 +21,14 @@
   - `main` (function, line 1) `int main(void)`
   - `volatile` (function, line 3) `__asm__ volatile("nop" : "+r"(a));`
 
+## tests/neg_asm_ds.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `sum_d5` (function, line 1) `long sum_d5(long d, long a, long b, long c, long e, long f)`
+  - `main` (function, line 7) `int main(void)`
+  - `printf` (function, line 9) `printf("%ld\n", sum_d5(1, 2, 3, 4, 5, 6));`
+
 ## tests/neg_attr.c
 - Layer: testing
 - Language: c
@@ -39,6 +47,62 @@
 - Symbols:
   - `main` (function, line 1) `int main(void)`
 
+## tests/neg_fnptr.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `add2` (function, line 2) `long add2(long a, long b)`
+  - `main` (function, line 6) `int main(void)`
+  - `long` (function, line 8) `long (*f)(long, long);`
+  - `printf` (function, line 12) `printf("%ld\n", x);`
+
+## tests/neg_fnptr_call.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `main` (function, line 2) `int main(void)`
+  - `printf` (function, line 8) `printf("%ld\n", y);`
+
+## tests/neg_fnptr_cmp.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `add2` (function, line 2) `long add2(long a, long b)`
+  - `mul2` (function, line 6) `long mul2(long a, long b)`
+  - `main` (function, line 10) `int main(void)`
+  - `long` (function, line 12) `long (*f)(long, long);`
+  - `printf` (function, line 18) `printf("%ld\n", r);`
+
+## tests/neg_fnptr_cmp0.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `add2` (function, line 2) `long add2(long a, long b)`
+  - `main` (function, line 6) `int main(void)`
+  - `long` (function, line 8) `long (*f)(long, long);`
+  - `printf` (function, line 12) `printf("%ld\n", r);`
+
+## tests/neg_fnptr_globalinit.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `add2` (function, line 1) `long add2(long a, long b)`
+  - `main` (function, line 6) `int main(void)`
+
+## tests/neg_fnptr_tern.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `add2` (function, line 2) `long add2(long a, long b)`
+  - `main` (function, line 6) `int main(void)`
+  - `long` (function, line 8) `long (*f)(long, long);`
+  - `printf` (function, line 14) `printf("%ld\n", r);`
+
 ## tests/neg_hex.c
 - Layer: testing
 - Language: c
@@ -50,6 +114,13 @@
 - Language: c
 - Symbols:
   - `main` (function, line 1) `int main(void)`
+
+## tests/neg_typedef_arrcont.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `c` (type_alias, line 1) `typedef int b, c[4];`
+  - `main` (function, line 2) `int main(void)`
 
 ## tests/neg_va.c
 - Layer: testing
@@ -66,6 +137,18 @@
 - Symbols:
   - `main` (function, line 2) `int main(int argc, char **argv)`
   - `printf` (function, line 4) `printf("%d\n", argc);`
+
+## tests/t_args7.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `sum7` (function, line 2) `long sum7(long a, long b, long c, long d, long e, long f, long g)`
+  - `sum8` (function, line 6) `long sum8(long a, long b, long c, long d, long e, long f, long g, long h)`
+  - `mix8` (function, line 10) `long mix8(long a, long b, long c, long d, long e, long f, long g, long h)`
+  - `main` (function, line 15) `int main(void)`
+  - `long` (function, line 17) `long (*fp)(long, long, long, long, long, long, long);`
+  - `printf` (function, line 18) `printf("%ld\n", sum7(1, 2, 3, 4, 5, 6, 7));`
 
 ## tests/t_arith.c
 - Layer: testing
@@ -102,6 +185,24 @@
   - `main` (function, line 5) `int main(void)`
   - `volatile` (function, line 9) `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));`
   - `printf` (function, line 10) `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);`
+
+## tests/t_asm_ds.c
+- Layer: testing
+- Doc: include <stdio.h> include <stdint.h>
+- Language: c
+- Symbols:
+  - `via_d` (function, line 3) `long via_d(long x)`
+  - `via_s` (function, line 9) `long via_s(long x)`
+  - `add_ds` (function, line 15) `long add_ds(long a, long b)`
+  - `ret_d` (function, line 21) `long ret_d(long x)`
+  - `ret_s` (function, line 27) `long ret_s(long x)`
+  - `ret_di` (function, line 33) `int ret_di(void)`
+  - `ret_dc` (function, line 39) `char ret_dc(void)`
+  - `ret_ds` (function, line 45) `int16_t ret_ds(void)`
+  - `ret_dw` (function, line 51) `int32_t ret_dw(void)`
+  - `main` (function, line 57) `int main(void)`
+  - `volatile` (function, line 6) `__asm__ volatile("movq %1, %0" : "=r"(r) : "D"(x));`
+  - `printf` (function, line 59) `printf("%ld\n", via_d(41));`
 
 ## tests/t_attr.c
 - Layer: testing
@@ -149,6 +250,21 @@
 - Symbols:
   - `main` (function, line 2) `int main(void)`
   - `printf` (function, line 6) `printf("%d %d %d\n", a + b == 4.0, a * b == 3.75, b - a == 1.0);`
+
+## tests/t_fnptr.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `ops_t` (struct, line 15)
+  - `add2` (function, line 2) `long add2(long a, long b)`
+  - `mul2` (function, line 6) `long mul2(long a, long b)`
+  - `apply2` (function, line 10) `long apply2(long (*f)(long, long), long x, long y)`
+  - `run_op` (function, line 21) `long run_op(ops_t *o, long x, long y)`
+  - `main` (function, line 25) `int main(void)`
+  - `f` (function, line 12) `return f(x, y);`
+  - `long` (function, line 16) `long (*op)(long, long);`
+  - `printf` (function, line 31) `printf("%ld\n", f(10, 20));`
 
 ## tests/t_for.c
 - Layer: testing
@@ -238,6 +354,19 @@
 - Symbols:
   - `main` (function, line 2) `int main(void)`
   - `printf` (function, line 6) `printf("%d %d %d\n", t && t, t && f, f || f);`
+
+## tests/t_longlong.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `u64` (type_alias, line 2) `typedef unsigned long long u64;`
+  - `s64` (type_alias, line 4) `typedef long long s64;`
+  - `bump` (function, line 5) `u64 bump(u64 x)`
+  - `negate` (function, line 9) `s64 negate(s64 x)`
+  - `add64` (function, line 13) `unsigned long long add64(unsigned long long a, unsigned long long b)`
+  - `main` (function, line 19) `int main(void)`
+  - `printf` (function, line 26) `printf("%llu\n", a + b);`
 
 ## tests/t_macros.c
 - Layer: testing
@@ -330,6 +459,15 @@
   - `main` (function, line 17) `int main(void)`
   - `printf` (function, line 22) `printf("%d %d\n", pp->x, pp->y);`
 
+## tests/t_struct_ul.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `R` (struct, line 3)
+  - `main` (function, line 12) `int main(void)`
+  - `printf` (function, line 22) `printf("%lu\n", r.base);`
+
 ## tests/t_switch.c
 - Layer: testing
 - Doc: include <stdio.h>
@@ -358,6 +496,24 @@
   - `myint` (type_alias, line 2) `typedef int myint;`
   - `main` (function, line 15) `int main(void)`
   - `printf` (function, line 18) `printf("%d\n", shared + 2);`
+
+## tests/t_unsigned.c
+- Layer: testing
+- Doc: include <stdio.h>
+- Language: c
+- Symbols:
+  - `ureg_t` (struct, line 17)
+  - `u64` (type_alias, line 2) `typedef unsigned long u64;`
+  - `u32` (type_alias, line 4) `typedef unsigned int u32;`
+  - `u8` (type_alias, line 94) `typedef unsigned char u8;`
+  - `u8b` (type_alias, line 96) `typedef u8 u8b;`
+  - `uword` (type_alias, line 108) `typedef u32 uword;`
+  - `ureg2` (type_alias, line 114) `typedef ureg_t ureg2;`
+  - `bump` (function, line 8) `unsigned long bump(unsigned long x)`
+  - `narrow` (function, line 12) `unsigned int narrow(unsigned int x)`
+  - `reg_base` (function, line 22) `unsigned long reg_base(ureg_t *r)`
+  - `main` (function, line 26) `int main(void)`
+  - `printf` (function, line 39) `printf("%lu\n", c);`
 
 ## tests/t_variadic.c
 - Layer: infrastructure

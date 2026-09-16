@@ -2,7 +2,7 @@
 
 | File | Purpose | Subsystem | Symbols |
 |------|---------|-----------|---------|
-| `minigcc.c` | - | root | 154 |
+| `minigcc.c` | - | root | 164 |
 | `minigccg2.s` | - | root | 202 |
 | `minigccg3.s` | - | root | 202 |
 | `minigccg4.s` | - | root | 202 |
@@ -16,22 +16,33 @@
 | `tests/neg_asm.c` | - | tests | 2 |
 | `tests/neg_asm2.c` | - | tests | 2 |
 | `tests/neg_asm3.c` | - | tests | 2 |
+| `tests/neg_asm_ds.c` | - | tests | 3 |
 | `tests/neg_attr.c` | - | tests | 1 |
 | `tests/neg_comment.c` | - | tests | 1 |
 | `tests/neg_float.c` | - | tests | 1 |
+| `tests/neg_fnptr.c` | include <stdio.h> | tests | 4 |
+| `tests/neg_fnptr_call.c` | include <stdio.h> | tests | 2 |
+| `tests/neg_fnptr_cmp.c` | include <stdio.h> | tests | 5 |
+| `tests/neg_fnptr_cmp0.c` | include <stdio.h> | tests | 4 |
+| `tests/neg_fnptr_globalinit.c` | - | tests | 2 |
+| `tests/neg_fnptr_tern.c` | include <stdio.h> | tests | 4 |
 | `tests/neg_hex.c` | - | tests | 1 |
 | `tests/neg_octal.c` | - | tests | 1 |
+| `tests/neg_typedef_arrcont.c` | - | tests | 2 |
 | `tests/neg_va.c` | - | tests | 3 |
 | `tests/t_args.c` | include <stdio.h> | tests | 2 |
+| `tests/t_args7.c` | include <stdio.h> | tests | 6 |
 | `tests/t_arith.c` | include <stdio.h> | tests | 2 |
 | `tests/t_arrays.c` | include <stdio.h> | tests | 2 |
 | `tests/t_asm.c` | include <stdio.h> | tests | 5 |
 | `tests/t_asm3.c` | include <stdio.h> | tests | 3 |
+| `tests/t_asm_ds.c` | include <stdio.h> include <stdint.h> | tests | 12 |
 | `tests/t_attr.c` | include <stdio.h> include <stdint.h> | tests | 7 |
 | `tests/t_compound.c` | include <stdio.h> | tests | 2 |
 | `tests/t_dowhile.c` | include <stdio.h> | tests | 2 |
 | `tests/t_enum.c` | include <stdio.h> | tests | 4 |
 | `tests/t_float.c` | include <stdio.h> | tests | 2 |
+| `tests/t_fnptr.c` | include <stdio.h> | tests | 9 |
 | `tests/t_for.c` | include <stdio.h> | tests | 2 |
 | `tests/t_globinit.c` | include <stdio.h> | tests | 2 |
 | `tests/t_goto.c` | include <stdio.h> | tests | 2 |
@@ -42,6 +53,7 @@
 | `tests/t_inline_h.h` | ifndef T_INLINE_H define T_INLINE_H | tests | 2 |
 | `tests/t_inner_h.h` | ifndef T_INNER_H define T_INNER_H  define INNER_VAL 111 | tests | 3 |
 | `tests/t_logic.c` | include <stdio.h> | tests | 2 |
+| `tests/t_longlong.c` | include <stdio.h> | tests | 7 |
 | `tests/t_macros.c` | include <stdio.h>  define KONST 40 define SHIFTED (1 << 4) define HEXED 0x10 def | tests | 8 |
 | `tests/t_outer_h.h` | ifndef T_OUTER_H define T_OUTER_H  include "t_inner_h.h"  define OUTER_VAL (INNE | tests | 2 |
 | `tests/t_pointers.c` | include <stdio.h> | tests | 3 |
@@ -51,8 +63,10 @@
 | `tests/t_stdint.c` | include <stdio.h> include <stdint.h> | tests | 7 |
 | `tests/t_strings.c` | include <stdio.h> | tests | 2 |
 | `tests/t_struct.c` | include <stdio.h> | tests | 4 |
+| `tests/t_struct_ul.c` | include <stdio.h> | tests | 3 |
 | `tests/t_switch.c` | include <stdio.h> | tests | 3 |
 | `tests/t_sync.c` | include <stdio.h> | tests | 4 |
 | `tests/t_typedef.c` | include <stdio.h> | tests | 4 |
+| `tests/t_unsigned.c` | include <stdio.h> | tests | 12 |
 | `tests/t_variadic.c` | include <stdio.h> | tests | 8 |
 | `tests/t_while.c` | include <stdio.h> | tests | 2 |

@@ -6,138 +6,148 @@
 - Symbols:
   - `FileContext` (struct, line 96)
   - `Symbol` (struct, line 109)
-  - `ParserState` (struct, line 220)
-  - `Macro` (struct, line 308)
-  - `save_parser_state` (function, line 247) `static void save_parser_state(ParserState *state)`
-  - `restore_parser_state` (function, line 275) `static void restore_parser_state(ParserState *state)`
-  - `find_macro` (function, line 314) `static int find_macro(const char *name)`
-  - `add_macro` (function, line 323) `static void add_macro(const char *name, int value)`
-  - `macro_skipws` (function, line 350) `static void macro_skipws(void)`
-  - `macro_hex_digit` (function, line 354) `static int macro_hex_digit(int c)`
-  - `macro_digit_val` (function, line 361) `static int macro_digit_val(int c)`
-  - `macro_primary` (function, line 368) `static int macro_primary(void)`
-  - `macro_unary` (function, line 442) `static int macro_unary(void)`
-  - `macro_mul` (function, line 451) `static int macro_mul(void)`
-  - `macro_add` (function, line 476) `static int macro_add(void)`
-  - `macro_shift` (function, line 493) `static int macro_shift(void)`
-  - `macro_cmp` (function, line 510) `static int macro_cmp(void)`
-  - `macro_eq` (function, line 533) `static int macro_eq(void)`
-  - `macro_bitand` (function, line 550) `static int macro_bitand(void)`
-  - `macro_bitxor` (function, line 564) `static int macro_bitxor(void)`
-  - `macro_bitor` (function, line 578) `static int macro_bitor(void)`
-  - `macro_logand` (function, line 592) `static int macro_logand(void)`
-  - `macro_or_expr` (function, line 606) `static int macro_or_expr(void)`
-  - `macro_fold` (function, line 620) `static int macro_fold(void)`
-  - `error` (function, line 625) `static void error(const char *msg)`
-  - `safe_malloc` (function, line 631) `static void *safe_malloc(size_t size)`
-  - `safe_strcpy` (function, line 640) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
-  - `safe_strtoll` (function, line 649) `static long safe_strtoll(const char *s)`
-  - `is_file_processed` (function, line 662) `static int is_file_processed(const char *path)`
-  - `mark_file_processed` (function, line 671) `static void mark_file_processed(const char *path)`
-  - `get_dir_from_path` (function, line 683) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
-  - `resolve_local_include` (function, line 702) `static char *resolve_local_include(const char *target)`
-  - `read_include_file` (function, line 741) `static char *read_include_file(const char *path)`
-  - `hash_name` (function, line 766) `static int hash_name(const char *name)`
-  - `hash_init` (function, line 775) `static void hash_init(void)`
-  - `push_scope` (function, line 780) `static void push_scope(void)`
-  - `pop_scope` (function, line 788) `static void pop_scope(void)`
-  - `truncate_symbols` (function, line 818) `static void truncate_symbols(int start_idx)`
-  - `my_isspace` (function, line 836) `static int my_isspace(int c)`
-  - `my_isalpha` (function, line 846) `static int my_isalpha(int c)`
-  - `my_isdigit` (function, line 852) `static int my_isdigit(int c)`
-  - `my_isalnum` (function, line 857) `static int my_isalnum(int c)`
-  - `lex_fail` (function, line 863) `static void lex_fail(const char *msg, char *start, char *end)`
-  - `lex_kw_add` (function, line 873) `static void lex_kw_add(const char *name, int id)`
-  - `lex_init_keywords` (function, line 886) `static void lex_init_keywords(void)`
-  - `lex_kw_lookup` (function, line 926) `static int lex_kw_lookup(void)`
-  - `lex_match_op` (function, line 938) `static int lex_match_op(const char *op, int id)`
-  - `lex_hex_val` (function, line 950) `static int lex_hex_val(int c)`
-  - `lex_is_int_suffix` (function, line 957) `static int lex_is_int_suffix(int c)`
-  - `lex_number` (function, line 963) `static void lex_number(void)`
-  - `next_token` (function, line 1082) `static void next_token(void)`
-  - `match` (function, line 1510) `static void match(int expected)`
-  - `emit` (function, line 1515) `static void emit(const char *s)`
-  - `emit_i` (function, line 1529) `static void emit_i(const char *fmt, int v)`
-  - `emit_s` (function, line 1535) `static void emit_s(const char *fmt, const char *s)`
-  - `emit_is` (function, line 1541) `static void emit_is(const char *fmt, int v, const char *s)`
-  - `emit_si` (function, line 1547) `static void emit_si(const char *fmt, const char *s, int v)`
-  - `emit_asciz_body` (function, line 1557) `static void emit_asciz_body(const char *s)`
-  - `emit_label` (function, line 1575) `static void emit_label(int label)`
-  - `find_symbol` (function, line 1582) `static int find_symbol(const char *name)`
-  - `add_symbol` (function, line 1592) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
-  - `arg_reg` (function, line 1666) `static const char *arg_reg(int i)`
-  - `libc_global_name` (function, line 1676) `static const char *libc_global_name(int i)`
-  - `typedef_name` (function, line 1688) `static const char *typedef_name(int i)`
-  - `typedef_size` (function, line 1704) `static int typedef_size(int i)`
-  - `typedef_uns` (function, line 1720) `static int typedef_uns(int i)`
-  - `unary` (function, line 1729) `static void unary(void)`
-  - `strcmp` (function, line 1766) `strcmp(id_name, "va_start") == 0)`
-  - `strcmp` (function, line 1769) `strcmp(id_name, "va_end") == 0)`
-  - `strcmp` (function, line 1772) `strcmp(id_name, "va_arg") == 0)`
-  - `parse_sync_call` (function, line 2092) `static void parse_sync_call(const char *name)`
-  - `parse_va_start` (function, line 2126) `static void parse_va_start(void)`
-  - `parse_va_arg` (function, line 2159) `static void parse_va_arg(void)`
-  - `parse_va_end` (function, line 2209) `static void parse_va_end(void)`
-  - `lvalue_address` (function, line 2224) `static void lvalue_address(void)`
-  - `handle_postfix` (function, line 2281) `static void handle_postfix(int is_lvalue)`
-  - `unary_expr` (function, line 2442) `static void unary_expr(void)`
-  - `multiplicative_expr` (function, line 2457) `static void multiplicative_expr(void)`
-  - `additive_expr` (function, line 2521) `static void additive_expr(void)`
-  - `shift_expr` (function, line 2582) `static void shift_expr(void)`
-  - `relational_expr` (function, line 2601) `static void relational_expr(void)`
-  - `equality_expr` (function, line 2654) `static void equality_expr(void)`
-  - `bitwise_and_expr` (function, line 2703) `static void bitwise_and_expr(void)`
-  - `bitwise_xor_expr` (function, line 2715) `static void bitwise_xor_expr(void)`
-  - `bitwise_or_expr` (function, line 2727) `static void bitwise_or_expr(void)`
-  - `logical_and_expr` (function, line 2739) `static void logical_and_expr(void)`
-  - `logical_or_expr` (function, line 2759) `static void logical_or_expr(void)`
-  - `conditional_expr` (function, line 2779) `static void conditional_expr(void)`
-  - `emit_compound_op` (function, line 2797) `static void emit_compound_op(int op, int asize)`
-  - `assignment_expr` (function, line 2838) `static void assignment_expr(void)`
-  - `asm_scratch` (function, line 3059) `static const char *asm_scratch(int i)`
-  - `asm_home_text` (function, line 3068) `static void asm_home_text(int home, char *buf)`
-  - `asm_reg_sized` (function, line 3076) `static void asm_reg_sized(int home, int size, char *buf)`
-  - `asm_fixed_home` (function, line 3112) `static int asm_fixed_home(int c)`
-  - `asm_emit_template` (function, line 3120) `static void asm_emit_template(void)`
-  - `asm_parse_mem` (function, line 3147) `static void asm_parse_mem(int idx, int is_out)`
-  - `asm_emit_ss` (function, line 3205) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
-  - `asm_parse_one` (function, line 3211) `static void asm_parse_one(int idx, int is_out)`
-  - `asm_assign_homes` (function, line 3275) `static void asm_assign_homes(void)`
-  - `asm_emit_all` (function, line 3320) `static void asm_emit_all(void)`
-  - `skip_gcc_attribute` (function, line 3368) `static int skip_gcc_attribute(void)`
-  - `strcmp` (function, line 3389) `strcmp(token, "returns_twice") == 0 ||
+  - `ParserState` (struct, line 228)
+  - `Macro` (struct, line 316)
+  - `save_parser_state` (function, line 255) `static void save_parser_state(ParserState *state)`
+  - `restore_parser_state` (function, line 283) `static void restore_parser_state(ParserState *state)`
+  - `find_macro` (function, line 322) `static int find_macro(const char *name)`
+  - `add_macro` (function, line 331) `static void add_macro(const char *name, int value)`
+  - `macro_skipws` (function, line 358) `static void macro_skipws(void)`
+  - `macro_hex_digit` (function, line 362) `static int macro_hex_digit(int c)`
+  - `macro_digit_val` (function, line 369) `static int macro_digit_val(int c)`
+  - `macro_primary` (function, line 376) `static int macro_primary(void)`
+  - `macro_unary` (function, line 450) `static int macro_unary(void)`
+  - `macro_mul` (function, line 459) `static int macro_mul(void)`
+  - `macro_add` (function, line 484) `static int macro_add(void)`
+  - `macro_shift` (function, line 501) `static int macro_shift(void)`
+  - `macro_cmp` (function, line 518) `static int macro_cmp(void)`
+  - `macro_eq` (function, line 541) `static int macro_eq(void)`
+  - `macro_bitand` (function, line 558) `static int macro_bitand(void)`
+  - `macro_bitxor` (function, line 572) `static int macro_bitxor(void)`
+  - `macro_bitor` (function, line 586) `static int macro_bitor(void)`
+  - `macro_logand` (function, line 600) `static int macro_logand(void)`
+  - `macro_or_expr` (function, line 614) `static int macro_or_expr(void)`
+  - `macro_fold` (function, line 628) `static int macro_fold(void)`
+  - `error` (function, line 633) `static void error(const char *msg)`
+  - `safe_malloc` (function, line 639) `static void *safe_malloc(size_t size)`
+  - `safe_strcpy` (function, line 648) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
+  - `safe_strtoll` (function, line 657) `static long safe_strtoll(const char *s)`
+  - `is_file_processed` (function, line 670) `static int is_file_processed(const char *path)`
+  - `mark_file_processed` (function, line 679) `static void mark_file_processed(const char *path)`
+  - `get_dir_from_path` (function, line 691) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
+  - `resolve_local_include` (function, line 710) `static char *resolve_local_include(const char *target)`
+  - `read_include_file` (function, line 749) `static char *read_include_file(const char *path)`
+  - `hash_name` (function, line 774) `static int hash_name(const char *name)`
+  - `hash_init` (function, line 783) `static void hash_init(void)`
+  - `push_scope` (function, line 788) `static void push_scope(void)`
+  - `pop_scope` (function, line 796) `static void pop_scope(void)`
+  - `truncate_symbols` (function, line 826) `static void truncate_symbols(int start_idx)`
+  - `my_isspace` (function, line 844) `static int my_isspace(int c)`
+  - `my_isalpha` (function, line 854) `static int my_isalpha(int c)`
+  - `my_isdigit` (function, line 860) `static int my_isdigit(int c)`
+  - `my_isalnum` (function, line 865) `static int my_isalnum(int c)`
+  - `lex_fail` (function, line 871) `static void lex_fail(const char *msg, char *start, char *end)`
+  - `lex_kw_add` (function, line 881) `static void lex_kw_add(const char *name, int id)`
+  - `lex_init_keywords` (function, line 894) `static void lex_init_keywords(void)`
+  - `lex_kw_lookup` (function, line 934) `static int lex_kw_lookup(void)`
+  - `lex_match_op` (function, line 946) `static int lex_match_op(const char *op, int id)`
+  - `lex_hex_val` (function, line 958) `static int lex_hex_val(int c)`
+  - `lex_is_int_suffix` (function, line 965) `static int lex_is_int_suffix(int c)`
+  - `lex_number` (function, line 971) `static void lex_number(void)`
+  - `next_token` (function, line 1090) `static void next_token(void)`
+  - `match` (function, line 1576) `static void match(int expected)`
+  - `emit` (function, line 1581) `static void emit(const char *s)`
+  - `emit_i` (function, line 1595) `static void emit_i(const char *fmt, int v)`
+  - `emit_s` (function, line 1601) `static void emit_s(const char *fmt, const char *s)`
+  - `emit_is` (function, line 1607) `static void emit_is(const char *fmt, int v, const char *s)`
+  - `emit_si` (function, line 1613) `static void emit_si(const char *fmt, const char *s, int v)`
+  - `emit_asciz_body` (function, line 1623) `static void emit_asciz_body(const char *s)`
+  - `emit_label` (function, line 1641) `static void emit_label(int label)`
+  - `find_symbol` (function, line 1648) `static int find_symbol(const char *name)`
+  - `add_symbol` (function, line 1658) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
+  - `arg_reg` (function, line 1739) `static const char *arg_reg(int i)`
+  - `note_defined_func` (function, line 1747) `static void note_defined_func(const char *name)`
+  - `is_defined_func` (function, line 1760) `static int is_defined_func(const char *name)`
+  - `parse_fnptr_declarator` (function, line 1770) `static int parse_fnptr_declarator(char *out_name, int *out_count)`
+  - `peek_call_argc` (function, line 1821) `static int peek_call_argc(void)`
+  - `emit_spill_reverse` (function, line 1859) `static void emit_spill_reverse(int argc)`
+  - `parse_indirect_call` (function, line 1871) `static void parse_indirect_call(void)`
+  - `libc_global_name` (function, line 1911) `static const char *libc_global_name(int i)`
+  - `typedef_name` (function, line 1923) `static const char *typedef_name(int i)`
+  - `typedef_size` (function, line 1939) `static int typedef_size(int i)`
+  - `typedef_uns` (function, line 1955) `static int typedef_uns(int i)`
+  - `unary` (function, line 1964) `static void unary(void)`
+  - `strcmp` (function, line 2008) `strcmp(id_name, "__sync_lock_test_and_set") == 0 ||
+                strcmp(id_name, "__sync_lock_...`
+  - `strcmp` (function, line 2013) `strcmp(id_name, "va_start") == 0)`
+  - `strcmp` (function, line 2016) `strcmp(id_name, "va_end") == 0)`
+  - `strcmp` (function, line 2019) `strcmp(id_name, "va_arg") == 0)`
+  - `parse_sync_call` (function, line 2374) `static void parse_sync_call(const char *name)`
+  - `parse_va_start` (function, line 2408) `static void parse_va_start(void)`
+  - `parse_va_arg` (function, line 2441) `static void parse_va_arg(void)`
+  - `parse_va_end` (function, line 2491) `static void parse_va_end(void)`
+  - `lvalue_address` (function, line 2506) `static void lvalue_address(void)`
+  - `handle_postfix` (function, line 2563) `static void handle_postfix(int is_lvalue)`
+  - `unary_expr` (function, line 2749) `static void unary_expr(void)`
+  - `multiplicative_expr` (function, line 2764) `static void multiplicative_expr(void)`
+  - `additive_expr` (function, line 2832) `static void additive_expr(void)`
+  - `shift_expr` (function, line 2897) `static void shift_expr(void)`
+  - `relational_expr` (function, line 2920) `static void relational_expr(void)`
+  - `equality_expr` (function, line 2974) `static void equality_expr(void)`
+  - `bitwise_and_expr` (function, line 3024) `static void bitwise_and_expr(void)`
+  - `bitwise_xor_expr` (function, line 3040) `static void bitwise_xor_expr(void)`
+  - `bitwise_or_expr` (function, line 3056) `static void bitwise_or_expr(void)`
+  - `logical_and_expr` (function, line 3072) `static void logical_and_expr(void)`
+  - `logical_or_expr` (function, line 3092) `static void logical_or_expr(void)`
+  - `conditional_expr` (function, line 3112) `static void conditional_expr(void)`
+  - `emit_compound_op` (function, line 3131) `static void emit_compound_op(int op, int asize)`
+  - `assignment_expr` (function, line 3172) `static void assignment_expr(void)`
+  - `asm_scratch` (function, line 3393) `static const char *asm_scratch(int i)`
+  - `asm_home_text` (function, line 3402) `static void asm_home_text(int home, char *buf)`
+  - `asm_reg_sized` (function, line 3412) `static void asm_reg_sized(int home, int size, char *buf)`
+  - `asm_fixed_home` (function, line 3454) `static int asm_fixed_home(int c)`
+  - `asm_emit_template` (function, line 3464) `static void asm_emit_template(void)`
+  - `asm_parse_mem` (function, line 3491) `static void asm_parse_mem(int idx, int is_out)`
+  - `asm_emit_ss` (function, line 3549) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
+  - `asm_parse_one` (function, line 3555) `static void asm_parse_one(int idx, int is_out)`
+  - `asm_assign_homes` (function, line 3623) `static void asm_assign_homes(void)`
+  - `asm_emit_all` (function, line 3685) `static void asm_emit_all(void)`
+  - `skip_gcc_attribute` (function, line 3733) `static int skip_gcc_attribute(void)`
+  - `strcmp` (function, line 3754) `strcmp(token, "returns_twice") == 0 ||
                        strcmp(token, "always_inline") == 0)`
-  - `parse_trailing_align` (function, line 3418) `static void parse_trailing_align(void)`
-  - `parse_asm_block` (function, line 3425) `static void parse_asm_block(void)`
-  - `statement` (function, line 3489) `static void statement(void)`
-  - `parse_function` (function, line 4179) `static void parse_function(const char *name, int ret_type)`
-  - `parse_enum` (function, line 4355) `static void parse_enum(void)`
-  - `skip_struct_fields` (function, line 4405) `static void skip_struct_fields(int fsize, int funs, int ffloat)`
-  - `skip_struct` (function, line 4440) `static void skip_struct(void)`
-  - `skip_typedef` (function, line 4503) `static void skip_typedef(void)`
-  - `data_directive` (function, line 4562) `static const char *data_directive(int size)`
-  - `emit_global_bss` (function, line 4570) `static void emit_global_bss(const char *name, int is_static, int size)`
-  - `emit_global_data_head` (function, line 4581) `static void emit_global_data_head(const char *name, int is_static)`
-  - `parse_const_int` (function, line 4595) `static int parse_const_int(long long *out)`
-  - `intern_string` (function, line 4618) `static int intern_string(const char *text)`
-  - `emit_global_initializer` (function, line 4635) `static int emit_global_initializer(const char *name, int is_static, int *size,
+  - `parse_trailing_align` (function, line 3783) `static void parse_trailing_align(void)`
+  - `parse_asm_block` (function, line 3790) `static void parse_asm_block(void)`
+  - `statement` (function, line 3854) `static void statement(void)`
+  - `parse_function` (function, line 4600) `static void parse_function(const char *name, int ret_type)`
+  - `parse_enum` (function, line 4811) `static void parse_enum(void)`
+  - `skip_struct_fields` (function, line 4862) `static void skip_struct_fields(int fsize, int funs, int ffloat)`
+  - `skip_struct` (function, line 4921) `static void skip_struct(void)`
+  - `record_typedef_alias` (function, line 4990) `static void record_typedef_alias(const char *name, int size, int uns, int fnptr)`
+  - `skip_typedef` (function, line 5021) `static void skip_typedef(void)`
+  - `data_directive` (function, line 5170) `static const char *data_directive(int size)`
+  - `emit_global_bss` (function, line 5178) `static void emit_global_bss(const char *name, int is_static, int size)`
+  - `emit_global_data_head` (function, line 5189) `static void emit_global_data_head(const char *name, int is_static)`
+  - `parse_const_int` (function, line 5203) `static int parse_const_int(long long *out)`
+  - `intern_string` (function, line 5226) `static int intern_string(const char *text)`
+  - `emit_global_initializer` (function, line 5243) `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...`
-  - `parse_program` (function, line 4699) `static void parse_program(void)`
-  - `emit_float_consts` (function, line 4883) `static void emit_float_consts(void)`
-  - `emit_string_pool` (function, line 4893) `static void emit_string_pool(void)`
-  - `main` (function, line 4903) `int main(int argc, char **argv)`
-  - `fprintf` (function, line 627) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
-  - `exit` (function, line 629) `exit(EXIT_FAILURE);`
-  - `fclose` (function, line 706) `fclose(f);`
-  - `fseek` (function, line 745) `fseek(f, 0, SEEK_END);`
-  - `rewind` (function, line 751) `rewind(f);`
-  - `free` (function, line 755) `free(buf);`
-  - `snprintf` (function, line 978) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
-  - `fputc` (function, line 1520) `fputc('%', output);`
-  - `strncpy` (function, line 1598) `strncpy(d, name, MAX_IDENT_LEN - 1);`
-  - `memcpy` (function, line 2135) `memcpy(apname, token, nlen);`
-  - `strcpy` (function, line 2843) `strcpy(saved_token, token);`
-  - `fputs` (function, line 3136) `fputs(asm_text[oi], output);`
+  - `parse_program` (function, line 5307) `static void parse_program(void)`
+  - `emit_float_consts` (function, line 5527) `static void emit_float_consts(void)`
+  - `emit_string_pool` (function, line 5537) `static void emit_string_pool(void)`
+  - `main` (function, line 5547) `int main(int argc, char **argv)`
+  - `fprintf` (function, line 635) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
+  - `exit` (function, line 637) `exit(EXIT_FAILURE);`
+  - `fclose` (function, line 714) `fclose(f);`
+  - `fseek` (function, line 753) `fseek(f, 0, SEEK_END);`
+  - `rewind` (function, line 759) `rewind(f);`
+  - `free` (function, line 763) `free(buf);`
+  - `snprintf` (function, line 986) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
+  - `fputc` (function, line 1586) `fputc('%', output);`
+  - `strncpy` (function, line 1664) `strncpy(d, name, MAX_IDENT_LEN - 1);`
+  - `memcpy` (function, line 1783) `memcpy(out_name, token, nlen);`
+  - `strcpy` (function, line 1831) `strcpy(save_token, token);`
+  - `fputs` (function, line 3480) `fputs(asm_text[oi], output);`
+  - `pointer` (function, line 4676) `subscript yields another pointer (stride 8) whose pointee is still the base type, so char** keeps char as the pointee and elem_ptr marks the 8-byte first stride. */ add_symbol(is_fn ? fn_name : token,`
   - `MAX_TOKEN_LEN` (macro, line 14) `#define MAX_TOKEN_LEN`
   - `MAX_SYMBOLS` (macro, line 16) `#define MAX_SYMBOLS`
   - `MAX_IDENT_LEN` (macro, line 17) `#define MAX_IDENT_LEN`
@@ -147,19 +157,20 @@
   - `STACK_ALIGN` (macro, line 21) `#define STACK_ALIGN`
   - `LEX_KW_CAP` (macro, line 80) `#define LEX_KW_CAP`
   - `LEX_KW_BLOB` (macro, line 82) `#define LEX_KW_BLOB`
-  - `HASH_TABLE_SIZE` (macro, line 131) `#define HASH_TABLE_SIZE`
-  - `MAX_SCOPE_DEPTH` (macro, line 133) `#define MAX_SCOPE_DEPTH`
-  - `MAX_FLOAT_CONSTS` (macro, line 162) `#define MAX_FLOAT_CONSTS`
-  - `MAX_CASES_PER_SWITCH` (macro, line 167) `#define MAX_CASES_PER_SWITCH`
-  - `MAX_STRINGS` (macro, line 180) `#define MAX_STRINGS`
-  - `MAX_PTR_INITS` (macro, line 189) `#define MAX_PTR_INITS`
-  - `MAX_STRUCT_MEMBERS` (macro, line 199) `#define MAX_STRUCT_MEMBERS`
-  - `MAX_IF_NESTING` (macro, line 208) `#define MAX_IF_NESTING`
-  - `CONST_VAR_FLAG` (macro, line 210) `#define CONST_VAR_FLAG`
-  - `MAX_MACROS` (macro, line 216) `#define MAX_MACROS`
-  - `ASM_MAX_OPS` (macro, line 3044) `#define ASM_MAX_OPS`
-  - `ASM_TMPL_SZ` (macro, line 3046) `#define ASM_TMPL_SZ`
-  - `ASM_TXT_SZ` (macro, line 3047) `#define ASM_TXT_SZ`
+  - `HASH_TABLE_SIZE` (macro, line 132) `#define HASH_TABLE_SIZE`
+  - `MAX_SCOPE_DEPTH` (macro, line 134) `#define MAX_SCOPE_DEPTH`
+  - `MAX_FLOAT_CONSTS` (macro, line 165) `#define MAX_FLOAT_CONSTS`
+  - `MAX_CASES_PER_SWITCH` (macro, line 170) `#define MAX_CASES_PER_SWITCH`
+  - `MAX_STRINGS` (macro, line 183) `#define MAX_STRINGS`
+  - `MAX_PTR_INITS` (macro, line 192) `#define MAX_PTR_INITS`
+  - `MAX_STRUCT_MEMBERS` (macro, line 202) `#define MAX_STRUCT_MEMBERS`
+  - `MAX_DEFINED_FUNCS` (macro, line 212) `#define MAX_DEFINED_FUNCS`
+  - `MAX_IF_NESTING` (macro, line 216) `#define MAX_IF_NESTING`
+  - `CONST_VAR_FLAG` (macro, line 218) `#define CONST_VAR_FLAG`
+  - `MAX_MACROS` (macro, line 224) `#define MAX_MACROS`
+  - `ASM_MAX_OPS` (macro, line 3378) `#define ASM_MAX_OPS`
+  - `ASM_TMPL_SZ` (macro, line 3380) `#define ASM_TMPL_SZ`
+  - `ASM_TXT_SZ` (macro, line 3381) `#define ASM_TXT_SZ`
 
 ## minigccg2.s
 - Layer: utility

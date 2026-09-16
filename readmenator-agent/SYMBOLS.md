@@ -2,162 +2,173 @@
 
 | Symbol | Kind | File:Line | Signature |
 |--------|------|-----------|-----------|
-| `ASM_MAX_OPS` | macro | `minigcc.c:3044` | `#define ASM_MAX_OPS` |
-| `ASM_TMPL_SZ` | macro | `minigcc.c:3046` | `#define ASM_TMPL_SZ` |
-| `ASM_TXT_SZ` | macro | `minigcc.c:3047` | `#define ASM_TXT_SZ` |
-| `CONST_VAR_FLAG` | macro | `minigcc.c:210` | `#define CONST_VAR_FLAG` |
+| `ASM_MAX_OPS` | macro | `minigcc.c:3378` | `#define ASM_MAX_OPS` |
+| `ASM_TMPL_SZ` | macro | `minigcc.c:3380` | `#define ASM_TMPL_SZ` |
+| `ASM_TXT_SZ` | macro | `minigcc.c:3381` | `#define ASM_TXT_SZ` |
+| `CONST_VAR_FLAG` | macro | `minigcc.c:218` | `#define CONST_VAR_FLAG` |
 | `FileContext` | struct | `minigcc.c:96` | `` |
-| `HASH_TABLE_SIZE` | macro | `minigcc.c:131` | `#define HASH_TABLE_SIZE` |
+| `HASH_TABLE_SIZE` | macro | `minigcc.c:132` | `#define HASH_TABLE_SIZE` |
 | `LEX_KW_BLOB` | macro | `minigcc.c:82` | `#define LEX_KW_BLOB` |
 | `LEX_KW_CAP` | macro | `minigcc.c:80` | `#define LEX_KW_CAP` |
-| `MAX_CASES_PER_SWITCH` | macro | `minigcc.c:167` | `#define MAX_CASES_PER_SWITCH` |
-| `MAX_FLOAT_CONSTS` | macro | `minigcc.c:162` | `#define MAX_FLOAT_CONSTS` |
+| `MAX_CASES_PER_SWITCH` | macro | `minigcc.c:170` | `#define MAX_CASES_PER_SWITCH` |
+| `MAX_DEFINED_FUNCS` | macro | `minigcc.c:212` | `#define MAX_DEFINED_FUNCS` |
+| `MAX_FLOAT_CONSTS` | macro | `minigcc.c:165` | `#define MAX_FLOAT_CONSTS` |
 | `MAX_IDENT_LEN` | macro | `minigcc.c:17` | `#define MAX_IDENT_LEN` |
-| `MAX_IF_NESTING` | macro | `minigcc.c:208` | `#define MAX_IF_NESTING` |
+| `MAX_IF_NESTING` | macro | `minigcc.c:216` | `#define MAX_IF_NESTING` |
 | `MAX_INCLUDE_DEPTH` | macro | `minigcc.c:19` | `#define MAX_INCLUDE_DEPTH` |
-| `MAX_MACROS` | macro | `minigcc.c:216` | `#define MAX_MACROS` |
+| `MAX_MACROS` | macro | `minigcc.c:224` | `#define MAX_MACROS` |
 | `MAX_PROCESSED_FILES` | macro | `minigcc.c:20` | `#define MAX_PROCESSED_FILES` |
-| `MAX_PTR_INITS` | macro | `minigcc.c:189` | `#define MAX_PTR_INITS` |
-| `MAX_SCOPE_DEPTH` | macro | `minigcc.c:133` | `#define MAX_SCOPE_DEPTH` |
+| `MAX_PTR_INITS` | macro | `minigcc.c:192` | `#define MAX_PTR_INITS` |
+| `MAX_SCOPE_DEPTH` | macro | `minigcc.c:134` | `#define MAX_SCOPE_DEPTH` |
 | `MAX_SOURCE_SIZE` | macro | `minigcc.c:18` | `#define MAX_SOURCE_SIZE` |
-| `MAX_STRINGS` | macro | `minigcc.c:180` | `#define MAX_STRINGS` |
-| `MAX_STRUCT_MEMBERS` | macro | `minigcc.c:199` | `#define MAX_STRUCT_MEMBERS` |
+| `MAX_STRINGS` | macro | `minigcc.c:183` | `#define MAX_STRINGS` |
+| `MAX_STRUCT_MEMBERS` | macro | `minigcc.c:202` | `#define MAX_STRUCT_MEMBERS` |
 | `MAX_SYMBOLS` | macro | `minigcc.c:16` | `#define MAX_SYMBOLS` |
 | `MAX_TOKEN_LEN` | macro | `minigcc.c:14` | `#define MAX_TOKEN_LEN` |
-| `Macro` | struct | `minigcc.c:308` | `` |
-| `ParserState` | struct | `minigcc.c:220` | `` |
+| `Macro` | struct | `minigcc.c:316` | `` |
+| `ParserState` | struct | `minigcc.c:228` | `` |
 | `STACK_ALIGN` | macro | `minigcc.c:21` | `#define STACK_ALIGN` |
 | `Symbol` | struct | `minigcc.c:109` | `` |
-| `add_macro` | function | `minigcc.c:323` | `static void add_macro(const char *name, int value)` |
-| `add_symbol` | function | `minigcc.c:1592` | `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...` |
-| `additive_expr` | function | `minigcc.c:2521` | `static void additive_expr(void)` |
-| `arg_reg` | function | `minigcc.c:1666` | `static const char *arg_reg(int i)` |
-| `asm_assign_homes` | function | `minigcc.c:3275` | `static void asm_assign_homes(void)` |
-| `asm_emit_all` | function | `minigcc.c:3320` | `static void asm_emit_all(void)` |
-| `asm_emit_ss` | function | `minigcc.c:3205` | `static void asm_emit_ss(const char *fmt, const char *a, const char *b)` |
-| `asm_emit_template` | function | `minigcc.c:3120` | `static void asm_emit_template(void)` |
-| `asm_fixed_home` | function | `minigcc.c:3112` | `static int asm_fixed_home(int c)` |
-| `asm_home_text` | function | `minigcc.c:3068` | `static void asm_home_text(int home, char *buf)` |
-| `asm_parse_mem` | function | `minigcc.c:3147` | `static void asm_parse_mem(int idx, int is_out)` |
-| `asm_parse_one` | function | `minigcc.c:3211` | `static void asm_parse_one(int idx, int is_out)` |
-| `asm_reg_sized` | function | `minigcc.c:3076` | `static void asm_reg_sized(int home, int size, char *buf)` |
-| `asm_scratch` | function | `minigcc.c:3059` | `static const char *asm_scratch(int i)` |
-| `assignment_expr` | function | `minigcc.c:2838` | `static void assignment_expr(void)` |
-| `bitwise_and_expr` | function | `minigcc.c:2703` | `static void bitwise_and_expr(void)` |
-| `bitwise_or_expr` | function | `minigcc.c:2727` | `static void bitwise_or_expr(void)` |
-| `bitwise_xor_expr` | function | `minigcc.c:2715` | `static void bitwise_xor_expr(void)` |
-| `conditional_expr` | function | `minigcc.c:2779` | `static void conditional_expr(void)` |
-| `data_directive` | function | `minigcc.c:4562` | `static const char *data_directive(int size)` |
-| `emit` | function | `minigcc.c:1515` | `static void emit(const char *s)` |
-| `emit_asciz_body` | function | `minigcc.c:1557` | `static void emit_asciz_body(const char *s)` |
-| `emit_compound_op` | function | `minigcc.c:2797` | `static void emit_compound_op(int op, int asize)` |
-| `emit_float_consts` | function | `minigcc.c:4883` | `static void emit_float_consts(void)` |
-| `emit_global_bss` | function | `minigcc.c:4570` | `static void emit_global_bss(const char *name, int is_static, int size)` |
-| `emit_global_data_head` | function | `minigcc.c:4581` | `static void emit_global_data_head(const char *name, int is_static)` |
-| `emit_global_initializer` | function | `minigcc.c:4635` | `static int emit_global_initializer(const char *name, int is_static, int *size,
+| `add_macro` | function | `minigcc.c:331` | `static void add_macro(const char *name, int value)` |
+| `add_symbol` | function | `minigcc.c:1658` | `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...` |
+| `additive_expr` | function | `minigcc.c:2832` | `static void additive_expr(void)` |
+| `arg_reg` | function | `minigcc.c:1739` | `static const char *arg_reg(int i)` |
+| `asm_assign_homes` | function | `minigcc.c:3623` | `static void asm_assign_homes(void)` |
+| `asm_emit_all` | function | `minigcc.c:3685` | `static void asm_emit_all(void)` |
+| `asm_emit_ss` | function | `minigcc.c:3549` | `static void asm_emit_ss(const char *fmt, const char *a, const char *b)` |
+| `asm_emit_template` | function | `minigcc.c:3464` | `static void asm_emit_template(void)` |
+| `asm_fixed_home` | function | `minigcc.c:3454` | `static int asm_fixed_home(int c)` |
+| `asm_home_text` | function | `minigcc.c:3402` | `static void asm_home_text(int home, char *buf)` |
+| `asm_parse_mem` | function | `minigcc.c:3491` | `static void asm_parse_mem(int idx, int is_out)` |
+| `asm_parse_one` | function | `minigcc.c:3555` | `static void asm_parse_one(int idx, int is_out)` |
+| `asm_reg_sized` | function | `minigcc.c:3412` | `static void asm_reg_sized(int home, int size, char *buf)` |
+| `asm_scratch` | function | `minigcc.c:3393` | `static const char *asm_scratch(int i)` |
+| `assignment_expr` | function | `minigcc.c:3172` | `static void assignment_expr(void)` |
+| `bitwise_and_expr` | function | `minigcc.c:3024` | `static void bitwise_and_expr(void)` |
+| `bitwise_or_expr` | function | `minigcc.c:3056` | `static void bitwise_or_expr(void)` |
+| `bitwise_xor_expr` | function | `minigcc.c:3040` | `static void bitwise_xor_expr(void)` |
+| `conditional_expr` | function | `minigcc.c:3112` | `static void conditional_expr(void)` |
+| `data_directive` | function | `minigcc.c:5170` | `static const char *data_directive(int size)` |
+| `emit` | function | `minigcc.c:1581` | `static void emit(const char *s)` |
+| `emit_asciz_body` | function | `minigcc.c:1623` | `static void emit_asciz_body(const char *s)` |
+| `emit_compound_op` | function | `minigcc.c:3131` | `static void emit_compound_op(int op, int asize)` |
+| `emit_float_consts` | function | `minigcc.c:5527` | `static void emit_float_consts(void)` |
+| `emit_global_bss` | function | `minigcc.c:5178` | `static void emit_global_bss(const char *name, int is_static, int size)` |
+| `emit_global_data_head` | function | `minigcc.c:5189` | `static void emit_global_data_head(const char *name, int is_static)` |
+| `emit_global_initializer` | function | `minigcc.c:5243` | `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...` |
-| `emit_i` | function | `minigcc.c:1529` | `static void emit_i(const char *fmt, int v)` |
-| `emit_is` | function | `minigcc.c:1541` | `static void emit_is(const char *fmt, int v, const char *s)` |
-| `emit_label` | function | `minigcc.c:1575` | `static void emit_label(int label)` |
-| `emit_s` | function | `minigcc.c:1535` | `static void emit_s(const char *fmt, const char *s)` |
-| `emit_si` | function | `minigcc.c:1547` | `static void emit_si(const char *fmt, const char *s, int v)` |
-| `emit_string_pool` | function | `minigcc.c:4893` | `static void emit_string_pool(void)` |
-| `equality_expr` | function | `minigcc.c:2654` | `static void equality_expr(void)` |
-| `error` | function | `minigcc.c:625` | `static void error(const char *msg)` |
-| `exit` | function | `minigcc.c:629` | `exit(EXIT_FAILURE);` |
-| `fclose` | function | `minigcc.c:706` | `fclose(f);` |
-| `find_macro` | function | `minigcc.c:314` | `static int find_macro(const char *name)` |
-| `find_symbol` | function | `minigcc.c:1582` | `static int find_symbol(const char *name)` |
-| `fprintf` | function | `minigcc.c:627` | `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);` |
-| `fputc` | function | `minigcc.c:1520` | `fputc('%', output);` |
-| `fputs` | function | `minigcc.c:3136` | `fputs(asm_text[oi], output);` |
-| `free` | function | `minigcc.c:755` | `free(buf);` |
-| `fseek` | function | `minigcc.c:745` | `fseek(f, 0, SEEK_END);` |
-| `get_dir_from_path` | function | `minigcc.c:683` | `static void get_dir_from_path(const char *path, char *dir, int dir_sz)` |
-| `handle_postfix` | function | `minigcc.c:2281` | `static void handle_postfix(int is_lvalue)` |
-| `hash_init` | function | `minigcc.c:775` | `static void hash_init(void)` |
-| `hash_name` | function | `minigcc.c:766` | `static int hash_name(const char *name)` |
-| `intern_string` | function | `minigcc.c:4618` | `static int intern_string(const char *text)` |
-| `is_file_processed` | function | `minigcc.c:662` | `static int is_file_processed(const char *path)` |
-| `lex_fail` | function | `minigcc.c:863` | `static void lex_fail(const char *msg, char *start, char *end)` |
-| `lex_hex_val` | function | `minigcc.c:950` | `static int lex_hex_val(int c)` |
-| `lex_init_keywords` | function | `minigcc.c:886` | `static void lex_init_keywords(void)` |
-| `lex_is_int_suffix` | function | `minigcc.c:957` | `static int lex_is_int_suffix(int c)` |
-| `lex_kw_add` | function | `minigcc.c:873` | `static void lex_kw_add(const char *name, int id)` |
-| `lex_kw_lookup` | function | `minigcc.c:926` | `static int lex_kw_lookup(void)` |
-| `lex_match_op` | function | `minigcc.c:938` | `static int lex_match_op(const char *op, int id)` |
-| `lex_number` | function | `minigcc.c:963` | `static void lex_number(void)` |
-| `libc_global_name` | function | `minigcc.c:1676` | `static const char *libc_global_name(int i)` |
-| `logical_and_expr` | function | `minigcc.c:2739` | `static void logical_and_expr(void)` |
-| `logical_or_expr` | function | `minigcc.c:2759` | `static void logical_or_expr(void)` |
-| `lvalue_address` | function | `minigcc.c:2224` | `static void lvalue_address(void)` |
-| `macro_add` | function | `minigcc.c:476` | `static int macro_add(void)` |
-| `macro_bitand` | function | `minigcc.c:550` | `static int macro_bitand(void)` |
-| `macro_bitor` | function | `minigcc.c:578` | `static int macro_bitor(void)` |
-| `macro_bitxor` | function | `minigcc.c:564` | `static int macro_bitxor(void)` |
-| `macro_cmp` | function | `minigcc.c:510` | `static int macro_cmp(void)` |
-| `macro_digit_val` | function | `minigcc.c:361` | `static int macro_digit_val(int c)` |
-| `macro_eq` | function | `minigcc.c:533` | `static int macro_eq(void)` |
-| `macro_fold` | function | `minigcc.c:620` | `static int macro_fold(void)` |
-| `macro_hex_digit` | function | `minigcc.c:354` | `static int macro_hex_digit(int c)` |
-| `macro_logand` | function | `minigcc.c:592` | `static int macro_logand(void)` |
-| `macro_mul` | function | `minigcc.c:451` | `static int macro_mul(void)` |
-| `macro_or_expr` | function | `minigcc.c:606` | `static int macro_or_expr(void)` |
-| `macro_primary` | function | `minigcc.c:368` | `static int macro_primary(void)` |
-| `macro_shift` | function | `minigcc.c:493` | `static int macro_shift(void)` |
-| `macro_skipws` | function | `minigcc.c:350` | `static void macro_skipws(void)` |
-| `macro_unary` | function | `minigcc.c:442` | `static int macro_unary(void)` |
-| `main` | function | `minigcc.c:4903` | `int main(int argc, char **argv)` |
-| `mark_file_processed` | function | `minigcc.c:671` | `static void mark_file_processed(const char *path)` |
-| `match` | function | `minigcc.c:1510` | `static void match(int expected)` |
-| `memcpy` | function | `minigcc.c:2135` | `memcpy(apname, token, nlen);` |
-| `multiplicative_expr` | function | `minigcc.c:2457` | `static void multiplicative_expr(void)` |
-| `my_isalnum` | function | `minigcc.c:857` | `static int my_isalnum(int c)` |
-| `my_isalpha` | function | `minigcc.c:846` | `static int my_isalpha(int c)` |
-| `my_isdigit` | function | `minigcc.c:852` | `static int my_isdigit(int c)` |
-| `my_isspace` | function | `minigcc.c:836` | `static int my_isspace(int c)` |
-| `next_token` | function | `minigcc.c:1082` | `static void next_token(void)` |
-| `parse_asm_block` | function | `minigcc.c:3425` | `static void parse_asm_block(void)` |
-| `parse_const_int` | function | `minigcc.c:4595` | `static int parse_const_int(long long *out)` |
-| `parse_enum` | function | `minigcc.c:4355` | `static void parse_enum(void)` |
-| `parse_function` | function | `minigcc.c:4179` | `static void parse_function(const char *name, int ret_type)` |
-| `parse_program` | function | `minigcc.c:4699` | `static void parse_program(void)` |
-| `parse_sync_call` | function | `minigcc.c:2092` | `static void parse_sync_call(const char *name)` |
-| `parse_trailing_align` | function | `minigcc.c:3418` | `static void parse_trailing_align(void)` |
-| `parse_va_arg` | function | `minigcc.c:2159` | `static void parse_va_arg(void)` |
-| `parse_va_end` | function | `minigcc.c:2209` | `static void parse_va_end(void)` |
-| `parse_va_start` | function | `minigcc.c:2126` | `static void parse_va_start(void)` |
-| `pop_scope` | function | `minigcc.c:788` | `static void pop_scope(void)` |
-| `push_scope` | function | `minigcc.c:780` | `static void push_scope(void)` |
-| `read_include_file` | function | `minigcc.c:741` | `static char *read_include_file(const char *path)` |
-| `relational_expr` | function | `minigcc.c:2601` | `static void relational_expr(void)` |
-| `resolve_local_include` | function | `minigcc.c:702` | `static char *resolve_local_include(const char *target)` |
-| `restore_parser_state` | function | `minigcc.c:275` | `static void restore_parser_state(ParserState *state)` |
-| `rewind` | function | `minigcc.c:751` | `rewind(f);` |
-| `safe_malloc` | function | `minigcc.c:631` | `static void *safe_malloc(size_t size)` |
-| `safe_strcpy` | function | `minigcc.c:640` | `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)` |
-| `safe_strtoll` | function | `minigcc.c:649` | `static long safe_strtoll(const char *s)` |
-| `save_parser_state` | function | `minigcc.c:247` | `static void save_parser_state(ParserState *state)` |
-| `shift_expr` | function | `minigcc.c:2582` | `static void shift_expr(void)` |
-| `skip_gcc_attribute` | function | `minigcc.c:3368` | `static int skip_gcc_attribute(void)` |
-| `skip_struct` | function | `minigcc.c:4440` | `static void skip_struct(void)` |
-| `skip_struct_fields` | function | `minigcc.c:4405` | `static void skip_struct_fields(int fsize, int funs, int ffloat)` |
-| `skip_typedef` | function | `minigcc.c:4503` | `static void skip_typedef(void)` |
-| `snprintf` | function | `minigcc.c:978` | `snprintf(token, MAX_TOKEN_LEN, "%ld", v);` |
-| `statement` | function | `minigcc.c:3489` | `static void statement(void)` |
-| `strcmp` | function | `minigcc.c:1766` | `strcmp(id_name, "va_start") == 0)` |
-| `strcmp` | function | `minigcc.c:1769` | `strcmp(id_name, "va_end") == 0)` |
-| `strcmp` | function | `minigcc.c:1772` | `strcmp(id_name, "va_arg") == 0)` |
-| `strcmp` | function | `minigcc.c:3389` | `strcmp(token, "returns_twice") == 0 \|\|
+| `emit_i` | function | `minigcc.c:1595` | `static void emit_i(const char *fmt, int v)` |
+| `emit_is` | function | `minigcc.c:1607` | `static void emit_is(const char *fmt, int v, const char *s)` |
+| `emit_label` | function | `minigcc.c:1641` | `static void emit_label(int label)` |
+| `emit_s` | function | `minigcc.c:1601` | `static void emit_s(const char *fmt, const char *s)` |
+| `emit_si` | function | `minigcc.c:1613` | `static void emit_si(const char *fmt, const char *s, int v)` |
+| `emit_spill_reverse` | function | `minigcc.c:1859` | `static void emit_spill_reverse(int argc)` |
+| `emit_string_pool` | function | `minigcc.c:5537` | `static void emit_string_pool(void)` |
+| `equality_expr` | function | `minigcc.c:2974` | `static void equality_expr(void)` |
+| `error` | function | `minigcc.c:633` | `static void error(const char *msg)` |
+| `exit` | function | `minigcc.c:637` | `exit(EXIT_FAILURE);` |
+| `fclose` | function | `minigcc.c:714` | `fclose(f);` |
+| `find_macro` | function | `minigcc.c:322` | `static int find_macro(const char *name)` |
+| `find_symbol` | function | `minigcc.c:1648` | `static int find_symbol(const char *name)` |
+| `fprintf` | function | `minigcc.c:635` | `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);` |
+| `fputc` | function | `minigcc.c:1586` | `fputc('%', output);` |
+| `fputs` | function | `minigcc.c:3480` | `fputs(asm_text[oi], output);` |
+| `free` | function | `minigcc.c:763` | `free(buf);` |
+| `fseek` | function | `minigcc.c:753` | `fseek(f, 0, SEEK_END);` |
+| `get_dir_from_path` | function | `minigcc.c:691` | `static void get_dir_from_path(const char *path, char *dir, int dir_sz)` |
+| `handle_postfix` | function | `minigcc.c:2563` | `static void handle_postfix(int is_lvalue)` |
+| `hash_init` | function | `minigcc.c:783` | `static void hash_init(void)` |
+| `hash_name` | function | `minigcc.c:774` | `static int hash_name(const char *name)` |
+| `intern_string` | function | `minigcc.c:5226` | `static int intern_string(const char *text)` |
+| `is_defined_func` | function | `minigcc.c:1760` | `static int is_defined_func(const char *name)` |
+| `is_file_processed` | function | `minigcc.c:670` | `static int is_file_processed(const char *path)` |
+| `lex_fail` | function | `minigcc.c:871` | `static void lex_fail(const char *msg, char *start, char *end)` |
+| `lex_hex_val` | function | `minigcc.c:958` | `static int lex_hex_val(int c)` |
+| `lex_init_keywords` | function | `minigcc.c:894` | `static void lex_init_keywords(void)` |
+| `lex_is_int_suffix` | function | `minigcc.c:965` | `static int lex_is_int_suffix(int c)` |
+| `lex_kw_add` | function | `minigcc.c:881` | `static void lex_kw_add(const char *name, int id)` |
+| `lex_kw_lookup` | function | `minigcc.c:934` | `static int lex_kw_lookup(void)` |
+| `lex_match_op` | function | `minigcc.c:946` | `static int lex_match_op(const char *op, int id)` |
+| `lex_number` | function | `minigcc.c:971` | `static void lex_number(void)` |
+| `libc_global_name` | function | `minigcc.c:1911` | `static const char *libc_global_name(int i)` |
+| `logical_and_expr` | function | `minigcc.c:3072` | `static void logical_and_expr(void)` |
+| `logical_or_expr` | function | `minigcc.c:3092` | `static void logical_or_expr(void)` |
+| `lvalue_address` | function | `minigcc.c:2506` | `static void lvalue_address(void)` |
+| `macro_add` | function | `minigcc.c:484` | `static int macro_add(void)` |
+| `macro_bitand` | function | `minigcc.c:558` | `static int macro_bitand(void)` |
+| `macro_bitor` | function | `minigcc.c:586` | `static int macro_bitor(void)` |
+| `macro_bitxor` | function | `minigcc.c:572` | `static int macro_bitxor(void)` |
+| `macro_cmp` | function | `minigcc.c:518` | `static int macro_cmp(void)` |
+| `macro_digit_val` | function | `minigcc.c:369` | `static int macro_digit_val(int c)` |
+| `macro_eq` | function | `minigcc.c:541` | `static int macro_eq(void)` |
+| `macro_fold` | function | `minigcc.c:628` | `static int macro_fold(void)` |
+| `macro_hex_digit` | function | `minigcc.c:362` | `static int macro_hex_digit(int c)` |
+| `macro_logand` | function | `minigcc.c:600` | `static int macro_logand(void)` |
+| `macro_mul` | function | `minigcc.c:459` | `static int macro_mul(void)` |
+| `macro_or_expr` | function | `minigcc.c:614` | `static int macro_or_expr(void)` |
+| `macro_primary` | function | `minigcc.c:376` | `static int macro_primary(void)` |
+| `macro_shift` | function | `minigcc.c:501` | `static int macro_shift(void)` |
+| `macro_skipws` | function | `minigcc.c:358` | `static void macro_skipws(void)` |
+| `macro_unary` | function | `minigcc.c:450` | `static int macro_unary(void)` |
+| `main` | function | `minigcc.c:5547` | `int main(int argc, char **argv)` |
+| `mark_file_processed` | function | `minigcc.c:679` | `static void mark_file_processed(const char *path)` |
+| `match` | function | `minigcc.c:1576` | `static void match(int expected)` |
+| `memcpy` | function | `minigcc.c:1783` | `memcpy(out_name, token, nlen);` |
+| `multiplicative_expr` | function | `minigcc.c:2764` | `static void multiplicative_expr(void)` |
+| `my_isalnum` | function | `minigcc.c:865` | `static int my_isalnum(int c)` |
+| `my_isalpha` | function | `minigcc.c:854` | `static int my_isalpha(int c)` |
+| `my_isdigit` | function | `minigcc.c:860` | `static int my_isdigit(int c)` |
+| `my_isspace` | function | `minigcc.c:844` | `static int my_isspace(int c)` |
+| `next_token` | function | `minigcc.c:1090` | `static void next_token(void)` |
+| `note_defined_func` | function | `minigcc.c:1747` | `static void note_defined_func(const char *name)` |
+| `parse_asm_block` | function | `minigcc.c:3790` | `static void parse_asm_block(void)` |
+| `parse_const_int` | function | `minigcc.c:5203` | `static int parse_const_int(long long *out)` |
+| `parse_enum` | function | `minigcc.c:4811` | `static void parse_enum(void)` |
+| `parse_fnptr_declarator` | function | `minigcc.c:1770` | `static int parse_fnptr_declarator(char *out_name, int *out_count)` |
+| `parse_function` | function | `minigcc.c:4600` | `static void parse_function(const char *name, int ret_type)` |
+| `parse_indirect_call` | function | `minigcc.c:1871` | `static void parse_indirect_call(void)` |
+| `parse_program` | function | `minigcc.c:5307` | `static void parse_program(void)` |
+| `parse_sync_call` | function | `minigcc.c:2374` | `static void parse_sync_call(const char *name)` |
+| `parse_trailing_align` | function | `minigcc.c:3783` | `static void parse_trailing_align(void)` |
+| `parse_va_arg` | function | `minigcc.c:2441` | `static void parse_va_arg(void)` |
+| `parse_va_end` | function | `minigcc.c:2491` | `static void parse_va_end(void)` |
+| `parse_va_start` | function | `minigcc.c:2408` | `static void parse_va_start(void)` |
+| `peek_call_argc` | function | `minigcc.c:1821` | `static int peek_call_argc(void)` |
+| `pointer` | function | `minigcc.c:4676` | `subscript yields another pointer (stride 8) whose pointee is still the base type, so char** keeps char as the pointee an` |
+| `pop_scope` | function | `minigcc.c:796` | `static void pop_scope(void)` |
+| `push_scope` | function | `minigcc.c:788` | `static void push_scope(void)` |
+| `read_include_file` | function | `minigcc.c:749` | `static char *read_include_file(const char *path)` |
+| `record_typedef_alias` | function | `minigcc.c:4990` | `static void record_typedef_alias(const char *name, int size, int uns, int fnptr)` |
+| `relational_expr` | function | `minigcc.c:2920` | `static void relational_expr(void)` |
+| `resolve_local_include` | function | `minigcc.c:710` | `static char *resolve_local_include(const char *target)` |
+| `restore_parser_state` | function | `minigcc.c:283` | `static void restore_parser_state(ParserState *state)` |
+| `rewind` | function | `minigcc.c:759` | `rewind(f);` |
+| `safe_malloc` | function | `minigcc.c:639` | `static void *safe_malloc(size_t size)` |
+| `safe_strcpy` | function | `minigcc.c:648` | `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)` |
+| `safe_strtoll` | function | `minigcc.c:657` | `static long safe_strtoll(const char *s)` |
+| `save_parser_state` | function | `minigcc.c:255` | `static void save_parser_state(ParserState *state)` |
+| `shift_expr` | function | `minigcc.c:2897` | `static void shift_expr(void)` |
+| `skip_gcc_attribute` | function | `minigcc.c:3733` | `static int skip_gcc_attribute(void)` |
+| `skip_struct` | function | `minigcc.c:4921` | `static void skip_struct(void)` |
+| `skip_struct_fields` | function | `minigcc.c:4862` | `static void skip_struct_fields(int fsize, int funs, int ffloat)` |
+| `skip_typedef` | function | `minigcc.c:5021` | `static void skip_typedef(void)` |
+| `snprintf` | function | `minigcc.c:986` | `snprintf(token, MAX_TOKEN_LEN, "%ld", v);` |
+| `statement` | function | `minigcc.c:3854` | `static void statement(void)` |
+| `strcmp` | function | `minigcc.c:2008` | `strcmp(id_name, "__sync_lock_test_and_set") == 0 \|\|
+                strcmp(id_name, "__sync_lock_...` |
+| `strcmp` | function | `minigcc.c:2013` | `strcmp(id_name, "va_start") == 0)` |
+| `strcmp` | function | `minigcc.c:2016` | `strcmp(id_name, "va_end") == 0)` |
+| `strcmp` | function | `minigcc.c:2019` | `strcmp(id_name, "va_arg") == 0)` |
+| `strcmp` | function | `minigcc.c:3754` | `strcmp(token, "returns_twice") == 0 \|\|
                        strcmp(token, "always_inline") == 0)` |
-| `strcpy` | function | `minigcc.c:2843` | `strcpy(saved_token, token);` |
-| `strncpy` | function | `minigcc.c:1598` | `strncpy(d, name, MAX_IDENT_LEN - 1);` |
-| `truncate_symbols` | function | `minigcc.c:818` | `static void truncate_symbols(int start_idx)` |
-| `typedef_name` | function | `minigcc.c:1688` | `static const char *typedef_name(int i)` |
-| `typedef_size` | function | `minigcc.c:1704` | `static int typedef_size(int i)` |
-| `typedef_uns` | function | `minigcc.c:1720` | `static int typedef_uns(int i)` |
-| `unary` | function | `minigcc.c:1729` | `static void unary(void)` |
-| `unary_expr` | function | `minigcc.c:2442` | `static void unary_expr(void)` |
+| `strcpy` | function | `minigcc.c:1831` | `strcpy(save_token, token);` |
+| `strncpy` | function | `minigcc.c:1664` | `strncpy(d, name, MAX_IDENT_LEN - 1);` |
+| `truncate_symbols` | function | `minigcc.c:826` | `static void truncate_symbols(int start_idx)` |
+| `typedef_name` | function | `minigcc.c:1923` | `static const char *typedef_name(int i)` |
+| `typedef_size` | function | `minigcc.c:1939` | `static int typedef_size(int i)` |
+| `typedef_uns` | function | `minigcc.c:1955` | `static int typedef_uns(int i)` |
+| `unary` | function | `minigcc.c:1964` | `static void unary(void)` |
+| `unary_expr` | function | `minigcc.c:2749` | `static void unary_expr(void)` |
 | `_start` | function | `minigccg2.s:51933` | `` |
 | `add_macro` | function | `minigccg2.s:730` | `` |
 | `add_symbol` | function | `minigccg2.s:13515` | `` |
@@ -783,16 +794,48 @@
 | `volatile` | function | `tests/neg_asm2.c:4` | `__asm__ volatile("nop" : "=a"(a), "=a"(b));` |
 | `main` | function | `tests/neg_asm3.c:1` | `int main(void)` |
 | `volatile` | function | `tests/neg_asm3.c:3` | `__asm__ volatile("nop" : "+r"(a));` |
+| `main` | function | `tests/neg_asm_ds.c:7` | `int main(void)` |
+| `printf` | function | `tests/neg_asm_ds.c:9` | `printf("%ld\n", sum_d5(1, 2, 3, 4, 5, 6));` |
+| `sum_d5` | function | `tests/neg_asm_ds.c:1` | `long sum_d5(long d, long a, long b, long c, long e, long f)` |
 | `main` | function | `tests/neg_attr.c:2` | `int main(void)` |
 | `main` | function | `tests/neg_comment.c:1` | `int main(void)` |
 | `main` | function | `tests/neg_float.c:1` | `int main(void)` |
+| `add2` | function | `tests/neg_fnptr.c:2` | `long add2(long a, long b)` |
+| `long` | function | `tests/neg_fnptr.c:8` | `long (*f)(long, long);` |
+| `main` | function | `tests/neg_fnptr.c:6` | `int main(void)` |
+| `printf` | function | `tests/neg_fnptr.c:12` | `printf("%ld\n", x);` |
+| `main` | function | `tests/neg_fnptr_call.c:2` | `int main(void)` |
+| `printf` | function | `tests/neg_fnptr_call.c:8` | `printf("%ld\n", y);` |
+| `add2` | function | `tests/neg_fnptr_cmp.c:2` | `long add2(long a, long b)` |
+| `long` | function | `tests/neg_fnptr_cmp.c:12` | `long (*f)(long, long);` |
+| `main` | function | `tests/neg_fnptr_cmp.c:10` | `int main(void)` |
+| `mul2` | function | `tests/neg_fnptr_cmp.c:6` | `long mul2(long a, long b)` |
+| `printf` | function | `tests/neg_fnptr_cmp.c:18` | `printf("%ld\n", r);` |
+| `add2` | function | `tests/neg_fnptr_cmp0.c:2` | `long add2(long a, long b)` |
+| `long` | function | `tests/neg_fnptr_cmp0.c:8` | `long (*f)(long, long);` |
+| `main` | function | `tests/neg_fnptr_cmp0.c:6` | `int main(void)` |
+| `printf` | function | `tests/neg_fnptr_cmp0.c:12` | `printf("%ld\n", r);` |
+| `add2` | function | `tests/neg_fnptr_globalinit.c:1` | `long add2(long a, long b)` |
+| `main` | function | `tests/neg_fnptr_globalinit.c:6` | `int main(void)` |
+| `add2` | function | `tests/neg_fnptr_tern.c:2` | `long add2(long a, long b)` |
+| `long` | function | `tests/neg_fnptr_tern.c:8` | `long (*f)(long, long);` |
+| `main` | function | `tests/neg_fnptr_tern.c:6` | `int main(void)` |
+| `printf` | function | `tests/neg_fnptr_tern.c:14` | `printf("%ld\n", r);` |
 | `main` | function | `tests/neg_hex.c:1` | `int main(void)` |
 | `main` | function | `tests/neg_octal.c:1` | `int main(void)` |
+| `c` | type_alias | `tests/neg_typedef_arrcont.c:1` | `typedef int b, c[4];` |
+| `main` | function | `tests/neg_typedef_arrcont.c:2` | `int main(void)` |
 | `__builtin_va_end` | function | `tests/neg_va.c:4` | `__builtin_va_end(ap);` |
 | `__builtin_va_start` | function | `tests/neg_va.c:3` | `__builtin_va_start(ap, ap);` |
 | `main` | function | `tests/neg_va.c:1` | `int main(void)` |
 | `main` | function | `tests/t_args.c:2` | `int main(int argc, char **argv)` |
 | `printf` | function | `tests/t_args.c:4` | `printf("%d\n", argc);` |
+| `long` | function | `tests/t_args7.c:17` | `long (*fp)(long, long, long, long, long, long, long);` |
+| `main` | function | `tests/t_args7.c:15` | `int main(void)` |
+| `mix8` | function | `tests/t_args7.c:10` | `long mix8(long a, long b, long c, long d, long e, long f, long g, long h)` |
+| `printf` | function | `tests/t_args7.c:18` | `printf("%ld\n", sum7(1, 2, 3, 4, 5, 6, 7));` |
+| `sum7` | function | `tests/t_args7.c:2` | `long sum7(long a, long b, long c, long d, long e, long f, long g)` |
+| `sum8` | function | `tests/t_args7.c:6` | `long sum8(long a, long b, long c, long d, long e, long f, long g, long h)` |
 | `main` | function | `tests/t_arith.c:2` | `int main(void)` |
 | `printf` | function | `tests/t_arith.c:19` | `printf("%d %d %d\n", a, b, c);` |
 | `main` | function | `tests/t_arrays.c:2` | `int main(void)` |
@@ -805,6 +848,18 @@
 | `main` | function | `tests/t_asm3.c:5` | `int main(void)` |
 | `printf` | function | `tests/t_asm3.c:10` | `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);` |
 | `volatile` | function | `tests/t_asm3.c:9` | `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));` |
+| `add_ds` | function | `tests/t_asm_ds.c:15` | `long add_ds(long a, long b)` |
+| `main` | function | `tests/t_asm_ds.c:57` | `int main(void)` |
+| `printf` | function | `tests/t_asm_ds.c:59` | `printf("%ld\n", via_d(41));` |
+| `ret_d` | function | `tests/t_asm_ds.c:21` | `long ret_d(long x)` |
+| `ret_dc` | function | `tests/t_asm_ds.c:39` | `char ret_dc(void)` |
+| `ret_di` | function | `tests/t_asm_ds.c:33` | `int ret_di(void)` |
+| `ret_ds` | function | `tests/t_asm_ds.c:45` | `int16_t ret_ds(void)` |
+| `ret_dw` | function | `tests/t_asm_ds.c:51` | `int32_t ret_dw(void)` |
+| `ret_s` | function | `tests/t_asm_ds.c:27` | `long ret_s(long x)` |
+| `via_d` | function | `tests/t_asm_ds.c:3` | `long via_d(long x)` |
+| `via_s` | function | `tests/t_asm_ds.c:9` | `long via_s(long x)` |
+| `volatile` | function | `tests/t_asm_ds.c:6` | `__asm__ volatile("movq %1, %0" : "=r"(r) : "D"(x));` |
 | `__attribute__` | function | `tests/t_attr.c:3` | `typedef struct __attribute__((packed))` |
 | `__attribute__` | function | `tests/t_attr.c:11` | `__attribute__((always_inline)) static inline int sq(int x)` |
 | `knoreturn` | function | `tests/t_attr.c:22` | `void knoreturn(void)` |
@@ -822,6 +877,15 @@
 | `printf` | function | `tests/t_enum.c:14` | `printf("%d %d %d\n", RED, GREEN, BLUE);` |
 | `main` | function | `tests/t_float.c:2` | `int main(void)` |
 | `printf` | function | `tests/t_float.c:6` | `printf("%d %d %d\n", a + b == 4.0, a * b == 3.75, b - a == 1.0);` |
+| `add2` | function | `tests/t_fnptr.c:2` | `long add2(long a, long b)` |
+| `apply2` | function | `tests/t_fnptr.c:10` | `long apply2(long (*f)(long, long), long x, long y)` |
+| `f` | function | `tests/t_fnptr.c:12` | `return f(x, y);` |
+| `long` | function | `tests/t_fnptr.c:16` | `long (*op)(long, long);` |
+| `main` | function | `tests/t_fnptr.c:25` | `int main(void)` |
+| `mul2` | function | `tests/t_fnptr.c:6` | `long mul2(long a, long b)` |
+| `ops_t` | struct | `tests/t_fnptr.c:15` | `` |
+| `printf` | function | `tests/t_fnptr.c:31` | `printf("%ld\n", f(10, 20));` |
+| `run_op` | function | `tests/t_fnptr.c:21` | `long run_op(ops_t *o, long x, long y)` |
 | `main` | function | `tests/t_for.c:2` | `int main(void)` |
 | `printf` | function | `tests/t_for.c:7` | `printf("%d\n", sum);` |
 | `main` | function | `tests/t_globinit.c:7` | `int main(void)` |
@@ -847,6 +911,13 @@
 | `inner_add` | function | `tests/t_inner_h.h:5` | `static inline int inner_add(int a, int b)` |
 | `main` | function | `tests/t_logic.c:2` | `int main(void)` |
 | `printf` | function | `tests/t_logic.c:6` | `printf("%d %d %d\n", t && t, t && f, f \|\| f);` |
+| `add64` | function | `tests/t_longlong.c:13` | `unsigned long long add64(unsigned long long a, unsigned long long b)` |
+| `bump` | function | `tests/t_longlong.c:5` | `u64 bump(u64 x)` |
+| `main` | function | `tests/t_longlong.c:19` | `int main(void)` |
+| `negate` | function | `tests/t_longlong.c:9` | `s64 negate(s64 x)` |
+| `printf` | function | `tests/t_longlong.c:26` | `printf("%llu\n", a + b);` |
+| `s64` | type_alias | `tests/t_longlong.c:4` | `typedef long long s64;` |
+| `u64` | type_alias | `tests/t_longlong.c:2` | `typedef unsigned long long u64;` |
 | `HEXED` | macro | `tests/t_macros.c:5` | `#define HEXED` |
 | `KONST` | macro | `tests/t_macros.c:2` | `#define KONST` |
 | `NEGD` | macro | `tests/t_macros.c:7` | `#define NEGD` |
@@ -882,6 +953,9 @@
 | `main` | function | `tests/t_struct.c:17` | `int main(void)` |
 | `manhattan` | function | `tests/t_struct.c:9` | `int manhattan(Point *p)` |
 | `printf` | function | `tests/t_struct.c:22` | `printf("%d %d\n", pp->x, pp->y);` |
+| `R` | struct | `tests/t_struct_ul.c:3` | `` |
+| `main` | function | `tests/t_struct_ul.c:12` | `int main(void)` |
+| `printf` | function | `tests/t_struct_ul.c:22` | `printf("%lu\n", r.base);` |
 | `classify` | function | `tests/t_switch.c:2` | `int classify(int v)` |
 | `main` | function | `tests/t_switch.c:13` | `int main(void)` |
 | `printf` | function | `tests/t_switch.c:15` | `printf("%d %d %d\n", classify(1), classify(2), classify(3));` |
@@ -893,6 +967,18 @@
 | `main` | function | `tests/t_typedef.c:15` | `int main(void)` |
 | `myint` | type_alias | `tests/t_typedef.c:2` | `typedef int myint;` |
 | `printf` | function | `tests/t_typedef.c:18` | `printf("%d\n", shared + 2);` |
+| `bump` | function | `tests/t_unsigned.c:8` | `unsigned long bump(unsigned long x)` |
+| `main` | function | `tests/t_unsigned.c:26` | `int main(void)` |
+| `narrow` | function | `tests/t_unsigned.c:12` | `unsigned int narrow(unsigned int x)` |
+| `printf` | function | `tests/t_unsigned.c:39` | `printf("%lu\n", c);` |
+| `reg_base` | function | `tests/t_unsigned.c:22` | `unsigned long reg_base(ureg_t *r)` |
+| `u32` | type_alias | `tests/t_unsigned.c:4` | `typedef unsigned int u32;` |
+| `u64` | type_alias | `tests/t_unsigned.c:2` | `typedef unsigned long u64;` |
+| `u8` | type_alias | `tests/t_unsigned.c:94` | `typedef unsigned char u8;` |
+| `u8b` | type_alias | `tests/t_unsigned.c:96` | `typedef u8 u8b;` |
+| `ureg2` | type_alias | `tests/t_unsigned.c:114` | `typedef ureg_t ureg2;` |
+| `ureg_t` | struct | `tests/t_unsigned.c:17` | `` |
+| `uword` | type_alias | `tests/t_unsigned.c:108` | `typedef u32 uword;` |
 | `__builtin_va_end` | function | `tests/t_variadic.c:43` | `__builtin_va_end(ap);` |
 | `__builtin_va_start` | function | `tests/t_variadic.c:14` | `__builtin_va_start(ap, fmt);` |
 | `main` | function | `tests/t_variadic.c:58` | `int main(void)` |

@@ -3,402 +3,430 @@
 ## minigcc.c
 
 ### save_parser_state (function) `static void save_parser_state(ParserState *state)`
-- Defined: `minigcc.c:247`
+- Defined: `minigcc.c:255`
 
 ### restore_parser_state (function) `static void restore_parser_state(ParserState *state)`
-- Defined: `minigcc.c:275`
+- Defined: `minigcc.c:283`
 
 ### find_macro (function) `static int find_macro(const char *name)`
-- Defined: `minigcc.c:314`
+- Defined: `minigcc.c:322`
 
 ### add_macro (function) `static void add_macro(const char *name, int value)`
-- Defined: `minigcc.c:323`
+- Defined: `minigcc.c:331`
 
 ### macro_skipws (function) `static void macro_skipws(void)`
-- Defined: `minigcc.c:350`
+- Defined: `minigcc.c:358`
 
 ### macro_hex_digit (function) `static int macro_hex_digit(int c)`
-- Defined: `minigcc.c:354`
+- Defined: `minigcc.c:362`
 
 ### macro_digit_val (function) `static int macro_digit_val(int c)`
-- Defined: `minigcc.c:361`
+- Defined: `minigcc.c:369`
 
 ### macro_primary (function) `static int macro_primary(void)`
-- Defined: `minigcc.c:368`
+- Defined: `minigcc.c:376`
 
 ### macro_unary (function) `static int macro_unary(void)`
-- Defined: `minigcc.c:442`
+- Defined: `minigcc.c:450`
 
 ### macro_mul (function) `static int macro_mul(void)`
-- Defined: `minigcc.c:451`
+- Defined: `minigcc.c:459`
 
 ### macro_add (function) `static int macro_add(void)`
-- Defined: `minigcc.c:476`
+- Defined: `minigcc.c:484`
 
 ### macro_shift (function) `static int macro_shift(void)`
-- Defined: `minigcc.c:493`
+- Defined: `minigcc.c:501`
 
 ### macro_cmp (function) `static int macro_cmp(void)`
-- Defined: `minigcc.c:510`
+- Defined: `minigcc.c:518`
 
 ### macro_eq (function) `static int macro_eq(void)`
-- Defined: `minigcc.c:533`
+- Defined: `minigcc.c:541`
 
 ### macro_bitand (function) `static int macro_bitand(void)`
-- Defined: `minigcc.c:550`
+- Defined: `minigcc.c:558`
 
 ### macro_bitxor (function) `static int macro_bitxor(void)`
-- Defined: `minigcc.c:564`
+- Defined: `minigcc.c:572`
 
 ### macro_bitor (function) `static int macro_bitor(void)`
-- Defined: `minigcc.c:578`
+- Defined: `minigcc.c:586`
 
 ### macro_logand (function) `static int macro_logand(void)`
-- Defined: `minigcc.c:592`
+- Defined: `minigcc.c:600`
 
 ### macro_or_expr (function) `static int macro_or_expr(void)`
-- Defined: `minigcc.c:606`
+- Defined: `minigcc.c:614`
 
 ### macro_fold (function) `static int macro_fold(void)`
-- Defined: `minigcc.c:620`
+- Defined: `minigcc.c:628`
 
 ### error (function) `static void error(const char *msg)`
-- Defined: `minigcc.c:625`
+- Defined: `minigcc.c:633`
 
 ### safe_malloc (function) `static void *safe_malloc(size_t size)`
-- Defined: `minigcc.c:631`
+- Defined: `minigcc.c:639`
 
 ### safe_strcpy (function) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
-- Defined: `minigcc.c:640`
+- Defined: `minigcc.c:648`
 
 ### safe_strtoll (function) `static long safe_strtoll(const char *s)`
-- Defined: `minigcc.c:649`
+- Defined: `minigcc.c:657`
 
 ### is_file_processed (function) `static int is_file_processed(const char *path)`
-- Defined: `minigcc.c:662`
+- Defined: `minigcc.c:670`
 
 ### mark_file_processed (function) `static void mark_file_processed(const char *path)`
-- Defined: `minigcc.c:671`
+- Defined: `minigcc.c:679`
 
 ### get_dir_from_path (function) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
-- Defined: `minigcc.c:683`
+- Defined: `minigcc.c:691`
 
 ### resolve_local_include (function) `static char *resolve_local_include(const char *target)`
-- Defined: `minigcc.c:702`
+- Defined: `minigcc.c:710`
 
 ### read_include_file (function) `static char *read_include_file(const char *path)`
-- Defined: `minigcc.c:741`
+- Defined: `minigcc.c:749`
 
 ### hash_name (function) `static int hash_name(const char *name)`
-- Defined: `minigcc.c:766`
+- Defined: `minigcc.c:774`
 - Doc: Must produce identical results under gcc (32-bit int) and under the compiler's own model (64-bit int), so avoid multipli
 
 ### hash_init (function) `static void hash_init(void)`
-- Defined: `minigcc.c:775`
+- Defined: `minigcc.c:783`
 
 ### push_scope (function) `static void push_scope(void)`
-- Defined: `minigcc.c:780`
-
-### pop_scope (function) `static void pop_scope(void)`
 - Defined: `minigcc.c:788`
 
+### pop_scope (function) `static void pop_scope(void)`
+- Defined: `minigcc.c:796`
+
 ### truncate_symbols (function) `static void truncate_symbols(int start_idx)`
-- Defined: `minigcc.c:818`
+- Defined: `minigcc.c:826`
 - Doc: Remove all symbols from start_idx onward from the hash table and truncate symbol_count. Does NOT touch the scope stack (
 
 ### my_isspace (function) `static int my_isspace(int c)`
-- Defined: `minigcc.c:836`
+- Defined: `minigcc.c:844`
 
 ### my_isalpha (function) `static int my_isalpha(int c)`
-- Defined: `minigcc.c:846`
+- Defined: `minigcc.c:854`
 
 ### my_isdigit (function) `static int my_isdigit(int c)`
-- Defined: `minigcc.c:852`
+- Defined: `minigcc.c:860`
 
 ### my_isalnum (function) `static int my_isalnum(int c)`
-- Defined: `minigcc.c:857`
+- Defined: `minigcc.c:865`
 
 ### lex_fail (function) `static void lex_fail(const char *msg, char *start, char *end)`
-- Defined: `minigcc.c:863`
+- Defined: `minigcc.c:871`
 
 ### lex_kw_add (function) `static void lex_kw_add(const char *name, int id)`
-- Defined: `minigcc.c:873`
+- Defined: `minigcc.c:881`
 
 ### lex_init_keywords (function) `static void lex_init_keywords(void)`
-- Defined: `minigcc.c:886`
+- Defined: `minigcc.c:894`
 
 ### lex_kw_lookup (function) `static int lex_kw_lookup(void)`
-- Defined: `minigcc.c:926`
+- Defined: `minigcc.c:934`
 
 ### lex_match_op (function) `static int lex_match_op(const char *op, int id)`
-- Defined: `minigcc.c:938`
+- Defined: `minigcc.c:946`
 
 ### lex_hex_val (function) `static int lex_hex_val(int c)`
-- Defined: `minigcc.c:950`
+- Defined: `minigcc.c:958`
 
 ### lex_is_int_suffix (function) `static int lex_is_int_suffix(int c)`
-- Defined: `minigcc.c:957`
+- Defined: `minigcc.c:965`
 
 ### lex_number (function) `static void lex_number(void)`
-- Defined: `minigcc.c:963`
+- Defined: `minigcc.c:971`
 
 ### next_token (function) `static void next_token(void)`
-- Defined: `minigcc.c:1082`
+- Defined: `minigcc.c:1090`
 - Doc: float_const_is_float[float_const_count] = (sfx == 'f' || sfx == 'F') ? 1 : 0; safe_strcpy(float_const_str[float_const_co
 
 ### match (function) `static void match(int expected)`
-- Defined: `minigcc.c:1510`
+- Defined: `minigcc.c:1576`
 
 ### emit (function) `static void emit(const char *s)`
-- Defined: `minigcc.c:1515`
+- Defined: `minigcc.c:1581`
 
 ### emit_i (function) `static void emit_i(const char *fmt, int v)`
-- Defined: `minigcc.c:1529`
+- Defined: `minigcc.c:1595`
 
 ### emit_s (function) `static void emit_s(const char *fmt, const char *s)`
-- Defined: `minigcc.c:1535`
+- Defined: `minigcc.c:1601`
 
 ### emit_is (function) `static void emit_is(const char *fmt, int v, const char *s)`
-- Defined: `minigcc.c:1541`
+- Defined: `minigcc.c:1607`
 
 ### emit_si (function) `static void emit_si(const char *fmt, const char *s, int v)`
-- Defined: `minigcc.c:1547`
+- Defined: `minigcc.c:1613`
 
 ### emit_asciz_body (function) `static void emit_asciz_body(const char *s)`
-- Defined: `minigcc.c:1557`
+- Defined: `minigcc.c:1623`
 - Doc: Write a C string as the body of a .asciz directive, escaping everything the assembler cannot take literally. Shared by t
 
 ### emit_label (function) `static void emit_label(int label)`
-- Defined: `minigcc.c:1575`
+- Defined: `minigcc.c:1641`
 
 ### find_symbol (function) `static int find_symbol(const char *name)`
-- Defined: `minigcc.c:1582`
+- Defined: `minigcc.c:1648`
 - Doc: else if (c == '\a') fprintf(output, "\\a"); else if (c == '\b') fprintf(output, "\\b"); else if (c >= 32 && c <= 126) fp
 
 ### add_symbol (function) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
-- Defined: `minigcc.c:1592`
+- Defined: `minigcc.c:1658`
 
 ### arg_reg (function) `static const char *arg_reg(int i)`
-- Defined: `minigcc.c:1666`
+- Defined: `minigcc.c:1739`
 - Doc: Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compi
+
+### note_defined_func (function) `static void note_defined_func(const char *name)`
+- Defined: `minigcc.c:1747`
+
+### is_defined_func (function) `static int is_defined_func(const char *name)`
+- Defined: `minigcc.c:1760`
+
+### parse_fnptr_declarator (function) `static int parse_fnptr_declarator(char *out_name, int *out_count)`
+- Defined: `minigcc.c:1770`
+
+### peek_call_argc (function) `static int peek_call_argc(void)`
+- Defined: `minigcc.c:1821`
+
+### emit_spill_reverse (function) `static void emit_spill_reverse(int argc)`
+- Defined: `minigcc.c:1859`
+
+### parse_indirect_call (function) `static void parse_indirect_call(void)`
+- Defined: `minigcc.c:1871`
 
 ### libc_global_name (function) `static const char *libc_global_name(int i)`
-- Defined: `minigcc.c:1676`
-- Doc: Argument/parameter register names by ABI index. Written as a function instead of a local array literal because the compi
+- Defined: `minigcc.c:1911`
+- Doc: emit_spill_reverse(argc); emit("    movq 8(%%r12), %%r10"); emit("    xorl %%eax, %%eax"); emit("    call *%%r10"); emit
 
 ### typedef_name (function) `static const char *typedef_name(int i)`
-- Defined: `minigcc.c:1688`
+- Defined: `minigcc.c:1923`
 
 ### typedef_size (function) `static int typedef_size(int i)`
-- Defined: `minigcc.c:1704`
+- Defined: `minigcc.c:1939`
 
 ### typedef_uns (function) `static int typedef_uns(int i)`
-- Defined: `minigcc.c:1720`
+- Defined: `minigcc.c:1955`
 
 ### unary (function) `static void unary(void)`
-- Defined: `minigcc.c:1729`
+- Defined: `minigcc.c:1964`
+
+### strcmp (function) `strcmp(id_name, "__sync_lock_test_and_set") == 0 ||
+                strcmp(id_name, "__sync_lock_...`
+- Defined: `minigcc.c:2008`
 
 ### strcmp (function) `strcmp(id_name, "va_start") == 0)`
-- Defined: `minigcc.c:1766`
+- Defined: `minigcc.c:2013`
 
 ### strcmp (function) `strcmp(id_name, "va_end") == 0)`
-- Defined: `minigcc.c:1769`
+- Defined: `minigcc.c:2016`
 
 ### strcmp (function) `strcmp(id_name, "va_arg") == 0)`
-- Defined: `minigcc.c:1772`
+- Defined: `minigcc.c:2019`
 
 ### parse_sync_call (function) `static void parse_sync_call(const char *name)`
-- Defined: `minigcc.c:2092`
+- Defined: `minigcc.c:2374`
 
 ### parse_va_start (function) `static void parse_va_start(void)`
-- Defined: `minigcc.c:2126`
+- Defined: `minigcc.c:2408`
 
 ### parse_va_arg (function) `static void parse_va_arg(void)`
-- Defined: `minigcc.c:2159`
+- Defined: `minigcc.c:2441`
 
 ### parse_va_end (function) `static void parse_va_end(void)`
-- Defined: `minigcc.c:2209`
+- Defined: `minigcc.c:2491`
 
 ### lvalue_address (function) `static void lvalue_address(void)`
-- Defined: `minigcc.c:2224`
+- Defined: `minigcc.c:2506`
 
 ### handle_postfix (function) `static void handle_postfix(int is_lvalue)`
-- Defined: `minigcc.c:2281`
+- Defined: `minigcc.c:2563`
 
 ### unary_expr (function) `static void unary_expr(void)`
-- Defined: `minigcc.c:2442`
+- Defined: `minigcc.c:2749`
 
 ### multiplicative_expr (function) `static void multiplicative_expr(void)`
-- Defined: `minigcc.c:2457`
+- Defined: `minigcc.c:2764`
 
 ### additive_expr (function) `static void additive_expr(void)`
-- Defined: `minigcc.c:2521`
+- Defined: `minigcc.c:2832`
 
 ### shift_expr (function) `static void shift_expr(void)`
-- Defined: `minigcc.c:2582`
+- Defined: `minigcc.c:2897`
 
 ### relational_expr (function) `static void relational_expr(void)`
-- Defined: `minigcc.c:2601`
+- Defined: `minigcc.c:2920`
 
 ### equality_expr (function) `static void equality_expr(void)`
-- Defined: `minigcc.c:2654`
+- Defined: `minigcc.c:2974`
 
 ### bitwise_and_expr (function) `static void bitwise_and_expr(void)`
-- Defined: `minigcc.c:2703`
+- Defined: `minigcc.c:3024`
 
 ### bitwise_xor_expr (function) `static void bitwise_xor_expr(void)`
-- Defined: `minigcc.c:2715`
+- Defined: `minigcc.c:3040`
 
 ### bitwise_or_expr (function) `static void bitwise_or_expr(void)`
-- Defined: `minigcc.c:2727`
+- Defined: `minigcc.c:3056`
 
 ### logical_and_expr (function) `static void logical_and_expr(void)`
-- Defined: `minigcc.c:2739`
+- Defined: `minigcc.c:3072`
 
 ### logical_or_expr (function) `static void logical_or_expr(void)`
-- Defined: `minigcc.c:2759`
+- Defined: `minigcc.c:3092`
 
 ### conditional_expr (function) `static void conditional_expr(void)`
-- Defined: `minigcc.c:2779`
-
-### emit_compound_op (function) `static void emit_compound_op(int op, int asize)`
-- Defined: `minigcc.c:2797`
-
-### assignment_expr (function) `static void assignment_expr(void)`
-- Defined: `minigcc.c:2838`
-
-### asm_scratch (function) `static const char *asm_scratch(int i)`
-- Defined: `minigcc.c:3059`
-
-### asm_home_text (function) `static void asm_home_text(int home, char *buf)`
-- Defined: `minigcc.c:3068`
-
-### asm_reg_sized (function) `static void asm_reg_sized(int home, int size, char *buf)`
-- Defined: `minigcc.c:3076`
-
-### asm_fixed_home (function) `static int asm_fixed_home(int c)`
 - Defined: `minigcc.c:3112`
 
+### emit_compound_op (function) `static void emit_compound_op(int op, int asize)`
+- Defined: `minigcc.c:3131`
+
+### assignment_expr (function) `static void assignment_expr(void)`
+- Defined: `minigcc.c:3172`
+
+### asm_scratch (function) `static const char *asm_scratch(int i)`
+- Defined: `minigcc.c:3393`
+
+### asm_home_text (function) `static void asm_home_text(int home, char *buf)`
+- Defined: `minigcc.c:3402`
+
+### asm_reg_sized (function) `static void asm_reg_sized(int home, int size, char *buf)`
+- Defined: `minigcc.c:3412`
+
+### asm_fixed_home (function) `static int asm_fixed_home(int c)`
+- Defined: `minigcc.c:3454`
+
 ### asm_emit_template (function) `static void asm_emit_template(void)`
-- Defined: `minigcc.c:3120`
+- Defined: `minigcc.c:3464`
 
 ### asm_parse_mem (function) `static void asm_parse_mem(int idx, int is_out)`
-- Defined: `minigcc.c:3147`
+- Defined: `minigcc.c:3491`
 
 ### asm_emit_ss (function) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
-- Defined: `minigcc.c:3205`
+- Defined: `minigcc.c:3549`
 
 ### asm_parse_one (function) `static void asm_parse_one(int idx, int is_out)`
-- Defined: `minigcc.c:3211`
+- Defined: `minigcc.c:3555`
 
 ### asm_assign_homes (function) `static void asm_assign_homes(void)`
-- Defined: `minigcc.c:3275`
+- Defined: `minigcc.c:3623`
 
 ### asm_emit_all (function) `static void asm_emit_all(void)`
-- Defined: `minigcc.c:3320`
+- Defined: `minigcc.c:3685`
 
 ### skip_gcc_attribute (function) `static int skip_gcc_attribute(void)`
-- Defined: `minigcc.c:3368`
+- Defined: `minigcc.c:3733`
 
 ### strcmp (function) `strcmp(token, "returns_twice") == 0 ||
                        strcmp(token, "always_inline") == 0)`
-- Defined: `minigcc.c:3389`
+- Defined: `minigcc.c:3754`
 
 ### parse_trailing_align (function) `static void parse_trailing_align(void)`
-- Defined: `minigcc.c:3418`
+- Defined: `minigcc.c:3783`
 
 ### parse_asm_block (function) `static void parse_asm_block(void)`
-- Defined: `minigcc.c:3425`
+- Defined: `minigcc.c:3790`
 
 ### statement (function) `static void statement(void)`
-- Defined: `minigcc.c:3489`
+- Defined: `minigcc.c:3854`
 
 ### parse_function (function) `static void parse_function(const char *name, int ret_type)`
-- Defined: `minigcc.c:4179`
+- Defined: `minigcc.c:4600`
 
 ### parse_enum (function) `static void parse_enum(void)`
-- Defined: `minigcc.c:4355`
+- Defined: `minigcc.c:4811`
 
 ### skip_struct_fields (function) `static void skip_struct_fields(int fsize, int funs, int ffloat)`
-- Defined: `minigcc.c:4405`
+- Defined: `minigcc.c:4862`
 
 ### skip_struct (function) `static void skip_struct(void)`
-- Defined: `minigcc.c:4440`
+- Defined: `minigcc.c:4921`
+
+### record_typedef_alias (function) `static void record_typedef_alias(const char *name, int size, int uns, int fnptr)`
+- Defined: `minigcc.c:4990`
 
 ### skip_typedef (function) `static void skip_typedef(void)`
-- Defined: `minigcc.c:4503`
+- Defined: `minigcc.c:5021`
 
 ### data_directive (function) `static const char *data_directive(int size)`
-- Defined: `minigcc.c:4562`
-- Doc: s->const_value = 8;  /* just a marker /* If a struct was just parsed, store its size if (struct_total_size > 0) s->const
+- Defined: `minigcc.c:5170`
+- Doc: if (struct_total_size > 0) s->const_value = struct_total_size; { int h = hash_name(last_name); s->next_hash = hash_table
 
 ### emit_global_bss (function) `static void emit_global_bss(const char *name, int is_static, int size)`
-- Defined: `minigcc.c:4570`
-- Doc: } } match(';'); } /* Storage directive for a datum of `size` bytes. static const char *data_directive(int size) { if (si
+- Defined: `minigcc.c:5178`
+- Doc: } td_stash_valid = 0; match(';'); } /* Storage directive for a datum of `size` bytes. static const char *data_directive(
 
 ### emit_global_data_head (function) `static void emit_global_data_head(const char *name, int is_static)`
-- Defined: `minigcc.c:4581`
+- Defined: `minigcc.c:5189`
 
 ### parse_const_int (function) `static int parse_const_int(long long *out)`
-- Defined: `minigcc.c:4595`
+- Defined: `minigcc.c:5203`
 - Doc: Parse an integer constant usable as a static initializer: an optionally signed numeric or character literal, or a macro 
 
 ### intern_string (function) `static int intern_string(const char *text)`
-- Defined: `minigcc.c:4618`
+- Defined: `minigcc.c:5226`
 - Doc: } if (tok == T_ID) { int mi = find_macro(token); if (mi >= 0) { long long v = macros[mi].value; next_token(); out = neg 
 
 ### emit_global_initializer (function) `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...`
-- Defined: `minigcc.c:4635`
+- Defined: `minigcc.c:5243`
 - Doc: Emit the definition of a global that carries an initializer. On entry the current token is the one after '='. `size` is 
 
 ### parse_program (function) `static void parse_program(void)`
-- Defined: `minigcc.c:4699`
+- Defined: `minigcc.c:5307`
 
 ### emit_float_consts (function) `static void emit_float_consts(void)`
-- Defined: `minigcc.c:4883`
+- Defined: `minigcc.c:5527`
 
 ### emit_string_pool (function) `static void emit_string_pool(void)`
-- Defined: `minigcc.c:4893`
+- Defined: `minigcc.c:5537`
 
 ### main (function) `int main(int argc, char **argv)`
-- Defined: `minigcc.c:4903`
+- Defined: `minigcc.c:5547`
 
 ### fprintf (function) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
-- Defined: `minigcc.c:627`
+- Defined: `minigcc.c:635`
 
 ### exit (function) `exit(EXIT_FAILURE);`
-- Defined: `minigcc.c:629`
+- Defined: `minigcc.c:637`
 
 ### fclose (function) `fclose(f);`
-- Defined: `minigcc.c:706`
+- Defined: `minigcc.c:714`
 
 ### fseek (function) `fseek(f, 0, SEEK_END);`
-- Defined: `minigcc.c:745`
+- Defined: `minigcc.c:753`
 
 ### rewind (function) `rewind(f);`
-- Defined: `minigcc.c:751`
+- Defined: `minigcc.c:759`
 
 ### free (function) `free(buf);`
-- Defined: `minigcc.c:755`
+- Defined: `minigcc.c:763`
 
 ### snprintf (function) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
-- Defined: `minigcc.c:978`
+- Defined: `minigcc.c:986`
 
 ### fputc (function) `fputc('%', output);`
-- Defined: `minigcc.c:1520`
+- Defined: `minigcc.c:1586`
 
 ### strncpy (function) `strncpy(d, name, MAX_IDENT_LEN - 1);`
-- Defined: `minigcc.c:1598`
+- Defined: `minigcc.c:1664`
 
-### memcpy (function) `memcpy(apname, token, nlen);`
-- Defined: `minigcc.c:2135`
+### memcpy (function) `memcpy(out_name, token, nlen);`
+- Defined: `minigcc.c:1783`
 
-### strcpy (function) `strcpy(saved_token, token);`
-- Defined: `minigcc.c:2843`
+### strcpy (function) `strcpy(save_token, token);`
+- Defined: `minigcc.c:1831`
 
 ### fputs (function) `fputs(asm_text[oi], output);`
-- Defined: `minigcc.c:3136`
+- Defined: `minigcc.c:3480`
+
+### pointer (function) `subscript yields another pointer (stride 8) whose pointee is still the base type, so char** keeps char as the pointee and elem_ptr marks the 8-byte first stride. */ add_symbol(is_fn ? fn_name : token,`
+- Defined: `minigcc.c:4676`
 
 ## minigccg2.s
 
@@ -2303,6 +2331,17 @@
 ### volatile (function) `__asm__ volatile("nop" : "+r"(a));`
 - Defined: `tests/neg_asm3.c:3`
 
+## tests/neg_asm_ds.c
+
+### sum_d5 (function) `long sum_d5(long d, long a, long b, long c, long e, long f)`
+- Defined: `tests/neg_asm_ds.c:1`
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_asm_ds.c:7`
+
+### printf (function) `printf("%ld\n", sum_d5(1, 2, 3, 4, 5, 6));`
+- Defined: `tests/neg_asm_ds.c:9`
+
 ## tests/neg_attr.c
 
 ### main (function) `int main(void)`
@@ -2318,6 +2357,86 @@
 ### main (function) `int main(void)`
 - Defined: `tests/neg_float.c:1`
 
+## tests/neg_fnptr.c
+
+### add2 (function) `long add2(long a, long b)`
+- Defined: `tests/neg_fnptr.c:2`
+- Doc: include <stdio.h>
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_fnptr.c:6`
+
+### long (function) `long (*f)(long, long);`
+- Defined: `tests/neg_fnptr.c:8`
+
+### printf (function) `printf("%ld\n", x);`
+- Defined: `tests/neg_fnptr.c:12`
+
+## tests/neg_fnptr_call.c
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_fnptr_call.c:2`
+- Doc: include <stdio.h>
+
+### printf (function) `printf("%ld\n", y);`
+- Defined: `tests/neg_fnptr_call.c:8`
+
+## tests/neg_fnptr_cmp.c
+
+### add2 (function) `long add2(long a, long b)`
+- Defined: `tests/neg_fnptr_cmp.c:2`
+- Doc: include <stdio.h>
+
+### mul2 (function) `long mul2(long a, long b)`
+- Defined: `tests/neg_fnptr_cmp.c:6`
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_fnptr_cmp.c:10`
+
+### long (function) `long (*f)(long, long);`
+- Defined: `tests/neg_fnptr_cmp.c:12`
+
+### printf (function) `printf("%ld\n", r);`
+- Defined: `tests/neg_fnptr_cmp.c:18`
+
+## tests/neg_fnptr_cmp0.c
+
+### add2 (function) `long add2(long a, long b)`
+- Defined: `tests/neg_fnptr_cmp0.c:2`
+- Doc: include <stdio.h>
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_fnptr_cmp0.c:6`
+
+### long (function) `long (*f)(long, long);`
+- Defined: `tests/neg_fnptr_cmp0.c:8`
+
+### printf (function) `printf("%ld\n", r);`
+- Defined: `tests/neg_fnptr_cmp0.c:12`
+
+## tests/neg_fnptr_globalinit.c
+
+### add2 (function) `long add2(long a, long b)`
+- Defined: `tests/neg_fnptr_globalinit.c:1`
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_fnptr_globalinit.c:6`
+
+## tests/neg_fnptr_tern.c
+
+### add2 (function) `long add2(long a, long b)`
+- Defined: `tests/neg_fnptr_tern.c:2`
+- Doc: include <stdio.h>
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_fnptr_tern.c:6`
+
+### long (function) `long (*f)(long, long);`
+- Defined: `tests/neg_fnptr_tern.c:8`
+
+### printf (function) `printf("%ld\n", r);`
+- Defined: `tests/neg_fnptr_tern.c:14`
+
 ## tests/neg_hex.c
 
 ### main (function) `int main(void)`
@@ -2327,6 +2446,11 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_octal.c:1`
+
+## tests/neg_typedef_arrcont.c
+
+### main (function) `int main(void)`
+- Defined: `tests/neg_typedef_arrcont.c:2`
 
 ## tests/neg_va.c
 
@@ -2347,6 +2471,27 @@
 
 ### printf (function) `printf("%d\n", argc);`
 - Defined: `tests/t_args.c:4`
+
+## tests/t_args7.c
+
+### sum7 (function) `long sum7(long a, long b, long c, long d, long e, long f, long g)`
+- Defined: `tests/t_args7.c:2`
+- Doc: include <stdio.h>
+
+### sum8 (function) `long sum8(long a, long b, long c, long d, long e, long f, long g, long h)`
+- Defined: `tests/t_args7.c:6`
+
+### mix8 (function) `long mix8(long a, long b, long c, long d, long e, long f, long g, long h)`
+- Defined: `tests/t_args7.c:10`
+
+### main (function) `int main(void)`
+- Defined: `tests/t_args7.c:15`
+
+### long (function) `long (*fp)(long, long, long, long, long, long, long);`
+- Defined: `tests/t_args7.c:17`
+
+### printf (function) `printf("%ld\n", sum7(1, 2, 3, 4, 5, 6, 7));`
+- Defined: `tests/t_args7.c:18`
 
 ## tests/t_arith.c
 
@@ -2393,6 +2538,45 @@
 
 ### printf (function) `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);`
 - Defined: `tests/t_asm3.c:10`
+
+## tests/t_asm_ds.c
+
+### via_d (function) `long via_d(long x)`
+- Defined: `tests/t_asm_ds.c:3`
+- Doc: include <stdio.h> include <stdint.h>
+
+### via_s (function) `long via_s(long x)`
+- Defined: `tests/t_asm_ds.c:9`
+
+### add_ds (function) `long add_ds(long a, long b)`
+- Defined: `tests/t_asm_ds.c:15`
+
+### ret_d (function) `long ret_d(long x)`
+- Defined: `tests/t_asm_ds.c:21`
+
+### ret_s (function) `long ret_s(long x)`
+- Defined: `tests/t_asm_ds.c:27`
+
+### ret_di (function) `int ret_di(void)`
+- Defined: `tests/t_asm_ds.c:33`
+
+### ret_dc (function) `char ret_dc(void)`
+- Defined: `tests/t_asm_ds.c:39`
+
+### ret_ds (function) `int16_t ret_ds(void)`
+- Defined: `tests/t_asm_ds.c:45`
+
+### ret_dw (function) `int32_t ret_dw(void)`
+- Defined: `tests/t_asm_ds.c:51`
+
+### main (function) `int main(void)`
+- Defined: `tests/t_asm_ds.c:57`
+
+### volatile (function) `__asm__ volatile("movq %1, %0" : "=r"(r) : "D"(x));`
+- Defined: `tests/t_asm_ds.c:6`
+
+### printf (function) `printf("%ld\n", via_d(41));`
+- Defined: `tests/t_asm_ds.c:59`
 
 ## tests/t_attr.c
 
@@ -2449,6 +2633,33 @@
 
 ### printf (function) `printf("%d %d %d\n", a + b == 4.0, a * b == 3.75, b - a == 1.0);`
 - Defined: `tests/t_float.c:6`
+
+## tests/t_fnptr.c
+
+### add2 (function) `long add2(long a, long b)`
+- Defined: `tests/t_fnptr.c:2`
+- Doc: include <stdio.h>
+
+### mul2 (function) `long mul2(long a, long b)`
+- Defined: `tests/t_fnptr.c:6`
+
+### apply2 (function) `long apply2(long (*f)(long, long), long x, long y)`
+- Defined: `tests/t_fnptr.c:10`
+
+### run_op (function) `long run_op(ops_t *o, long x, long y)`
+- Defined: `tests/t_fnptr.c:21`
+
+### main (function) `int main(void)`
+- Defined: `tests/t_fnptr.c:25`
+
+### f (function) `return f(x, y);`
+- Defined: `tests/t_fnptr.c:12`
+
+### long (function) `long (*op)(long, long);`
+- Defined: `tests/t_fnptr.c:16`
+
+### printf (function) `printf("%ld\n", f(10, 20));`
+- Defined: `tests/t_fnptr.c:31`
 
 ## tests/t_for.c
 
@@ -2554,6 +2765,23 @@
 ### printf (function) `printf("%d %d %d\n", t && t, t && f, f || f);`
 - Defined: `tests/t_logic.c:6`
 
+## tests/t_longlong.c
+
+### bump (function) `u64 bump(u64 x)`
+- Defined: `tests/t_longlong.c:5`
+
+### negate (function) `s64 negate(s64 x)`
+- Defined: `tests/t_longlong.c:9`
+
+### add64 (function) `unsigned long long add64(unsigned long long a, unsigned long long b)`
+- Defined: `tests/t_longlong.c:13`
+
+### main (function) `int main(void)`
+- Defined: `tests/t_longlong.c:19`
+
+### printf (function) `printf("%llu\n", a + b);`
+- Defined: `tests/t_longlong.c:26`
+
 ## tests/t_macros.c
 
 ### main (function) `int main(void)`
@@ -2650,6 +2878,14 @@
 ### printf (function) `printf("%d %d\n", pp->x, pp->y);`
 - Defined: `tests/t_struct.c:22`
 
+## tests/t_struct_ul.c
+
+### main (function) `int main(void)`
+- Defined: `tests/t_struct_ul.c:12`
+
+### printf (function) `printf("%lu\n", r.base);`
+- Defined: `tests/t_struct_ul.c:22`
+
 ## tests/t_switch.c
 
 ### classify (function) `int classify(int v)`
@@ -2683,6 +2919,23 @@
 
 ### printf (function) `printf("%d\n", shared + 2);`
 - Defined: `tests/t_typedef.c:18`
+
+## tests/t_unsigned.c
+
+### bump (function) `unsigned long bump(unsigned long x)`
+- Defined: `tests/t_unsigned.c:8`
+
+### narrow (function) `unsigned int narrow(unsigned int x)`
+- Defined: `tests/t_unsigned.c:12`
+
+### reg_base (function) `unsigned long reg_base(ureg_t *r)`
+- Defined: `tests/t_unsigned.c:22`
+
+### main (function) `int main(void)`
+- Defined: `tests/t_unsigned.c:26`
+
+### printf (function) `printf("%lu\n", c);`
+- Defined: `tests/t_unsigned.c:39`
 
 ## tests/t_variadic.c
 
