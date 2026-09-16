@@ -1,0 +1,24 @@
+{
+  "tool": "readmenator",
+  "generated_at": "2026-09-15T03:35:01Z",
+  "project_root": "/home/grisun0/src_note/c/boot/repo/miniGCC",
+  "files": 54,
+  "symbols": 899,
+  "imports": 43,
+  "resolved_imports": 4,
+  "security_findings": 0,
+  "languages": {
+    "c": 44,
+    "s": 3,
+    "h": 4,
+    "sh": 3
+  },
+  "entrypoints": [],
+  "start_here": "INDEX.md",
+  "workflow": [
+    "grep -n '<keyword>' INDEX.md",
+    "cat KB_<subsystem>.md",
+    "grep -n '<file>' ARCHITECTURE.md SYMBOLS.md"
+  ],
+  "regenerate": "readmenator . --rebuild"
+}
