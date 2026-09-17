@@ -116,5 +116,27 @@ int main(void) {
         q.base = 77;
         printf("%lu\n", reg_base(&q));
     }
+    {
+        unsigned long a = 4000000000ul;
+        unsigned long big = a * a;
+        printf("%d %d %d %d\n", big > a, big >= a, a < big, a <= big);
+        printf("%d %d %d %d\n", a > big, big < a, 100 < big, big > 100);
+        printf("%lu\n", big / a);
+        printf("%lu\n", big % 7);
+        printf("%lu\n", big >> 63);
+        printf("%d\n", (big >> 62) == 3);
+        printf("%d\n", (big / a) == a);
+        printf("%d\n", (big % a) == 0);
+        big /= a;
+        printf("%lu\n", big);
+        big = a * a;
+        big %= 7;
+        printf("%lu\n", big);
+        {
+            unsigned long s = a * a;
+            s >>= 63;
+            printf("%lu\n", s);
+        }
+    }
     return 0;
 }

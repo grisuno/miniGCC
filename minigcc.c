@@ -153,6 +153,7 @@ static int deref_w = 0;
 static int deref_u = 0;
 static int no_postfix_deref = 0;
 static int expr_type = 0;
+static int expr_unsigned = 0;
 static int static_flag = 0;
 static int unsigned_type = 0;
 static int const_flag = 0;
@@ -212,6 +213,7 @@ static int struct_member_count = 0;
 
 #define MAX_DEFINED_FUNCS 512
 static char defined_func_names[MAX_DEFINED_FUNCS][MAX_IDENT_LEN];
+static int defined_func_unsigned[MAX_DEFINED_FUNCS];
 static int defined_func_count = 0;
 
 #define MAX_IF_NESTING 64
@@ -250,6 +252,7 @@ typedef struct {
     int struct_member_count;
     int macro_count;
     int expr_type;
+    int expr_unsigned;
     int float_const_count;
 } ParserState;
 
@@ -278,6 +281,7 @@ static void save_parser_state(ParserState *state) {
     state->struct_member_count = struct_member_count;
     state->macro_count = macro_count;
     state->expr_type = expr_type;
+    state->expr_unsigned = expr_unsigned;
     state->float_const_count = float_const_count;
 }
 
@@ -310,6 +314,7 @@ static void restore_parser_state(ParserState *state) {
     struct_member_count = state->struct_member_count;
     macro_count = state->macro_count;
     expr_type = state->expr_type;
+    expr_unsigned = state->expr_unsigned;
     float_const_count = state->float_const_count;
 }
 
@@ -1728,8 +1733,9 @@ static int parse_const_int(long long *out);
 static int skip_gcc_attribute(void);
 static void parse_indirect_call(void);
 static int parse_fnptr_declarator(char *out_name, int *out_count);
-static void note_defined_func(const char *name);
+static void note_defined_func(const char *name, int is_uns);
 static int is_defined_func(const char *name);
+static int func_return_unsigned(const char *name);
 static int peek_call_argc(void);
 static void emit_spill_reverse(int argc);
 
@@ -1745,16 +1751,19 @@ static const char *arg_reg(int i) {
     return "%r9";
 }
 
-static void note_defined_func(const char *name) {
+static void note_defined_func(const char *name, int is_uns) {
     int i = 0;
     while (i < defined_func_count) {
-        if (strcmp(defined_func_names[i], name) == 0)
+        if (strcmp(defined_func_names[i], name) == 0) {
+            defined_func_unsigned[i] = is_uns;
             return;
+        }
         i++;
     }
     if (defined_func_count >= MAX_DEFINED_FUNCS)
         error("too many functions");
     safe_strcpy(defined_func_names[defined_func_count], name, MAX_IDENT_LEN);
+    defined_func_unsigned[defined_func_count] = is_uns;
     defined_func_count++;
 }
 
@@ -1763,6 +1772,16 @@ static int is_defined_func(const char *name) {
     while (i < defined_func_count) {
         if (strcmp(defined_func_names[i], name) == 0)
             return 1;
+        i++;
+    }
+    return 0;
+}
+
+static int func_return_unsigned(const char *name) {
+    int i = 0;
+    while (i < defined_func_count) {
+        if (strcmp(defined_func_names[i], name) == 0)
+            return defined_func_unsigned[i];
         i++;
     }
     return 0;
@@ -1903,6 +1922,7 @@ static void parse_indirect_call(void) {
     emit("    addq $8, %%rsp");
     expr_pointed = 0;
     expr_fnptr = 0;
+    expr_unsigned = 0;
     deref_w = 0;
     deref_u = 0;
 }
@@ -1968,6 +1988,7 @@ static void unary(void) {
         expr_pointed = 0;
         expr_fnptr = 0;
         expr_type = 0;
+        expr_unsigned = 0;
         deref_w = 0;
         deref_u = 0;
         next_token();
@@ -1986,6 +2007,7 @@ static void unary(void) {
         }
         expr_pointed = 0;
         expr_fnptr = 0;
+        expr_unsigned = 0;
         deref_w = 0;
         deref_u = 0;
         next_token();
@@ -2050,6 +2072,7 @@ static void unary(void) {
             
             expr_pointed = 0;
             expr_fnptr = 0;
+            expr_unsigned = func_return_unsigned(id_name);
             deref_w = 0;
             deref_u = 0;
             }
@@ -2060,6 +2083,7 @@ static void unary(void) {
                     emit_s("    leaq %s(%%rip), %%rax", id_name);
                     expr_pointed = 0;
                     expr_fnptr = 1;
+                    expr_unsigned = 0;
                     deref_w = 0;
                     deref_u = 0;
                 } else {
@@ -2074,6 +2098,7 @@ static void unary(void) {
                 int cv = s->const_value;
                 emit_i("    movq $%d, %%rax", cv);
                 expr_pointed = 0;
+                expr_unsigned = 0;
                 deref_w = 0;
                 deref_u = 0;
             } else if (s->is_array || (s->pointed && s->size > 8)) {
@@ -2095,6 +2120,7 @@ static void unary(void) {
                     emit_i("    leaq %d(%%rbp), %%rax", s->offset);
                 subscript_base_fnptr = s->is_fnptr;
                 expr_pointed = s->size > 0 && s->size <= 8 ? 0 : (s->pointed ? s->pointed : T_INT);
+                expr_unsigned = 0;
             } else {
                 int sg = s->is_global;
                 int sz = s->size;
@@ -2102,6 +2128,7 @@ static void unary(void) {
                 int su = s->is_unsigned;
                 int dot_after = (tok == '.') && !s->pointed;
                 expr_pointed = s->pointed;
+                expr_unsigned = 0;
                 current_elem_size2 = 0;
                 if (s->pointed) {
                     current_elem_size = s->elem_size > 0 ? s->elem_size :
@@ -2112,6 +2139,8 @@ static void unary(void) {
                 } else {
                 }
                 expr_type = sv;
+                if (!dot_after && sv != T_FLOAT && sv != T_DOUBLE)
+                    expr_unsigned = su;
                 
                 if (sv == T_FLOAT) {
                     if (sg) {
@@ -2196,26 +2225,35 @@ static void unary(void) {
     } else if (tok == '(') {
         char *cast_save = input_ptr;
         int cast_line = line;
+        int cast_uns = 0;
+        int cast_stars = 0;
         next_token();
         int is_cast = 0;
         if (tok == T_ID) {
             int ti = find_symbol(token);
             if (ti >= 0 && symbols[ti].is_const) {
+                cast_uns = symbols[ti].is_unsigned;
                 next_token();
-                while (tok == '*') next_token();
+                while (tok == '*') { cast_stars++; next_token(); }
                 if (tok == ')') is_cast = 1;
             }
         } else if (tok == T_INT || tok == T_CHAR || tok == T_FLOAT || tok == T_DOUBLE) {
             int saved = tok;
+            cast_uns = unsigned_type;
             next_token();
-            while (tok == '*') next_token();
+            while (tok == '*') { cast_stars++; next_token(); }
             if (tok == ')') is_cast = 1;
             if (!is_cast) tok = saved;
         }
         if (is_cast) {
+            unsigned_type = 0;
             next_token();
             unary();
             expr_fnptr = 0;
+            if (cast_stars > 0)
+                expr_unsigned = 0;
+            else if (expr_type != T_FLOAT && expr_type != T_DOUBLE)
+                expr_unsigned = cast_uns;
         } else {
             input_ptr = cast_save;
             line = cast_line;
@@ -2225,31 +2263,43 @@ static void unary(void) {
             match(')');
         }
     } else if (tok == '*') {
+        int save_du;
         next_token();
         unary();
+        save_du = deref_u;
         if (expr_fnptr) {
             assign_size = 8;
-        } else if (expr_pointed == T_CHAR && deref_w == 0)
+            expr_unsigned = 0;
+        } else if (expr_pointed == T_CHAR && deref_w == 0) {
             emit("    movsbq (%%rax), %%rax");
-        else if (deref_w == 1) {
+            expr_unsigned = 0;
+        } else if (deref_w == 1) {
             if (deref_u) emit("    movzbq (%%rax), %%rax");
             else emit("    movsbq (%%rax), %%rax");
+            expr_unsigned = save_du;
         } else if (deref_w == 2) {
             if (deref_u) emit("    movzwq (%%rax), %%rax");
             else emit("    movswq (%%rax), %%rax");
+            expr_unsigned = save_du;
         } else if (deref_w == 4) {
             if (deref_u) emit("    movl (%%rax), %%eax");
             else emit("    movslq (%%rax), %%rax");
-        } else if (expr_pointed == T_CHAR)
+            expr_unsigned = save_du;
+        } else if (expr_pointed == T_CHAR) {
             emit("    movsbq (%%rax), %%rax");
-        else if (expr_pointed == T_FLOAT) {
+            expr_unsigned = 0;
+        } else if (expr_pointed == T_FLOAT) {
             emit("    movl (%%rax), %%eax");
             expr_type = T_FLOAT;
+            expr_unsigned = 0;
         } else if (expr_pointed == T_DOUBLE) {
             emit("    movq (%%rax), %%rax");
             expr_type = T_DOUBLE;
-        } else
+            expr_unsigned = 0;
+        } else {
             emit("    movq (%%rax), %%rax");
+            expr_unsigned = save_du;
+        }
         deref_w = 0;
         deref_u = 0;
     } else if (tok == '&') {
@@ -2270,6 +2320,7 @@ static void unary(void) {
         } else {
         Symbol *s = &symbols[idx];
         expr_fnptr = 0;
+        expr_unsigned = 0;
         if (s->var_type == T_CHAR) expr_pointed = T_CHAR;
         else if (s->var_type == T_FLOAT) expr_pointed = T_FLOAT;
         else if (s->var_type == T_DOUBLE) expr_pointed = T_DOUBLE;
@@ -2298,12 +2349,14 @@ static void unary(void) {
         emit_i("    leaq .Lstr%d(%%rip), %%rax", lbl);
         expr_pointed = T_CHAR;
         expr_fnptr = 0;
+        expr_unsigned = 0;
         next_token();
     } else if (tok == '-') {
         next_token();
         unary();
         handle_postfix(0);
         expr_fnptr = 0;
+        expr_unsigned = 0;
         if (expr_type == T_FLOAT)
             emit("    xorl $0x80000000, %%eax");
         else if (expr_type == T_DOUBLE)
@@ -2315,6 +2368,7 @@ static void unary(void) {
         unary();
         handle_postfix(0);
         expr_fnptr = 0;
+        expr_unsigned = 0;
         emit("    testq %%rax, %%rax");
         emit("    sete %%al");
         emit("    movzbq %%al, %%rax");
@@ -2367,6 +2421,7 @@ static void unary(void) {
         if (need_paren) match(')');
         emit_i("    movq $%d, %%rax", sz);
         expr_pointed = 0;
+        expr_unsigned = 1;
     } else {
         error("invalid primary expression");
     }
@@ -2402,6 +2457,7 @@ static void parse_sync_call(const char *name) {
     }
     expr_pointed = 0;
     expr_type = 0;
+    expr_unsigned = 0;
     deref_w = 0;
     deref_u = 0;
 }
@@ -2435,6 +2491,7 @@ static void parse_va_start(void) {
         emit_i("    movq %%rax, %d(%%rbp)", symbols[ai].offset);
     expr_pointed = 0;
     expr_type = 0;
+    expr_unsigned = 0;
     deref_w = 0;
     deref_u = 0;
 }
@@ -2485,6 +2542,7 @@ static void parse_va_arg(void) {
         emit_i("    movq %%rcx, %d(%%rbp)", symbols[ai].offset);
     expr_pointed = 0;
     expr_type = 0;
+    expr_unsigned = 0;
     deref_w = 0;
     deref_u = 0;
 }
@@ -2500,6 +2558,7 @@ static void parse_va_end(void) {
     match(')');
     expr_pointed = 0;
     expr_type = 0;
+    expr_unsigned = 0;
     deref_w = 0;
     deref_u = 0;
 }
@@ -2525,7 +2584,7 @@ static void lvalue_address(void) {
                 current_elem_unsigned = s->is_unsigned;
             } else {
                 current_elem_size = 0;
-                current_elem_unsigned = 0;
+                current_elem_unsigned = s->is_unsigned;
             }
         }
         int need_ptr_value = (s->pointed && s->size == 8);
@@ -2575,6 +2634,8 @@ static void handle_postfix(int is_lvalue) {
 			int saved_as = assign_size;       // <--- ¡FALTABA ESTE!
 			int saved_npd = no_postfix_deref;
 			int saved_sbfn = subscript_base_fnptr;
+			int saved_uns = expr_unsigned;
+			int saved_et = expr_type;
 			
 			assignment_expr(); // Evalúa el índice del array
 			
@@ -2586,6 +2647,8 @@ static void handle_postfix(int is_lvalue) {
 			assign_size = saved_as;           // <--- ¡RESTAURADO!
 			no_postfix_deref = saved_npd;
 			subscript_base_fnptr = saved_sbfn;
+			expr_unsigned = saved_uns;
+			expr_type = saved_et;
 			// ------------------------------------------
 
 			emit("    popq %%rcx");
@@ -2610,6 +2673,7 @@ static void handle_postfix(int is_lvalue) {
 				current_elem_size2 = 0;
 				assign_size = current_elem_size;
 				expr_fnptr = 0;
+				expr_unsigned = 0;
 				subscript_base_fnptr = 0;
 			} else if (!is_lvalue && !no_postfix_deref && elem_size <= 8) {
 				/* Load width follows the element size, not the pointed-to
@@ -2636,14 +2700,17 @@ static void handle_postfix(int is_lvalue) {
 					expr_pointed = saved_ep;
 					current_elem_size = (saved_ep == T_CHAR) ? 1 : 8;
 					expr_fnptr = subscript_base_fnptr;
+					expr_unsigned = 0;
 					subscript_base_fnptr = 0;
 				} else {
 					expr_pointed = 0;
 					expr_fnptr = subscript_base_fnptr;
+					expr_unsigned = elem_uns;
 					subscript_base_fnptr = 0;
 				}
 			} else {
 				expr_fnptr = 0;
+				expr_unsigned = 0;
 				subscript_base_fnptr = 0;
 			}
 			match(']');
@@ -2669,12 +2736,14 @@ static void handle_postfix(int is_lvalue) {
             current_elem_unsigned = muns;
             if (is_lvalue || no_postfix_deref) {
                 expr_fnptr = 0;
+                expr_unsigned = 0;
                 if (msize == 1 && !muns) expr_pointed = T_CHAR;
 				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
 				else expr_pointed = (msize > 8) ? T_INT : 0;
             } else {
                 if (msize > 8) {
                     expr_fnptr = 0;
+                    expr_unsigned = 0;
                     expr_pointed = (msize > 0) ? T_INT : 0;
                 } else {
                     if (msize == 1) {
@@ -2690,6 +2759,10 @@ static void handle_postfix(int is_lvalue) {
                         emit("    movq (%%rax), %%rax");
                     expr_pointed = 0;
                     expr_fnptr = mfnptr;
+                    if (mfloat || mfnptr)
+                        expr_unsigned = 0;
+                    else
+                        expr_unsigned = muns;
                 }
             }
         } else if (tok == T_ARROW) {
@@ -2714,12 +2787,14 @@ static void handle_postfix(int is_lvalue) {
             current_elem_unsigned = muns;
             if (is_lvalue || no_postfix_deref) {
                 expr_fnptr = 0;
+                expr_unsigned = 0;
                 if (msize == 1 && !muns) expr_pointed = T_CHAR;
 				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
 				else expr_pointed = (msize > 8) ? T_INT : 0;
 			} else {
 				if (msize > 8) {
 					expr_fnptr = 0;
+					expr_unsigned = 0;
 					expr_pointed = (msize > 0) ? T_INT : 0;
 				} else {
 					if (msize == 1) {
@@ -2735,6 +2810,10 @@ static void handle_postfix(int is_lvalue) {
 						emit("    movq (%%rax), %%rax");
 					expr_pointed = 0;
 					expr_fnptr = mfnptr;
+					if (mfloat || mfnptr)
+					    expr_unsigned = 0;
+					else
+					    expr_unsigned = muns;
 				}
 			}
 		}
@@ -2769,11 +2848,13 @@ static void multiplicative_expr(void) {
         next_token();
         emit("    pushq %%rax");
         int left_type = expr_type;
+        int left_uns = expr_unsigned;
         int left_fn = expr_fnptr;
         unary_expr();
         if (left_fn || expr_fnptr)
             error("arithmetic on function pointer");
         int right_type = expr_type;
+        int right_uns = expr_unsigned;
         emit("    popq %%rcx");
         
         int t = right_type;
@@ -2809,20 +2890,38 @@ static void multiplicative_expr(void) {
                 else emit("    divss %%xmm1, %%xmm0");
                 emit("    movd %%xmm0, %%eax");
             }
+            expr_unsigned = 0;
         } else if (op == '%') {
+            int muns = left_uns || right_uns;
             emit("    movq %%rax, %%r8");
             emit("    movq %%rcx, %%rax");
-            emit("    cqto");
-            emit("    idivq %%r8");
+            if (muns) {
+                emit("    xorl %%edx, %%edx");
+                emit("    divq %%r8");
+            } else {
+                emit("    cqto");
+                emit("    idivq %%r8");
+            }
             emit("    movq %%rdx, %%rax");
+            expr_unsigned = muns;
         } else {
+            int muns = left_uns || right_uns;
             if (op == '*') emit("    imulq %%rcx, %%rax");
             else {
                 emit("    movq %%rax, %%r8");
                 emit("    movq %%rcx, %%rax");
-                emit("    cqto");
-                emit("    idivq %%r8");
+                if (muns) {
+                    emit("    xorl %%edx, %%edx");
+                    emit("    divq %%r8");
+                } else {
+                    emit("    cqto");
+                    emit("    idivq %%r8");
+                }
             }
+            if (t == T_FLOAT || t == T_DOUBLE)
+                expr_unsigned = 0;
+            else
+                expr_unsigned = muns;
         }
         expr_type = t;
         expr_pointed = 0;
@@ -2837,6 +2936,7 @@ static void additive_expr(void) {
         next_token();
         emit("    pushq %%rax");
         int left_type = expr_type;
+        int left_uns = expr_unsigned;
         int left_fn = expr_fnptr;
         int save_dw = deref_w;
         int save_du = deref_u;
@@ -2848,6 +2948,7 @@ static void additive_expr(void) {
             deref_u = save_du;
         }
         int right_type = expr_type;
+        int right_uns = expr_unsigned;
         emit("    popq %%rcx");
         
         int t = right_type;
@@ -2881,6 +2982,7 @@ static void additive_expr(void) {
                 else emit("    subss %%xmm1, %%xmm0");
                 emit("    movd %%xmm0, %%eax");
             }
+            expr_unsigned = 0;
         } else {
             if (op == '+') {
                 emit("    addq %%rcx, %%rax");
@@ -2888,6 +2990,7 @@ static void additive_expr(void) {
                 emit("    subq %%rax, %%rcx");
                 emit("    movq %%rcx, %%rax");
             }
+            expr_unsigned = left_uns || right_uns;
         }
         expr_type = t;
         expr_pointed = 0;
@@ -2899,6 +3002,7 @@ static void shift_expr(void) {
     additive_expr();
     while (tok == T_SHL || tok == T_SHR) {
         int op = tok;
+        int left_uns = expr_unsigned;
         int left_fn = expr_fnptr;
         next_token();
         emit("    pushq %%rax");
@@ -2910,10 +3014,13 @@ static void shift_expr(void) {
         emit("    popq %%rax");
         if (op == T_SHL)
             emit("    salq %%cl, %%rax");
+        else if (left_uns)
+            emit("    shrq %%cl, %%rax");
         else
             emit("    sarq %%cl, %%rax");
         expr_pointed = 0;
         expr_type = 0;
+        expr_unsigned = left_uns;
         expr_fnptr = 0;
     }
 }
@@ -2925,8 +3032,10 @@ static void relational_expr(void) {
         next_token();
         emit("    pushq %%rax");
         int left_type = expr_type;
+        int left_uns = expr_unsigned;
         additive_expr();
         int right_type = expr_type;
+        int right_uns = expr_unsigned;
         emit("    popq %%rcx");
         
         int t = right_type;
@@ -2960,14 +3069,23 @@ static void relational_expr(void) {
             else emit("    setae %%al");
             emit("    movzbq %%al, %%rax");
         } else {
+            int runs = left_uns || right_uns;
             emit("    cmpq %%rax, %%rcx");
-            if (op == '<') emit("    setl %%al");
-            else if (op == T_LE) emit("    setle %%al");
-            else if (op == '>') emit("    setg %%al");
-            else emit("    setge %%al");
+            if (runs) {
+                if (op == '<') emit("    setb %%al");
+                else if (op == T_LE) emit("    setbe %%al");
+                else if (op == '>') emit("    seta %%al");
+                else emit("    setae %%al");
+            } else {
+                if (op == '<') emit("    setl %%al");
+                else if (op == T_LE) emit("    setle %%al");
+                else if (op == '>') emit("    setg %%al");
+                else emit("    setge %%al");
+            }
             emit("    movzbq %%al, %%rax");
         }
         expr_pointed = 0;
+        expr_unsigned = 0;
         expr_fnptr = 0;
     }
 }
@@ -3018,6 +3136,7 @@ static void equality_expr(void) {
             emit("    movzbq %%al, %%rax");
         }
         expr_pointed = 0;
+        expr_unsigned = 0;
         expr_fnptr = 0;
     }
 }
@@ -3027,6 +3146,7 @@ static void bitwise_and_expr(void) {
     while (tok == '&') {
         next_token();
         emit("    pushq %%rax");
+        int left_uns = expr_unsigned;
         int left_fn = expr_fnptr;
         equality_expr();
         if (left_fn || expr_fnptr)
@@ -3034,6 +3154,7 @@ static void bitwise_and_expr(void) {
         emit("    popq %%rcx");
         emit("    andq %%rcx, %%rax");
         expr_pointed = 0;
+        expr_unsigned = left_uns || expr_unsigned;
         expr_fnptr = 0;
     }
 }
@@ -3043,6 +3164,7 @@ static void bitwise_xor_expr(void) {
     while (tok == '^') {
         next_token();
         emit("    pushq %%rax");
+        int left_uns = expr_unsigned;
         int left_fn = expr_fnptr;
         bitwise_and_expr();
         if (left_fn || expr_fnptr)
@@ -3050,6 +3172,7 @@ static void bitwise_xor_expr(void) {
         emit("    popq %%rcx");
         emit("    xorq %%rcx, %%rax");
         expr_pointed = 0;
+        expr_unsigned = left_uns || expr_unsigned;
         expr_fnptr = 0;
     }
 }
@@ -3059,6 +3182,7 @@ static void bitwise_or_expr(void) {
     while (tok == '|') {
         next_token();
         emit("    pushq %%rax");
+        int left_uns = expr_unsigned;
         int left_fn = expr_fnptr;
         bitwise_xor_expr();
         if (left_fn || expr_fnptr)
@@ -3066,6 +3190,7 @@ static void bitwise_or_expr(void) {
         emit("    popq %%rcx");
         emit("    orq %%rcx, %%rax");
         expr_pointed = 0;
+        expr_unsigned = left_uns || expr_unsigned;
         expr_fnptr = 0;
     }
 }
@@ -3087,6 +3212,7 @@ static void logical_and_expr(void) {
         emit("    xorl %%eax, %%eax");
         emit_label(l_end);
         expr_pointed = 0;
+        expr_unsigned = 0;
     }
 }
 
@@ -3107,6 +3233,7 @@ static void logical_or_expr(void) {
         emit("    movl $1, %%eax");
         emit_label(l_end);
         expr_pointed = 0;
+        expr_unsigned = 0;
     }
 }
 
@@ -3125,11 +3252,12 @@ static void conditional_expr(void) {
         conditional_expr(); /* Rama falsa (recursiva para asociatividad derecha) */
         emit_label(l_end);
         expr_pointed = 0;
+        expr_unsigned = 0;
         expr_fnptr = 0;
     }
 }
 
-static void emit_compound_op(int op, int asize) {
+static void emit_compound_op(int op, int asize, int is_uns) {
     if (op == T_MUL_ASSIGN) {
         if (asize == 4) emit("    imull %%ecx, %%eax");
         else emit("    imulq %%rcx, %%rax");
@@ -3137,14 +3265,24 @@ static void emit_compound_op(int op, int asize) {
         if (asize == 4) {
             emit("    movl %%eax, %%r8d");
             emit("    movl %%ecx, %%eax");
-            emit("    cltd");
-            emit("    idivl %%r8d");
+            if (is_uns) {
+                emit("    xorl %%edx, %%edx");
+                emit("    divl %%r8d");
+            } else {
+                emit("    cltd");
+                emit("    idivl %%r8d");
+            }
             if (op == T_MOD_ASSIGN) emit("    movl %%edx, %%eax");
         } else {
             emit("    movq %%rax, %%r8");
             emit("    movq %%rcx, %%rax");
-            emit("    cqto");
-            emit("    idivq %%r8");
+            if (is_uns) {
+                emit("    xorl %%edx, %%edx");
+                emit("    divq %%r8");
+            } else {
+                emit("    cqto");
+                emit("    idivq %%r8");
+            }
             if (op == T_MOD_ASSIGN) emit("    movq %%rdx, %%rax");
         }
     } else if (op == T_AND_ASSIGN) {
@@ -3164,8 +3302,13 @@ static void emit_compound_op(int op, int asize) {
             if (asize == 4) emit("    sall %%cl, %%eax");
             else emit("    salq %%cl, %%rax");
         } else {
-            if (asize == 4) emit("    sarl %%cl, %%eax");
-            else emit("    sarq %%cl, %%rax");
+            if (asize == 4) {
+                if (is_uns) emit("    shrl %%cl, %%eax");
+                else emit("    sarl %%cl, %%eax");
+            } else {
+                if (is_uns) emit("    shrq %%cl, %%rax");
+                else emit("    sarq %%cl, %%rax");
+            }
         }
     }
 }
@@ -3255,11 +3398,21 @@ static void assignment_expr(void) {
             return;
         } else if (assign_type >= 6) {
             int cop = 0;
+            int lhs_uns = 0;
+            int lhs_as = 0;
+            int rhs_uns = 0;
+            int cuns = 0;
             tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
             lvalue_address(); emit("    pushq %%rax");
+            lhs_uns = current_elem_unsigned;
+            lhs_as = assign_size;
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); cop = tok; next_token(); assignment_expr(); emit("    popq %%rcx");
-            emit_compound_op(cop, assign_size);
+            rhs_uns = expr_unsigned;
+            cuns = lhs_uns || rhs_uns;
+            if (cop == T_SHR_ASSIGN) cuns = lhs_uns;
+            emit_compound_op(cop, lhs_as, cuns);
+            expr_unsigned = lhs_uns;
             emit("    popq %%rcx");
             if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
@@ -3286,6 +3439,8 @@ static void assignment_expr(void) {
         /* Guardar estado global de tipos para el modo peek */
         int saved_assign_size = assign_size;
         int saved_expr_pointed = expr_pointed;
+        int saved_expr_unsigned = expr_unsigned;
+        int saved_expr_type = expr_type;
         int saved_current_elem_size = current_elem_size;
         int saved_current_elem_size2 = current_elem_size2;
         int saved_current_elem_unsigned = current_elem_unsigned;
@@ -3301,6 +3456,8 @@ static void assignment_expr(void) {
         /* Restaurar estado global de tipos */
         assign_size = saved_assign_size;
         expr_pointed = saved_expr_pointed;
+        expr_unsigned = saved_expr_unsigned;
+        expr_type = saved_expr_type;
         current_elem_size = saved_current_elem_size;
         current_elem_size2 = saved_current_elem_size2;
         current_elem_unsigned = saved_current_elem_unsigned;
@@ -3356,10 +3513,20 @@ static void assignment_expr(void) {
             return;
         } else if (assign_type >= 6) {
             int cop = 0;
+            int lhs_uns = 0;
+            int lhs_as = 0;
+            int rhs_uns = 0;
+            int cuns = 0;
             lvalue_address(); emit("    pushq %%rax");
+            lhs_uns = current_elem_unsigned;
+            lhs_as = assign_size;
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); cop = tok; next_token(); assignment_expr(); emit("    popq %%rcx");
-            emit_compound_op(cop, assign_size);
+            rhs_uns = expr_unsigned;
+            cuns = lhs_uns || rhs_uns;
+            if (cop == T_SHR_ASSIGN) cuns = lhs_uns;
+            emit_compound_op(cop, lhs_as, cuns);
+            expr_unsigned = lhs_uns;
             emit("    popq %%rcx");
             if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
@@ -4600,6 +4767,7 @@ static void statement(void) {
 
 static void parse_function(const char *name, int ret_type) {
     (void)ret_type;
+    int ret_uns = unsigned_type;
     int outer_stack = stack_size;
     func_is_variadic = 0;
     vararg_nfixed = -1;
@@ -4712,7 +4880,7 @@ static void parse_function(const char *name, int ret_type) {
     }
 
     if (tok != '{') error("expected function body");
-    note_defined_func(name);
+    note_defined_func(name, ret_uns);
 
     int param_stack = stack_size - outer_stack;
 

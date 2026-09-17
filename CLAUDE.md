@@ -70,6 +70,17 @@ whenever `../ld/ld.c` exists.
   sub-64 arithmetic, shifts and comparisons are exact, unsigned included),
   stores narrow, `sizeof` and struct members honor widths. Only 64-bit
   `uint64_t` arithmetic above 2^63 still uses signed ops.
+- Full 64-bit `unsigned` model: an `expr_unsigned` flag rides every
+  expression (set on loads from unsigned variables/params/globals/members/
+  derefs/subscripts, `sizeof`, `(unsigned)` casts and unsigned-returning
+  calls; propagated through arithmetic/bitwise/shift with C usual
+  conversions), selecting `divq`+`xorl %edx,%edx` over `cqto`+`idivq`,
+  `shrq` over `sarq`, and `setb/setbe/seta/setae` over `setl/setle/setg/
+  setge` (plus unsigned `/=`, `%=`, `>>=`, `divl` for 32-bit compound).
+  Pinned by `tests/t_unsigned.c` (gcc-link) and the ld `udiv` chain
+  (both backends). Residual gap: a pure-literal expression whose decimal
+  value exceeds 2^63-1 (e.g. `1844...15ul / 2`) still takes the signed
+  path; any unsigned variable operand selects the unsigned path.
 - `inline` / `__inline` / `__inline__` accepted as a no-op qualifier and
   skipped by the parser (functions always emit out-of-line, so a plain
   `inline` definition links like a normal global instead of following the
@@ -144,8 +155,11 @@ decimal constants only, so the previous generation (which cannot parse hex)
 still bootstraps it.
 
 ## Known Gaps (Priority Order)
-1. `unsigned` type semantics partial (div, comparisons use signed ops)
-2. No function pointers
+1. ~~`unsigned` partial~~ FIXED (64-bit div/mod/cmp/shr + compound + casts;
+   see feature list). Remaining: pure-literal >2^63 expressions take the
+   signed path.
+2. Function pointers compile (see `tests/t_fnptr.c`) and link in both ld
+   backends (`ld/test/fnptr.c` chain); indirect-call ABI is `call *%r10`.
 3. No variadic parameters
 4. No `short` / `long long` / `long double` types
 5. No compound literals or designated initializers
