@@ -4,25 +4,24 @@
 
 ## Definition
 
-This community groups 3 file(s) rooted at `tests` with dominant language h (cohesion 1.00). Central symbols: `INNER_VAL`, `OUTER_VAL`, `T_INNER_H`, `T_OUTER_H`, `inner_add`, `main`, `printf`. Core file: `tests/t_inner_h.h` (3 symbols).
+This community groups 3 file(s) rooted at `tests` with dominant language h (cohesion 1.00). Central symbols: `INNER_VAL`, `OUTER_VAL`, `T_INNER_H`, `T_OUTER_H`, `inner_add`, `main`. Core file: `tests/t_inner_h.h` (3 symbols).
 
 ## Files
 
 | File | Language | Layer | Symbols | Doc |
 |------|----------|-------|---------|-----|
-| `tests/t_include.c` | c | testing | 2 | no |
+| `tests/t_include.c` | c | testing | 1 | no |
 | `tests/t_inner_h.h` | h | testing | 3 | no |
 | `tests/t_outer_h.h` | h | testing | 2 | no |
 
 ## Key Symbols
 
-- `main` (function, `tests/t_include.c:4`) `int main(void)` - include <stdio.h> include "t_outer_h.h" include "t_outer_h.h"
-- `printf` (function, `tests/t_include.c:6`) `printf("%d %d %d\n", INNER_VAL, OUTER_VAL, inner_add(40, 2));`
+- `main` (function, `tests/t_include.c:5`) `int main(void)`
 - `T_INNER_H` (macro, `tests/t_inner_h.h:2`) `#define T_INNER_H`
-- `INNER_VAL` (macro, `tests/t_inner_h.h:3`) `#define INNER_VAL`
-- `inner_add` (function, `tests/t_inner_h.h:5`) `static inline int inner_add(int a, int b)` - define INNER_VAL 111
+- `INNER_VAL` (macro, `tests/t_inner_h.h:4`) `#define INNER_VAL`
+- `inner_add` (function, `tests/t_inner_h.h:6`) `static inline int inner_add(int a, int b)`
 - `T_OUTER_H` (macro, `tests/t_outer_h.h:2`) `#define T_OUTER_H`
-- `OUTER_VAL` (macro, `tests/t_outer_h.h:5`) `#define OUTER_VAL`
+- `OUTER_VAL` (macro, `tests/t_outer_h.h:6`) `#define OUTER_VAL`
 
 ## Internal vs External Edges
 

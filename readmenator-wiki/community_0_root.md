@@ -4,22 +4,21 @@
 
 ## Definition
 
-This community groups 2 file(s) rooted at `.` with dominant language h (cohesion 1.00). Central symbols: `MY_LIBRARY_H`, `greet`, `main`, `printf`. Core file: `test_include.c` (3 symbols). Documented purpose: Test function to verify that inclusion works correctly.
+This community groups 2 file(s) rooted at `root` with dominant language h (cohesion 1.00). Central symbols: `MY_LIBRARY_H`, `greet`, `main`. Core file: `my_library.h` (2 symbols). Documented purpose: Test function to verify that inclusion works correctly.
 
 ## Files
 
 | File | Language | Layer | Symbols | Doc |
 |------|----------|-------|---------|-----|
 | `my_library.h` | h | utility | 2 | yes |
-| `test_include.c` | c | testing | 3 | no |
+| `test_include.c` | c | testing | 2 | no |
 
 ## Key Symbols
 
 - `MY_LIBRARY_H` (macro, `my_library.h:2`) `#define MY_LIBRARY_H`
 - `greet` (function, `my_library.h:5`) `void greet(void);` - Test function to verify that inclusion works correctly
-- `main` (function, `test_include.c:3`) `int main(void)` - include <stdio.h> include "my_library.h"
-- `printf` (function, `test_include.c:5`) `printf("Compilation successful! The compiler includes files correctly.\n");`
-- `greet` (function, `test_include.c:9`) `void greet(void)`
+- `main` (function, `test_include.c:4`) `int main(void)`
+- `greet` (function, `test_include.c:10`) `void greet(void)`
 
 ## Internal vs External Edges
 

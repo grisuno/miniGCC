@@ -1,8 +1,8 @@
 {
-  "minigcc.c": "1126c56530b0ebeb7efa481cd0f0baa1addbf0801ca6198a528a58bbb68a7010",
-  "minigccg2.s": "12a9ecac7e7fb275dd105608b97bac3e172a75d226c2475f671adc4e417bb308",
-  "minigccg3.s": "12a9ecac7e7fb275dd105608b97bac3e172a75d226c2475f671adc4e417bb308",
-  "minigccg4.s": "12a9ecac7e7fb275dd105608b97bac3e172a75d226c2475f671adc4e417bb308",
+  "minigcc.c": "f3b7daddebf982fb98db4a03f1abbb2228431273f53c7d05ce12bcaa49006bf0",
+  "minigccg2.s": "f27febabd4bf8af90b51786b5e189e60ef6ef8d65fff12f58e307eeae4a3c0db",
+  "minigccg3.s": "f27febabd4bf8af90b51786b5e189e60ef6ef8d65fff12f58e307eeae4a3c0db",
+  "minigccg4.s": "f27febabd4bf8af90b51786b5e189e60ef6ef8d65fff12f58e307eeae4a3c0db",
   "my_library.h": "46b2e9d03d73a56f9f0610e55e671690128aa3a13aea5510bd9059bf7c8a0796",
   "test.c": "1b5cc57a5d2bc6b25717280ff11d58557b99ba4402a9d7c9601f7f8dce121387",
   "test.sh": "ecd260bd1ea6368b9ed2ae45a28e3bfceecf3db88e09ae5bb8ac4414f0712236",
@@ -64,7 +64,7 @@
   "tests/t_switch.c": "de95c1f36add97546edc0b4503bb92781d3c5bf1f11727861cb82bb9b1467849",
   "tests/t_sync.c": "c687a67c5ea51ba2224391eb4bdf0313f6a2d162930ac5a1b7139d9256ac3438",
   "tests/t_typedef.c": "3943d161d9614ba674b050fb8ab7e27bbd2a8aec6f4c4a46f2c53ac837605cc3",
-  "tests/t_unsigned.c": "7a940c2563ecb41040cd971e57dfd57840b21440d82a0931389e18240013d2cb",
+  "tests/t_unsigned.c": "1e12e19f62d6dd9c215329f6b92113e7ad8d8e7d0b7ff36d983dfe43fcb57a1d",
   "tests/t_variadic.c": "691dd47d166982dc41dce2a76d051f15e209386abba0479b1b0e4ef7a9c5ee4a",
   "tests/t_while.c": "0aec2607375c5f54d322ebf423aa557718f5f263a0fb31ae4466ebf9edee337f"
 }

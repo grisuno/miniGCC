@@ -17,9 +17,9 @@ Every edge is tagged. Extracted means parsed from source; inferred means derived
 
 - Files: 68, communities: 4
 - File doc coverage: 4/68
-- Orphans (no docs at any level): 26
+- Orphans (no docs at any level): 59
 - Layers detected: 4
-- Security findings: 28
+- Security findings: 0
 - Large files (>256KB, maybe generated): 3 (minigccg2.s, minigccg3.s, minigccg4.s)
 
 ## Limits
@@ -31,7 +31,7 @@ Every edge is tagged. Extracted means parsed from source; inferred means derived
 
 ## Token Benchmark
 
-- Wiki index plus community pages estimate: ~4900 tokens (chars/4).
+- Wiki index plus community pages estimate: ~4605 tokens (chars/4).
 - Full re-read of every source file would cost strictly more on any non-trivial project; this wiki is the cheaper entry point.
 - Generation cost: $0, offline, no network calls.
 

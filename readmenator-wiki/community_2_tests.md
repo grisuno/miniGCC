@@ -4,24 +4,23 @@
 
 ## Definition
 
-This community groups 2 file(s) rooted at `tests` with dominant language c (cohesion 1.00). Central symbols: `T_INLINE_H`, `icube`, `idbl`, `iinc`, `isq`, `main`, `printf`. Core file: `tests/t_inline.c` (5 symbols).
+This community groups 2 file(s) rooted at `tests` with dominant language c (cohesion 1.00). Central symbols: `T_INLINE_H`, `icube`, `idbl`, `iinc`, `isq`, `main`. Core file: `tests/t_inline.c` (4 symbols).
 
 ## Files
 
 | File | Language | Layer | Symbols | Doc |
 |------|----------|-------|---------|-----|
-| `tests/t_inline.c` | c | testing | 5 | no |
+| `tests/t_inline.c` | c | testing | 4 | no |
 | `tests/t_inline_h.h` | h | testing | 2 | no |
 
 ## Key Symbols
 
-- `icube` (function, `tests/t_inline.c:3`) `static inline int icube(int x)` - include <stdio.h> include "t_inline_h.h"
-- `idbl` (function, `tests/t_inline.c:7`) `__inline__ static int idbl(int x)`
-- `iinc` (function, `tests/t_inline.c:11`) `__inline static int iinc(int x)`
-- `main` (function, `tests/t_inline.c:15`) `int main(void)`
-- `printf` (function, `tests/t_inline.c:17`) `printf("%d %d %d\n", isq(6), icube(3), idbl(20));`
+- `icube` (function, `tests/t_inline.c:4`) `static inline int icube(int x)`
+- `idbl` (function, `tests/t_inline.c:8`) `__inline__ static int idbl(int x)`
+- `iinc` (function, `tests/t_inline.c:12`) `__inline static int iinc(int x)`
+- `main` (function, `tests/t_inline.c:16`) `int main(void)`
 - `T_INLINE_H` (macro, `tests/t_inline_h.h:2`) `#define T_INLINE_H`
-- `isq` (function, `tests/t_inline_h.h:3`) `static inline int isq(int x)` - ifndef T_INLINE_H define T_INLINE_H
+- `isq` (function, `tests/t_inline_h.h:4`) `static inline int isq(int x)`
 
 ## Internal vs External Edges
 

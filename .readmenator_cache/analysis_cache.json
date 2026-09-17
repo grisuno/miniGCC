@@ -3,19 +3,19 @@
     "god_nodes": [
       [
         "minigccg2.s",
-        21.8
+        22.1
       ],
       [
         "minigccg3.s",
-        21.8
+        22.1
       ],
       [
         "minigccg4.s",
-        21.8
+        22.1
       ],
       [
         "minigcc.c",
-        16.400000000000002
+        15.200000000000001
       ],
       [
         "tests/t_outer_h.h",
@@ -23,11 +23,7 @@
       ],
       [
         "tests/t_inline.c",
-        2.5
-      ],
-      [
-        "test_include.c",
-        2.3
+        2.4
       ],
       [
         "tests/t_inner_h.h",
@@ -38,7 +34,11 @@
         2.2
       ],
       [
-        "tests/t_include.c",
+        "test_include.c",
+        2.2
+      ],
+      [
+        "tests/t_inline_h.h",
         2.2
       ]
     ],
@@ -57,9 +57,9 @@
         "id": 1,
         "label": "tests",
         "file_ids": [
+          "tests/t_include.c",
           "tests/t_outer_h.h",
-          "tests/t_inner_h.h",
-          "tests/t_include.c"
+          "tests/t_inner_h.h"
         ],
         "cohesion": 1.0,
         "size": 3
@@ -155,259 +155,6 @@
     "tests/t_while.c": "testing"
   },
   "security": {
-    "findings": [
-      {
-        "file_path": "minigcc.c",
-        "line": 1831,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(save_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 1837,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, save_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 1856,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, save_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3177,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(saved_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3192,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(peek_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3227,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, peek_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3230,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3237,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3247,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3258,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3268,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "input_ptr = save_src; line = save_line; tok = saved_tok; strcpy(token, saved_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3275,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3284,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(peek_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3331,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, peek_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3500,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(save_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3535,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, save_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3967,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(cond_first_tok_val, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 3979,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(inc_first_tok_val, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4016,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(after_body_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4021,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "input_ptr = inc_pos; line = inc_line_saved; tok = inc_first_tok; strcpy(token, inc_first_tok_val);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4054,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "input_ptr = cond_pos; line = cond_line_saved; tok = cond_first_tok; strcpy(token, cond_first_tok_val);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4088,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "input_ptr = after_body_pos; line = after_body_line; tok = after_body_tok; strcpy(token, after_body_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4575,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(peek_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4589,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, peek_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4724,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(body_token, token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "minigcc.c",
-        "line": 4766,
-        "severity": "high",
-        "rule_id": "C001",
-        "description": "Buffer overflow risk: strcpy \u2014 use strncpy or snprintf instead",
-        "snippet": "strcpy(token, body_token);",
-        "cwe": "CWE-121"
-      },
-      {
-        "file_path": "test_all.sh",
-        "line": 12,
-        "severity": "medium",
-        "rule_id": "S003",
-        "description": "Command substitution with user input \u2014 potential injection",
-        "snippet": "WORK=\"$(mktemp -d \"${TMPDIR:-/tmp}/mgcc_all.XXXXXX\")\" || exit 1",
-        "cwe": "CWE-78"
-      },
-      {
-        "file_path": "test_ld_selfhost.sh",
-        "line": 19,
-        "severity": "medium",
-        "rule_id": "S003",
-        "description": "Command substitution with user input \u2014 potential injection",
-        "snippet": "WORK=\"$(mktemp -d \"${TMPDIR:-/tmp}/mgcc_selfhost.XXXXXX\")\" || exit 1",
-        "cwe": "CWE-78"
-      }
-    ]
+    "findings": []
   }
 }
