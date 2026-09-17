@@ -135,19 +135,6 @@
   - `emit_float_consts` (function, line 5527) `static void emit_float_consts(void)`
   - `emit_string_pool` (function, line 5537) `static void emit_string_pool(void)`
   - `main` (function, line 5547) `int main(int argc, char **argv)`
-  - `fprintf` (function, line 635) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
-  - `exit` (function, line 637) `exit(EXIT_FAILURE);`
-  - `fclose` (function, line 714) `fclose(f);`
-  - `fseek` (function, line 753) `fseek(f, 0, SEEK_END);`
-  - `rewind` (function, line 759) `rewind(f);`
-  - `free` (function, line 763) `free(buf);`
-  - `snprintf` (function, line 986) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
-  - `fputc` (function, line 1586) `fputc('%', output);`
-  - `strncpy` (function, line 1664) `strncpy(d, name, MAX_IDENT_LEN - 1);`
-  - `memcpy` (function, line 1783) `memcpy(out_name, token, nlen);`
-  - `strcpy` (function, line 1831) `strcpy(save_token, token);`
-  - `fputs` (function, line 3480) `fputs(asm_text[oi], output);`
-  - `pointer` (function, line 4676) `subscript yields another pointer (stride 8) whose pointee is still the base type, so char** keeps char as the pointee and elem_ptr marks the 8-byte first stride. */ add_symbol(is_fn ? fn_name : token,`
   - `MAX_TOKEN_LEN` (macro, line 14) `#define MAX_TOKEN_LEN`
   - `MAX_SYMBOLS` (macro, line 16) `#define MAX_SYMBOLS`
   - `MAX_IDENT_LEN` (macro, line 17) `#define MAX_IDENT_LEN`
@@ -883,7 +870,6 @@
 - Symbols:
   - `main` (function, line 3) `int main(void)`
   - `greet` (function, line 9) `void greet(void)`
-  - `printf` (function, line 5) `printf("Compilation successful! The compiler includes files correctly.\n");`
 - Depends on: `my_library.h`
 
 ## test_ld_selfhost.sh

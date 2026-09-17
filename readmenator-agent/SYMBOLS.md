@@ -66,15 +66,8 @@
 | `emit_string_pool` | function | `minigcc.c:5537` | `static void emit_string_pool(void)` |
 | `equality_expr` | function | `minigcc.c:2974` | `static void equality_expr(void)` |
 | `error` | function | `minigcc.c:633` | `static void error(const char *msg)` |
-| `exit` | function | `minigcc.c:637` | `exit(EXIT_FAILURE);` |
-| `fclose` | function | `minigcc.c:714` | `fclose(f);` |
 | `find_macro` | function | `minigcc.c:322` | `static int find_macro(const char *name)` |
 | `find_symbol` | function | `minigcc.c:1648` | `static int find_symbol(const char *name)` |
-| `fprintf` | function | `minigcc.c:635` | `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);` |
-| `fputc` | function | `minigcc.c:1586` | `fputc('%', output);` |
-| `fputs` | function | `minigcc.c:3480` | `fputs(asm_text[oi], output);` |
-| `free` | function | `minigcc.c:763` | `free(buf);` |
-| `fseek` | function | `minigcc.c:753` | `fseek(f, 0, SEEK_END);` |
 | `get_dir_from_path` | function | `minigcc.c:691` | `static void get_dir_from_path(const char *path, char *dir, int dir_sz)` |
 | `handle_postfix` | function | `minigcc.c:2563` | `static void handle_postfix(int is_lvalue)` |
 | `hash_init` | function | `minigcc.c:783` | `static void hash_init(void)` |
@@ -113,7 +106,6 @@
 | `main` | function | `minigcc.c:5547` | `int main(int argc, char **argv)` |
 | `mark_file_processed` | function | `minigcc.c:679` | `static void mark_file_processed(const char *path)` |
 | `match` | function | `minigcc.c:1576` | `static void match(int expected)` |
-| `memcpy` | function | `minigcc.c:1783` | `memcpy(out_name, token, nlen);` |
 | `multiplicative_expr` | function | `minigcc.c:2764` | `static void multiplicative_expr(void)` |
 | `my_isalnum` | function | `minigcc.c:865` | `static int my_isalnum(int c)` |
 | `my_isalpha` | function | `minigcc.c:854` | `static int my_isalpha(int c)` |
@@ -134,7 +126,6 @@
 | `parse_va_end` | function | `minigcc.c:2491` | `static void parse_va_end(void)` |
 | `parse_va_start` | function | `minigcc.c:2408` | `static void parse_va_start(void)` |
 | `peek_call_argc` | function | `minigcc.c:1821` | `static int peek_call_argc(void)` |
-| `pointer` | function | `minigcc.c:4676` | `subscript yields another pointer (stride 8) whose pointee is still the base type, so char** keeps char as the pointee an` |
 | `pop_scope` | function | `minigcc.c:796` | `static void pop_scope(void)` |
 | `push_scope` | function | `minigcc.c:788` | `static void push_scope(void)` |
 | `read_include_file` | function | `minigcc.c:749` | `static char *read_include_file(const char *path)` |
@@ -142,7 +133,6 @@
 | `relational_expr` | function | `minigcc.c:2920` | `static void relational_expr(void)` |
 | `resolve_local_include` | function | `minigcc.c:710` | `static char *resolve_local_include(const char *target)` |
 | `restore_parser_state` | function | `minigcc.c:283` | `static void restore_parser_state(ParserState *state)` |
-| `rewind` | function | `minigcc.c:759` | `rewind(f);` |
 | `safe_malloc` | function | `minigcc.c:639` | `static void *safe_malloc(size_t size)` |
 | `safe_strcpy` | function | `minigcc.c:648` | `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)` |
 | `safe_strtoll` | function | `minigcc.c:657` | `static long safe_strtoll(const char *s)` |
@@ -152,7 +142,6 @@
 | `skip_struct` | function | `minigcc.c:4921` | `static void skip_struct(void)` |
 | `skip_struct_fields` | function | `minigcc.c:4862` | `static void skip_struct_fields(int fsize, int funs, int ffloat)` |
 | `skip_typedef` | function | `minigcc.c:5021` | `static void skip_typedef(void)` |
-| `snprintf` | function | `minigcc.c:986` | `snprintf(token, MAX_TOKEN_LEN, "%ld", v);` |
 | `statement` | function | `minigcc.c:3854` | `static void statement(void)` |
 | `strcmp` | function | `minigcc.c:2008` | `strcmp(id_name, "__sync_lock_test_and_set") == 0 \|\|
                 strcmp(id_name, "__sync_lock_...` |
@@ -161,8 +150,6 @@
 | `strcmp` | function | `minigcc.c:2019` | `strcmp(id_name, "va_arg") == 0)` |
 | `strcmp` | function | `minigcc.c:3754` | `strcmp(token, "returns_twice") == 0 \|\|
                        strcmp(token, "always_inline") == 0)` |
-| `strcpy` | function | `minigcc.c:1831` | `strcpy(save_token, token);` |
-| `strncpy` | function | `minigcc.c:1664` | `strncpy(d, name, MAX_IDENT_LEN - 1);` |
 | `truncate_symbols` | function | `minigcc.c:826` | `static void truncate_symbols(int start_idx)` |
 | `typedef_name` | function | `minigcc.c:1923` | `static const char *typedef_name(int i)` |
 | `typedef_size` | function | `minigcc.c:1939` | `static int typedef_size(int i)` |
@@ -833,72 +820,44 @@
 | `main` | function | `test_for.c:2` | `int main()` |
 | `greet` | function | `test_include.c:9` | `void greet(void)` |
 | `main` | function | `test_include.c:3` | `int main(void)` |
-| `printf` | function | `test_include.c:5` | `printf("Compilation successful! The compiler includes files correctly.\n");` |
 | `fail` | function | `test_ld_selfhost.sh:32` | `` |
 | `pass` | function | `test_ld_selfhost.sh:27` | `` |
 | `main` | function | `tests/neg_asm.c:1` | `int main(void)` |
-| `volatile` | function | `tests/neg_asm.c:3` | `__asm__ volatile("mov %0, %%rax" : "=z"(x));` |
 | `main` | function | `tests/neg_asm2.c:1` | `int main(void)` |
-| `volatile` | function | `tests/neg_asm2.c:4` | `__asm__ volatile("nop" : "=a"(a), "=a"(b));` |
 | `main` | function | `tests/neg_asm3.c:1` | `int main(void)` |
-| `volatile` | function | `tests/neg_asm3.c:3` | `__asm__ volatile("nop" : "+r"(a));` |
 | `main` | function | `tests/neg_asm_ds.c:7` | `int main(void)` |
-| `printf` | function | `tests/neg_asm_ds.c:9` | `printf("%ld\n", sum_d5(1, 2, 3, 4, 5, 6));` |
 | `sum_d5` | function | `tests/neg_asm_ds.c:1` | `long sum_d5(long d, long a, long b, long c, long e, long f)` |
 | `main` | function | `tests/neg_attr.c:2` | `int main(void)` |
 | `main` | function | `tests/neg_comment.c:1` | `int main(void)` |
 | `main` | function | `tests/neg_float.c:1` | `int main(void)` |
 | `add2` | function | `tests/neg_fnptr.c:2` | `long add2(long a, long b)` |
-| `long` | function | `tests/neg_fnptr.c:8` | `long (*f)(long, long);` |
 | `main` | function | `tests/neg_fnptr.c:6` | `int main(void)` |
-| `printf` | function | `tests/neg_fnptr.c:12` | `printf("%ld\n", x);` |
 | `main` | function | `tests/neg_fnptr_call.c:2` | `int main(void)` |
-| `printf` | function | `tests/neg_fnptr_call.c:8` | `printf("%ld\n", y);` |
 | `add2` | function | `tests/neg_fnptr_cmp.c:2` | `long add2(long a, long b)` |
-| `long` | function | `tests/neg_fnptr_cmp.c:12` | `long (*f)(long, long);` |
 | `main` | function | `tests/neg_fnptr_cmp.c:10` | `int main(void)` |
 | `mul2` | function | `tests/neg_fnptr_cmp.c:6` | `long mul2(long a, long b)` |
-| `printf` | function | `tests/neg_fnptr_cmp.c:18` | `printf("%ld\n", r);` |
 | `add2` | function | `tests/neg_fnptr_cmp0.c:2` | `long add2(long a, long b)` |
-| `long` | function | `tests/neg_fnptr_cmp0.c:8` | `long (*f)(long, long);` |
 | `main` | function | `tests/neg_fnptr_cmp0.c:6` | `int main(void)` |
-| `printf` | function | `tests/neg_fnptr_cmp0.c:12` | `printf("%ld\n", r);` |
 | `add2` | function | `tests/neg_fnptr_globalinit.c:1` | `long add2(long a, long b)` |
 | `main` | function | `tests/neg_fnptr_globalinit.c:6` | `int main(void)` |
 | `add2` | function | `tests/neg_fnptr_tern.c:2` | `long add2(long a, long b)` |
-| `long` | function | `tests/neg_fnptr_tern.c:8` | `long (*f)(long, long);` |
 | `main` | function | `tests/neg_fnptr_tern.c:6` | `int main(void)` |
-| `printf` | function | `tests/neg_fnptr_tern.c:14` | `printf("%ld\n", r);` |
 | `main` | function | `tests/neg_hex.c:1` | `int main(void)` |
 | `main` | function | `tests/neg_octal.c:1` | `int main(void)` |
 | `c` | type_alias | `tests/neg_typedef_arrcont.c:1` | `typedef int b, c[4];` |
 | `main` | function | `tests/neg_typedef_arrcont.c:2` | `int main(void)` |
-| `__builtin_va_end` | function | `tests/neg_va.c:4` | `__builtin_va_end(ap);` |
-| `__builtin_va_start` | function | `tests/neg_va.c:3` | `__builtin_va_start(ap, ap);` |
 | `main` | function | `tests/neg_va.c:1` | `int main(void)` |
 | `main` | function | `tests/t_args.c:2` | `int main(int argc, char **argv)` |
-| `printf` | function | `tests/t_args.c:4` | `printf("%d\n", argc);` |
-| `long` | function | `tests/t_args7.c:17` | `long (*fp)(long, long, long, long, long, long, long);` |
 | `main` | function | `tests/t_args7.c:15` | `int main(void)` |
 | `mix8` | function | `tests/t_args7.c:10` | `long mix8(long a, long b, long c, long d, long e, long f, long g, long h)` |
-| `printf` | function | `tests/t_args7.c:18` | `printf("%ld\n", sum7(1, 2, 3, 4, 5, 6, 7));` |
 | `sum7` | function | `tests/t_args7.c:2` | `long sum7(long a, long b, long c, long d, long e, long f, long g)` |
 | `sum8` | function | `tests/t_args7.c:6` | `long sum8(long a, long b, long c, long d, long e, long f, long g, long h)` |
 | `main` | function | `tests/t_arith.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_arith.c:19` | `printf("%d %d %d\n", a, b, c);` |
 | `main` | function | `tests/t_arrays.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_arrays.c:7` | `printf("%d %d %d\n", a[0], a[2], a[4]);` |
-| `__asm` | function | `tests/t_asm.c:7` | `__asm("nop");` |
-| `__asm__` | function | `tests/t_asm.c:8` | `__asm__("nop");` |
 | `main` | function | `tests/t_asm.c:4` | `int main(void)` |
-| `printf` | function | `tests/t_asm.c:11` | `printf("%d %d\n", probe, v);` |
-| `volatile` | function | `tests/t_asm.c:6` | `__asm__ volatile("nop");` |
 | `main` | function | `tests/t_asm3.c:5` | `int main(void)` |
-| `printf` | function | `tests/t_asm3.c:10` | `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);` |
-| `volatile` | function | `tests/t_asm3.c:9` | `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));` |
 | `add_ds` | function | `tests/t_asm_ds.c:15` | `long add_ds(long a, long b)` |
 | `main` | function | `tests/t_asm_ds.c:57` | `int main(void)` |
-| `printf` | function | `tests/t_asm_ds.c:59` | `printf("%ld\n", via_d(41));` |
 | `ret_d` | function | `tests/t_asm_ds.c:21` | `long ret_d(long x)` |
 | `ret_dc` | function | `tests/t_asm_ds.c:39` | `char ret_dc(void)` |
 | `ret_di` | function | `tests/t_asm_ds.c:33` | `int ret_di(void)` |
@@ -907,63 +866,45 @@
 | `ret_s` | function | `tests/t_asm_ds.c:27` | `long ret_s(long x)` |
 | `via_d` | function | `tests/t_asm_ds.c:3` | `long via_d(long x)` |
 | `via_s` | function | `tests/t_asm_ds.c:9` | `long via_s(long x)` |
-| `volatile` | function | `tests/t_asm_ds.c:6` | `__asm__ volatile("movq %1, %0" : "=r"(r) : "D"(x));` |
 | `__attribute__` | function | `tests/t_attr.c:3` | `typedef struct __attribute__((packed))` |
 | `__attribute__` | function | `tests/t_attr.c:11` | `__attribute__((always_inline)) static inline int sq(int x)` |
 | `knoreturn` | function | `tests/t_attr.c:22` | `void knoreturn(void)` |
 | `ksetjmp` | function | `tests/t_attr.c:17` | `int ksetjmp(long buf)` |
 | `limit` | type_alias | `tests/t_attr.c:3` | `typedef struct __attribute__((packed)) { uint16_t limit;` |
 | `main` | function | `tests/t_attr.c:24` | `int main(void)` |
-| `printf` | function | `tests/t_attr.c:31` | `printf("%d %d %d %d %d\n", id.limit, id.base == 200, arr[0], g, sq(6));` |
 | `main` | function | `tests/t_compound.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_compound.c:8` | `printf("%d\n", m);` |
 | `main` | function | `tests/t_dowhile.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_dowhile.c:10` | `printf("%d %d\n", sum, i);` |
 | `Color` | enum | `tests/t_enum.c:3` | `` |
 | `Single` | enum | `tests/t_enum.c:9` | `` |
 | `main` | function | `tests/t_enum.c:12` | `int main(void)` |
-| `printf` | function | `tests/t_enum.c:14` | `printf("%d %d %d\n", RED, GREEN, BLUE);` |
 | `main` | function | `tests/t_float.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_float.c:6` | `printf("%d %d %d\n", a + b == 4.0, a * b == 3.75, b - a == 1.0);` |
 | `add2` | function | `tests/t_fnptr.c:2` | `long add2(long a, long b)` |
 | `apply2` | function | `tests/t_fnptr.c:10` | `long apply2(long (*f)(long, long), long x, long y)` |
-| `f` | function | `tests/t_fnptr.c:12` | `return f(x, y);` |
-| `long` | function | `tests/t_fnptr.c:16` | `long (*op)(long, long);` |
 | `main` | function | `tests/t_fnptr.c:25` | `int main(void)` |
 | `mul2` | function | `tests/t_fnptr.c:6` | `long mul2(long a, long b)` |
 | `ops_t` | struct | `tests/t_fnptr.c:15` | `` |
-| `printf` | function | `tests/t_fnptr.c:31` | `printf("%ld\n", f(10, 20));` |
 | `run_op` | function | `tests/t_fnptr.c:21` | `long run_op(ops_t *o, long x, long y)` |
 | `main` | function | `tests/t_for.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_for.c:7` | `printf("%d\n", sum);` |
 | `main` | function | `tests/t_globinit.c:7` | `int main(void)` |
-| `printf` | function | `tests/t_globinit.c:9` | `printf("%d %d %d\n", gscalar, garr[0], garr[3]);` |
 | `main` | function | `tests/t_goto.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_goto.c:13` | `end: printf("%d\n", i);` |
 | `main` | function | `tests/t_hexoct.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_hexoct.c:11` | `printf("%d %d %d\n", h1, h2, h3);` |
 | `grade` | function | `tests/t_if.c:2` | `int grade(int s)` |
 | `main` | function | `tests/t_if.c:9` | `int main(void)` |
-| `printf` | function | `tests/t_if.c:12` | `printf("%d %d %d\n", grade(95), grade(80), grade(60));` |
 | `main` | function | `tests/t_include.c:4` | `int main(void)` |
-| `printf` | function | `tests/t_include.c:6` | `printf("%d %d %d\n", INNER_VAL, OUTER_VAL, inner_add(40, 2));` |
 | `icube` | function | `tests/t_inline.c:3` | `static inline int icube(int x)` |
 | `idbl` | function | `tests/t_inline.c:7` | `__inline__ static int idbl(int x)` |
 | `iinc` | function | `tests/t_inline.c:11` | `__inline static int iinc(int x)` |
 | `main` | function | `tests/t_inline.c:15` | `int main(void)` |
-| `printf` | function | `tests/t_inline.c:17` | `printf("%d %d %d\n", isq(6), icube(3), idbl(20));` |
 | `T_INLINE_H` | macro | `tests/t_inline_h.h:2` | `#define T_INLINE_H` |
 | `isq` | function | `tests/t_inline_h.h:3` | `static inline int isq(int x)` |
 | `INNER_VAL` | macro | `tests/t_inner_h.h:3` | `#define INNER_VAL` |
 | `T_INNER_H` | macro | `tests/t_inner_h.h:2` | `#define T_INNER_H` |
 | `inner_add` | function | `tests/t_inner_h.h:5` | `static inline int inner_add(int a, int b)` |
 | `main` | function | `tests/t_logic.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_logic.c:6` | `printf("%d %d %d\n", t && t, t && f, f \|\| f);` |
 | `add64` | function | `tests/t_longlong.c:13` | `unsigned long long add64(unsigned long long a, unsigned long long b)` |
 | `bump` | function | `tests/t_longlong.c:5` | `u64 bump(u64 x)` |
 | `main` | function | `tests/t_longlong.c:19` | `int main(void)` |
 | `negate` | function | `tests/t_longlong.c:9` | `s64 negate(s64 x)` |
-| `printf` | function | `tests/t_longlong.c:26` | `printf("%llu\n", a + b);` |
 | `s64` | type_alias | `tests/t_longlong.c:4` | `typedef long long s64;` |
 | `u64` | type_alias | `tests/t_longlong.c:2` | `typedef unsigned long long u64;` |
 | `HEXED` | macro | `tests/t_macros.c:5` | `#define HEXED` |
@@ -973,52 +914,37 @@
 | `SUMMED` | macro | `tests/t_macros.c:6` | `#define SUMMED` |
 | `SZ` | macro | `tests/t_macros.c:8` | `#define SZ` |
 | `main` | function | `tests/t_macros.c:9` | `int main(void)` |
-| `printf` | function | `tests/t_macros.c:11` | `printf("%d %d %d\n", KONST, SHIFTED, HEXED);` |
 | `OUTER_VAL` | macro | `tests/t_outer_h.h:5` | `#define OUTER_VAL` |
 | `T_OUTER_H` | macro | `tests/t_outer_h.h:2` | `#define T_OUTER_H` |
 | `bump` | function | `tests/t_pointers.c:2` | `void bump(int *p)` |
 | `main` | function | `tests/t_pointers.c:6` | `int main(void)` |
-| `printf` | function | `tests/t_pointers.c:10` | `printf("%d %d\n", x, *p);` |
 | `fact` | function | `tests/t_recursion.c:7` | `int fact(int n)` |
 | `fib` | function | `tests/t_recursion.c:2` | `int fib(int n)` |
 | `main` | function | `tests/t_recursion.c:12` | `int main(void)` |
-| `printf` | function | `tests/t_recursion.c:14` | `printf("%d %d\n", fib(15), fact(7));` |
 | `main` | function | `tests/t_scope.c:11` | `int main(void)` |
-| `printf` | function | `tests/t_scope.c:13` | `printf("%d %d\n", g, K);` |
 | `touch` | function | `tests/t_scope.c:6` | `void touch(void)` |
 | `main` | function | `tests/t_sizeof.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_sizeof.c:4` | `printf("%d %d %d\n", sizeof(char), sizeof(float), sizeof(double));` |
 | `add_shorts` | function | `tests/t_stdint.c:33` | `short add_shorts(short a, short b)` |
 | `idtr_t` | struct | `tests/t_stdint.c:4` | `` |
 | `loads_s16` | function | `tests/t_stdint.c:25` | `int16_t loads_s16(int16_t v)` |
 | `loads_u32` | function | `tests/t_stdint.c:29` | `uint32_t loads_u32(uint32_t v)` |
 | `loads_u8` | function | `tests/t_stdint.c:21` | `uint8_t loads_u8(uint8_t v)` |
 | `main` | function | `tests/t_stdint.c:37` | `int main(void)` |
-| `printf` | function | `tests/t_stdint.c:49` | `printf("%d %d %d\n", gu8, gi8, gu16);` |
 | `main` | function | `tests/t_strings.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_strings.c:4` | `printf("hello\n");` |
 | `Point` | struct | `tests/t_struct.c:3` | `` |
 | `main` | function | `tests/t_struct.c:17` | `int main(void)` |
 | `manhattan` | function | `tests/t_struct.c:9` | `int manhattan(Point *p)` |
-| `printf` | function | `tests/t_struct.c:22` | `printf("%d %d\n", pp->x, pp->y);` |
 | `R` | struct | `tests/t_struct_ul.c:3` | `` |
 | `main` | function | `tests/t_struct_ul.c:12` | `int main(void)` |
-| `printf` | function | `tests/t_struct_ul.c:22` | `printf("%lu\n", r.base);` |
 | `classify` | function | `tests/t_switch.c:2` | `int classify(int v)` |
 | `main` | function | `tests/t_switch.c:13` | `int main(void)` |
-| `printf` | function | `tests/t_switch.c:15` | `printf("%d %d %d\n", classify(1), classify(2), classify(3));` |
-| `__sync_lock_release` | function | `tests/t_sync.c:16` | `__sync_lock_release(&flag);` |
-| `__sync_synchronize` | function | `tests/t_sync.c:27` | `__sync_synchronize();` |
 | `main` | function | `tests/t_sync.c:5` | `int main(void)` |
-| `printf` | function | `tests/t_sync.c:11` | `printf("%d %d %d\n", a, b, ctr);` |
 | `Pair` | struct | `tests/t_typedef.c:9` | `` |
 | `main` | function | `tests/t_typedef.c:15` | `int main(void)` |
 | `myint` | type_alias | `tests/t_typedef.c:2` | `typedef int myint;` |
-| `printf` | function | `tests/t_typedef.c:18` | `printf("%d\n", shared + 2);` |
 | `bump` | function | `tests/t_unsigned.c:8` | `unsigned long bump(unsigned long x)` |
 | `main` | function | `tests/t_unsigned.c:26` | `int main(void)` |
 | `narrow` | function | `tests/t_unsigned.c:12` | `unsigned int narrow(unsigned int x)` |
-| `printf` | function | `tests/t_unsigned.c:39` | `printf("%lu\n", c);` |
 | `reg_base` | function | `tests/t_unsigned.c:22` | `unsigned long reg_base(ureg_t *r)` |
 | `u32` | type_alias | `tests/t_unsigned.c:4` | `typedef unsigned int u32;` |
 | `u64` | type_alias | `tests/t_unsigned.c:2` | `typedef unsigned long u64;` |
@@ -1027,13 +953,9 @@
 | `ureg2` | type_alias | `tests/t_unsigned.c:114` | `typedef ureg_t ureg2;` |
 | `ureg_t` | struct | `tests/t_unsigned.c:17` | `` |
 | `uword` | type_alias | `tests/t_unsigned.c:108` | `typedef u32 uword;` |
-| `__builtin_va_end` | function | `tests/t_variadic.c:43` | `__builtin_va_end(ap);` |
-| `__builtin_va_start` | function | `tests/t_variadic.c:14` | `__builtin_va_start(ap, fmt);` |
 | `main` | function | `tests/t_variadic.c:58` | `int main(void)` |
 | `mini_kprintf` | function | `tests/t_variadic.c:11` | `void mini_kprintf(const char *fmt, ...)` |
 | `mini_puts` | function | `tests/t_variadic.c:4` | `void mini_puts(const char *s)` |
-| `printf` | function | `tests/t_variadic.c:68` | `printf("%d %d\n", vsum(3, 10L, 20L, 30L), vsum(1, 99L));` |
 | `putchar` | function | `tests/t_variadic.c:2` | `int putchar(int c);` |
 | `vsum` | function | `tests/t_variadic.c:45` | `long vsum(int n, ...)` |
 | `main` | function | `tests/t_while.c:2` | `int main(void)` |
-| `printf` | function | `tests/t_while.c:12` | `printf("%d %d\n", i, sum);` |

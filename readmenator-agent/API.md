@@ -389,45 +389,6 @@
 ### main (function) `int main(int argc, char **argv)`
 - Defined: `minigcc.c:5547`
 
-### fprintf (function) `fprintf(stderr, "%s:%d: Error at token '%s': %s\n", current_file ? current_file : "(unknown)", line, token, msg);`
-- Defined: `minigcc.c:635`
-
-### exit (function) `exit(EXIT_FAILURE);`
-- Defined: `minigcc.c:637`
-
-### fclose (function) `fclose(f);`
-- Defined: `minigcc.c:714`
-
-### fseek (function) `fseek(f, 0, SEEK_END);`
-- Defined: `minigcc.c:753`
-
-### rewind (function) `rewind(f);`
-- Defined: `minigcc.c:759`
-
-### free (function) `free(buf);`
-- Defined: `minigcc.c:763`
-
-### snprintf (function) `snprintf(token, MAX_TOKEN_LEN, "%ld", v);`
-- Defined: `minigcc.c:986`
-
-### fputc (function) `fputc('%', output);`
-- Defined: `minigcc.c:1586`
-
-### strncpy (function) `strncpy(d, name, MAX_IDENT_LEN - 1);`
-- Defined: `minigcc.c:1664`
-
-### memcpy (function) `memcpy(out_name, token, nlen);`
-- Defined: `minigcc.c:1783`
-
-### strcpy (function) `strcpy(save_token, token);`
-- Defined: `minigcc.c:1831`
-
-### fputs (function) `fputs(asm_text[oi], output);`
-- Defined: `minigcc.c:3480`
-
-### pointer (function) `subscript yields another pointer (stride 8) whose pointee is still the base type, so char** keeps char as the pointee and elem_ptr marks the 8-byte first stride. */ add_symbol(is_fn ? fn_name : token,`
-- Defined: `minigcc.c:4676`
-
 ## minigccg2.s
 
 ### lex_kw_blob (function)
@@ -2439,10 +2400,6 @@
 - Defined: `test_include.c:9`
 - Depends on: `my_library.h`
 
-### printf (function) `printf("Compilation successful! The compiler includes files correctly.\n");`
-- Defined: `test_include.c:5`
-- Depends on: `my_library.h`
-
 ## test_ld_selfhost.sh
 
 ### pass (function)
@@ -2456,24 +2413,15 @@
 ### main (function) `int main(void)`
 - Defined: `tests/neg_asm.c:1`
 
-### volatile (function) `__asm__ volatile("mov %0, %%rax" : "=z"(x));`
-- Defined: `tests/neg_asm.c:3`
-
 ## tests/neg_asm2.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_asm2.c:1`
 
-### volatile (function) `__asm__ volatile("nop" : "=a"(a), "=a"(b));`
-- Defined: `tests/neg_asm2.c:4`
-
 ## tests/neg_asm3.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_asm3.c:1`
-
-### volatile (function) `__asm__ volatile("nop" : "+r"(a));`
-- Defined: `tests/neg_asm3.c:3`
 
 ## tests/neg_asm_ds.c
 
@@ -2482,9 +2430,6 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_asm_ds.c:7`
-
-### printf (function) `printf("%ld\n", sum_d5(1, 2, 3, 4, 5, 6));`
-- Defined: `tests/neg_asm_ds.c:9`
 
 ## tests/neg_attr.c
 
@@ -2510,20 +2455,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/neg_fnptr.c:6`
 
-### long (function) `long (*f)(long, long);`
-- Defined: `tests/neg_fnptr.c:8`
-
-### printf (function) `printf("%ld\n", x);`
-- Defined: `tests/neg_fnptr.c:12`
-
 ## tests/neg_fnptr_call.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_fnptr_call.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%ld\n", y);`
-- Defined: `tests/neg_fnptr_call.c:8`
 
 ## tests/neg_fnptr_cmp.c
 
@@ -2537,12 +2473,6 @@
 ### main (function) `int main(void)`
 - Defined: `tests/neg_fnptr_cmp.c:10`
 
-### long (function) `long (*f)(long, long);`
-- Defined: `tests/neg_fnptr_cmp.c:12`
-
-### printf (function) `printf("%ld\n", r);`
-- Defined: `tests/neg_fnptr_cmp.c:18`
-
 ## tests/neg_fnptr_cmp0.c
 
 ### add2 (function) `long add2(long a, long b)`
@@ -2551,12 +2481,6 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_fnptr_cmp0.c:6`
-
-### long (function) `long (*f)(long, long);`
-- Defined: `tests/neg_fnptr_cmp0.c:8`
-
-### printf (function) `printf("%ld\n", r);`
-- Defined: `tests/neg_fnptr_cmp0.c:12`
 
 ## tests/neg_fnptr_globalinit.c
 
@@ -2574,12 +2498,6 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/neg_fnptr_tern.c:6`
-
-### long (function) `long (*f)(long, long);`
-- Defined: `tests/neg_fnptr_tern.c:8`
-
-### printf (function) `printf("%ld\n", r);`
-- Defined: `tests/neg_fnptr_tern.c:14`
 
 ## tests/neg_hex.c
 
@@ -2601,20 +2519,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/neg_va.c:1`
 
-### __builtin_va_start (function) `__builtin_va_start(ap, ap);`
-- Defined: `tests/neg_va.c:3`
-
-### __builtin_va_end (function) `__builtin_va_end(ap);`
-- Defined: `tests/neg_va.c:4`
-
 ## tests/t_args.c
 
 ### main (function) `int main(int argc, char **argv)`
 - Defined: `tests/t_args.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d\n", argc);`
-- Defined: `tests/t_args.c:4`
 
 ## tests/t_args7.c
 
@@ -2631,20 +2540,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_args7.c:15`
 
-### long (function) `long (*fp)(long, long, long, long, long, long, long);`
-- Defined: `tests/t_args7.c:17`
-
-### printf (function) `printf("%ld\n", sum7(1, 2, 3, 4, 5, 6, 7));`
-- Defined: `tests/t_args7.c:18`
-
 ## tests/t_arith.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_arith.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d %d %d\n", a, b, c);`
-- Defined: `tests/t_arith.c:19`
 
 ## tests/t_arrays.c
 
@@ -2652,36 +2552,15 @@
 - Defined: `tests/t_arrays.c:2`
 - Doc: include <stdio.h>
 
-### printf (function) `printf("%d %d %d\n", a[0], a[2], a[4]);`
-- Defined: `tests/t_arrays.c:7`
-
 ## tests/t_asm.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_asm.c:4`
 
-### volatile (function) `__asm__ volatile("nop");`
-- Defined: `tests/t_asm.c:6`
-
-### __asm (function) `__asm("nop");`
-- Defined: `tests/t_asm.c:7`
-
-### __asm__ (function) `__asm__("nop");`
-- Defined: `tests/t_asm.c:8`
-
-### printf (function) `printf("%d %d\n", probe, v);`
-- Defined: `tests/t_asm.c:11`
-
 ## tests/t_asm3.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_asm3.c:5`
-
-### volatile (function) `__asm__ volatile("rdtsc" : "=a"(lo), "=d"(hi));`
-- Defined: `tests/t_asm3.c:9`
-
-### printf (function) `printf("%d\n", (lo == 0 && hi == 0) ? 0 : 1);`
-- Defined: `tests/t_asm3.c:10`
 
 ## tests/t_asm_ds.c
 
@@ -2716,12 +2595,6 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_asm_ds.c:57`
 
-### volatile (function) `__asm__ volatile("movq %1, %0" : "=r"(r) : "D"(x));`
-- Defined: `tests/t_asm_ds.c:6`
-
-### printf (function) `printf("%ld\n", via_d(41));`
-- Defined: `tests/t_asm_ds.c:59`
-
 ## tests/t_attr.c
 
 ### __attribute__ (function) `typedef struct __attribute__((packed))`
@@ -2740,17 +2613,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_attr.c:24`
 
-### printf (function) `printf("%d %d %d %d %d\n", id.limit, id.base == 200, arr[0], g, sq(6));`
-- Defined: `tests/t_attr.c:31`
-
 ## tests/t_compound.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_compound.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d\n", m);`
-- Defined: `tests/t_compound.c:8`
 
 ## tests/t_dowhile.c
 
@@ -2758,25 +2625,16 @@
 - Defined: `tests/t_dowhile.c:2`
 - Doc: include <stdio.h>
 
-### printf (function) `printf("%d %d\n", sum, i);`
-- Defined: `tests/t_dowhile.c:10`
-
 ## tests/t_enum.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_enum.c:12`
-
-### printf (function) `printf("%d %d %d\n", RED, GREEN, BLUE);`
-- Defined: `tests/t_enum.c:14`
 
 ## tests/t_float.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_float.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d %d %d\n", a + b == 4.0, a * b == 3.75, b - a == 1.0);`
-- Defined: `tests/t_float.c:6`
 
 ## tests/t_fnptr.c
 
@@ -2796,31 +2654,16 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_fnptr.c:25`
 
-### f (function) `return f(x, y);`
-- Defined: `tests/t_fnptr.c:12`
-
-### long (function) `long (*op)(long, long);`
-- Defined: `tests/t_fnptr.c:16`
-
-### printf (function) `printf("%ld\n", f(10, 20));`
-- Defined: `tests/t_fnptr.c:31`
-
 ## tests/t_for.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_for.c:2`
 - Doc: include <stdio.h>
 
-### printf (function) `printf("%d\n", sum);`
-- Defined: `tests/t_for.c:7`
-
 ## tests/t_globinit.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_globinit.c:7`
-
-### printf (function) `printf("%d %d %d\n", gscalar, garr[0], garr[3]);`
-- Defined: `tests/t_globinit.c:9`
 
 ## tests/t_goto.c
 
@@ -2828,17 +2671,11 @@
 - Defined: `tests/t_goto.c:2`
 - Doc: include <stdio.h>
 
-### printf (function) `end: printf("%d\n", i);`
-- Defined: `tests/t_goto.c:13`
-
 ## tests/t_hexoct.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_hexoct.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d %d %d\n", h1, h2, h3);`
-- Defined: `tests/t_hexoct.c:11`
 
 ## tests/t_if.c
 
@@ -2849,18 +2686,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_if.c:9`
 
-### printf (function) `printf("%d %d %d\n", grade(95), grade(80), grade(60));`
-- Defined: `tests/t_if.c:12`
-
 ## tests/t_include.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_include.c:4`
 - Doc: include <stdio.h> include "t_outer_h.h" include "t_outer_h.h"
-- Depends on: `tests/t_outer_h.h`
-
-### printf (function) `printf("%d %d %d\n", INNER_VAL, OUTER_VAL, inner_add(40, 2));`
-- Defined: `tests/t_include.c:6`
 - Depends on: `tests/t_outer_h.h`
 
 ## tests/t_inline.c
@@ -2880,10 +2710,6 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_inline.c:15`
-- Depends on: `tests/t_inline_h.h`
-
-### printf (function) `printf("%d %d %d\n", isq(6), icube(3), idbl(20));`
-- Defined: `tests/t_inline.c:17`
 - Depends on: `tests/t_inline_h.h`
 
 ## tests/t_inline_h.h
@@ -2906,9 +2732,6 @@
 - Defined: `tests/t_logic.c:2`
 - Doc: include <stdio.h>
 
-### printf (function) `printf("%d %d %d\n", t && t, t && f, f || f);`
-- Defined: `tests/t_logic.c:6`
-
 ## tests/t_longlong.c
 
 ### bump (function) `u64 bump(u64 x)`
@@ -2923,17 +2746,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_longlong.c:19`
 
-### printf (function) `printf("%llu\n", a + b);`
-- Defined: `tests/t_longlong.c:26`
-
 ## tests/t_macros.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_macros.c:9`
 - Doc: define KONST 40 define SHIFTED (1 << 4) define HEXED 0x10 define SUMMED (KONST + 2) define NEGD (0 - 3) define SZ 4
-
-### printf (function) `printf("%d %d %d\n", KONST, SHIFTED, HEXED);`
-- Defined: `tests/t_macros.c:11`
 
 ## tests/t_pointers.c
 
@@ -2943,9 +2760,6 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_pointers.c:6`
-
-### printf (function) `printf("%d %d\n", x, *p);`
-- Defined: `tests/t_pointers.c:10`
 
 ## tests/t_recursion.c
 
@@ -2959,9 +2773,6 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_recursion.c:12`
 
-### printf (function) `printf("%d %d\n", fib(15), fact(7));`
-- Defined: `tests/t_recursion.c:14`
-
 ## tests/t_scope.c
 
 ### touch (function) `void touch(void)`
@@ -2970,17 +2781,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_scope.c:11`
 
-### printf (function) `printf("%d %d\n", g, K);`
-- Defined: `tests/t_scope.c:13`
-
 ## tests/t_sizeof.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_sizeof.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d %d %d\n", sizeof(char), sizeof(float), sizeof(double));`
-- Defined: `tests/t_sizeof.c:4`
 
 ## tests/t_stdint.c
 
@@ -2999,17 +2804,11 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_stdint.c:37`
 
-### printf (function) `printf("%d %d %d\n", gu8, gi8, gu16);`
-- Defined: `tests/t_stdint.c:49`
-
 ## tests/t_strings.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_strings.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("hello\n");`
-- Defined: `tests/t_strings.c:4`
 
 ## tests/t_struct.c
 
@@ -3019,16 +2818,10 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_struct.c:17`
 
-### printf (function) `printf("%d %d\n", pp->x, pp->y);`
-- Defined: `tests/t_struct.c:22`
-
 ## tests/t_struct_ul.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_struct_ul.c:12`
-
-### printf (function) `printf("%lu\n", r.base);`
-- Defined: `tests/t_struct_ul.c:22`
 
 ## tests/t_switch.c
 
@@ -3039,30 +2832,15 @@
 ### main (function) `int main(void)`
 - Defined: `tests/t_switch.c:13`
 
-### printf (function) `printf("%d %d %d\n", classify(1), classify(2), classify(3));`
-- Defined: `tests/t_switch.c:15`
-
 ## tests/t_sync.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_sync.c:5`
 
-### printf (function) `printf("%d %d %d\n", a, b, ctr);`
-- Defined: `tests/t_sync.c:11`
-
-### __sync_lock_release (function) `__sync_lock_release(&flag);`
-- Defined: `tests/t_sync.c:16`
-
-### __sync_synchronize (function) `__sync_synchronize();`
-- Defined: `tests/t_sync.c:27`
-
 ## tests/t_typedef.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_typedef.c:15`
-
-### printf (function) `printf("%d\n", shared + 2);`
-- Defined: `tests/t_typedef.c:18`
 
 ## tests/t_unsigned.c
 
@@ -3077,9 +2855,6 @@
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_unsigned.c:26`
-
-### printf (function) `printf("%lu\n", c);`
-- Defined: `tests/t_unsigned.c:39`
 
 ## tests/t_variadic.c
 
@@ -3099,20 +2874,8 @@
 - Defined: `tests/t_variadic.c:2`
 - Doc: include <stdio.h>
 
-### __builtin_va_start (function) `__builtin_va_start(ap, fmt);`
-- Defined: `tests/t_variadic.c:14`
-
-### __builtin_va_end (function) `__builtin_va_end(ap);`
-- Defined: `tests/t_variadic.c:43`
-
-### printf (function) `printf("%d %d\n", vsum(3, 10L, 20L, 30L), vsum(1, 99L));`
-- Defined: `tests/t_variadic.c:68`
-
 ## tests/t_while.c
 
 ### main (function) `int main(void)`
 - Defined: `tests/t_while.c:2`
 - Doc: include <stdio.h>
-
-### printf (function) `printf("%d %d\n", i, sum);`
-- Defined: `tests/t_while.c:12`
