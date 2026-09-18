@@ -75,6 +75,8 @@ enum {
     T_INLINE,
     T_UNION,
     T_EXTERN,
+    T_REGISTER,
+    T_AUTO,
     T_EOF
 };
 
@@ -209,7 +211,16 @@ static int struct_member_elem_sizes[MAX_STRUCT_MEMBERS];
 static int struct_member_unsigned[MAX_STRUCT_MEMBERS];
 static int struct_member_is_float[MAX_STRUCT_MEMBERS];
 static int struct_member_is_fnptr[MAX_STRUCT_MEMBERS];
+static int struct_member_is_struct[MAX_STRUCT_MEMBERS];
 static int struct_member_count = 0;
+
+/* Typedef names that denote struct types. A member declared with one of
+   these keeps the base address in %rax for chained access instead of being
+   loaded as a scalar (which silently miscompiled a.b.c for structs of 8
+   bytes or less). Pointer declarators clear struct-ness at use sites. */
+#define MAX_STRUCT_TYPEDEFS 128
+static char struct_typedef_names[MAX_STRUCT_TYPEDEFS][MAX_IDENT_LEN];
+static int struct_typedef_count = 0;
 
 #define MAX_DEFINED_FUNCS 512
 static char defined_func_names[MAX_DEFINED_FUNCS][MAX_IDENT_LEN];
@@ -219,10 +230,12 @@ static int defined_func_count = 0;
 #define MAX_IF_NESTING 64
 #define CONST_VAR_FLAG 0x10000
 static int if_nest[MAX_IF_NESTING];
+static int if_taken[MAX_IF_NESTING];
 static int if_depth = 0;
 
 static void error(const char *msg);
 static void truncate_symbols(int start_idx);
+static void ident_copy(char *dst, const char *src);
 
 #define MAX_MACROS 256
 
@@ -339,11 +352,7 @@ static void add_macro(const char *name, int value) {
         error("too many macros");
     char *dest = macros[macro_count].name;
     macro_count++;
-    int nlen = strlen(name);
-    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-    int i = 0;
-    while (i < nlen) { dest[i] = name[i]; i++; }
-    dest[nlen] = '\0';
+    ident_copy(dest, name);
     macros[macro_count - 1].value = value;
 }
 
@@ -358,6 +367,7 @@ static void add_macro(const char *name, int value) {
  * behaviour, so nothing that compiled before changes meaning. */
 static char *macro_p;
 static int macro_ok;
+static int macro_undef_zero;
 
 static int macro_or_expr(void);
 
@@ -445,8 +455,36 @@ static int macro_primary(void) {
             macro_p++;
         }
         name[n] = '\0';
+        if (strcmp(name, "defined") == 0) {
+            int paren = 0;
+            macro_skipws();
+            if (*macro_p == '(') { paren = 1; macro_p++; macro_skipws(); }
+            n = 0;
+            while (((*macro_p >= 'a' && *macro_p <= 'z') ||
+                    (*macro_p >= 'A' && *macro_p <= 'Z') ||
+                    (*macro_p >= '0' && *macro_p <= '9') || *macro_p == '_') &&
+                   n < MAX_IDENT_LEN - 1) {
+                name[n] = *macro_p;
+                n++;
+                macro_p++;
+            }
+            name[n] = '\0';
+            while ((*macro_p >= 'a' && *macro_p <= 'z') ||
+                   (*macro_p >= 'A' && *macro_p <= 'Z') ||
+                   (*macro_p >= '0' && *macro_p <= '9') || *macro_p == '_') macro_p++;
+            macro_skipws();
+            if (paren) {
+                if (*macro_p != ')') { macro_ok = 0; return 0; }
+                macro_p++;
+            }
+            return find_macro(name) >= 0;
+        }
         mi = find_macro(name);
-        if (mi < 0) { macro_ok = 0; return 0; }
+        if (mi < 0) {
+            if (macro_undef_zero) return 0;
+            macro_ok = 0;
+            return 0;
+        }
         return macros[mi].value;
     }
     macro_ok = 0;
@@ -633,6 +671,7 @@ static int macro_or_expr(void) {
 
 static int macro_fold(void) {
     macro_ok = 1;
+    macro_undef_zero = 0;
     return macro_or_expr();
 }
 
@@ -640,6 +679,19 @@ static void error(const char *msg) {
     fprintf(stderr, "%s:%d: Error at token '%s': %s\n",
             current_file ? current_file : "(unknown)", line, token, msg);
     exit(EXIT_FAILURE);
+}
+
+static int pp_eval(char *p) {
+    int v;
+    macro_p = p;
+    macro_ok = 1;
+    macro_undef_zero = 1;
+    v = macro_or_expr();
+    macro_undef_zero = 0;
+    if (!macro_ok) error("bad #if expression");
+    while (*macro_p == ' ' || *macro_p == '\t') macro_p++;
+    if (*macro_p != '\n' && *macro_p != '\0') error("bad #if expression");
+    return v;
 }
 
 static void *safe_malloc(size_t size) {
@@ -658,6 +710,31 @@ static void safe_strcpy(char *dst, const char *src, size_t dst_sz) {
         i++;
     }
     dst[i] = '\0';
+}
+
+static void ident_copy(char *dst, const char *src) {
+    int n = strlen(src);
+    int i = 0;
+    if (n >= MAX_IDENT_LEN) n = MAX_IDENT_LEN - 1;
+    while (i < n) { dst[i] = src[i]; i++; }
+    dst[n] = '\0';
+}
+
+static int is_struct_typedef(const char *name) {
+    int i = 0;
+    if (!name || !name[0]) return 0;
+    while (i < struct_typedef_count) {
+        if (strcmp(name, struct_typedef_names[i]) == 0) return 1;
+        i++;
+    }
+    return 0;
+}
+
+static void record_struct_typedef(const char *name) {
+    if (!name || !name[0] || is_struct_typedef(name)) return;
+    if (struct_typedef_count >= MAX_STRUCT_TYPEDEFS) error("too many struct typedefs");
+    ident_copy(struct_typedef_names[struct_typedef_count], name);
+    struct_typedef_count++;
 }
 
 static long safe_strtoll(const char *s) {
@@ -935,6 +1012,8 @@ static void lex_init_keywords(void) {
     lex_kw_add("inline", T_INLINE);
     lex_kw_add("__inline", T_INLINE);
     lex_kw_add("__inline__", T_INLINE);
+    lex_kw_add("register", T_REGISTER);
+    lex_kw_add("auto", T_AUTO);
 }
 
 static int lex_kw_lookup(void) {
@@ -1114,9 +1193,20 @@ static void next_token(void) {
             while (my_isspace(*input_ptr)) { if (*input_ptr == '\n') line++; input_ptr++; }
             if (strncmp(input_ptr, "ifdef", 5) == 0 || strncmp(input_ptr, "ifndef", 6) == 0 || strncmp(input_ptr, "if", 2) == 0) {
                 if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
-                if_nest[if_depth++] = 1;
+                if_nest[if_depth] = 1;
+                if_taken[if_depth] = 1;
+                if_depth++;
+            } else if (strncmp(input_ptr, "elif", 4) == 0 && (input_ptr[4] == '\0' || my_isspace(input_ptr[4]))) {
+                if (if_taken[if_depth - 1]) {
+                    if_nest[if_depth - 1] = 1;
+                } else {
+                    int ev = pp_eval(input_ptr + 4);
+                    if_nest[if_depth - 1] = ev ? 0 : 1;
+                    if_taken[if_depth - 1] = ev ? 1 : 0;
+                }
             } else if (strncmp(input_ptr, "else", 4) == 0 && (input_ptr[4] == '\0' || my_isspace(input_ptr[4]))) {
-                if_nest[if_depth - 1] = !if_nest[if_depth - 1];
+                if_nest[if_depth - 1] = if_taken[if_depth - 1];
+                if_taken[if_depth - 1] = 1;
             } else if (strncmp(input_ptr, "endif", 5) == 0) {
                 if (if_depth > 0) if_depth--;
             }
@@ -1179,6 +1269,8 @@ static void next_token(void) {
                 input_ptr++;
             }
             mname[mlen] = '\0';
+            if (*input_ptr == '(')
+                error("function-like macros are not supported");
             while (*input_ptr == ' ' || *input_ptr == '\t') input_ptr++;
             int mval = 0;
             int has_val = 0;
@@ -1255,7 +1347,9 @@ static void next_token(void) {
             }
             mname[mlen] = '\0';
             if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
-            if_nest[if_depth++] = (find_macro(mname) < 0);
+            if_nest[if_depth] = (find_macro(mname) < 0);
+            if_taken[if_depth] = (find_macro(mname) >= 0);
+            if_depth++;
             while (*input_ptr && *input_ptr != '\n') input_ptr++;
             goto restart;
         } else if (strncmp(input_ptr, "ifndef", 6) == 0) {
@@ -1267,24 +1361,54 @@ static void next_token(void) {
             }
             mname[mlen] = '\0';
             if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
-            if_nest[if_depth++] = (find_macro(mname) >= 0);
+            if_nest[if_depth] = (find_macro(mname) >= 0);
+            if_taken[if_depth] = (find_macro(mname) < 0);
+            if_depth++;
             while (*input_ptr && *input_ptr != '\n') input_ptr++;
             goto restart;
         } else if (strncmp(input_ptr, "if", 2) == 0) {
+            int val;
             input_ptr += 2;
-            while (my_isspace(*input_ptr)) input_ptr++;
-            int val = 0;
-            if (*input_ptr == '0') { val = 0; input_ptr++; }
-            else if (*input_ptr == '1') { val = 1; input_ptr++; }
+            val = pp_eval(input_ptr);
             while (*input_ptr && *input_ptr != '\n') input_ptr++;
             if (if_depth >= MAX_IF_NESTING) error("#if nesting too deep");
-            if_nest[if_depth++] = !val;
+            if_nest[if_depth] = val ? 0 : 1;
+            if_taken[if_depth] = val ? 1 : 0;
+            if_depth++;
+            goto restart;
+        } else if (strncmp(input_ptr, "elif", 4) == 0 && (input_ptr[4] == '\0' || my_isspace(input_ptr[4]))) {
+            int val;
+            if (if_depth == 0) error("#elif without #if");
+            input_ptr += 4;
+            if (if_taken[if_depth - 1]) {
+                if_nest[if_depth - 1] = 1;
+            } else {
+                val = pp_eval(input_ptr);
+                if_nest[if_depth - 1] = val ? 0 : 1;
+                if_taken[if_depth - 1] = val ? 1 : 0;
+            }
+            while (*input_ptr && *input_ptr != '\n') input_ptr++;
             goto restart;
         } else if (strncmp(input_ptr, "else", 4) == 0 && (input_ptr[4] == '\0' || my_isspace(input_ptr[4]))) {
             if (if_depth == 0) error("#else without #if");
-            if_nest[if_depth - 1] = !if_nest[if_depth - 1];
+            if_nest[if_depth - 1] = if_taken[if_depth - 1];
+            if_taken[if_depth - 1] = 1;
             while (*input_ptr && *input_ptr != '\n') input_ptr++;
             goto restart;
+        } else if (strncmp(input_ptr, "error", 5) == 0 && (input_ptr[5] == '\0' || my_isspace(input_ptr[5]))) {
+            char emsg[MAX_TOKEN_LEN];
+            int elen = 0;
+            input_ptr += 5;
+            while (*input_ptr == ' ' || *input_ptr == '\t') input_ptr++;
+            while (*input_ptr && *input_ptr != '\n' && elen < MAX_TOKEN_LEN - 1) {
+                emsg[elen] = *input_ptr;
+                elen++;
+                input_ptr++;
+            }
+            emsg[elen] = '\0';
+            fprintf(stderr, "%s:%d: #error: %s\n",
+                    current_file ? current_file : "(unknown)", line, emsg);
+            exit(EXIT_FAILURE);
         } else if (strncmp(input_ptr, "endif", 5) == 0) {
             if (if_depth == 0) error("#endif without #if");
             if_depth--;
@@ -1405,7 +1529,6 @@ static void next_token(void) {
                     case 'v': *p = '\v'; break;
                     case 'a': *p = '\a'; break;
                     case 'b': *p = '\b'; break;
-                    case '0': *p = '\0'; break;
                     case '\\': *p = '\\'; break;
                     case '"': *p = '"'; break;
                     case '\'': *p = '\''; break;
@@ -1429,8 +1552,9 @@ static void next_token(void) {
                         if (input_ptr[1] >= '0' && input_ptr[1] <= '7') {
                             int ov = 0;
                             int cnt = 0;
-                            while (input_ptr[1] >= '0' && input_ptr[1] <= '7' && cnt < 3) {
-                                ov = (ov << 3) | (input_ptr[1] - '0');
+                            input_ptr++;
+                            while (*input_ptr >= '0' && *input_ptr <= '7' && cnt < 3) {
+                                ov = (ov << 3) | (*input_ptr - '0');
                                 input_ptr++;
                                 cnt++;
                             }
@@ -1666,8 +1790,7 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
         error("too many symbols");
     Symbol *s = &symbols[symbol_count];
     char *d = s->name;
-    strncpy(d, name, MAX_IDENT_LEN - 1);
-    d[MAX_IDENT_LEN - 1] = '\0';
+    safe_strcpy(d, name, MAX_IDENT_LEN);
     s->is_global = is_global;
     s->is_static = static_flag;
     static_flag = 0;
@@ -1721,12 +1844,15 @@ static void statement(void);
 static void lvalue_address(void);
 static void handle_postfix(int is_lvalue);
 static void assignment_expr(void);
+static void comma_expr(void);
 static void parse_sync_call(const char *name);
 static void parse_va_start(void);
 static void parse_va_arg(void);
 static void parse_va_end(void);
-static void parse_enum(void);
-static void skip_struct(void);
+static int parse_enum(void);
+static void skip_struct(int is_union);
+static void record_typedef_alias(const char *name, int size, int uns, int fnptr);
+static void record_struct_typedef(const char *name);
 static void skip_typedef(void);
 static void parse_asm_block(void);
 static int parse_const_int(long long *out);
@@ -1789,18 +1915,13 @@ static int func_return_unsigned(const char *name) {
 
 static int parse_fnptr_declarator(char *out_name, int *out_count) {
     int depth;
-    int nlen;
     match('(');
     if (tok != '*')
         error("expected function pointer declarator");
     next_token();
     if (tok != T_ID)
         error("expected function pointer name");
-    nlen = strlen(token);
-    if (nlen >= MAX_IDENT_LEN)
-        nlen = MAX_IDENT_LEN - 1;
-    memcpy(out_name, token, nlen);
-    out_name[nlen] = '\0';
+    ident_copy(out_name, token);
     next_token();
     *out_count = 0;
     if (tok == '[') {
@@ -1847,13 +1968,13 @@ static int peek_call_argc(void) {
     int argc = 0;
     if (tok != '(')
         error("call arity lookahead needs '('");
-    strcpy(save_token, token);
+    safe_strcpy(save_token, token, MAX_TOKEN_LEN);
     next_token();
     if (tok == ')') {
         input_ptr = save_src;
         line = save_line;
         tok = save_tok;
-        strcpy(token, save_token);
+        safe_strcpy(token, save_token, MAX_TOKEN_LEN);
         return 0;
     }
     argc = 1;
@@ -1872,7 +1993,7 @@ static int peek_call_argc(void) {
     input_ptr = save_src;
     line = save_line;
     tok = save_tok;
-    strcpy(token, save_token);
+    safe_strcpy(token, save_token, MAX_TOKEN_LEN);
     return argc;
 }
 
@@ -2259,7 +2380,7 @@ static void unary(void) {
             line = cast_line;
             tok = '(';
             next_token();
-            assignment_expr();
+            comma_expr();
             match(')');
         }
     } else if (tok == '*') {
@@ -2395,7 +2516,8 @@ static void unary(void) {
             next_token();
             if (tok == T_ID) {
                 int ti = find_symbol(token);
-                if (ti >= 0 && symbols[ti].is_const && symbols[ti].size == 0)
+                if (ti >= 0 && symbols[ti].is_const &&
+                    (symbols[ti].size == 0 || symbols[ti].var_type == CONST_VAR_FLAG))
                     sz = symbols[ti].const_value;
                 next_token();
             }
@@ -2464,14 +2586,10 @@ static void parse_sync_call(const char *name) {
 
 static void parse_va_start(void) {
     char apname[MAX_IDENT_LEN];
-    int nlen;
     int ai;
     next_token();
     if (tok != T_ID) error("va_start needs a variable");
-    nlen = strlen(token);
-    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-    memcpy(apname, token, nlen);
-    apname[nlen] = '\0';
+    ident_copy(apname, token);
     next_token();
     match(',');
     if (tok != T_ID) error("va_start needs a parameter name");
@@ -2498,16 +2616,12 @@ static void parse_va_start(void) {
 
 static void parse_va_arg(void) {
     char apname[MAX_IDENT_LEN];
-    int nlen;
     int ai;
     int depth;
     int saw;
     next_token();
     if (tok != T_ID) error("va_arg needs a variable");
-    nlen = strlen(token);
-    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-    memcpy(apname, token, nlen);
-    apname[nlen] = '\0';
+    ident_copy(apname, token);
     next_token();
     match(',');
     depth = 0;
@@ -2620,6 +2734,70 @@ static void lvalue_address(void) {
     }
 }
 
+static void postfix_member(int is_lvalue) {
+    int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0, mfnptr = 0, mstruct = 0;
+    int found = 0;
+    int i = 0;
+    while (i < struct_member_count) {
+        if (strcmp(token, struct_member_names[i]) == 0) {
+            off = struct_member_offsets[i];
+            msize = struct_member_sizes[i];
+            mesize = struct_member_elem_sizes[i];
+            muns = struct_member_unsigned[i];
+            mfloat = struct_member_is_float[i];
+            mfnptr = struct_member_is_fnptr[i];
+            mstruct = struct_member_is_struct[i];
+            found = 1;
+            break;
+        }
+        i++;
+    }
+    if (!found) error("unknown struct member");
+    next_token();
+    if (off > 0) emit_i("    addq $%d, %%rax", off);
+    assign_size = msize;
+    current_elem_size = mesize;
+    current_elem_size2 = 0;
+    current_elem_unsigned = muns;
+    if (mstruct && (tok == '.' || tok == T_ARROW || tok == '[')) {
+        expr_fnptr = 0;
+        expr_unsigned = 0;
+        expr_pointed = T_INT;
+        return;
+    }
+    if (is_lvalue || no_postfix_deref) {
+        expr_fnptr = 0;
+        expr_unsigned = 0;
+        if (msize == 1 && !muns) expr_pointed = T_CHAR;
+        else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
+        else expr_pointed = (mstruct || msize > 8) ? T_INT : 0;
+    } else {
+        if (mstruct || msize > 8) {
+            expr_fnptr = 0;
+            expr_unsigned = 0;
+            expr_pointed = (msize > 0) ? T_INT : 0;
+        } else {
+            if (msize == 1) {
+                if (muns) emit("    movzbq (%%rax), %%rax");
+                else emit("    movsbq (%%rax), %%rax");
+            } else if (msize == 2) {
+                if (muns) emit("    movzwq (%%rax), %%rax");
+                else emit("    movswq (%%rax), %%rax");
+            } else if (msize == 4) {
+                if (muns) emit("    movl (%%rax), %%eax");
+                else emit("    movslq (%%rax), %%rax");
+            } else
+                emit("    movq (%%rax), %%rax");
+            expr_pointed = 0;
+            expr_fnptr = mfnptr;
+            if (mfloat || mfnptr)
+                expr_unsigned = 0;
+            else
+                expr_unsigned = muns;
+        }
+    }
+}
+
 static void handle_postfix(int is_lvalue) {
 	while (tok == '[' || tok == '.' || tok == T_ARROW) {
 		if (tok == '[') {
@@ -2637,7 +2815,7 @@ static void handle_postfix(int is_lvalue) {
 			int saved_uns = expr_unsigned;
 			int saved_et = expr_type;
 			
-			assignment_expr(); // Evalúa el índice del array
+			comma_expr(); // Evalúa el índice del array
 			
 			// --- RESTAURACIÓN DE ESTADO TOTAL ---
 			expr_pointed = saved_ep;
@@ -2714,109 +2892,10 @@ static void handle_postfix(int is_lvalue) {
 				subscript_base_fnptr = 0;
 			}
 			match(']');
-        } else if (tok == '.') {
+        } else if (tok == '.' || tok == T_ARROW) {
             next_token();
-            int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0, mfnptr = 0;
-            for (int i = 0; i < struct_member_count; i++) {
-                if (strcmp(token, struct_member_names[i]) == 0) {
-                    off = struct_member_offsets[i];
-                    msize = struct_member_sizes[i];
-                    mesize = struct_member_elem_sizes[i];
-                    muns = struct_member_unsigned[i];
-                    mfloat = struct_member_is_float[i];
-                    mfnptr = struct_member_is_fnptr[i];
-                    break;
-                }
-            }
-            next_token();
-            if (off > 0) emit_i("    addq $%d, %%rax", off);
-            assign_size = msize;
-            current_elem_size = mesize;
-            current_elem_size2 = 0;
-            current_elem_unsigned = muns;
-            if (is_lvalue || no_postfix_deref) {
-                expr_fnptr = 0;
-                expr_unsigned = 0;
-                if (msize == 1 && !muns) expr_pointed = T_CHAR;
-				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
-				else expr_pointed = (msize > 8) ? T_INT : 0;
-            } else {
-                if (msize > 8) {
-                    expr_fnptr = 0;
-                    expr_unsigned = 0;
-                    expr_pointed = (msize > 0) ? T_INT : 0;
-                } else {
-                    if (msize == 1) {
-                        if (muns) emit("    movzbq (%%rax), %%rax");
-                        else emit("    movsbq (%%rax), %%rax");
-                    } else if (msize == 2) {
-                        if (muns) emit("    movzwq (%%rax), %%rax");
-                        else emit("    movswq (%%rax), %%rax");
-                    } else if (msize == 4) {
-                        if (muns) emit("    movl (%%rax), %%eax");
-                        else emit("    movslq (%%rax), %%rax");
-                    } else
-                        emit("    movq (%%rax), %%rax");
-                    expr_pointed = 0;
-                    expr_fnptr = mfnptr;
-                    if (mfloat || mfnptr)
-                        expr_unsigned = 0;
-                    else
-                        expr_unsigned = muns;
-                }
-            }
-        } else if (tok == T_ARROW) {
-            next_token();
-            int off = 0, msize = 8, mesize = 8, muns = 0, mfloat = 0, mfnptr = 0;
-            for (int i = 0; i < struct_member_count; i++) {
-                if (strcmp(token, struct_member_names[i]) == 0) {
-                    off = struct_member_offsets[i];
-                    msize = struct_member_sizes[i];
-                    mesize = struct_member_elem_sizes[i];
-                    muns = struct_member_unsigned[i];
-                    mfloat = struct_member_is_float[i];
-                    mfnptr = struct_member_is_fnptr[i];
-                    break;
-                }
-            }
-            next_token();
-            if (off > 0) emit_i("    addq $%d, %%rax", off);
-            assign_size = msize;
-            current_elem_size = mesize;
-            current_elem_size2 = 0;
-            current_elem_unsigned = muns;
-            if (is_lvalue || no_postfix_deref) {
-                expr_fnptr = 0;
-                expr_unsigned = 0;
-                if (msize == 1 && !muns) expr_pointed = T_CHAR;
-				else if (msize == 4 && mfloat) expr_pointed = T_FLOAT;
-				else expr_pointed = (msize > 8) ? T_INT : 0;
-			} else {
-				if (msize > 8) {
-					expr_fnptr = 0;
-					expr_unsigned = 0;
-					expr_pointed = (msize > 0) ? T_INT : 0;
-				} else {
-					if (msize == 1) {
-						if (muns) emit("    movzbq (%%rax), %%rax");
-						else emit("    movsbq (%%rax), %%rax");
-					} else if (msize == 2) {
-						if (muns) emit("    movzwq (%%rax), %%rax");
-						else emit("    movswq (%%rax), %%rax");
-					} else if (msize == 4) {
-						if (muns) emit("    movl (%%rax), %%eax");
-						else emit("    movslq (%%rax), %%rax");
-					} else
-						emit("    movq (%%rax), %%rax");
-					expr_pointed = 0;
-					expr_fnptr = mfnptr;
-					if (mfloat || mfnptr)
-					    expr_unsigned = 0;
-					else
-					    expr_unsigned = muns;
-				}
-			}
-		}
+            postfix_member(is_lvalue);
+	}
 	}
     if (tok == '(') {
         if (!expr_fnptr)
@@ -3245,7 +3324,7 @@ static void conditional_expr(void) {
         next_token();
         emit("    testq %%rax, %%rax");
         emit_i("    je .L%d", l_false);
-        assignment_expr(); /* Rama verdadera */
+        comma_expr(); /* Rama verdadera */
         emit_i("    jmp .L%d", l_end);
         emit_label(l_false);
         match(':');
@@ -3317,7 +3396,7 @@ static void assignment_expr(void) {
     //no_postfix_deref = 0; 
     int saved_tok = tok;
     char saved_token[MAX_TOKEN_LEN];
-    strcpy(saved_token, token);
+    safe_strcpy(saved_token, token, MAX_TOKEN_LEN);
     char *save_src = input_ptr;
     int save_line = line;
 
@@ -3332,7 +3411,7 @@ static void assignment_expr(void) {
         int peek_line = line;
         int peek_tok = tok;
         char peek_token[MAX_TOKEN_LEN];
-        strcpy(peek_token, token);
+        safe_strcpy(peek_token, token, MAX_TOKEN_LEN);
 
         int assign_type = 0;
         while (tok == '[' || tok == '.' || tok == T_ARROW || tok == '(') {
@@ -3367,17 +3446,17 @@ static void assignment_expr(void) {
         input_ptr = peek_ptr;
         line = peek_line;
         tok = peek_tok;
-        strcpy(token, peek_token);
+        safe_strcpy(token, peek_token, MAX_TOKEN_LEN);
 
         if (assign_type == 1) {
-            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            tok = saved_tok; safe_strcpy(token, saved_token, MAX_TOKEN_LEN); input_ptr = save_src; line = save_line;
             lvalue_address(); match('='); emit("    pushq %%rax");
             int saved_as = assign_size; assignment_expr(); emit("    popq %%rcx");
             assign_size = saved_as;
             if (assign_size == 1) emit("    movb %%al, (%%rcx)"); else if (assign_size == 2) emit("    movw %%ax, (%%rcx)"); else if (assign_size == 4) emit("    movl %%eax, (%%rcx)"); else emit("    movq %%rax, (%%rcx)");
             return;
         } else if (assign_type == 4) {
-            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            tok = saved_tok; safe_strcpy(token, saved_token, MAX_TOKEN_LEN); input_ptr = save_src; line = save_line;
             lvalue_address(); emit("    pushq %%rax");
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
@@ -3387,7 +3466,7 @@ static void assignment_expr(void) {
             else { emit("    addq %%rcx, %%rax"); emit("    popq %%rcx"); emit("    movq %%rax, (%%rcx)"); }
             return;
         } else if (assign_type == 5) {
-            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            tok = saved_tok; safe_strcpy(token, saved_token, MAX_TOKEN_LEN); input_ptr = save_src; line = save_line;
             lvalue_address(); emit("    pushq %%rax");
             if (assign_size == 1) emit("    movsbq (%%rax), %%rax"); else if (assign_size == 4) emit("    movl (%%rax), %%eax"); else emit("    movq (%%rax), %%rax");
             emit("    pushq %%rax"); next_token(); assignment_expr(); emit("    popq %%rcx");
@@ -3402,7 +3481,7 @@ static void assignment_expr(void) {
             int lhs_as = 0;
             int rhs_uns = 0;
             int cuns = 0;
-            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            tok = saved_tok; safe_strcpy(token, saved_token, MAX_TOKEN_LEN); input_ptr = save_src; line = save_line;
             lvalue_address(); emit("    pushq %%rax");
             lhs_uns = current_elem_unsigned;
             lhs_as = assign_size;
@@ -3418,14 +3497,14 @@ static void assignment_expr(void) {
             return;
         } else if (assign_type != 0) {
             int op = tok == T_INC ? T_INC : T_DEC;
-            input_ptr = save_src; line = save_line; tok = saved_tok; strcpy(token, saved_token);
+            input_ptr = save_src; line = save_line; tok = saved_tok; safe_strcpy(token, saved_token, MAX_TOKEN_LEN);
             lvalue_address();
             if (assign_size == 1) emit("    movsbq (%%rax), %%rcx"); else if (assign_size == 4) emit("    movl (%%rax), %%ecx"); else emit("    movq (%%rax), %%rcx");
             if (op == T_INC) { if (assign_size == 1) emit("    addb $1, (%%rax)"); else if (assign_size == 4) emit("    addl $1, (%%rax)"); else emit("    addq $1, (%%rax)"); }
             else { if (assign_size == 1) emit("    subb $1, (%%rax)"); else if (assign_size == 4) emit("    subl $1, (%%rax)"); else emit("    subq $1, (%%rax)"); }
             emit("    movq %%rcx, %%rax"); next_token(); return;
         } else {
-            tok = saved_tok; strcpy(token, saved_token); input_ptr = save_src; line = save_line;
+            tok = saved_tok; safe_strcpy(token, saved_token, MAX_TOKEN_LEN); input_ptr = save_src; line = save_line;
             conditional_expr(); // <-- Cambiado
             return;
         }
@@ -3434,7 +3513,7 @@ static void assignment_expr(void) {
         int peek_line = line;
         int peek_tok = tok;
         char peek_token[MAX_TOKEN_LEN];
-        strcpy(peek_token, token);
+        safe_strcpy(peek_token, token, MAX_TOKEN_LEN);
 
         /* Guardar estado global de tipos para el modo peek */
         int saved_assign_size = assign_size;
@@ -3485,7 +3564,7 @@ static void assignment_expr(void) {
         input_ptr = peek_ptr; 
         line = peek_line; 
         tok = peek_tok; 
-        strcpy(token, peek_token);
+        safe_strcpy(token, peek_token, MAX_TOKEN_LEN);
 
         if (assign_type == 1) {
             lvalue_address(); match('='); emit("    pushq %%rax");
@@ -3540,6 +3619,14 @@ static void assignment_expr(void) {
             conditional_expr(); 
             return;
         }
+    }
+}
+
+static void comma_expr(void) {
+    assignment_expr();
+    while (tok == ',') {
+        next_token();
+        assignment_expr();
     }
 }
 
@@ -3664,7 +3751,7 @@ static void asm_parse_mem(int idx, int is_out) {
         int save_tok = tok;
         char save_token[MAX_TOKEN_LEN];
         int vi;
-        strcpy(save_token, token);
+        safe_strcpy(save_token, token, MAX_TOKEN_LEN);
         vi = 0;
         while (vi < MAX_IDENT_LEN - 1 && token[vi]) {
             vname[vi] = token[vi];
@@ -3699,7 +3786,7 @@ static void asm_parse_mem(int idx, int is_out) {
         input_ptr = save_src;
         line = save_line;
         tok = save_tok;
-        strcpy(token, save_token);
+        safe_strcpy(token, save_token, MAX_TOKEN_LEN);
     }
     lvalue_address();
     if (is_out && asm_home[idx] == -4)
@@ -4027,7 +4114,7 @@ static void statement(void) {
     if (tok == T_IF) {
         next_token();
         match('(');
-        assignment_expr();
+        comma_expr();
         match(')');
         int l1 = label_counter++;
         int l2 = label_counter++;
@@ -4052,7 +4139,7 @@ static void statement(void) {
         push_scope();
         
         /* init */
-        if (tok == T_CONST || tok == T_VOLATILE) { next_token(); }
+        if (tok == T_CONST || tok == T_VOLATILE || tok == T_REGISTER || tok == T_AUTO) { next_token(); }
         if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
             unsigned_type = (strcmp(token, "unsigned") == 0);
             next_token();
@@ -4079,10 +4166,7 @@ static void statement(void) {
                         error("function pointer arrays need a body declaration");
                 } else {
                     if (tok != T_ID) error("expected variable name");
-                    int nlen = strlen(token);
-                    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                    memcpy(varname, token, nlen);
-                    varname[nlen] = '\0';
+                    ident_copy(varname, token);
                     next_token();
                 }
                 int vsize = 8;
@@ -4116,11 +4200,7 @@ static void statement(void) {
             }
             match(';');
         } else if (tok != ';') {
-            while (tok != ';' && tok != T_EOF) {
-                assignment_expr();
-                if (tok == ',') next_token();
-                else break;
-            }
+            comma_expr();
             match(';');
         } else {
             match(';');
@@ -4131,7 +4211,7 @@ static void statement(void) {
         int cond_line_saved = line;
         int cond_first_tok = tok;
         char cond_first_tok_val[MAX_TOKEN_LEN];
-        strcpy(cond_first_tok_val, token);
+        safe_strcpy(cond_first_tok_val, token, MAX_TOKEN_LEN);
         int has_cond = (tok != ';');
         if (has_cond) {
             while (tok != ';' && tok != T_EOF) next_token();
@@ -4143,7 +4223,7 @@ static void statement(void) {
         int inc_line_saved = line;
         int inc_first_tok = tok;
         char inc_first_tok_val[MAX_TOKEN_LEN];
-        strcpy(inc_first_tok_val, token);
+        safe_strcpy(inc_first_tok_val, token, MAX_TOKEN_LEN);
         int has_inc = (tok != ')');
         if (has_inc) {
             while (tok != ')' && tok != T_EOF) next_token();
@@ -4180,12 +4260,12 @@ static void statement(void) {
         int after_body_line = line;
         int after_body_tok = tok;
         char after_body_token[MAX_TOKEN_LEN];
-        strcpy(after_body_token, token);
+        safe_strcpy(after_body_token, token, MAX_TOKEN_LEN);
         
         /* Increment (re-parsed) - CON ESTADO COMPLETO */
         if (has_inc) {
             emit_label(l_inc);
-            input_ptr = inc_pos; line = inc_line_saved; tok = inc_first_tok; strcpy(token, inc_first_tok_val);
+            input_ptr = inc_pos; line = inc_line_saved; tok = inc_first_tok; safe_strcpy(token, inc_first_tok_val, MAX_TOKEN_LEN);
             
             ParserState saved_state;
             save_parser_state(&saved_state);
@@ -4218,7 +4298,7 @@ static void statement(void) {
         /* Condition (re-parsed) - CON ESTADO COMPLETO */
         emit_label(l_cond);
         if (has_cond) {
-            input_ptr = cond_pos; line = cond_line_saved; tok = cond_first_tok; strcpy(token, cond_first_tok_val);
+            input_ptr = cond_pos; line = cond_line_saved; tok = cond_first_tok; safe_strcpy(token, cond_first_tok_val, MAX_TOKEN_LEN);
             
             ParserState saved_state;
             save_parser_state(&saved_state);
@@ -4252,7 +4332,7 @@ static void statement(void) {
 
         emit_label(l_end);
 
-        input_ptr = after_body_pos; line = after_body_line; tok = after_body_tok; strcpy(token, after_body_token);
+        input_ptr = after_body_pos; line = after_body_line; tok = after_body_tok; safe_strcpy(token, after_body_token, MAX_TOKEN_LEN);
         pop_scope();
         return;
     }
@@ -4274,7 +4354,7 @@ static void statement(void) {
         if (tok != T_WHILE) error("expected 'while' after do body");
         next_token();
         match('(');
-        assignment_expr();
+        comma_expr();
         match(')');
         match(';');
         emit("    cmpq $0, %%rax");
@@ -4301,7 +4381,7 @@ static void statement(void) {
         break_target = l2;
         break_target_valid = 1;
         emit_label(l1);
-        assignment_expr();
+        comma_expr();
         match(')');
         emit("    cmpq $0, %%rax");
         emit_i("    je .L%d", l2);
@@ -4318,7 +4398,7 @@ static void statement(void) {
     if (tok == T_SWITCH) {
         next_token();
         match('(');
-        assignment_expr(); 
+        comma_expr(); 
         match(')');
         int dispatch_label = label_counter++;
         int end_label = label_counter++;
@@ -4411,7 +4491,7 @@ static void statement(void) {
     if (tok == T_RETURN) {
         function_has_return = 1;
         next_token();
-        if (tok != ';') assignment_expr();
+        if (tok != ';') comma_expr();
         match(';');
         emit("    leave");
         emit("    ret");
@@ -4438,6 +4518,12 @@ static void statement(void) {
             } else if (tok == T_INLINE) {
                 next_token();
                 continue;
+            } else if (tok == T_REGISTER) {
+                next_token();
+                continue;
+            } else if (tok == T_AUTO) {
+                next_token();
+                continue;
             } else if (tok == T_VOLATILE) {
                 next_token();
                 continue;
@@ -4451,8 +4537,21 @@ static void statement(void) {
             } else if (tok == T_TYPEDEF) {
                 skip_typedef();
             } else if (tok == T_STRUCT || tok == T_UNION) {
+                int is_un = (tok == T_UNION);
                 next_token();
-                skip_struct();
+                if (tok == T_ID) {
+                    const char *p = input_ptr;
+                    while (*p && (*p == ' ' || *p == '\t')) p++;
+                    if (*p != '{') {
+                        int ti = find_symbol(token);
+                        if (ti < 0 || !symbols[ti].is_const || symbols[ti].var_type != CONST_VAR_FLAG)
+                            error("unknown struct or union tag");
+                        tok = T_ID;
+                        continue;
+                    }
+                }
+                skip_struct(is_un);
+                if (tok == ';') next_token();
             } else if (tok == T_ID) {
                 /* Check for label (ID followed by ':') */
                 {
@@ -4487,10 +4586,7 @@ static void statement(void) {
                     is_ptr = 1;
                 } else {
                     if (tok != T_ID) error("expected variable name");
-                    int nlen = strlen(token);
-                    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                    memcpy(varname, token, nlen);
-                    varname[nlen] = '\0';
+                    ident_copy(varname, token);
                     next_token();
                     if (td_fnptr && nstars == 0) {
                         is_fn = 1;
@@ -4616,10 +4712,7 @@ static void statement(void) {
                     is_ptr = 1;
                 } else {
                     if (tok != T_ID) error("expected variable name");
-                    int nlen = strlen(token);
-                    if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                    memcpy(varname, token, nlen);
-                    varname[nlen] = '\0';
+                    ident_copy(varname, token);
                     next_token();
                 }
                 int gsize = 8;
@@ -4724,7 +4817,7 @@ static void statement(void) {
                 }
                 match(';');
             } else if (tok == T_ENUM) {
-                parse_enum();
+                if (!parse_enum()) continue;
             } else {
                 statement();
             }
@@ -4739,13 +4832,13 @@ static void statement(void) {
         int peek_line = line;
         int peek_tok = tok;
         char peek_token[MAX_TOKEN_LEN];
-        strcpy(peek_token, token);
+        safe_strcpy(peek_token, token, MAX_TOKEN_LEN);
         next_token();
         if (tok == T_VOID) {
             next_token();
             if (tok == ')') {
                 next_token();
-                assignment_expr();
+                comma_expr();
                 match(';');
                 return;
             }
@@ -4753,7 +4846,7 @@ static void statement(void) {
         input_ptr = peek_src;
         line = peek_line;
         tok = peek_tok;
-        strcpy(token, peek_token);
+        safe_strcpy(token, peek_token, MAX_TOKEN_LEN);
     }
 
     if (tok == ';') {
@@ -4761,7 +4854,7 @@ static void statement(void) {
         return;
     }
 
-    assignment_expr();
+    comma_expr();
     match(';');
 }
 
@@ -4781,7 +4874,18 @@ static void parse_function(const char *name, int ret_type) {
         next_token();
     } else {
         while (tok != ')' && tok != T_EOF) {
-            if (tok == T_CONST || tok == T_VOLATILE) { next_token(); continue; }
+            if (tok == T_CONST || tok == T_VOLATILE || tok == T_REGISTER || tok == T_AUTO) { next_token(); continue; }
+            if (tok == T_STRUCT || tok == T_UNION) {
+                next_token();
+                if (tok != T_ID) error("expected struct tag");
+                {
+                    int ti = find_symbol(token);
+                    if (ti < 0 || !symbols[ti].is_const || symbols[ti].var_type != CONST_VAR_FLAG)
+                        error("unknown struct or union tag");
+                }
+                tok = T_ID;
+                continue;
+            }
             if (tok == T_ID && (strcmp(token, "unsigned") == 0 || strcmp(token, "signed") == 0)) {
                 unsigned_type = (strcmp(token, "unsigned") == 0);
                 next_token();
@@ -4817,19 +4921,13 @@ static void parse_function(const char *name, int ret_type) {
                 } else {
                     if (tok != T_ID) error("expected parameter name");
                     if (td_fnptr && nstars == 0) {
-                        int fnl = strlen(token);
-                        if (fnl >= MAX_IDENT_LEN) fnl = MAX_IDENT_LEN - 1;
-                        memcpy(fn_name, token, fnl);
-                        fn_name[fnl] = '\0';
+                        ident_copy(fn_name, token);
                         next_token();
                         is_fn = 1;
                         is_ptr = 1;
                     }
                 }
-                int nlen = strlen(is_fn ? fn_name : token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(param_names[param_count], is_fn ? fn_name : token, nlen);
-                param_names[param_count][nlen] = '\0';
+                ident_copy(param_names[param_count], is_fn ? fn_name : token);
                 int psize = 8;
                 int pointed_type = 0;
                 int vt = (ptype == T_INT || ptype == T_VOID) ? 0 : ptype;
@@ -4889,7 +4987,7 @@ static void parse_function(const char *name, int ret_type) {
     int body_line = line;
     int body_tok = tok;
     char body_token[MAX_TOKEN_LEN];
-    strcpy(body_token, token);
+    safe_strcpy(body_token, token, MAX_TOKEN_LEN);
     int saved_symbol_cnt = symbol_count;
     int saved_macro_count = macro_count;
     int saved_if_depth = if_depth;
@@ -4931,7 +5029,7 @@ static void parse_function(const char *name, int ret_type) {
     input_ptr = body_start;
     line = body_line;
     tok = body_tok;
-    strcpy(token, body_token);
+    safe_strcpy(token, body_token, MAX_TOKEN_LEN);
     emit_enabled = 1;
     lex_pass_top = -1;
 
@@ -4977,13 +5075,33 @@ static void parse_function(const char *name, int ret_type) {
     pop_scope();
 }
 
-static void parse_enum(void) {
+static int parse_enum(void) {
+    char tag[MAX_IDENT_LEN] = "";
     next_token();
     if (tok == T_ID) {
-        next_token();
+        ident_copy(tag, token);
+        {
+            char *save_src = input_ptr;
+            int save_line = line;
+            next_token();
+            while (tok == T_ATTRIBUTE) skip_gcc_attribute();
+            if (tok != '{') {
+                input_ptr = save_src;
+                line = save_line;
+                {
+                    int ti = find_symbol(tag);
+                    if (ti < 0 || !symbols[ti].is_const || symbols[ti].var_type != CONST_VAR_FLAG)
+                        record_typedef_alias(tag, 8, 0, 0);
+                }
+                ident_copy(token, tag);
+                tok = T_ID;
+                return 0;
+            }
+        }
+    } else {
+        while (tok == T_ATTRIBUTE) skip_gcc_attribute();
+        if (tok != '{') error("expected '{' after enum");
     }
-    while (tok == T_ATTRIBUTE) skip_gcc_attribute();
-    if (tok != '{') error("expected '{' after enum");
     next_token();
     int val = 0;
     while (tok != '}' && tok != T_EOF) {
@@ -4993,10 +5111,7 @@ static void parse_enum(void) {
         char *d = s->name;
         symbol_count++;
         {
-            int nlen = strlen(token);
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(d, token, nlen);
-            d[nlen] = '\0';
+            ident_copy(d, token);
         }
         s->is_const = 1;
         s->is_global = 0;
@@ -5025,46 +5140,47 @@ static void parse_enum(void) {
         if (tok == ',') next_token();
     }
     match('}');
+    if (tag[0]) record_typedef_alias(tag, 8, 0, 0);
     match(';');
+    return 1;
 }
 
-static void skip_struct_fields(int fsize, int funs, int ffloat) {
+static void skip_struct_fields(int fsize, int funs, int ffloat, int fstruct, int isunion) {
     int list_uns = unsigned_type;
     unsigned_type = 0;
     while (tok != ';' && tok != '}' && tok != T_EOF) {
         if (tok == '(') {
             char fn_name[MAX_IDENT_LEN];
             int fn_arr = 0;
-            int nlen;
             parse_fnptr_declarator(fn_name, &fn_arr);
             if (fn_arr > 0)
                 error("function pointer arrays are not struct members");
             if (struct_member_count < MAX_STRUCT_MEMBERS) {
-                nlen = strlen(fn_name);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(struct_member_names[struct_member_count], fn_name, nlen);
-                struct_member_names[struct_member_count][nlen] = '\0';
-                struct_member_offsets[struct_member_count] = struct_total_size;
+                ident_copy(struct_member_names[struct_member_count], fn_name);
+                struct_member_offsets[struct_member_count] = isunion ? 0 : struct_total_size;
                 struct_member_sizes[struct_member_count] = 8;
                 struct_member_elem_sizes[struct_member_count] = 8;
                 struct_member_unsigned[struct_member_count] = 0;
                 struct_member_is_float[struct_member_count] = 0;
                 struct_member_is_fnptr[struct_member_count] = 1;
+                struct_member_is_struct[struct_member_count] = 0;
                 struct_member_count++;
             }
-            struct_total_size += 8;
+            if (isunion) {
+                if (8 > struct_total_size) struct_total_size = 8;
+            } else {
+                struct_total_size += 8;
+            }
         } else if (tok == T_ID) {
             if (struct_member_count < MAX_STRUCT_MEMBERS) {
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(struct_member_names[struct_member_count], token, nlen);
-                struct_member_names[struct_member_count][nlen] = '\0';
-                struct_member_offsets[struct_member_count] = struct_total_size;
+                ident_copy(struct_member_names[struct_member_count], token);
+                struct_member_offsets[struct_member_count] = isunion ? 0 : struct_total_size;
                 struct_member_sizes[struct_member_count] = fsize;
                 struct_member_elem_sizes[struct_member_count] = fsize;
                 struct_member_unsigned[struct_member_count] = funs || list_uns;
                 struct_member_is_float[struct_member_count] = ffloat;
                 struct_member_is_fnptr[struct_member_count] = 0;
+                struct_member_is_struct[struct_member_count] = fstruct;
                 struct_member_count++;
             }
             next_token();
@@ -5073,12 +5189,21 @@ static void skip_struct_fields(int fsize, int funs, int ffloat) {
                 int count = 1;
                 if (tok == T_NUM) { count = (int)safe_strtoll(token); next_token(); }
                 match(']');
-                struct_total_size += fsize * count;
+                if (isunion) {
+                    if (fsize * count > struct_total_size) struct_total_size = fsize * count;
+                } else {
+                    struct_total_size += fsize * count;
+                }
                 if (struct_member_count > 0) {
                     struct_member_sizes[struct_member_count - 1] = fsize * count;
+                    struct_member_is_struct[struct_member_count - 1] = 0;
                 }
             } else {
-                struct_total_size += fsize;
+                if (isunion) {
+                    if (fsize > struct_total_size) struct_total_size = fsize;
+                } else {
+                    struct_total_size += fsize;
+                }
             }
         } else {
             next_token();
@@ -5087,9 +5212,10 @@ static void skip_struct_fields(int fsize, int funs, int ffloat) {
     match(';');
 }
 
-static void skip_struct(void) {
+static void skip_struct(int is_union) {
+    char tag[MAX_IDENT_LEN] = "";
     while (tok == T_ATTRIBUTE) skip_gcc_attribute();
-    if (tok == T_ID) next_token();
+    if (tok == T_ID) { ident_copy(tag, token); next_token(); }
     while (tok == T_ATTRIBUTE) skip_gcc_attribute();
     if (tok != '{') error("expected '{' in struct");
     next_token();
@@ -5106,6 +5232,17 @@ static void skip_struct(void) {
             muns = (strcmp(token, "unsigned") == 0);
             next_token();
         }
+        if (tok == T_STRUCT || tok == T_UNION) {
+            next_token();
+            if (tok != T_ID) error("expected struct tag");
+            {
+                int ti = find_symbol(token);
+                if (ti < 0 || !symbols[ti].is_const || symbols[ti].var_type != CONST_VAR_FLAG)
+                    error("unknown struct or union tag");
+            }
+            tok = T_ID;
+            continue;
+        }
         if (tok == T_INT || tok == T_CHAR || tok == T_FLOAT || tok == T_DOUBLE) {
             int ftype = tok;
             int is_long = (tok == T_INT && strcmp(token, "long") == 0);
@@ -5119,7 +5256,7 @@ static void skip_struct(void) {
             else if (ftype == T_DOUBLE) fsize = 8;
             else fsize = is_long ? 8 : 4;
 
-            skip_struct_fields(fsize, muns, ftype == T_FLOAT ? 1 : 0);
+            skip_struct_fields(fsize, muns, ftype == T_FLOAT ? 1 : 0, 0, is_union);
             muns = 0;
         } else if (tok == T_ID) {
             int ti = find_symbol(token);
@@ -5134,12 +5271,16 @@ static void skip_struct(void) {
             if (fsize <= 0) fsize = 8;
             funs = muns || symbols[ti].is_unsigned;
             next_token();
-            while (tok == '*') {
-                fsize = 8;
-                funs = 0;
-                next_token();
+            {
+                int fstruct = is_struct_typedef(symbols[ti].name);
+                while (tok == '*') {
+                    fsize = 8;
+                    funs = 0;
+                    fstruct = 0;
+                    next_token();
+                }
+                skip_struct_fields(fsize, funs, 0, fstruct, is_union);
             }
-            skip_struct_fields(fsize, funs, 0);
             muns = 0;
         } else if (tok == '}') {
             break;
@@ -5149,6 +5290,10 @@ static void skip_struct(void) {
         }
     }
     match('}');
+    if (tag[0] && struct_total_size > 0) {
+        record_typedef_alias(tag, struct_total_size, 0, 0);
+        record_struct_typedef(tag);
+    }
 }
 
 static int td_stash_valid = 0;
@@ -5163,11 +5308,7 @@ static void record_typedef_alias(const char *name, int size, int uns, int fnptr)
     Symbol *s = &symbols[symbol_count];
     char *d = s->name;
     symbol_count++;
-    int nlen = strlen(name);
-    if (nlen >= MAX_IDENT_LEN)
-        nlen = MAX_IDENT_LEN - 1;
-    memcpy(d, name, nlen);
-    d[nlen] = '\0';
+    ident_copy(d, name);
     s->is_const = 1;
     s->is_global = 0;
     s->size = 8;
@@ -5190,9 +5331,12 @@ static void record_typedef_alias(const char *name, int size, int uns, int fnptr)
 static void skip_typedef(void) {
     next_token(); /* skip 'typedef' */
     td_stash_valid = 0;
-    if (tok == T_STRUCT) {
+    int td_was_struct = 0;
+    if (tok == T_STRUCT || tok == T_UNION) {
+        int is_un = (tok == T_UNION);
         next_token();
-        skip_struct();
+        skip_struct(is_un);
+        td_was_struct = 1;
     } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_FLOAT || tok == T_DOUBLE) {
         int tuns = unsigned_type;
         unsigned_type = 0;
@@ -5223,11 +5367,7 @@ static void skip_typedef(void) {
             td_stash_fnptr = 0;
         } else if (tok == T_ID) {
             char td_name[MAX_IDENT_LEN];
-            int nlen = strlen(token);
-            if (nlen >= MAX_IDENT_LEN)
-                nlen = MAX_IDENT_LEN - 1;
-            memcpy(td_name, token, nlen);
-            td_name[nlen] = '\0';
+            ident_copy(td_name, token);
             next_token();
             if (tok == '[') {
                 int cnt = 0;
@@ -5264,18 +5404,23 @@ static void skip_typedef(void) {
             char src_name[MAX_IDENT_LEN];
             safe_strcpy(src_name, token, MAX_IDENT_LEN);
             next_token();
-            while (tok == '*') {
-                tz = 8;
-                tf = 0;
-                next_token();
-            }
-            if (tok == T_ID) {
-                record_typedef_alias(token, tz, tu, tf);
-                td_stash_valid = 1;
-                td_stash_size = tz;
-                td_stash_uns = tu;
-                td_stash_fnptr = tf;
-                next_token();
+            {
+                int tstruct = is_struct_typedef(src_name);
+                while (tok == '*') {
+                    tz = 8;
+                    tf = 0;
+                    tstruct = 0;
+                    next_token();
+                }
+                if (tok == T_ID) {
+                    record_typedef_alias(token, tz, tu, tf);
+                    if (tstruct) record_struct_typedef(token);
+                    td_stash_valid = 1;
+                    td_stash_size = tz;
+                    td_stash_uns = tu;
+                    td_stash_fnptr = tf;
+                    next_token();
+                }
             }
         }
     }
@@ -5286,12 +5431,9 @@ static void skip_typedef(void) {
         if (tok == '[')
             error("array continuation in typedef needs its own declaration");
         if (tok == T_ID) {
-            int nlen = strlen(token);
             if (strcmp(token, "unsigned") == 0) last_uns = 1;
             if (strcmp(token, "signed") == 0) last_uns = 0;
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(last_name, token, nlen);
-            last_name[nlen] = '\0';
+            ident_copy(last_name, token);
         }
         next_token();
     }
@@ -5304,10 +5446,7 @@ static void skip_typedef(void) {
             Symbol *s = &symbols[symbol_count];
             char *d = s->name;
             symbol_count++;
-            int nlen = strlen(last_name);
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(d, last_name, nlen);
-            d[nlen] = '\0';
+            ident_copy(d, last_name);
             s->is_const = 1;
             s->is_global = 0;
             s->size = 8;
@@ -5321,8 +5460,10 @@ static void skip_typedef(void) {
             s->next_hash = -1;
             s->const_value = 8;  /* just a marker */
             /* If a struct was just parsed, store its size */
-            if (struct_total_size > 0)
+            if (struct_total_size > 0 && td_was_struct) {
                 s->const_value = struct_total_size;
+                record_struct_typedef(last_name);
+            }
             {
                 int h = hash_name(last_name);
                 s->next_hash = hash_table[h];
@@ -5476,7 +5617,7 @@ static int emit_global_initializer(const char *name, int is_static, int *size,
 static void parse_program(void) {
     next_token();
     while (tok != T_EOF) {
-        while (tok == T_INLINE || tok == T_VOLATILE) next_token();
+        while (tok == T_INLINE || tok == T_VOLATILE || tok == T_REGISTER || tok == T_AUTO) next_token();
         while (tok == T_ATTRIBUTE) {
             int a = skip_gcc_attribute();
             if (a > 0) pending_align = a;
@@ -5494,7 +5635,7 @@ static void parse_program(void) {
             static_flag = 1;
             next_token();
         }
-        while (tok == T_INLINE || tok == T_VOLATILE) next_token();
+        while (tok == T_INLINE || tok == T_VOLATILE || tok == T_REGISTER || tok == T_AUTO) next_token();
         while (tok == T_ATTRIBUTE) skip_gcc_attribute();
         if (tok == T_CONST) {
             next_token();
@@ -5502,10 +5643,23 @@ static void parse_program(void) {
         } else if (tok == T_TYPEDEF) {
             skip_typedef();
         } else if (tok == T_STRUCT || tok == T_UNION) {
+            int is_un = (tok == T_UNION);
             next_token();
-            skip_struct();
+            if (tok == T_ID) {
+                const char *p = input_ptr;
+                while (*p && (*p == ' ' || *p == '\t')) p++;
+                if (*p != '{') {
+                    int ti = find_symbol(token);
+                    if (ti < 0 || !symbols[ti].is_const || symbols[ti].var_type != CONST_VAR_FLAG)
+                        error("unknown struct or union tag");
+                    tok = T_ID;
+                    continue;
+                }
+            }
+            skip_struct(is_un);
+            if (tok == ';') next_token();
         } else if (tok == T_ENUM) {
-            parse_enum();
+            if (!parse_enum()) continue;
         } else if (tok == T_ASM) {
             parse_asm_block();
         } else if (tok == T_INT || tok == T_CHAR || tok == T_VOID || tok == T_FLOAT || tok == T_DOUBLE) {
@@ -5525,10 +5679,7 @@ static void parse_program(void) {
                 is_ptr = 1;
             } else {
                 if (tok != T_ID) error("expected identifier");
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(fname, token, nlen);
-                fname[nlen] = '\0';
+                ident_copy(fname, token);
                 next_token();
             }
             if (tok == '(' && !is_fn) {
@@ -5626,10 +5777,7 @@ static void parse_program(void) {
                 is_ptr = 1;
             } else {
                 if (tok != T_ID) error("expected identifier");
-                int nlen = strlen(token);
-                if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-                memcpy(fname, token, nlen);
-                fname[nlen] = '\0';
+                ident_copy(fname, token);
                 next_token();
             }
             if (tok == '(' && !is_fn) {
@@ -5782,10 +5930,7 @@ int main(int argc, char **argv) {
             Symbol *s = &symbols[symbol_count];
             char *d = s->name;
             symbol_count++;
-            int nlen = strlen(gname);
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(d, gname, nlen);
-            d[nlen] = '\0';
+            ident_copy(d, gname);
             s->offset = 0;
             s->is_global = 1;
             s->size = 8;
@@ -5816,7 +5961,6 @@ int main(int argc, char **argv) {
             int tuns;
             Symbol *s;
             char *d;
-            int nlen;
             int h;
             if (tname == NULL) break;
             tsize = typedef_size(i);
@@ -5824,10 +5968,7 @@ int main(int argc, char **argv) {
             s = &symbols[symbol_count];
             d = s->name;
             symbol_count++;
-            nlen = strlen(tname);
-            if (nlen >= MAX_IDENT_LEN) nlen = MAX_IDENT_LEN - 1;
-            memcpy(d, tname, nlen);
-            d[nlen] = '\0';
+            ident_copy(d, tname);
             s->offset = 0;
             s->is_global = 1;
             s->size = 8;

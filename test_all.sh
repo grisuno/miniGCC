@@ -146,6 +146,14 @@ run_test args
 run_test args7
 run_test unsigned
 run_test struct_ul
+run_test chained
+run_test elif
+run_test tagstruct
+run_test union
+run_test enumtype
+run_test octesc
+run_test comma
+run_test regauto
 run_test longlong
 run_test asm
 run_test asm3
@@ -173,6 +181,9 @@ run_neg fnptr_globalinit "need assignment, not initializers"
 run_neg typedef_arrcont "needs its own declaration"
 run_neg attr "needs a positive power of two"
 run_neg va "va_start outside variadic function"
+run_neg error "#error"
+run_neg funmacro "function-like"
+run_neg member "unknown struct member"
 
 echo "=== test_all summary: $PASS passed, $FAIL failed ==="
 [ "$FAIL" -eq 0 ]
