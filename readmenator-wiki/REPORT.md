@@ -1,6 +1,6 @@
 # Audit Report
 
-*Project: miniGCC | 2026-09-17 | offline, deterministic*
+*Project: miniGCC | 2026-09-18 | offline, deterministic*
 
 ## Confidence Trail
 
@@ -9,15 +9,15 @@ Every edge is tagged. Extracted means parsed from source; inferred means derived
 | Confidence | Count | Meaning |
 |------------|-------|---------|
 | EXTRACTED | 4 | Resolved import edges parsed from source |
-| EXTRACTED | 55 | Raw import statements (may include externals) |
+| EXTRACTED | 66 | Raw import statements (may include externals) |
 | INFERRED | 0 | Surprising cross-community bridges |
 | AMBIGUOUS | 0 | No uncertain edges are emitted by the static scanner |
 
 ## Coverage
 
-- Files: 68, communities: 4
-- File doc coverage: 4/68
-- Orphans (no docs at any level): 59
+- Files: 81, communities: 4
+- File doc coverage: 4/81
+- Orphans (no docs at any level): 70
 - Layers detected: 4
 - Security findings: 0
 - Large files (>256KB, maybe generated): 3 (minigccg2.s, minigccg3.s, minigccg4.s)
@@ -31,7 +31,7 @@ Every edge is tagged. Extracted means parsed from source; inferred means derived
 
 ## Token Benchmark
 
-- Wiki index plus community pages estimate: ~4605 tokens (chars/4).
+- Wiki index plus community pages estimate: ~4882 tokens (chars/4).
 - Full re-read of every source file would cost strictly more on any non-trivial project; this wiki is the cheaper entry point.
 - Generation cost: $0, offline, no network calls.
 

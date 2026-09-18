@@ -27,8 +27,9 @@ This community groups 2 file(s) rooted at `root` with dominant language h (cohes
 
 ## Connections
 
-- [INFERRED] shares_context community 0 <-> 1 (strength 0.5): Inferred shared context (language h) with no import path between community 0 (root) and community 1 (tests).
-- [INFERRED] shares_context community 0 <-> 2 (strength 0.5): Inferred shared context (language h) with no import path between community 0 (root) and community 2 (tests).
+- [INFERRED] shares_context community 0 <-> 1 (strength 0.5): Inferred shared context (layer testing) with no import path between community 0 (root) and community 1 (tests).
+- [INFERRED] shares_context community 0 <-> 2 (strength 0.5): Inferred shared context (language c and layer testing) with no import path between community 0 (root) and community 2 (tests).
+- [INFERRED] shares_context community 0 <-> 3 (strength 0.5): Inferred shared context (language c and layer testing) with no import path between community 0 (root) and community 3 (orphans).
 
 ## Risks
 

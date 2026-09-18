@@ -125,10 +125,39 @@ typedef struct {
     int is_unsigned;
     int is_fnptr;
     int next_hash;
+    char slab[MAX_IDENT_LEN];
 } Symbol;
 
 static Symbol symbols[MAX_SYMBOLS];
 static int symbol_count = 0;
+static int static_local_count = 0;
+
+static const char *sym_label(Symbol *s) {
+    return s->slab[0] ? s->slab : s->name;
+}
+
+static void build_static_label(char *dst) {
+    static_local_count++;
+    int n = static_local_count;
+    char tmp[16];
+    int len = 0;
+    if (n <= 0) n = 1;
+    while (n > 0 && len < 15) {
+        tmp[len++] = (char)('0' + n % 10);
+        n /= 10;
+    }
+    int p = 0;
+    dst[p++] = '_';
+    dst[p++] = '_';
+    dst[p++] = 's';
+    dst[p++] = 'l';
+    dst[p++] = '_';
+    while (len > 0 && p < MAX_IDENT_LEN - 1) {
+        len--;
+        dst[p++] = tmp[len];
+    }
+    dst[p] = '\0';
+}
 
 /* Hash table for O(1) symbol lookup */
 #define HASH_TABLE_SIZE 512
@@ -1808,6 +1837,7 @@ static void add_symbol(const char *name, int is_global, int size, int pointed, i
     s->elem_ptr = 0;
     s->is_fnptr = 0;
     s->next_hash = -1;
+    s->slab[0] = '\0';
     if (is_global) {
         s->offset = 0;
         if (extern_flag) {
@@ -1852,6 +1882,8 @@ static void parse_va_end(void);
 static int parse_enum(void);
 static void skip_struct(int is_union);
 static void record_typedef_alias(const char *name, int size, int uns, int fnptr);
+static void emit_global_bss(const char *name, int is_static, int size);
+static int emit_global_initializer(const char *name, int is_static, int *size, int elem_size, int is_array, int is_ptr);
 static void record_struct_typedef(const char *name);
 static void skip_typedef(void);
 static void parse_asm_block(void);
@@ -2212,6 +2244,7 @@ static void unary(void) {
                 }
             } else {
             Symbol *s = &symbols[idx];
+            if (s->slab[0]) ident_copy(id_name, s->slab);
             int sc = s->is_const;
             expr_fnptr = 0;
             subscript_base_fnptr = 0;
@@ -2484,7 +2517,7 @@ static void unary(void) {
         current_elem_unsigned = s->is_unsigned;
         no_postfix_deref = 1;
         if (s->is_global)
-            emit_s("    leaq %s(%%rip), %%rax", token);
+            emit_s("    leaq %s(%%rip), %%rax", sym_label(s));
         else
             emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         next_token();
@@ -2740,12 +2773,12 @@ static void lvalue_address(void) {
             need_ptr_value = 0;
         if (need_ptr_value) {
             if (s->is_global)
-                emit_s("    movq %s(%%rip), %%rax", s->name);
+                emit_s("    movq %s(%%rip), %%rax", sym_label(s));
             else
                 emit_i("    movq %d(%%rbp), %%rax", s->offset);
         } else {
             if (s->is_global)
-                emit_s("    leaq %s(%%rip), %%rax", s->name);
+                emit_s("    leaq %s(%%rip), %%rax", sym_label(s));
             else
                 emit_i("    leaq %d(%%rbp), %%rax", s->offset);
         }
@@ -3801,13 +3834,13 @@ static void asm_parse_mem(int idx, int is_out) {
             asm_mem[idx][0] = '\0';
             if (asm_home[idx] == -4) {
                 if (symbols[ti].is_global) {
-                    snprintf(asm_text[idx], ASM_TXT_SZ, "%s(%%rip)", vname);
+                    snprintf(asm_text[idx], ASM_TXT_SZ, "%s(%%rip)", sym_label(&symbols[ti]));
                 } else {
                     snprintf(asm_text[idx], ASM_TXT_SZ, "%d(%%rbp)", symbols[ti].offset);
                 }
             } else {
                 if (symbols[ti].is_global) {
-                    snprintf(asm_mem[idx], ASM_TXT_SZ, "%s(%%rip)", vname);
+                    snprintf(asm_mem[idx], ASM_TXT_SZ, "%s(%%rip)", sym_label(&symbols[ti]));
                 } else {
                     snprintf(asm_mem[idx], ASM_TXT_SZ, "%d(%%rbp)", symbols[ti].offset);
                 }
@@ -4216,9 +4249,9 @@ static void statement(void) {
                     Symbol *s = &symbols[si];
                     if (s->is_global) {
                         if (s->var_type == T_FLOAT)
-                            emit_s("    movl %%eax, %s(%%rip)", s->name);
+                            emit_s("    movl %%eax, %s(%%rip)", sym_label(s));
                         else
-                            emit_s("    movq %%rax, %s(%%rip)", s->name);
+                            emit_s("    movq %%rax, %s(%%rip)", sym_label(s));
                     } else {
                         if (s->var_type == T_FLOAT)
                             emit_i("    movl %%eax, %d(%%rbp)", s->offset);
@@ -4544,6 +4577,7 @@ static void statement(void) {
             next_token();
         }
         if (tok == T_STATIC) {
+                static_flag = 1;
                 next_token();
                 continue;
             } else if (tok == T_INLINE) {
@@ -4567,6 +4601,7 @@ static void statement(void) {
                 continue;
             } else if (tok == T_TYPEDEF) {
                 skip_typedef();
+                static_flag = 0;
             } else if (tok == T_STRUCT || tok == T_UNION) {
                 int is_un = (tok == T_UNION);
                 next_token();
@@ -4583,6 +4618,7 @@ static void statement(void) {
                 }
                 skip_struct(is_un);
                 if (tok == ';') next_token();
+                static_flag = 0;
             } else if (tok == T_ID) {
                 /* Check for label (ID followed by ':') */
                 {
@@ -4592,12 +4628,13 @@ static void statement(void) {
                         emit_s("%s:", token);
                         next_token();
                         next_token();
+                        static_flag = 0;
                         continue;
                     }
                 }
                 /* Typedef type declaration (e.g., Macro *m) */
                 int ti = find_symbol(token);
-                if (ti < 0 || !symbols[ti].is_const) { statement(); continue; }
+                if (ti < 0 || !symbols[ti].is_const) { static_flag = 0; statement(); continue; }
                 int type_size = symbols[ti].const_value;
                 if (symbols[ti].is_unsigned) unsigned_type = 1;
                 int td_fnptr = symbols[ti].is_fnptr;
@@ -4706,9 +4743,9 @@ static void statement(void) {
                         Symbol *s = &symbols[si];
                         if (s->is_global) {
                             if (s->var_type == T_FLOAT)
-                                emit_s("    movl %%eax, %s(%%rip)", s->name);
+                                emit_s("    movl %%eax, %s(%%rip)", sym_label(s));
                             else
-                                emit_s("    movq %%rax, %s(%%rip)", s->name);
+                                emit_s("    movq %%rax, %s(%%rip)", sym_label(s));
                         } else {
                             if (s->var_type == T_FLOAT)
                                 emit_i("    movl %%eax, %d(%%rbp)", s->offset);
@@ -4749,6 +4786,8 @@ static void statement(void) {
                 int gsize = 8;
                 int vt = (type == T_INT || type == T_VOID) ? 0 : type;
                 int is_arr = 0;
+                int is_static_local = 0;
+                char slname[MAX_IDENT_LEN];
                 int elem_size = 8;
                 int elem_size2 = 0;
                 if (!is_fn) {
@@ -4783,7 +4822,16 @@ static void statement(void) {
                     elem_size = 8;
                     elem_size2 = 0;
                 }
-                add_symbol(varname, 0, gsize, is_ptr ? type : 0, is_arr, elem_size);
+                is_static_local = (static_flag && !is_fn);
+                if (is_static_local) {
+                    build_static_label(slname);
+                    global_emit_deferred = 1;
+                }
+                add_symbol(varname, is_static_local ? 1 : 0, gsize, is_ptr ? type : 0, is_arr, elem_size);
+                if (is_static_local) {
+                    global_emit_deferred = 0;
+                    ident_copy(symbols[symbol_count - 1].slab, slname);
+                }
                 symbols[symbol_count - 1].var_type = vt;
                 symbols[symbol_count - 1].is_fnptr = is_fn;
                 if (elem_size2 > 0) {
@@ -4793,7 +4841,12 @@ static void statement(void) {
                 parse_trailing_align();
                 if (tok == '=') {
                     next_token();
-                    if (tok == '{') {
+                    if (is_static_local) {
+                        int gsz = gsize;
+                        if (!emit_global_initializer(slname, 1, &gsz, elem_size, is_arr, is_ptr))
+                            error("unsupported static initializer");
+                        symbols[symbol_count - 1].size = gsz;
+                    } else if (tok == '{') {
                         next_token();
                         int elem_idx = 0;
                         while (tok != '}') {
@@ -4831,9 +4884,9 @@ static void statement(void) {
                         Symbol *s = &symbols[si];
                         if (s->is_global) {
                             if (s->var_type == T_FLOAT)
-                                emit_s("    movl %%eax, %s(%%rip)", s->name);
+                                emit_s("    movl %%eax, %s(%%rip)", sym_label(s));
                             else
-                                emit_s("    movq %%rax, %s(%%rip)", s->name);
+                                emit_s("    movq %%rax, %s(%%rip)", sym_label(s));
                         } else {
                             if (s->var_type == T_FLOAT)
                                 emit_i("    movl %%eax, %d(%%rbp)", s->offset);
@@ -4841,15 +4894,21 @@ static void statement(void) {
                                 emit_i("    movq %%rax, %d(%%rbp)", s->offset);
                         }
                     }
+                } else if (is_static_local) {
+                    emit_global_bss(slname, 1, gsize);
                 }
                 if (tok == ',') {
                     next_token();
+                    if (is_static_local) static_flag = 1;
                     goto restart_int;
                 }
                 match(';');
+                static_flag = 0;
             } else if (tok == T_ENUM) {
                 if (!parse_enum()) continue;
+                static_flag = 0;
             } else {
+                static_flag = 0;
                 statement();
             }
         }
@@ -5601,11 +5660,13 @@ static int emit_global_initializer(const char *name, int is_static, int *size,
 
     if (is_ptr && tok == T_STRING) {
         int lbl = intern_string(token);
-        if (ptr_init_count >= MAX_PTR_INITS)
-            error("too many pointer initializers");
-        safe_strcpy(ptr_init_name[ptr_init_count], name, MAX_IDENT_LEN);
-        ptr_init_label[ptr_init_count] = lbl;
-        ptr_init_count++;
+        if (emit_enabled) {
+            if (ptr_init_count >= MAX_PTR_INITS)
+                error("too many pointer initializers");
+            safe_strcpy(ptr_init_name[ptr_init_count], name, MAX_IDENT_LEN);
+            ptr_init_label[ptr_init_count] = lbl;
+            ptr_init_count++;
+        }
         emit_global_data_head(name, is_static);
         emit("    .quad 0");
         emit("    .text");
@@ -5714,6 +5775,8 @@ static void parse_program(void) {
                 next_token();
             }
             if (tok == '(' && !is_fn) {
+                static_flag = 0;
+                extern_flag = 0;
                 pending_align = 0;
                 parse_function(fname, type);
             } else {

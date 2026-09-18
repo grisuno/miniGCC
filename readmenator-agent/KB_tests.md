@@ -37,6 +37,12 @@
 - Symbols:
   - `main` (function, line 1) `int main(void)`
 
+## tests/neg_error.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 2) `int main(void)`
+
 ## tests/neg_float.c
 - Layer: testing
 - Language: c
@@ -85,11 +91,25 @@
   - `add2` (function, line 3) `long add2(long a, long b)`
   - `main` (function, line 7) `int main(void)`
 
+## tests/neg_funmacro.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 3) `int main(void)`
+  - `ADD` (macro, line 2) `#define ADD(a, b)`
+
 ## tests/neg_hex.c
 - Layer: testing
 - Language: c
 - Symbols:
   - `main` (function, line 1) `int main(void)`
+
+## tests/neg_member.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `A` (struct, line 1)
+  - `main` (function, line 5) `int main(void)`
 
 ## tests/neg_octal.c
 - Layer: testing
@@ -175,6 +195,22 @@
   - `knoreturn` (function, line 22) `void knoreturn(void)`
   - `main` (function, line 25) `int main(void)`
 
+## tests/t_chained.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `A` (struct, line 3)
+  - `B` (struct, line 7)
+  - `C` (struct, line 12)
+  - `main` (function, line 17) `int main(void)`
+
+## tests/t_comma.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `add` (function, line 3) `int add(int a, int b)`
+  - `main` (function, line 5) `int main(void)`
+
 ## tests/t_compound.c
 - Layer: testing
 - Language: c
@@ -187,6 +223,13 @@
 - Symbols:
   - `main` (function, line 3) `int main(void)`
 
+## tests/t_elif.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 49) `int main(void)`
+  - `V` (macro, line 3) `#define V`
+
 ## tests/t_enum.c
 - Layer: testing
 - Language: c
@@ -194,6 +237,20 @@
   - `Color` (enum, line 3)
   - `Single` (enum, line 9)
   - `main` (function, line 13) `int main(void)`
+
+## tests/t_enumtype.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `E` (enum, line 3)
+  - `pick` (function, line 5) `enum E pick(enum E e)`
+  - `main` (function, line 7) `int main(void)`
+
+## tests/t_fcast.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 3) `int main(void)`
 
 ## tests/t_float.c
 - Layer: testing
@@ -306,6 +363,12 @@
   - `NEGD` (macro, line 7) `#define NEGD`
   - `SZ` (macro, line 8) `#define SZ`
 
+## tests/t_octesc.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 3) `int main(void)`
+
 ## tests/t_outer_h.h
 - Layer: testing
 - Language: h
@@ -330,6 +393,12 @@
   - `fact` (function, line 8) `int fact(int n)`
   - `main` (function, line 13) `int main(void)`
 
+## tests/t_regauto.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `main` (function, line 3) `int main(void)`
+
 ## tests/t_scope.c
 - Layer: testing
 - Language: c
@@ -342,6 +411,15 @@
 - Language: c
 - Symbols:
   - `main` (function, line 3) `int main(void)`
+
+## tests/t_static.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `counter` (function, line 3) `int counter(void)`
+  - `adder` (function, line 9) `int adder(int v)`
+  - `same_name` (function, line 15) `int same_name(void)`
+  - `main` (function, line 21) `int main(void)`
 
 ## tests/t_stdint.c
 - Layer: infrastructure
@@ -388,6 +466,14 @@
 - Symbols:
   - `main` (function, line 6) `int main(void)`
 
+## tests/t_tagstruct.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `P` (struct, line 3)
+  - `dist` (function, line 10) `int dist(struct P *p)`
+  - `main` (function, line 12) `int main(void)`
+
 ## tests/t_typedef.c
 - Layer: testing
 - Language: c
@@ -395,6 +481,15 @@
   - `Pair` (struct, line 9)
   - `myint` (type_alias, line 2) `typedef int myint;`
   - `main` (function, line 16) `int main(void)`
+
+## tests/t_union.c
+- Layer: testing
+- Language: c
+- Symbols:
+  - `In` (struct, line 13)
+  - `Out` (struct, line 18)
+  - `U` (union, line 3)
+  - `main` (function, line 23) `int main(void)`
 
 ## tests/t_unsigned.c
 - Layer: testing

@@ -135,6 +135,7 @@ run_test typedef
 run_test scope
 run_test float
 run_test fcast
+run_test static
 run_test hexoct
 run_test compound
 run_test inline

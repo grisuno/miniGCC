@@ -1,14 +1,14 @@
 # orphans
 
-*Community 3 | 61 files | cohesion 0.00*
+*Community 3 | 74 files | cohesion 0.00*
 
 ## Definition
 
-This community groups 61 file(s) rooted at `tests` with dominant language c (cohesion 0.00). Central symbols: `ASM_MAX_OPS`, `ASM_TMPL_SZ`, `ASM_TXT_SZ`, `CONST_VAR_FLAG`, `Color`, `FileContext`, `HASH_TABLE_SIZE`, `HEXED`. Core file: `minigccg2.s` (221 symbols). Documented purpose: Cleaning env.
+This community groups 74 file(s) rooted at `tests` with dominant language c (cohesion 0.00). Central symbols: `A`, `ADD`, `ASM_MAX_OPS`, `ASM_TMPL_SZ`, `ASM_TXT_SZ`, `B`, `C`, `CONST_VAR_FLAG`. Core file: `minigccg2.s` (235 symbols). Documented purpose: Cleaning env.
 
 ## Files
 
-### `tests` (52 files)
+### `tests` (65 files)
 
 | File | Language | Layer | Symbols | Doc |
 |------|----------|-------|---------|-----|
@@ -18,27 +18,27 @@ This community groups 61 file(s) rooted at `tests` with dominant language c (coh
 | `tests/neg_asm_ds.c` | c | testing | 2 | no |
 | `tests/neg_attr.c` | c | testing | 1 | no |
 | `tests/neg_comment.c` | c | testing | 1 | no |
+| `tests/neg_error.c` | c | testing | 1 | no |
 | `tests/neg_float.c` | c | testing | 1 | no |
 | `tests/neg_fnptr.c` | c | testing | 2 | no |
 | `tests/neg_fnptr_call.c` | c | testing | 1 | no |
 | `tests/neg_fnptr_cmp.c` | c | testing | 3 | no |
-| `tests/neg_fnptr_cmp0.c` | c | testing | 2 | no |
 
 ### `.` (9 files)
 
 | File | Language | Layer | Symbols | Doc |
 |------|----------|-------|---------|-----|
-| `minigcc.c` | c | utility | 152 | no |
-| `minigccg2.s` | s | utility | 221 | no |
-| `minigccg3.s` | s | utility | 221 | no |
-| `minigccg4.s` | s | utility | 221 | no |
+| `minigcc.c` | c | utility | 161 | no |
+| `minigccg2.s` | s | utility | 235 | no |
+| `minigccg3.s` | s | utility | 235 | no |
+| `minigccg4.s` | s | utility | 235 | no |
 | `test.c` | c | testing | 1 | no |
 | `test.sh` | sh | testing | 0 | yes |
 | `test_all.sh` | sh | testing | 4 | yes |
 | `test_for.c` | c | testing | 1 | no |
 | `test_ld_selfhost.sh` | sh | testing | 2 | yes |
 
-*... and 41 more files in this community.*
+*... and 54 more files in this community.*
 
 
 ## Key Symbols
@@ -50,29 +50,29 @@ This community groups 61 file(s) rooted at `tests` with dominant language c (coh
 - `MAX_INCLUDE_DEPTH` (macro, `minigcc.c:19`) `#define MAX_INCLUDE_DEPTH`
 - `MAX_PROCESSED_FILES` (macro, `minigcc.c:20`) `#define MAX_PROCESSED_FILES`
 - `STACK_ALIGN` (macro, `minigcc.c:21`) `#define STACK_ALIGN`
-- `LEX_KW_CAP` (macro, `minigcc.c:81`) `#define LEX_KW_CAP`
-- `LEX_KW_BLOB` (macro, `minigcc.c:82`) `#define LEX_KW_BLOB`
-- `FileContext` (struct, `minigcc.c:96`)
-- `Symbol` (struct, `minigcc.c:109`)
-- `HASH_TABLE_SIZE` (macro, `minigcc.c:132`) `#define HASH_TABLE_SIZE`
-- `MAX_SCOPE_DEPTH` (macro, `minigcc.c:135`) `#define MAX_SCOPE_DEPTH`
-- `MAX_FLOAT_CONSTS` (macro, `minigcc.c:167`) `#define MAX_FLOAT_CONSTS`
-- `MAX_CASES_PER_SWITCH` (macro, `minigcc.c:172`) `#define MAX_CASES_PER_SWITCH`
-- `MAX_STRINGS` (macro, `minigcc.c:184`) `#define MAX_STRINGS`
-- `MAX_PTR_INITS` (macro, `minigcc.c:193`) `#define MAX_PTR_INITS`
-- `MAX_STRUCT_MEMBERS` (macro, `minigcc.c:203`) `#define MAX_STRUCT_MEMBERS`
-- `MAX_DEFINED_FUNCS` (macro, `minigcc.c:214`) `#define MAX_DEFINED_FUNCS`
-- `MAX_IF_NESTING` (macro, `minigcc.c:219`) `#define MAX_IF_NESTING`
-- `CONST_VAR_FLAG` (macro, `minigcc.c:220`) `#define CONST_VAR_FLAG`
-- `MAX_MACROS` (macro, `minigcc.c:227`) `#define MAX_MACROS`
-- `ParserState` (struct, `minigcc.c:230`)
-- `save_parser_state` (function, `minigcc.c:259`) `static void save_parser_state(ParserState *state)`
-- `restore_parser_state` (function, `minigcc.c:288`) `static void restore_parser_state(ParserState *state)`
-- `Macro` (struct, `minigcc.c:321`)
-- `find_macro` (function, `minigcc.c:329`) `static int find_macro(const char *name)`
-- `add_macro` (function, `minigcc.c:337`) `static void add_macro(const char *name, int value)`
-- `macro_skipws` (function, `minigcc.c:364`) `static void macro_skipws(void)`
-- `macro_hex_digit` (function, `minigcc.c:368`) `static int macro_hex_digit(int c)`
+- `LEX_KW_CAP` (macro, `minigcc.c:83`) `#define LEX_KW_CAP`
+- `LEX_KW_BLOB` (macro, `minigcc.c:84`) `#define LEX_KW_BLOB`
+- `FileContext` (struct, `minigcc.c:98`)
+- `Symbol` (struct, `minigcc.c:111`)
+- `sym_label` (function, `minigcc.c:135`) `static const char *sym_label(Symbol *s)`
+- `build_static_label` (function, `minigcc.c:139`) `static void build_static_label(char *dst)`
+- `HASH_TABLE_SIZE` (macro, `minigcc.c:163`) `#define HASH_TABLE_SIZE`
+- `MAX_SCOPE_DEPTH` (macro, `minigcc.c:166`) `#define MAX_SCOPE_DEPTH`
+- `MAX_FLOAT_CONSTS` (macro, `minigcc.c:198`) `#define MAX_FLOAT_CONSTS`
+- `MAX_CASES_PER_SWITCH` (macro, `minigcc.c:203`) `#define MAX_CASES_PER_SWITCH`
+- `MAX_STRINGS` (macro, `minigcc.c:215`) `#define MAX_STRINGS`
+- `MAX_PTR_INITS` (macro, `minigcc.c:224`) `#define MAX_PTR_INITS`
+- `MAX_STRUCT_MEMBERS` (macro, `minigcc.c:234`) `#define MAX_STRUCT_MEMBERS`
+- `MAX_STRUCT_TYPEDEFS` (macro, `minigcc.c:250`) `#define MAX_STRUCT_TYPEDEFS`
+- `MAX_DEFINED_FUNCS` (macro, `minigcc.c:254`) `#define MAX_DEFINED_FUNCS`
+- `MAX_IF_NESTING` (macro, `minigcc.c:259`) `#define MAX_IF_NESTING`
+- `CONST_VAR_FLAG` (macro, `minigcc.c:260`) `#define CONST_VAR_FLAG`
+- `MAX_MACROS` (macro, `minigcc.c:269`) `#define MAX_MACROS`
+- `ParserState` (struct, `minigcc.c:272`)
+- `save_parser_state` (function, `minigcc.c:301`) `static void save_parser_state(ParserState *state)`
+- `restore_parser_state` (function, `minigcc.c:330`) `static void restore_parser_state(ParserState *state)`
+- `Macro` (struct, `minigcc.c:363`)
+- `find_macro` (function, `minigcc.c:371`) `static int find_macro(const char *name)`
 
 ## Internal vs External Edges
 
@@ -81,8 +81,9 @@ This community groups 61 file(s) rooted at `tests` with dominant language c (coh
 
 ## Connections
 
+- [INFERRED] shares_context community 0 <-> 3 (strength 0.5): Inferred shared context (language c and layer testing) with no import path between community 0 (root) and community 3 (orphans).
 - [INFERRED] shares_context community 1 <-> 3 (strength 0.5): Inferred shared context (layer testing) with no import path between community 1 (tests) and community 3 (orphans).
-- [INFERRED] shares_context community 2 <-> 3 (strength 0.5): Inferred shared context (layer testing) with no import path between community 2 (tests) and community 3 (orphans).
+- [INFERRED] shares_context community 2 <-> 3 (strength 0.5): Inferred shared context (language c and layer testing) with no import path between community 2 (tests) and community 3 (orphans).
 
 ## Risks
 
@@ -95,7 +96,7 @@ This community groups 61 file(s) rooted at `tests` with dominant language c (coh
 
 ## Open Questions
 
-- Why do 58 file(s) lack file-level docs (e.g. `minigcc.c`)? What purpose do they serve?
+- Why do 71 file(s) lack file-level docs (e.g. `minigcc.c`)? What purpose do they serve?
 - What would break if the most connected file in orphans changed?
 - Should orphans be split, given cohesion 0.00?
 
@@ -116,9 +117,9 @@ This community groups 61 file(s) rooted at `tests` with dominant language c (coh
 - `tests/neg_asm_ds.c`
 - `tests/neg_attr.c`
 - `tests/neg_comment.c`
+- `tests/neg_error.c`
 - `tests/neg_float.c`
 - `tests/neg_fnptr.c`
 - `tests/neg_fnptr_call.c`
 - `tests/neg_fnptr_cmp.c`
-- `tests/neg_fnptr_cmp0.c`
-- *... and 41 more*
+- *... and 54 more*

@@ -4,138 +4,146 @@
 - Layer: utility
 - Language: c
 - Symbols:
-  - `FileContext` (struct, line 96)
-  - `Symbol` (struct, line 109)
-  - `ParserState` (struct, line 230)
-  - `Macro` (struct, line 321)
-  - `save_parser_state` (function, line 259) `static void save_parser_state(ParserState *state)`
-  - `restore_parser_state` (function, line 288) `static void restore_parser_state(ParserState *state)`
-  - `find_macro` (function, line 329) `static int find_macro(const char *name)`
-  - `add_macro` (function, line 337) `static void add_macro(const char *name, int value)`
-  - `macro_skipws` (function, line 364) `static void macro_skipws(void)`
-  - `macro_hex_digit` (function, line 368) `static int macro_hex_digit(int c)`
-  - `macro_digit_val` (function, line 375) `static int macro_digit_val(int c)`
-  - `macro_primary` (function, line 382) `static int macro_primary(void)`
-  - `macro_unary` (function, line 456) `static int macro_unary(void)`
-  - `macro_mul` (function, line 465) `static int macro_mul(void)`
-  - `macro_add` (function, line 490) `static int macro_add(void)`
-  - `macro_shift` (function, line 507) `static int macro_shift(void)`
-  - `macro_cmp` (function, line 524) `static int macro_cmp(void)`
-  - `macro_eq` (function, line 547) `static int macro_eq(void)`
-  - `macro_bitand` (function, line 564) `static int macro_bitand(void)`
-  - `macro_bitxor` (function, line 578) `static int macro_bitxor(void)`
-  - `macro_bitor` (function, line 592) `static int macro_bitor(void)`
-  - `macro_logand` (function, line 606) `static int macro_logand(void)`
-  - `macro_or_expr` (function, line 620) `static int macro_or_expr(void)`
-  - `macro_fold` (function, line 634) `static int macro_fold(void)`
-  - `error` (function, line 639) `static void error(const char *msg)`
-  - `safe_malloc` (function, line 645) `static void *safe_malloc(size_t size)`
-  - `safe_strcpy` (function, line 654) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
-  - `safe_strtoll` (function, line 663) `static long safe_strtoll(const char *s)`
-  - `is_file_processed` (function, line 676) `static int is_file_processed(const char *path)`
-  - `mark_file_processed` (function, line 685) `static void mark_file_processed(const char *path)`
-  - `get_dir_from_path` (function, line 697) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
-  - `resolve_local_include` (function, line 716) `static char *resolve_local_include(const char *target)`
-  - `read_include_file` (function, line 755) `static char *read_include_file(const char *path)`
-  - `hash_name` (function, line 779) `static int hash_name(const char *name)`
-  - `hash_init` (function, line 789) `static void hash_init(void)`
-  - `push_scope` (function, line 794) `static void push_scope(void)`
-  - `pop_scope` (function, line 802) `static void pop_scope(void)`
-  - `truncate_symbols` (function, line 831) `static void truncate_symbols(int start_idx)`
-  - `my_isspace` (function, line 850) `static int my_isspace(int c)`
-  - `my_isalpha` (function, line 860) `static int my_isalpha(int c)`
-  - `my_isdigit` (function, line 866) `static int my_isdigit(int c)`
-  - `my_isalnum` (function, line 871) `static int my_isalnum(int c)`
-  - `lex_fail` (function, line 877) `static void lex_fail(const char *msg, char *start, char *end)`
-  - `lex_kw_add` (function, line 887) `static void lex_kw_add(const char *name, int id)`
-  - `lex_init_keywords` (function, line 900) `static void lex_init_keywords(void)`
-  - `lex_kw_lookup` (function, line 940) `static int lex_kw_lookup(void)`
-  - `lex_match_op` (function, line 952) `static int lex_match_op(const char *op, int id)`
-  - `lex_hex_val` (function, line 964) `static int lex_hex_val(int c)`
-  - `lex_is_int_suffix` (function, line 971) `static int lex_is_int_suffix(int c)`
-  - `lex_number` (function, line 977) `static void lex_number(void)`
-  - `next_token` (function, line 1095) `static void next_token(void)`
-  - `match` (function, line 1582) `static void match(int expected)`
-  - `emit` (function, line 1587) `static void emit(const char *s)`
-  - `emit_i` (function, line 1601) `static void emit_i(const char *fmt, int v)`
-  - `emit_s` (function, line 1607) `static void emit_s(const char *fmt, const char *s)`
-  - `emit_is` (function, line 1613) `static void emit_is(const char *fmt, int v, const char *s)`
-  - `emit_si` (function, line 1619) `static void emit_si(const char *fmt, const char *s, int v)`
-  - `emit_asciz_body` (function, line 1628) `static void emit_asciz_body(const char *s)`
-  - `emit_label` (function, line 1647) `static void emit_label(int label)`
-  - `find_symbol` (function, line 1653) `static int find_symbol(const char *name)`
-  - `add_symbol` (function, line 1664) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
-  - `arg_reg` (function, line 1745) `static const char *arg_reg(int i)`
-  - `note_defined_func` (function, line 1754) `static void note_defined_func(const char *name, int is_uns)`
-  - `is_defined_func` (function, line 1770) `static int is_defined_func(const char *name)`
-  - `func_return_unsigned` (function, line 1780) `static int func_return_unsigned(const char *name)`
-  - `parse_fnptr_declarator` (function, line 1790) `static int parse_fnptr_declarator(char *out_name, int *out_count)`
-  - `peek_call_argc` (function, line 1841) `static int peek_call_argc(void)`
-  - `emit_spill_reverse` (function, line 1879) `static void emit_spill_reverse(int argc)`
-  - `parse_indirect_call` (function, line 1891) `static void parse_indirect_call(void)`
-  - `libc_global_name` (function, line 1931) `static const char *libc_global_name(int i)`
-  - `typedef_name` (function, line 1944) `static const char *typedef_name(int i)`
-  - `typedef_size` (function, line 1960) `static int typedef_size(int i)`
-  - `typedef_uns` (function, line 1976) `static int typedef_uns(int i)`
-  - `unary` (function, line 1985) `static void unary(void)`
-  - `strcmp` (function, line 2030) `strcmp(id_name, "__sync_lock_test_and_set") == 0 ||
+  - `FileContext` (struct, line 98)
+  - `Symbol` (struct, line 111)
+  - `ParserState` (struct, line 272)
+  - `Macro` (struct, line 363)
+  - `sym_label` (function, line 135) `static const char *sym_label(Symbol *s)`
+  - `build_static_label` (function, line 139) `static void build_static_label(char *dst)`
+  - `save_parser_state` (function, line 301) `static void save_parser_state(ParserState *state)`
+  - `restore_parser_state` (function, line 330) `static void restore_parser_state(ParserState *state)`
+  - `find_macro` (function, line 371) `static int find_macro(const char *name)`
+  - `add_macro` (function, line 379) `static void add_macro(const char *name, int value)`
+  - `macro_skipws` (function, line 403) `static void macro_skipws(void)`
+  - `macro_hex_digit` (function, line 407) `static int macro_hex_digit(int c)`
+  - `macro_digit_val` (function, line 414) `static int macro_digit_val(int c)`
+  - `macro_primary` (function, line 421) `static int macro_primary(void)`
+  - `macro_unary` (function, line 523) `static int macro_unary(void)`
+  - `macro_mul` (function, line 532) `static int macro_mul(void)`
+  - `macro_add` (function, line 557) `static int macro_add(void)`
+  - `macro_shift` (function, line 574) `static int macro_shift(void)`
+  - `macro_cmp` (function, line 591) `static int macro_cmp(void)`
+  - `macro_eq` (function, line 614) `static int macro_eq(void)`
+  - `macro_bitand` (function, line 631) `static int macro_bitand(void)`
+  - `macro_bitxor` (function, line 645) `static int macro_bitxor(void)`
+  - `macro_bitor` (function, line 659) `static int macro_bitor(void)`
+  - `macro_logand` (function, line 673) `static int macro_logand(void)`
+  - `macro_or_expr` (function, line 687) `static int macro_or_expr(void)`
+  - `macro_fold` (function, line 701) `static int macro_fold(void)`
+  - `error` (function, line 707) `static void error(const char *msg)`
+  - `pp_eval` (function, line 713) `static int pp_eval(char *p)`
+  - `safe_malloc` (function, line 726) `static void *safe_malloc(size_t size)`
+  - `safe_strcpy` (function, line 735) `static void safe_strcpy(char *dst, const char *src, size_t dst_sz)`
+  - `ident_copy` (function, line 744) `static void ident_copy(char *dst, const char *src)`
+  - `is_struct_typedef` (function, line 752) `static int is_struct_typedef(const char *name)`
+  - `record_struct_typedef` (function, line 762) `static void record_struct_typedef(const char *name)`
+  - `safe_strtoll` (function, line 769) `static long safe_strtoll(const char *s)`
+  - `is_file_processed` (function, line 782) `static int is_file_processed(const char *path)`
+  - `mark_file_processed` (function, line 791) `static void mark_file_processed(const char *path)`
+  - `get_dir_from_path` (function, line 803) `static void get_dir_from_path(const char *path, char *dir, int dir_sz)`
+  - `resolve_local_include` (function, line 822) `static char *resolve_local_include(const char *target)`
+  - `read_include_file` (function, line 861) `static char *read_include_file(const char *path)`
+  - `hash_name` (function, line 885) `static int hash_name(const char *name)`
+  - `hash_init` (function, line 895) `static void hash_init(void)`
+  - `push_scope` (function, line 900) `static void push_scope(void)`
+  - `pop_scope` (function, line 908) `static void pop_scope(void)`
+  - `truncate_symbols` (function, line 937) `static void truncate_symbols(int start_idx)`
+  - `my_isspace` (function, line 956) `static int my_isspace(int c)`
+  - `my_isalpha` (function, line 966) `static int my_isalpha(int c)`
+  - `my_isdigit` (function, line 972) `static int my_isdigit(int c)`
+  - `my_isalnum` (function, line 977) `static int my_isalnum(int c)`
+  - `lex_fail` (function, line 983) `static void lex_fail(const char *msg, char *start, char *end)`
+  - `lex_kw_add` (function, line 993) `static void lex_kw_add(const char *name, int id)`
+  - `lex_init_keywords` (function, line 1006) `static void lex_init_keywords(void)`
+  - `lex_kw_lookup` (function, line 1048) `static int lex_kw_lookup(void)`
+  - `lex_match_op` (function, line 1060) `static int lex_match_op(const char *op, int id)`
+  - `lex_hex_val` (function, line 1072) `static int lex_hex_val(int c)`
+  - `lex_is_int_suffix` (function, line 1079) `static int lex_is_int_suffix(int c)`
+  - `lex_number` (function, line 1085) `static void lex_number(void)`
+  - `next_token` (function, line 1203) `static void next_token(void)`
+  - `match` (function, line 1735) `static void match(int expected)`
+  - `emit` (function, line 1740) `static void emit(const char *s)`
+  - `emit_i` (function, line 1754) `static void emit_i(const char *fmt, int v)`
+  - `emit_s` (function, line 1760) `static void emit_s(const char *fmt, const char *s)`
+  - `emit_is` (function, line 1766) `static void emit_is(const char *fmt, int v, const char *s)`
+  - `emit_si` (function, line 1772) `static void emit_si(const char *fmt, const char *s, int v)`
+  - `emit_asciz_body` (function, line 1781) `static void emit_asciz_body(const char *s)`
+  - `emit_label` (function, line 1800) `static void emit_label(int label)`
+  - `find_symbol` (function, line 1806) `static int find_symbol(const char *name)`
+  - `add_symbol` (function, line 1817) `static void add_symbol(const char *name, int is_global, int size, int pointed, int is_array, int ...`
+  - `arg_reg` (function, line 1903) `static const char *arg_reg(int i)`
+  - `note_defined_func` (function, line 1912) `static void note_defined_func(const char *name, int is_uns)`
+  - `is_defined_func` (function, line 1928) `static int is_defined_func(const char *name)`
+  - `func_return_unsigned` (function, line 1938) `static int func_return_unsigned(const char *name)`
+  - `parse_fnptr_declarator` (function, line 1948) `static int parse_fnptr_declarator(char *out_name, int *out_count)`
+  - `peek_call_argc` (function, line 1994) `static int peek_call_argc(void)`
+  - `emit_spill_reverse` (function, line 2032) `static void emit_spill_reverse(int argc)`
+  - `parse_indirect_call` (function, line 2044) `static void parse_indirect_call(void)`
+  - `libc_global_name` (function, line 2084) `static const char *libc_global_name(int i)`
+  - `typedef_name` (function, line 2097) `static const char *typedef_name(int i)`
+  - `typedef_size` (function, line 2113) `static int typedef_size(int i)`
+  - `typedef_uns` (function, line 2129) `static int typedef_uns(int i)`
+  - `unary` (function, line 2138) `static void unary(void)`
+  - `strcmp` (function, line 2183) `strcmp(id_name, "__sync_lock_test_and_set") == 0 ||
                 strcmp(id_name, "__sync_lock_...`
-  - `strcmp` (function, line 2035) `strcmp(id_name, "va_start") == 0)`
-  - `strcmp` (function, line 2038) `strcmp(id_name, "va_end") == 0)`
-  - `strcmp` (function, line 2041) `strcmp(id_name, "va_arg") == 0)`
-  - `parse_sync_call` (function, line 2430) `static void parse_sync_call(const char *name)`
-  - `parse_va_start` (function, line 2465) `static void parse_va_start(void)`
-  - `parse_va_arg` (function, line 2499) `static void parse_va_arg(void)`
-  - `parse_va_end` (function, line 2550) `static void parse_va_end(void)`
-  - `lvalue_address` (function, line 2566) `static void lvalue_address(void)`
-  - `handle_postfix` (function, line 2623) `static void handle_postfix(int is_lvalue)`
-  - `unary_expr` (function, line 2829) `static void unary_expr(void)`
-  - `multiplicative_expr` (function, line 2844) `static void multiplicative_expr(void)`
-  - `additive_expr` (function, line 2932) `static void additive_expr(void)`
-  - `shift_expr` (function, line 3001) `static void shift_expr(void)`
-  - `relational_expr` (function, line 3028) `static void relational_expr(void)`
-  - `equality_expr` (function, line 3093) `static void equality_expr(void)`
-  - `bitwise_and_expr` (function, line 3144) `static void bitwise_and_expr(void)`
-  - `bitwise_xor_expr` (function, line 3162) `static void bitwise_xor_expr(void)`
-  - `bitwise_or_expr` (function, line 3180) `static void bitwise_or_expr(void)`
-  - `logical_and_expr` (function, line 3198) `static void logical_and_expr(void)`
-  - `logical_or_expr` (function, line 3219) `static void logical_or_expr(void)`
-  - `conditional_expr` (function, line 3240) `static void conditional_expr(void)`
-  - `emit_compound_op` (function, line 3260) `static void emit_compound_op(int op, int asize, int is_uns)`
-  - `assignment_expr` (function, line 3316) `static void assignment_expr(void)`
-  - `asm_scratch` (function, line 3561) `static const char *asm_scratch(int i)`
-  - `asm_home_text` (function, line 3570) `static void asm_home_text(int home, char *buf)`
-  - `asm_reg_sized` (function, line 3580) `static void asm_reg_sized(int home, int size, char *buf)`
-  - `asm_fixed_home` (function, line 3622) `static int asm_fixed_home(int c)`
-  - `asm_emit_template` (function, line 3632) `static void asm_emit_template(void)`
-  - `asm_parse_mem` (function, line 3659) `static void asm_parse_mem(int idx, int is_out)`
-  - `asm_emit_ss` (function, line 3717) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
-  - `asm_parse_one` (function, line 3723) `static void asm_parse_one(int idx, int is_out)`
-  - `asm_assign_homes` (function, line 3791) `static void asm_assign_homes(void)`
-  - `asm_emit_all` (function, line 3853) `static void asm_emit_all(void)`
-  - `skip_gcc_attribute` (function, line 3901) `static int skip_gcc_attribute(void)`
-  - `strcmp` (function, line 3921) `strcmp(token, "returns_twice") == 0 ||
+  - `strcmp` (function, line 2188) `strcmp(id_name, "va_start") == 0)`
+  - `strcmp` (function, line 2191) `strcmp(id_name, "va_end") == 0)`
+  - `strcmp` (function, line 2194) `strcmp(id_name, "va_arg") == 0)`
+  - `parse_sync_call` (function, line 2616) `static void parse_sync_call(const char *name)`
+  - `parse_va_start` (function, line 2651) `static void parse_va_start(void)`
+  - `parse_va_arg` (function, line 2681) `static void parse_va_arg(void)`
+  - `parse_va_end` (function, line 2728) `static void parse_va_end(void)`
+  - `lvalue_address` (function, line 2744) `static void lvalue_address(void)`
+  - `postfix_member` (function, line 2801) `static void postfix_member(int is_lvalue)`
+  - `handle_postfix` (function, line 2865) `static void handle_postfix(int is_lvalue)`
+  - `unary_expr` (function, line 2972) `static void unary_expr(void)`
+  - `multiplicative_expr` (function, line 2987) `static void multiplicative_expr(void)`
+  - `additive_expr` (function, line 3075) `static void additive_expr(void)`
+  - `shift_expr` (function, line 3144) `static void shift_expr(void)`
+  - `relational_expr` (function, line 3171) `static void relational_expr(void)`
+  - `equality_expr` (function, line 3236) `static void equality_expr(void)`
+  - `bitwise_and_expr` (function, line 3287) `static void bitwise_and_expr(void)`
+  - `bitwise_xor_expr` (function, line 3305) `static void bitwise_xor_expr(void)`
+  - `bitwise_or_expr` (function, line 3323) `static void bitwise_or_expr(void)`
+  - `logical_and_expr` (function, line 3341) `static void logical_and_expr(void)`
+  - `logical_or_expr` (function, line 3362) `static void logical_or_expr(void)`
+  - `conditional_expr` (function, line 3383) `static void conditional_expr(void)`
+  - `emit_compound_op` (function, line 3403) `static void emit_compound_op(int op, int asize, int is_uns)`
+  - `assignment_expr` (function, line 3459) `static void assignment_expr(void)`
+  - `comma_expr` (function, line 3689) `static void comma_expr(void)`
+  - `asm_scratch` (function, line 3712) `static const char *asm_scratch(int i)`
+  - `asm_home_text` (function, line 3721) `static void asm_home_text(int home, char *buf)`
+  - `asm_reg_sized` (function, line 3731) `static void asm_reg_sized(int home, int size, char *buf)`
+  - `asm_fixed_home` (function, line 3773) `static int asm_fixed_home(int c)`
+  - `asm_emit_template` (function, line 3783) `static void asm_emit_template(void)`
+  - `asm_parse_mem` (function, line 3810) `static void asm_parse_mem(int idx, int is_out)`
+  - `asm_emit_ss` (function, line 3868) `static void asm_emit_ss(const char *fmt, const char *a, const char *b)`
+  - `asm_parse_one` (function, line 3874) `static void asm_parse_one(int idx, int is_out)`
+  - `asm_assign_homes` (function, line 3942) `static void asm_assign_homes(void)`
+  - `asm_emit_all` (function, line 4004) `static void asm_emit_all(void)`
+  - `skip_gcc_attribute` (function, line 4052) `static int skip_gcc_attribute(void)`
+  - `strcmp` (function, line 4072) `strcmp(token, "returns_twice") == 0 ||
                        strcmp(token, "always_inline") == 0)`
-  - `parse_trailing_align` (function, line 3951) `static void parse_trailing_align(void)`
-  - `parse_asm_block` (function, line 3958) `static void parse_asm_block(void)`
-  - `statement` (function, line 4022) `static void statement(void)`
-  - `parse_function` (function, line 4768) `static void parse_function(const char *name, int ret_type)`
-  - `parse_enum` (function, line 4980) `static void parse_enum(void)`
-  - `skip_struct_fields` (function, line 5031) `static void skip_struct_fields(int fsize, int funs, int ffloat)`
-  - `skip_struct` (function, line 5090) `static void skip_struct(void)`
-  - `record_typedef_alias` (function, line 5159) `static void record_typedef_alias(const char *name, int size, int uns, int fnptr)`
-  - `skip_typedef` (function, line 5190) `static void skip_typedef(void)`
-  - `data_directive` (function, line 5338) `static const char *data_directive(int size)`
-  - `emit_global_bss` (function, line 5346) `static void emit_global_bss(const char *name, int is_static, int size)`
-  - `emit_global_data_head` (function, line 5358) `static void emit_global_data_head(const char *name, int is_static)`
-  - `parse_const_int` (function, line 5371) `static int parse_const_int(long long *out)`
-  - `intern_string` (function, line 5394) `static int intern_string(const char *text)`
-  - `emit_global_initializer` (function, line 5411) `static int emit_global_initializer(const char *name, int is_static, int *size,
+  - `parse_trailing_align` (function, line 4102) `static void parse_trailing_align(void)`
+  - `parse_asm_block` (function, line 4109) `static void parse_asm_block(void)`
+  - `statement` (function, line 4173) `static void statement(void)`
+  - `parse_function` (function, line 4951) `static void parse_function(const char *name, int ret_type)`
+  - `parse_enum` (function, line 5168) `static int parse_enum(void)`
+  - `skip_struct_fields` (function, line 5238) `static void skip_struct_fields(int fsize, int funs, int ffloat, int fstruct, int isunion)`
+  - `skip_struct` (function, line 5305) `static void skip_struct(int is_union)`
+  - `record_typedef_alias` (function, line 5394) `static void record_typedef_alias(const char *name, int size, int uns, int fnptr)`
+  - `skip_typedef` (function, line 5421) `static void skip_typedef(void)`
+  - `data_directive` (function, line 5569) `static const char *data_directive(int size)`
+  - `emit_global_bss` (function, line 5577) `static void emit_global_bss(const char *name, int is_static, int size)`
+  - `emit_global_data_head` (function, line 5589) `static void emit_global_data_head(const char *name, int is_static)`
+  - `parse_const_int` (function, line 5602) `static int parse_const_int(long long *out)`
+  - `intern_string` (function, line 5625) `static int intern_string(const char *text)`
+  - `emit_global_initializer` (function, line 5642) `static int emit_global_initializer(const char *name, int is_static, int *size,
                   ...`
-  - `parse_program` (function, line 5476) `static void parse_program(void)`
-  - `emit_float_consts` (function, line 5696) `static void emit_float_consts(void)`
-  - `emit_string_pool` (function, line 5706) `static void emit_string_pool(void)`
-  - `main` (function, line 5716) `int main(int argc, char **argv)`
+  - `parse_program` (function, line 5709) `static void parse_program(void)`
+  - `emit_float_consts` (function, line 5938) `static void emit_float_consts(void)`
+  - `emit_string_pool` (function, line 5948) `static void emit_string_pool(void)`
+  - `main` (function, line 5958) `int main(int argc, char **argv)`
   - `MAX_TOKEN_LEN` (macro, line 15) `#define MAX_TOKEN_LEN`
   - `MAX_SYMBOLS` (macro, line 16) `#define MAX_SYMBOLS`
   - `MAX_IDENT_LEN` (macro, line 17) `#define MAX_IDENT_LEN`
@@ -143,22 +151,23 @@
   - `MAX_INCLUDE_DEPTH` (macro, line 19) `#define MAX_INCLUDE_DEPTH`
   - `MAX_PROCESSED_FILES` (macro, line 20) `#define MAX_PROCESSED_FILES`
   - `STACK_ALIGN` (macro, line 21) `#define STACK_ALIGN`
-  - `LEX_KW_CAP` (macro, line 81) `#define LEX_KW_CAP`
-  - `LEX_KW_BLOB` (macro, line 82) `#define LEX_KW_BLOB`
-  - `HASH_TABLE_SIZE` (macro, line 132) `#define HASH_TABLE_SIZE`
-  - `MAX_SCOPE_DEPTH` (macro, line 135) `#define MAX_SCOPE_DEPTH`
-  - `MAX_FLOAT_CONSTS` (macro, line 167) `#define MAX_FLOAT_CONSTS`
-  - `MAX_CASES_PER_SWITCH` (macro, line 172) `#define MAX_CASES_PER_SWITCH`
-  - `MAX_STRINGS` (macro, line 184) `#define MAX_STRINGS`
-  - `MAX_PTR_INITS` (macro, line 193) `#define MAX_PTR_INITS`
-  - `MAX_STRUCT_MEMBERS` (macro, line 203) `#define MAX_STRUCT_MEMBERS`
-  - `MAX_DEFINED_FUNCS` (macro, line 214) `#define MAX_DEFINED_FUNCS`
-  - `MAX_IF_NESTING` (macro, line 219) `#define MAX_IF_NESTING`
-  - `CONST_VAR_FLAG` (macro, line 220) `#define CONST_VAR_FLAG`
-  - `MAX_MACROS` (macro, line 227) `#define MAX_MACROS`
-  - `ASM_MAX_OPS` (macro, line 3546) `#define ASM_MAX_OPS`
-  - `ASM_TMPL_SZ` (macro, line 3547) `#define ASM_TMPL_SZ`
-  - `ASM_TXT_SZ` (macro, line 3548) `#define ASM_TXT_SZ`
+  - `LEX_KW_CAP` (macro, line 83) `#define LEX_KW_CAP`
+  - `LEX_KW_BLOB` (macro, line 84) `#define LEX_KW_BLOB`
+  - `HASH_TABLE_SIZE` (macro, line 163) `#define HASH_TABLE_SIZE`
+  - `MAX_SCOPE_DEPTH` (macro, line 166) `#define MAX_SCOPE_DEPTH`
+  - `MAX_FLOAT_CONSTS` (macro, line 198) `#define MAX_FLOAT_CONSTS`
+  - `MAX_CASES_PER_SWITCH` (macro, line 203) `#define MAX_CASES_PER_SWITCH`
+  - `MAX_STRINGS` (macro, line 215) `#define MAX_STRINGS`
+  - `MAX_PTR_INITS` (macro, line 224) `#define MAX_PTR_INITS`
+  - `MAX_STRUCT_MEMBERS` (macro, line 234) `#define MAX_STRUCT_MEMBERS`
+  - `MAX_STRUCT_TYPEDEFS` (macro, line 250) `#define MAX_STRUCT_TYPEDEFS`
+  - `MAX_DEFINED_FUNCS` (macro, line 254) `#define MAX_DEFINED_FUNCS`
+  - `MAX_IF_NESTING` (macro, line 259) `#define MAX_IF_NESTING`
+  - `CONST_VAR_FLAG` (macro, line 260) `#define CONST_VAR_FLAG`
+  - `MAX_MACROS` (macro, line 269) `#define MAX_MACROS`
+  - `ASM_MAX_OPS` (macro, line 3697) `#define ASM_MAX_OPS`
+  - `ASM_TMPL_SZ` (macro, line 3698) `#define ASM_TMPL_SZ`
+  - `ASM_TXT_SZ` (macro, line 3699) `#define ASM_TXT_SZ`
 
 ## minigccg2.s
 - Layer: utility
@@ -181,210 +190,224 @@
   - `processed_count` (function, line 59)
   - `symbols` (function, line 63)
   - `symbol_count` (function, line 67)
-  - `hash_table` (function, line 71)
-  - `scope_stack_sym` (function, line 75)
-  - `scope_stack_stk` (function, line 79)
-  - `scope_depth` (function, line 83)
-  - `stack_size` (function, line 87)
-  - `label_counter` (function, line 91)
-  - `function_has_return` (function, line 95)
-  - `emit_enabled` (function, line 99)
-  - `max_func_stack` (function, line 103)
-  - `assign_size` (function, line 107)
-  - `expr_pointed` (function, line 111)
-  - `expr_fnptr` (function, line 115)
-  - `subscript_base_fnptr` (function, line 119)
-  - `current_elem_size` (function, line 123)
-  - `current_elem_size2` (function, line 127)
-  - `current_elem_unsigned` (function, line 131)
-  - `deref_w` (function, line 135)
-  - `deref_u` (function, line 139)
-  - `no_postfix_deref` (function, line 143)
-  - `expr_type` (function, line 147)
-  - `expr_unsigned` (function, line 151)
-  - `static_flag` (function, line 155)
-  - `unsigned_type` (function, line 159)
-  - `const_flag` (function, line 163)
-  - `extern_flag` (function, line 167)
-  - `global_emit_deferred` (function, line 171)
-  - `pending_align` (function, line 175)
-  - `func_is_variadic` (function, line 179)
-  - `vararg_nfixed` (function, line 183)
-  - `vararg_save_off` (function, line 187)
-  - `float_const_str` (function, line 191)
-  - `float_const_is_float` (function, line 195)
-  - `float_const_count` (function, line 199)
-  - `switch_case_values` (function, line 203)
-  - `switch_case_labels` (function, line 207)
-  - `switch_case_count` (function, line 211)
-  - `switch_has_default` (function, line 215)
-  - `switch_default_label` (function, line 219)
-  - `break_target` (function, line 223)
-  - `break_target_valid` (function, line 227)
-  - `continue_target` (function, line 231)
-  - `continue_target_valid` (function, line 235)
-  - `str_label_counter` (function, line 239)
-  - `string_pool` (function, line 243)
-  - `string_count` (function, line 247)
-  - `ptr_init_name` (function, line 251)
-  - `ptr_init_label` (function, line 255)
-  - `ptr_init_count` (function, line 259)
-  - `struct_total_size` (function, line 263)
-  - `struct_member_names` (function, line 267)
-  - `struct_member_offsets` (function, line 271)
-  - `struct_member_sizes` (function, line 275)
-  - `struct_member_elem_sizes` (function, line 279)
-  - `struct_member_unsigned` (function, line 283)
-  - `struct_member_is_float` (function, line 287)
-  - `struct_member_is_fnptr` (function, line 291)
-  - `struct_member_count` (function, line 295)
-  - `defined_func_names` (function, line 299)
-  - `defined_func_unsigned` (function, line 303)
-  - `defined_func_count` (function, line 307)
-  - `if_nest` (function, line 311)
-  - `if_depth` (function, line 315)
-  - `macro_count` (function, line 320)
-  - `save_parser_state` (function, line 324)
-  - `restore_parser_state` (function, line 487)
-  - `macros` (function, line 703)
-  - `find_macro` (function, line 707)
-  - `add_macro` (function, line 770)
-  - `macro_p` (function, line 900)
-  - `macro_ok` (function, line 904)
-  - `macro_skipws` (function, line 908)
-  - `macro_hex_digit` (function, line 949)
-  - `macro_digit_val` (function, line 1047)
-  - `macro_primary` (function, line 1168)
-  - `macro_unary` (function, line 1966)
-  - `macro_mul` (function, line 2094)
-  - `macro_add` (function, line 2297)
-  - `macro_shift` (function, line 2395)
-  - `macro_cmp` (function, line 2548)
-  - `macro_eq` (function, line 2769)
-  - `macro_bitand` (function, line 2922)
-  - `macro_bitxor` (function, line 3008)
-  - `macro_bitor` (function, line 3073)
-  - `macro_logand` (function, line 3159)
-  - `macro_or_expr` (function, line 3256)
-  - `macro_fold` (function, line 3353)
-  - `error` (function, line 3374)
-  - `safe_malloc` (function, line 3425)
-  - `safe_strcpy` (function, line 3479)
-  - `safe_strtoll` (function, line 3556)
-  - `is_file_processed` (function, line 3671)
-  - `mark_file_processed` (function, line 3731)
-  - `get_dir_from_path` (function, line 3842)
-  - `resolve_local_include` (function, line 3985)
-  - `read_include_file` (function, line 4433)
-  - `hash_name` (function, line 4639)
-  - `hash_init` (function, line 4697)
-  - `push_scope` (function, line 4736)
-  - `pop_scope` (function, line 4788)
-  - `truncate_symbols` (function, line 4984)
-  - `my_isspace` (function, line 5137)
-  - `my_isalpha` (function, line 5226)
-  - `my_isdigit` (function, line 5295)
-  - `my_isalnum` (function, line 5335)
-  - `lex_fail` (function, line 5380)
-  - `lex_kw_add` (function, line 5484)
-  - `lex_init_keywords` (function, line 5647)
-  - `lex_kw_lookup` (function, line 6134)
-  - `lex_match_op` (function, line 6227)
-  - `lex_hex_val` (function, line 6310)
-  - `lex_is_int_suffix` (function, line 6432)
-  - `lex_number` (function, line 6501)
-  - `next_token` (function, line 8028)
-  - `restart` (function, line 8032)
-  - `match` (function, line 13434)
-  - `emit` (function, line 13472)
-  - `emit_i` (function, line 13583)
-  - `emit_s` (function, line 13631)
-  - `emit_is` (function, line 13679)
-  - `emit_si` (function, line 13730)
-  - `emit_asciz_body` (function, line 13781)
-  - `emit_label` (function, line 14095)
-  - `find_symbol` (function, line 14124)
-  - `add_symbol` (function, line 14210)
-  - `arg_reg` (function, line 14619)
-  - `note_defined_func` (function, line 14695)
-  - `is_defined_func` (function, line 14818)
-  - `func_return_unsigned` (function, line 14877)
-  - `parse_fnptr_declarator` (function, line 14942)
-  - `peek_call_argc` (function, line 15361)
-  - `emit_spill_reverse` (function, line 15652)
-  - `parse_indirect_call` (function, line 15789)
-  - `libc_global_name` (function, line 16137)
-  - `typedef_name` (function, line 16265)
-  - `typedef_size` (function, line 16432)
-  - `typedef_uns` (function, line 16599)
-  - `unary` (function, line 16675)
-  - `parse_sync_call` (function, line 20973)
-  - `parse_va_start` (function, line 21295)
-  - `parse_va_arg` (function, line 21639)
-  - `parse_va_end` (function, line 22175)
-  - `lvalue_address` (function, line 22286)
-  - `handle_postfix` (function, line 22845)
-  - `unary_expr` (function, line 24452)
-  - `multiplicative_expr` (function, line 24477)
-  - `additive_expr` (function, line 25263)
-  - `shift_expr` (function, line 25832)
-  - `relational_expr` (function, line 26034)
-  - `equality_expr` (function, line 26748)
-  - `bitwise_and_expr` (function, line 27236)
-  - `bitwise_xor_expr` (function, line 27363)
-  - `bitwise_or_expr` (function, line 27490)
-  - `logical_and_expr` (function, line 27617)
-  - `logical_or_expr` (function, line 27782)
-  - `conditional_expr` (function, line 27947)
-  - `emit_compound_op` (function, line 28087)
-  - `assignment_expr` (function, line 28680)
-  - `asm_tmpl` (function, line 32435)
-  - `asm_text` (function, line 32439)
-  - `asm_mem` (function, line 32443)
-  - `asm_is_out` (function, line 32447)
-  - `asm_home` (function, line 32451)
-  - `asm_slot` (function, line 32455)
-  - `asm_size` (function, line 32459)
-  - `asm_nops` (function, line 32463)
-  - `asm_nslots` (function, line 32467)
-  - `asm_unique` (function, line 32471)
-  - `asm_scratch` (function, line 32475)
-  - `asm_home_text` (function, line 32551)
-  - `asm_reg_sized` (function, line 32766)
-  - `asm_fixed_home` (function, line 33746)
-  - `asm_emit_template` (function, line 33836)
-  - `asm_parse_mem` (function, line 34072)
-  - `asm_emit_ss` (function, line 34627)
-  - `asm_parse_one` (function, line 34678)
-  - `asm_assign_homes` (function, line 35749)
-  - `asm_emit_all` (function, line 36375)
-  - `skip_gcc_attribute` (function, line 36951)
-  - `parse_trailing_align` (function, line 37426)
-  - `parse_asm_block` (function, line 37468)
-  - `statement` (function, line 38033)
-  - `restart_typedef` (function, line 41754)
-  - `restart_int` (function, line 43004)
-  - `parse_function` (function, line 44373)
-  - `parse_enum` (function, line 46458)
-  - `skip_struct_fields` (function, line 46895)
-  - `skip_struct` (function, line 47462)
-  - `td_stash_valid` (function, line 48156)
-  - `td_stash_size` (function, line 48160)
-  - `td_stash_uns` (function, line 48164)
-  - `td_stash_fnptr` (function, line 48168)
-  - `record_typedef_alias` (function, line 48172)
-  - `skip_typedef` (function, line 48414)
-  - `data_directive` (function, line 49649)
-  - `emit_global_bss` (function, line 49699)
-  - `emit_global_data_head` (function, line 49809)
-  - `parse_const_int` (function, line 49884)
-  - `intern_string` (function, line 50047)
-  - `emit_global_initializer` (function, line 50140)
-  - `parse_program` (function, line 50847)
-  - `emit_float_consts` (function, line 53215)
-  - `emit_string_pool` (function, line 53312)
-  - `main` (function, line 53413)
-  - `_start` (function, line 58569)
+  - `static_local_count` (function, line 71)
+  - `sym_label` (function, line 75)
+  - `build_static_label` (function, line 100)
+  - `hash_table` (function, line 320)
+  - `scope_stack_sym` (function, line 324)
+  - `scope_stack_stk` (function, line 328)
+  - `scope_depth` (function, line 332)
+  - `stack_size` (function, line 336)
+  - `label_counter` (function, line 340)
+  - `function_has_return` (function, line 344)
+  - `emit_enabled` (function, line 348)
+  - `max_func_stack` (function, line 352)
+  - `assign_size` (function, line 356)
+  - `expr_pointed` (function, line 360)
+  - `expr_fnptr` (function, line 364)
+  - `subscript_base_fnptr` (function, line 368)
+  - `current_elem_size` (function, line 372)
+  - `current_elem_size2` (function, line 376)
+  - `current_elem_unsigned` (function, line 380)
+  - `deref_w` (function, line 384)
+  - `deref_u` (function, line 388)
+  - `no_postfix_deref` (function, line 392)
+  - `expr_type` (function, line 396)
+  - `expr_unsigned` (function, line 400)
+  - `static_flag` (function, line 404)
+  - `unsigned_type` (function, line 408)
+  - `const_flag` (function, line 412)
+  - `extern_flag` (function, line 416)
+  - `global_emit_deferred` (function, line 420)
+  - `pending_align` (function, line 424)
+  - `func_is_variadic` (function, line 428)
+  - `vararg_nfixed` (function, line 432)
+  - `vararg_save_off` (function, line 436)
+  - `float_const_str` (function, line 440)
+  - `float_const_is_float` (function, line 444)
+  - `float_const_count` (function, line 448)
+  - `switch_case_values` (function, line 452)
+  - `switch_case_labels` (function, line 456)
+  - `switch_case_count` (function, line 460)
+  - `switch_has_default` (function, line 464)
+  - `switch_default_label` (function, line 468)
+  - `break_target` (function, line 472)
+  - `break_target_valid` (function, line 476)
+  - `continue_target` (function, line 480)
+  - `continue_target_valid` (function, line 484)
+  - `str_label_counter` (function, line 488)
+  - `string_pool` (function, line 492)
+  - `string_count` (function, line 496)
+  - `ptr_init_name` (function, line 500)
+  - `ptr_init_label` (function, line 504)
+  - `ptr_init_count` (function, line 508)
+  - `struct_total_size` (function, line 512)
+  - `struct_member_names` (function, line 516)
+  - `struct_member_offsets` (function, line 520)
+  - `struct_member_sizes` (function, line 524)
+  - `struct_member_elem_sizes` (function, line 528)
+  - `struct_member_unsigned` (function, line 532)
+  - `struct_member_is_float` (function, line 536)
+  - `struct_member_is_fnptr` (function, line 540)
+  - `struct_member_is_struct` (function, line 544)
+  - `struct_member_count` (function, line 548)
+  - `struct_typedef_names` (function, line 552)
+  - `struct_typedef_count` (function, line 556)
+  - `defined_func_names` (function, line 560)
+  - `defined_func_unsigned` (function, line 564)
+  - `defined_func_count` (function, line 568)
+  - `if_nest` (function, line 572)
+  - `if_taken` (function, line 576)
+  - `if_depth` (function, line 580)
+  - `macro_count` (function, line 585)
+  - `save_parser_state` (function, line 589)
+  - `restore_parser_state` (function, line 752)
+  - `macros` (function, line 968)
+  - `find_macro` (function, line 972)
+  - `add_macro` (function, line 1035)
+  - `macro_p` (function, line 1105)
+  - `macro_ok` (function, line 1109)
+  - `macro_undef_zero` (function, line 1113)
+  - `macro_skipws` (function, line 1117)
+  - `macro_hex_digit` (function, line 1158)
+  - `macro_digit_val` (function, line 1256)
+  - `macro_primary` (function, line 1377)
+  - `macro_unary` (function, line 2580)
+  - `macro_mul` (function, line 2708)
+  - `macro_add` (function, line 2911)
+  - `macro_shift` (function, line 3009)
+  - `macro_cmp` (function, line 3162)
+  - `macro_eq` (function, line 3383)
+  - `macro_bitand` (function, line 3536)
+  - `macro_bitxor` (function, line 3622)
+  - `macro_bitor` (function, line 3687)
+  - `macro_logand` (function, line 3773)
+  - `macro_or_expr` (function, line 3870)
+  - `macro_fold` (function, line 3967)
+  - `error` (function, line 3993)
+  - `pp_eval` (function, line 4044)
+  - `safe_malloc` (function, line 4177)
+  - `safe_strcpy` (function, line 4231)
+  - `ident_copy` (function, line 4308)
+  - `is_struct_typedef` (function, line 4390)
+  - `record_struct_typedef` (function, line 4477)
+  - `safe_strtoll` (function, line 4575)
+  - `is_file_processed` (function, line 4690)
+  - `mark_file_processed` (function, line 4750)
+  - `get_dir_from_path` (function, line 4861)
+  - `resolve_local_include` (function, line 5004)
+  - `read_include_file` (function, line 5452)
+  - `hash_name` (function, line 5658)
+  - `hash_init` (function, line 5716)
+  - `push_scope` (function, line 5755)
+  - `pop_scope` (function, line 5807)
+  - `truncate_symbols` (function, line 6003)
+  - `my_isspace` (function, line 6156)
+  - `my_isalpha` (function, line 6245)
+  - `my_isdigit` (function, line 6314)
+  - `my_isalnum` (function, line 6354)
+  - `lex_fail` (function, line 6399)
+  - `lex_kw_add` (function, line 6503)
+  - `lex_init_keywords` (function, line 6666)
+  - `lex_kw_lookup` (function, line 7179)
+  - `lex_match_op` (function, line 7272)
+  - `lex_hex_val` (function, line 7355)
+  - `lex_is_int_suffix` (function, line 7477)
+  - `lex_number` (function, line 7546)
+  - `next_token` (function, line 9073)
+  - `restart` (function, line 9077)
+  - `match` (function, line 15167)
+  - `emit` (function, line 15205)
+  - `emit_i` (function, line 15316)
+  - `emit_s` (function, line 15364)
+  - `emit_is` (function, line 15412)
+  - `emit_si` (function, line 15463)
+  - `emit_asciz_body` (function, line 15514)
+  - `emit_label` (function, line 15828)
+  - `find_symbol` (function, line 15857)
+  - `add_symbol` (function, line 15943)
+  - `arg_reg` (function, line 16343)
+  - `note_defined_func` (function, line 16419)
+  - `is_defined_func` (function, line 16542)
+  - `func_return_unsigned` (function, line 16601)
+  - `parse_fnptr_declarator` (function, line 16666)
+  - `peek_call_argc` (function, line 17037)
+  - `emit_spill_reverse` (function, line 17340)
+  - `parse_indirect_call` (function, line 17477)
+  - `libc_global_name` (function, line 17825)
+  - `typedef_name` (function, line 17953)
+  - `typedef_size` (function, line 18120)
+  - `typedef_uns` (function, line 18287)
+  - `unary` (function, line 18363)
+  - `parse_sync_call` (function, line 23176)
+  - `parse_va_start` (function, line 23498)
+  - `parse_va_arg` (function, line 23794)
+  - `parse_va_end` (function, line 24282)
+  - `lvalue_address` (function, line 24393)
+  - `postfix_member` (function, line 24972)
+  - `handle_postfix` (function, line 25589)
+  - `unary_expr` (function, line 26234)
+  - `multiplicative_expr` (function, line 26259)
+  - `additive_expr` (function, line 27045)
+  - `shift_expr` (function, line 27614)
+  - `relational_expr` (function, line 27816)
+  - `equality_expr` (function, line 28530)
+  - `bitwise_and_expr` (function, line 29018)
+  - `bitwise_xor_expr` (function, line 29145)
+  - `bitwise_or_expr` (function, line 29272)
+  - `logical_and_expr` (function, line 29399)
+  - `logical_or_expr` (function, line 29564)
+  - `conditional_expr` (function, line 29729)
+  - `emit_compound_op` (function, line 29869)
+  - `assignment_expr` (function, line 30462)
+  - `comma_expr` (function, line 34261)
+  - `asm_tmpl` (function, line 34301)
+  - `asm_text` (function, line 34305)
+  - `asm_mem` (function, line 34309)
+  - `asm_is_out` (function, line 34313)
+  - `asm_home` (function, line 34317)
+  - `asm_slot` (function, line 34321)
+  - `asm_size` (function, line 34325)
+  - `asm_nops` (function, line 34329)
+  - `asm_nslots` (function, line 34333)
+  - `asm_unique` (function, line 34337)
+  - `asm_scratch` (function, line 34341)
+  - `asm_home_text` (function, line 34417)
+  - `asm_reg_sized` (function, line 34632)
+  - `asm_fixed_home` (function, line 35612)
+  - `asm_emit_template` (function, line 35702)
+  - `asm_parse_mem` (function, line 35938)
+  - `asm_emit_ss` (function, line 36531)
+  - `asm_parse_one` (function, line 36582)
+  - `asm_assign_homes` (function, line 37653)
+  - `asm_emit_all` (function, line 38279)
+  - `skip_gcc_attribute` (function, line 38855)
+  - `parse_trailing_align` (function, line 39330)
+  - `parse_asm_block` (function, line 39372)
+  - `statement` (function, line 39937)
+  - `restart_typedef` (function, line 43883)
+  - `restart_int` (function, line 45108)
+  - `parse_function` (function, line 46662)
+  - `parse_enum` (function, line 48821)
+  - `skip_struct_fields` (function, line 49409)
+  - `skip_struct` (function, line 49995)
+  - `td_stash_valid` (function, line 50930)
+  - `td_stash_size` (function, line 50934)
+  - `td_stash_uns` (function, line 50938)
+  - `td_stash_fnptr` (function, line 50942)
+  - `record_typedef_alias` (function, line 50946)
+  - `skip_typedef` (function, line 51143)
+  - `data_directive` (function, line 52331)
+  - `emit_global_bss` (function, line 52381)
+  - `emit_global_data_head` (function, line 52491)
+  - `parse_const_int` (function, line 52566)
+  - `intern_string` (function, line 52729)
+  - `emit_global_initializer` (function, line 52822)
+  - `parse_program` (function, line 53533)
+  - `emit_float_consts` (function, line 56071)
+  - `emit_string_pool` (function, line 56168)
+  - `main` (function, line 56269)
+  - `_start` (function, line 61452)
 
 ## minigccg3.s
 - Layer: utility
@@ -407,210 +430,224 @@
   - `processed_count` (function, line 59)
   - `symbols` (function, line 63)
   - `symbol_count` (function, line 67)
-  - `hash_table` (function, line 71)
-  - `scope_stack_sym` (function, line 75)
-  - `scope_stack_stk` (function, line 79)
-  - `scope_depth` (function, line 83)
-  - `stack_size` (function, line 87)
-  - `label_counter` (function, line 91)
-  - `function_has_return` (function, line 95)
-  - `emit_enabled` (function, line 99)
-  - `max_func_stack` (function, line 103)
-  - `assign_size` (function, line 107)
-  - `expr_pointed` (function, line 111)
-  - `expr_fnptr` (function, line 115)
-  - `subscript_base_fnptr` (function, line 119)
-  - `current_elem_size` (function, line 123)
-  - `current_elem_size2` (function, line 127)
-  - `current_elem_unsigned` (function, line 131)
-  - `deref_w` (function, line 135)
-  - `deref_u` (function, line 139)
-  - `no_postfix_deref` (function, line 143)
-  - `expr_type` (function, line 147)
-  - `expr_unsigned` (function, line 151)
-  - `static_flag` (function, line 155)
-  - `unsigned_type` (function, line 159)
-  - `const_flag` (function, line 163)
-  - `extern_flag` (function, line 167)
-  - `global_emit_deferred` (function, line 171)
-  - `pending_align` (function, line 175)
-  - `func_is_variadic` (function, line 179)
-  - `vararg_nfixed` (function, line 183)
-  - `vararg_save_off` (function, line 187)
-  - `float_const_str` (function, line 191)
-  - `float_const_is_float` (function, line 195)
-  - `float_const_count` (function, line 199)
-  - `switch_case_values` (function, line 203)
-  - `switch_case_labels` (function, line 207)
-  - `switch_case_count` (function, line 211)
-  - `switch_has_default` (function, line 215)
-  - `switch_default_label` (function, line 219)
-  - `break_target` (function, line 223)
-  - `break_target_valid` (function, line 227)
-  - `continue_target` (function, line 231)
-  - `continue_target_valid` (function, line 235)
-  - `str_label_counter` (function, line 239)
-  - `string_pool` (function, line 243)
-  - `string_count` (function, line 247)
-  - `ptr_init_name` (function, line 251)
-  - `ptr_init_label` (function, line 255)
-  - `ptr_init_count` (function, line 259)
-  - `struct_total_size` (function, line 263)
-  - `struct_member_names` (function, line 267)
-  - `struct_member_offsets` (function, line 271)
-  - `struct_member_sizes` (function, line 275)
-  - `struct_member_elem_sizes` (function, line 279)
-  - `struct_member_unsigned` (function, line 283)
-  - `struct_member_is_float` (function, line 287)
-  - `struct_member_is_fnptr` (function, line 291)
-  - `struct_member_count` (function, line 295)
-  - `defined_func_names` (function, line 299)
-  - `defined_func_unsigned` (function, line 303)
-  - `defined_func_count` (function, line 307)
-  - `if_nest` (function, line 311)
-  - `if_depth` (function, line 315)
-  - `macro_count` (function, line 320)
-  - `save_parser_state` (function, line 324)
-  - `restore_parser_state` (function, line 487)
-  - `macros` (function, line 703)
-  - `find_macro` (function, line 707)
-  - `add_macro` (function, line 770)
-  - `macro_p` (function, line 900)
-  - `macro_ok` (function, line 904)
-  - `macro_skipws` (function, line 908)
-  - `macro_hex_digit` (function, line 949)
-  - `macro_digit_val` (function, line 1047)
-  - `macro_primary` (function, line 1168)
-  - `macro_unary` (function, line 1966)
-  - `macro_mul` (function, line 2094)
-  - `macro_add` (function, line 2297)
-  - `macro_shift` (function, line 2395)
-  - `macro_cmp` (function, line 2548)
-  - `macro_eq` (function, line 2769)
-  - `macro_bitand` (function, line 2922)
-  - `macro_bitxor` (function, line 3008)
-  - `macro_bitor` (function, line 3073)
-  - `macro_logand` (function, line 3159)
-  - `macro_or_expr` (function, line 3256)
-  - `macro_fold` (function, line 3353)
-  - `error` (function, line 3374)
-  - `safe_malloc` (function, line 3425)
-  - `safe_strcpy` (function, line 3479)
-  - `safe_strtoll` (function, line 3556)
-  - `is_file_processed` (function, line 3671)
-  - `mark_file_processed` (function, line 3731)
-  - `get_dir_from_path` (function, line 3842)
-  - `resolve_local_include` (function, line 3985)
-  - `read_include_file` (function, line 4433)
-  - `hash_name` (function, line 4639)
-  - `hash_init` (function, line 4697)
-  - `push_scope` (function, line 4736)
-  - `pop_scope` (function, line 4788)
-  - `truncate_symbols` (function, line 4984)
-  - `my_isspace` (function, line 5137)
-  - `my_isalpha` (function, line 5226)
-  - `my_isdigit` (function, line 5295)
-  - `my_isalnum` (function, line 5335)
-  - `lex_fail` (function, line 5380)
-  - `lex_kw_add` (function, line 5484)
-  - `lex_init_keywords` (function, line 5647)
-  - `lex_kw_lookup` (function, line 6134)
-  - `lex_match_op` (function, line 6227)
-  - `lex_hex_val` (function, line 6310)
-  - `lex_is_int_suffix` (function, line 6432)
-  - `lex_number` (function, line 6501)
-  - `next_token` (function, line 8028)
-  - `restart` (function, line 8032)
-  - `match` (function, line 13434)
-  - `emit` (function, line 13472)
-  - `emit_i` (function, line 13583)
-  - `emit_s` (function, line 13631)
-  - `emit_is` (function, line 13679)
-  - `emit_si` (function, line 13730)
-  - `emit_asciz_body` (function, line 13781)
-  - `emit_label` (function, line 14095)
-  - `find_symbol` (function, line 14124)
-  - `add_symbol` (function, line 14210)
-  - `arg_reg` (function, line 14619)
-  - `note_defined_func` (function, line 14695)
-  - `is_defined_func` (function, line 14818)
-  - `func_return_unsigned` (function, line 14877)
-  - `parse_fnptr_declarator` (function, line 14942)
-  - `peek_call_argc` (function, line 15361)
-  - `emit_spill_reverse` (function, line 15652)
-  - `parse_indirect_call` (function, line 15789)
-  - `libc_global_name` (function, line 16137)
-  - `typedef_name` (function, line 16265)
-  - `typedef_size` (function, line 16432)
-  - `typedef_uns` (function, line 16599)
-  - `unary` (function, line 16675)
-  - `parse_sync_call` (function, line 20973)
-  - `parse_va_start` (function, line 21295)
-  - `parse_va_arg` (function, line 21639)
-  - `parse_va_end` (function, line 22175)
-  - `lvalue_address` (function, line 22286)
-  - `handle_postfix` (function, line 22845)
-  - `unary_expr` (function, line 24452)
-  - `multiplicative_expr` (function, line 24477)
-  - `additive_expr` (function, line 25263)
-  - `shift_expr` (function, line 25832)
-  - `relational_expr` (function, line 26034)
-  - `equality_expr` (function, line 26748)
-  - `bitwise_and_expr` (function, line 27236)
-  - `bitwise_xor_expr` (function, line 27363)
-  - `bitwise_or_expr` (function, line 27490)
-  - `logical_and_expr` (function, line 27617)
-  - `logical_or_expr` (function, line 27782)
-  - `conditional_expr` (function, line 27947)
-  - `emit_compound_op` (function, line 28087)
-  - `assignment_expr` (function, line 28680)
-  - `asm_tmpl` (function, line 32435)
-  - `asm_text` (function, line 32439)
-  - `asm_mem` (function, line 32443)
-  - `asm_is_out` (function, line 32447)
-  - `asm_home` (function, line 32451)
-  - `asm_slot` (function, line 32455)
-  - `asm_size` (function, line 32459)
-  - `asm_nops` (function, line 32463)
-  - `asm_nslots` (function, line 32467)
-  - `asm_unique` (function, line 32471)
-  - `asm_scratch` (function, line 32475)
-  - `asm_home_text` (function, line 32551)
-  - `asm_reg_sized` (function, line 32766)
-  - `asm_fixed_home` (function, line 33746)
-  - `asm_emit_template` (function, line 33836)
-  - `asm_parse_mem` (function, line 34072)
-  - `asm_emit_ss` (function, line 34627)
-  - `asm_parse_one` (function, line 34678)
-  - `asm_assign_homes` (function, line 35749)
-  - `asm_emit_all` (function, line 36375)
-  - `skip_gcc_attribute` (function, line 36951)
-  - `parse_trailing_align` (function, line 37426)
-  - `parse_asm_block` (function, line 37468)
-  - `statement` (function, line 38033)
-  - `restart_typedef` (function, line 41754)
-  - `restart_int` (function, line 43004)
-  - `parse_function` (function, line 44373)
-  - `parse_enum` (function, line 46458)
-  - `skip_struct_fields` (function, line 46895)
-  - `skip_struct` (function, line 47462)
-  - `td_stash_valid` (function, line 48156)
-  - `td_stash_size` (function, line 48160)
-  - `td_stash_uns` (function, line 48164)
-  - `td_stash_fnptr` (function, line 48168)
-  - `record_typedef_alias` (function, line 48172)
-  - `skip_typedef` (function, line 48414)
-  - `data_directive` (function, line 49649)
-  - `emit_global_bss` (function, line 49699)
-  - `emit_global_data_head` (function, line 49809)
-  - `parse_const_int` (function, line 49884)
-  - `intern_string` (function, line 50047)
-  - `emit_global_initializer` (function, line 50140)
-  - `parse_program` (function, line 50847)
-  - `emit_float_consts` (function, line 53215)
-  - `emit_string_pool` (function, line 53312)
-  - `main` (function, line 53413)
-  - `_start` (function, line 58569)
+  - `static_local_count` (function, line 71)
+  - `sym_label` (function, line 75)
+  - `build_static_label` (function, line 100)
+  - `hash_table` (function, line 320)
+  - `scope_stack_sym` (function, line 324)
+  - `scope_stack_stk` (function, line 328)
+  - `scope_depth` (function, line 332)
+  - `stack_size` (function, line 336)
+  - `label_counter` (function, line 340)
+  - `function_has_return` (function, line 344)
+  - `emit_enabled` (function, line 348)
+  - `max_func_stack` (function, line 352)
+  - `assign_size` (function, line 356)
+  - `expr_pointed` (function, line 360)
+  - `expr_fnptr` (function, line 364)
+  - `subscript_base_fnptr` (function, line 368)
+  - `current_elem_size` (function, line 372)
+  - `current_elem_size2` (function, line 376)
+  - `current_elem_unsigned` (function, line 380)
+  - `deref_w` (function, line 384)
+  - `deref_u` (function, line 388)
+  - `no_postfix_deref` (function, line 392)
+  - `expr_type` (function, line 396)
+  - `expr_unsigned` (function, line 400)
+  - `static_flag` (function, line 404)
+  - `unsigned_type` (function, line 408)
+  - `const_flag` (function, line 412)
+  - `extern_flag` (function, line 416)
+  - `global_emit_deferred` (function, line 420)
+  - `pending_align` (function, line 424)
+  - `func_is_variadic` (function, line 428)
+  - `vararg_nfixed` (function, line 432)
+  - `vararg_save_off` (function, line 436)
+  - `float_const_str` (function, line 440)
+  - `float_const_is_float` (function, line 444)
+  - `float_const_count` (function, line 448)
+  - `switch_case_values` (function, line 452)
+  - `switch_case_labels` (function, line 456)
+  - `switch_case_count` (function, line 460)
+  - `switch_has_default` (function, line 464)
+  - `switch_default_label` (function, line 468)
+  - `break_target` (function, line 472)
+  - `break_target_valid` (function, line 476)
+  - `continue_target` (function, line 480)
+  - `continue_target_valid` (function, line 484)
+  - `str_label_counter` (function, line 488)
+  - `string_pool` (function, line 492)
+  - `string_count` (function, line 496)
+  - `ptr_init_name` (function, line 500)
+  - `ptr_init_label` (function, line 504)
+  - `ptr_init_count` (function, line 508)
+  - `struct_total_size` (function, line 512)
+  - `struct_member_names` (function, line 516)
+  - `struct_member_offsets` (function, line 520)
+  - `struct_member_sizes` (function, line 524)
+  - `struct_member_elem_sizes` (function, line 528)
+  - `struct_member_unsigned` (function, line 532)
+  - `struct_member_is_float` (function, line 536)
+  - `struct_member_is_fnptr` (function, line 540)
+  - `struct_member_is_struct` (function, line 544)
+  - `struct_member_count` (function, line 548)
+  - `struct_typedef_names` (function, line 552)
+  - `struct_typedef_count` (function, line 556)
+  - `defined_func_names` (function, line 560)
+  - `defined_func_unsigned` (function, line 564)
+  - `defined_func_count` (function, line 568)
+  - `if_nest` (function, line 572)
+  - `if_taken` (function, line 576)
+  - `if_depth` (function, line 580)
+  - `macro_count` (function, line 585)
+  - `save_parser_state` (function, line 589)
+  - `restore_parser_state` (function, line 752)
+  - `macros` (function, line 968)
+  - `find_macro` (function, line 972)
+  - `add_macro` (function, line 1035)
+  - `macro_p` (function, line 1105)
+  - `macro_ok` (function, line 1109)
+  - `macro_undef_zero` (function, line 1113)
+  - `macro_skipws` (function, line 1117)
+  - `macro_hex_digit` (function, line 1158)
+  - `macro_digit_val` (function, line 1256)
+  - `macro_primary` (function, line 1377)
+  - `macro_unary` (function, line 2580)
+  - `macro_mul` (function, line 2708)
+  - `macro_add` (function, line 2911)
+  - `macro_shift` (function, line 3009)
+  - `macro_cmp` (function, line 3162)
+  - `macro_eq` (function, line 3383)
+  - `macro_bitand` (function, line 3536)
+  - `macro_bitxor` (function, line 3622)
+  - `macro_bitor` (function, line 3687)
+  - `macro_logand` (function, line 3773)
+  - `macro_or_expr` (function, line 3870)
+  - `macro_fold` (function, line 3967)
+  - `error` (function, line 3993)
+  - `pp_eval` (function, line 4044)
+  - `safe_malloc` (function, line 4177)
+  - `safe_strcpy` (function, line 4231)
+  - `ident_copy` (function, line 4308)
+  - `is_struct_typedef` (function, line 4390)
+  - `record_struct_typedef` (function, line 4477)
+  - `safe_strtoll` (function, line 4575)
+  - `is_file_processed` (function, line 4690)
+  - `mark_file_processed` (function, line 4750)
+  - `get_dir_from_path` (function, line 4861)
+  - `resolve_local_include` (function, line 5004)
+  - `read_include_file` (function, line 5452)
+  - `hash_name` (function, line 5658)
+  - `hash_init` (function, line 5716)
+  - `push_scope` (function, line 5755)
+  - `pop_scope` (function, line 5807)
+  - `truncate_symbols` (function, line 6003)
+  - `my_isspace` (function, line 6156)
+  - `my_isalpha` (function, line 6245)
+  - `my_isdigit` (function, line 6314)
+  - `my_isalnum` (function, line 6354)
+  - `lex_fail` (function, line 6399)
+  - `lex_kw_add` (function, line 6503)
+  - `lex_init_keywords` (function, line 6666)
+  - `lex_kw_lookup` (function, line 7179)
+  - `lex_match_op` (function, line 7272)
+  - `lex_hex_val` (function, line 7355)
+  - `lex_is_int_suffix` (function, line 7477)
+  - `lex_number` (function, line 7546)
+  - `next_token` (function, line 9073)
+  - `restart` (function, line 9077)
+  - `match` (function, line 15167)
+  - `emit` (function, line 15205)
+  - `emit_i` (function, line 15316)
+  - `emit_s` (function, line 15364)
+  - `emit_is` (function, line 15412)
+  - `emit_si` (function, line 15463)
+  - `emit_asciz_body` (function, line 15514)
+  - `emit_label` (function, line 15828)
+  - `find_symbol` (function, line 15857)
+  - `add_symbol` (function, line 15943)
+  - `arg_reg` (function, line 16343)
+  - `note_defined_func` (function, line 16419)
+  - `is_defined_func` (function, line 16542)
+  - `func_return_unsigned` (function, line 16601)
+  - `parse_fnptr_declarator` (function, line 16666)
+  - `peek_call_argc` (function, line 17037)
+  - `emit_spill_reverse` (function, line 17340)
+  - `parse_indirect_call` (function, line 17477)
+  - `libc_global_name` (function, line 17825)
+  - `typedef_name` (function, line 17953)
+  - `typedef_size` (function, line 18120)
+  - `typedef_uns` (function, line 18287)
+  - `unary` (function, line 18363)
+  - `parse_sync_call` (function, line 23176)
+  - `parse_va_start` (function, line 23498)
+  - `parse_va_arg` (function, line 23794)
+  - `parse_va_end` (function, line 24282)
+  - `lvalue_address` (function, line 24393)
+  - `postfix_member` (function, line 24972)
+  - `handle_postfix` (function, line 25589)
+  - `unary_expr` (function, line 26234)
+  - `multiplicative_expr` (function, line 26259)
+  - `additive_expr` (function, line 27045)
+  - `shift_expr` (function, line 27614)
+  - `relational_expr` (function, line 27816)
+  - `equality_expr` (function, line 28530)
+  - `bitwise_and_expr` (function, line 29018)
+  - `bitwise_xor_expr` (function, line 29145)
+  - `bitwise_or_expr` (function, line 29272)
+  - `logical_and_expr` (function, line 29399)
+  - `logical_or_expr` (function, line 29564)
+  - `conditional_expr` (function, line 29729)
+  - `emit_compound_op` (function, line 29869)
+  - `assignment_expr` (function, line 30462)
+  - `comma_expr` (function, line 34261)
+  - `asm_tmpl` (function, line 34301)
+  - `asm_text` (function, line 34305)
+  - `asm_mem` (function, line 34309)
+  - `asm_is_out` (function, line 34313)
+  - `asm_home` (function, line 34317)
+  - `asm_slot` (function, line 34321)
+  - `asm_size` (function, line 34325)
+  - `asm_nops` (function, line 34329)
+  - `asm_nslots` (function, line 34333)
+  - `asm_unique` (function, line 34337)
+  - `asm_scratch` (function, line 34341)
+  - `asm_home_text` (function, line 34417)
+  - `asm_reg_sized` (function, line 34632)
+  - `asm_fixed_home` (function, line 35612)
+  - `asm_emit_template` (function, line 35702)
+  - `asm_parse_mem` (function, line 35938)
+  - `asm_emit_ss` (function, line 36531)
+  - `asm_parse_one` (function, line 36582)
+  - `asm_assign_homes` (function, line 37653)
+  - `asm_emit_all` (function, line 38279)
+  - `skip_gcc_attribute` (function, line 38855)
+  - `parse_trailing_align` (function, line 39330)
+  - `parse_asm_block` (function, line 39372)
+  - `statement` (function, line 39937)
+  - `restart_typedef` (function, line 43883)
+  - `restart_int` (function, line 45108)
+  - `parse_function` (function, line 46662)
+  - `parse_enum` (function, line 48821)
+  - `skip_struct_fields` (function, line 49409)
+  - `skip_struct` (function, line 49995)
+  - `td_stash_valid` (function, line 50930)
+  - `td_stash_size` (function, line 50934)
+  - `td_stash_uns` (function, line 50938)
+  - `td_stash_fnptr` (function, line 50942)
+  - `record_typedef_alias` (function, line 50946)
+  - `skip_typedef` (function, line 51143)
+  - `data_directive` (function, line 52331)
+  - `emit_global_bss` (function, line 52381)
+  - `emit_global_data_head` (function, line 52491)
+  - `parse_const_int` (function, line 52566)
+  - `intern_string` (function, line 52729)
+  - `emit_global_initializer` (function, line 52822)
+  - `parse_program` (function, line 53533)
+  - `emit_float_consts` (function, line 56071)
+  - `emit_string_pool` (function, line 56168)
+  - `main` (function, line 56269)
+  - `_start` (function, line 61452)
 
 ## minigccg4.s
 - Layer: utility
@@ -633,210 +670,224 @@
   - `processed_count` (function, line 59)
   - `symbols` (function, line 63)
   - `symbol_count` (function, line 67)
-  - `hash_table` (function, line 71)
-  - `scope_stack_sym` (function, line 75)
-  - `scope_stack_stk` (function, line 79)
-  - `scope_depth` (function, line 83)
-  - `stack_size` (function, line 87)
-  - `label_counter` (function, line 91)
-  - `function_has_return` (function, line 95)
-  - `emit_enabled` (function, line 99)
-  - `max_func_stack` (function, line 103)
-  - `assign_size` (function, line 107)
-  - `expr_pointed` (function, line 111)
-  - `expr_fnptr` (function, line 115)
-  - `subscript_base_fnptr` (function, line 119)
-  - `current_elem_size` (function, line 123)
-  - `current_elem_size2` (function, line 127)
-  - `current_elem_unsigned` (function, line 131)
-  - `deref_w` (function, line 135)
-  - `deref_u` (function, line 139)
-  - `no_postfix_deref` (function, line 143)
-  - `expr_type` (function, line 147)
-  - `expr_unsigned` (function, line 151)
-  - `static_flag` (function, line 155)
-  - `unsigned_type` (function, line 159)
-  - `const_flag` (function, line 163)
-  - `extern_flag` (function, line 167)
-  - `global_emit_deferred` (function, line 171)
-  - `pending_align` (function, line 175)
-  - `func_is_variadic` (function, line 179)
-  - `vararg_nfixed` (function, line 183)
-  - `vararg_save_off` (function, line 187)
-  - `float_const_str` (function, line 191)
-  - `float_const_is_float` (function, line 195)
-  - `float_const_count` (function, line 199)
-  - `switch_case_values` (function, line 203)
-  - `switch_case_labels` (function, line 207)
-  - `switch_case_count` (function, line 211)
-  - `switch_has_default` (function, line 215)
-  - `switch_default_label` (function, line 219)
-  - `break_target` (function, line 223)
-  - `break_target_valid` (function, line 227)
-  - `continue_target` (function, line 231)
-  - `continue_target_valid` (function, line 235)
-  - `str_label_counter` (function, line 239)
-  - `string_pool` (function, line 243)
-  - `string_count` (function, line 247)
-  - `ptr_init_name` (function, line 251)
-  - `ptr_init_label` (function, line 255)
-  - `ptr_init_count` (function, line 259)
-  - `struct_total_size` (function, line 263)
-  - `struct_member_names` (function, line 267)
-  - `struct_member_offsets` (function, line 271)
-  - `struct_member_sizes` (function, line 275)
-  - `struct_member_elem_sizes` (function, line 279)
-  - `struct_member_unsigned` (function, line 283)
-  - `struct_member_is_float` (function, line 287)
-  - `struct_member_is_fnptr` (function, line 291)
-  - `struct_member_count` (function, line 295)
-  - `defined_func_names` (function, line 299)
-  - `defined_func_unsigned` (function, line 303)
-  - `defined_func_count` (function, line 307)
-  - `if_nest` (function, line 311)
-  - `if_depth` (function, line 315)
-  - `macro_count` (function, line 320)
-  - `save_parser_state` (function, line 324)
-  - `restore_parser_state` (function, line 487)
-  - `macros` (function, line 703)
-  - `find_macro` (function, line 707)
-  - `add_macro` (function, line 770)
-  - `macro_p` (function, line 900)
-  - `macro_ok` (function, line 904)
-  - `macro_skipws` (function, line 908)
-  - `macro_hex_digit` (function, line 949)
-  - `macro_digit_val` (function, line 1047)
-  - `macro_primary` (function, line 1168)
-  - `macro_unary` (function, line 1966)
-  - `macro_mul` (function, line 2094)
-  - `macro_add` (function, line 2297)
-  - `macro_shift` (function, line 2395)
-  - `macro_cmp` (function, line 2548)
-  - `macro_eq` (function, line 2769)
-  - `macro_bitand` (function, line 2922)
-  - `macro_bitxor` (function, line 3008)
-  - `macro_bitor` (function, line 3073)
-  - `macro_logand` (function, line 3159)
-  - `macro_or_expr` (function, line 3256)
-  - `macro_fold` (function, line 3353)
-  - `error` (function, line 3374)
-  - `safe_malloc` (function, line 3425)
-  - `safe_strcpy` (function, line 3479)
-  - `safe_strtoll` (function, line 3556)
-  - `is_file_processed` (function, line 3671)
-  - `mark_file_processed` (function, line 3731)
-  - `get_dir_from_path` (function, line 3842)
-  - `resolve_local_include` (function, line 3985)
-  - `read_include_file` (function, line 4433)
-  - `hash_name` (function, line 4639)
-  - `hash_init` (function, line 4697)
-  - `push_scope` (function, line 4736)
-  - `pop_scope` (function, line 4788)
-  - `truncate_symbols` (function, line 4984)
-  - `my_isspace` (function, line 5137)
-  - `my_isalpha` (function, line 5226)
-  - `my_isdigit` (function, line 5295)
-  - `my_isalnum` (function, line 5335)
-  - `lex_fail` (function, line 5380)
-  - `lex_kw_add` (function, line 5484)
-  - `lex_init_keywords` (function, line 5647)
-  - `lex_kw_lookup` (function, line 6134)
-  - `lex_match_op` (function, line 6227)
-  - `lex_hex_val` (function, line 6310)
-  - `lex_is_int_suffix` (function, line 6432)
-  - `lex_number` (function, line 6501)
-  - `next_token` (function, line 8028)
-  - `restart` (function, line 8032)
-  - `match` (function, line 13434)
-  - `emit` (function, line 13472)
-  - `emit_i` (function, line 13583)
-  - `emit_s` (function, line 13631)
-  - `emit_is` (function, line 13679)
-  - `emit_si` (function, line 13730)
-  - `emit_asciz_body` (function, line 13781)
-  - `emit_label` (function, line 14095)
-  - `find_symbol` (function, line 14124)
-  - `add_symbol` (function, line 14210)
-  - `arg_reg` (function, line 14619)
-  - `note_defined_func` (function, line 14695)
-  - `is_defined_func` (function, line 14818)
-  - `func_return_unsigned` (function, line 14877)
-  - `parse_fnptr_declarator` (function, line 14942)
-  - `peek_call_argc` (function, line 15361)
-  - `emit_spill_reverse` (function, line 15652)
-  - `parse_indirect_call` (function, line 15789)
-  - `libc_global_name` (function, line 16137)
-  - `typedef_name` (function, line 16265)
-  - `typedef_size` (function, line 16432)
-  - `typedef_uns` (function, line 16599)
-  - `unary` (function, line 16675)
-  - `parse_sync_call` (function, line 20973)
-  - `parse_va_start` (function, line 21295)
-  - `parse_va_arg` (function, line 21639)
-  - `parse_va_end` (function, line 22175)
-  - `lvalue_address` (function, line 22286)
-  - `handle_postfix` (function, line 22845)
-  - `unary_expr` (function, line 24452)
-  - `multiplicative_expr` (function, line 24477)
-  - `additive_expr` (function, line 25263)
-  - `shift_expr` (function, line 25832)
-  - `relational_expr` (function, line 26034)
-  - `equality_expr` (function, line 26748)
-  - `bitwise_and_expr` (function, line 27236)
-  - `bitwise_xor_expr` (function, line 27363)
-  - `bitwise_or_expr` (function, line 27490)
-  - `logical_and_expr` (function, line 27617)
-  - `logical_or_expr` (function, line 27782)
-  - `conditional_expr` (function, line 27947)
-  - `emit_compound_op` (function, line 28087)
-  - `assignment_expr` (function, line 28680)
-  - `asm_tmpl` (function, line 32435)
-  - `asm_text` (function, line 32439)
-  - `asm_mem` (function, line 32443)
-  - `asm_is_out` (function, line 32447)
-  - `asm_home` (function, line 32451)
-  - `asm_slot` (function, line 32455)
-  - `asm_size` (function, line 32459)
-  - `asm_nops` (function, line 32463)
-  - `asm_nslots` (function, line 32467)
-  - `asm_unique` (function, line 32471)
-  - `asm_scratch` (function, line 32475)
-  - `asm_home_text` (function, line 32551)
-  - `asm_reg_sized` (function, line 32766)
-  - `asm_fixed_home` (function, line 33746)
-  - `asm_emit_template` (function, line 33836)
-  - `asm_parse_mem` (function, line 34072)
-  - `asm_emit_ss` (function, line 34627)
-  - `asm_parse_one` (function, line 34678)
-  - `asm_assign_homes` (function, line 35749)
-  - `asm_emit_all` (function, line 36375)
-  - `skip_gcc_attribute` (function, line 36951)
-  - `parse_trailing_align` (function, line 37426)
-  - `parse_asm_block` (function, line 37468)
-  - `statement` (function, line 38033)
-  - `restart_typedef` (function, line 41754)
-  - `restart_int` (function, line 43004)
-  - `parse_function` (function, line 44373)
-  - `parse_enum` (function, line 46458)
-  - `skip_struct_fields` (function, line 46895)
-  - `skip_struct` (function, line 47462)
-  - `td_stash_valid` (function, line 48156)
-  - `td_stash_size` (function, line 48160)
-  - `td_stash_uns` (function, line 48164)
-  - `td_stash_fnptr` (function, line 48168)
-  - `record_typedef_alias` (function, line 48172)
-  - `skip_typedef` (function, line 48414)
-  - `data_directive` (function, line 49649)
-  - `emit_global_bss` (function, line 49699)
-  - `emit_global_data_head` (function, line 49809)
-  - `parse_const_int` (function, line 49884)
-  - `intern_string` (function, line 50047)
-  - `emit_global_initializer` (function, line 50140)
-  - `parse_program` (function, line 50847)
-  - `emit_float_consts` (function, line 53215)
-  - `emit_string_pool` (function, line 53312)
-  - `main` (function, line 53413)
-  - `_start` (function, line 58569)
+  - `static_local_count` (function, line 71)
+  - `sym_label` (function, line 75)
+  - `build_static_label` (function, line 100)
+  - `hash_table` (function, line 320)
+  - `scope_stack_sym` (function, line 324)
+  - `scope_stack_stk` (function, line 328)
+  - `scope_depth` (function, line 332)
+  - `stack_size` (function, line 336)
+  - `label_counter` (function, line 340)
+  - `function_has_return` (function, line 344)
+  - `emit_enabled` (function, line 348)
+  - `max_func_stack` (function, line 352)
+  - `assign_size` (function, line 356)
+  - `expr_pointed` (function, line 360)
+  - `expr_fnptr` (function, line 364)
+  - `subscript_base_fnptr` (function, line 368)
+  - `current_elem_size` (function, line 372)
+  - `current_elem_size2` (function, line 376)
+  - `current_elem_unsigned` (function, line 380)
+  - `deref_w` (function, line 384)
+  - `deref_u` (function, line 388)
+  - `no_postfix_deref` (function, line 392)
+  - `expr_type` (function, line 396)
+  - `expr_unsigned` (function, line 400)
+  - `static_flag` (function, line 404)
+  - `unsigned_type` (function, line 408)
+  - `const_flag` (function, line 412)
+  - `extern_flag` (function, line 416)
+  - `global_emit_deferred` (function, line 420)
+  - `pending_align` (function, line 424)
+  - `func_is_variadic` (function, line 428)
+  - `vararg_nfixed` (function, line 432)
+  - `vararg_save_off` (function, line 436)
+  - `float_const_str` (function, line 440)
+  - `float_const_is_float` (function, line 444)
+  - `float_const_count` (function, line 448)
+  - `switch_case_values` (function, line 452)
+  - `switch_case_labels` (function, line 456)
+  - `switch_case_count` (function, line 460)
+  - `switch_has_default` (function, line 464)
+  - `switch_default_label` (function, line 468)
+  - `break_target` (function, line 472)
+  - `break_target_valid` (function, line 476)
+  - `continue_target` (function, line 480)
+  - `continue_target_valid` (function, line 484)
+  - `str_label_counter` (function, line 488)
+  - `string_pool` (function, line 492)
+  - `string_count` (function, line 496)
+  - `ptr_init_name` (function, line 500)
+  - `ptr_init_label` (function, line 504)
+  - `ptr_init_count` (function, line 508)
+  - `struct_total_size` (function, line 512)
+  - `struct_member_names` (function, line 516)
+  - `struct_member_offsets` (function, line 520)
+  - `struct_member_sizes` (function, line 524)
+  - `struct_member_elem_sizes` (function, line 528)
+  - `struct_member_unsigned` (function, line 532)
+  - `struct_member_is_float` (function, line 536)
+  - `struct_member_is_fnptr` (function, line 540)
+  - `struct_member_is_struct` (function, line 544)
+  - `struct_member_count` (function, line 548)
+  - `struct_typedef_names` (function, line 552)
+  - `struct_typedef_count` (function, line 556)
+  - `defined_func_names` (function, line 560)
+  - `defined_func_unsigned` (function, line 564)
+  - `defined_func_count` (function, line 568)
+  - `if_nest` (function, line 572)
+  - `if_taken` (function, line 576)
+  - `if_depth` (function, line 580)
+  - `macro_count` (function, line 585)
+  - `save_parser_state` (function, line 589)
+  - `restore_parser_state` (function, line 752)
+  - `macros` (function, line 968)
+  - `find_macro` (function, line 972)
+  - `add_macro` (function, line 1035)
+  - `macro_p` (function, line 1105)
+  - `macro_ok` (function, line 1109)
+  - `macro_undef_zero` (function, line 1113)
+  - `macro_skipws` (function, line 1117)
+  - `macro_hex_digit` (function, line 1158)
+  - `macro_digit_val` (function, line 1256)
+  - `macro_primary` (function, line 1377)
+  - `macro_unary` (function, line 2580)
+  - `macro_mul` (function, line 2708)
+  - `macro_add` (function, line 2911)
+  - `macro_shift` (function, line 3009)
+  - `macro_cmp` (function, line 3162)
+  - `macro_eq` (function, line 3383)
+  - `macro_bitand` (function, line 3536)
+  - `macro_bitxor` (function, line 3622)
+  - `macro_bitor` (function, line 3687)
+  - `macro_logand` (function, line 3773)
+  - `macro_or_expr` (function, line 3870)
+  - `macro_fold` (function, line 3967)
+  - `error` (function, line 3993)
+  - `pp_eval` (function, line 4044)
+  - `safe_malloc` (function, line 4177)
+  - `safe_strcpy` (function, line 4231)
+  - `ident_copy` (function, line 4308)
+  - `is_struct_typedef` (function, line 4390)
+  - `record_struct_typedef` (function, line 4477)
+  - `safe_strtoll` (function, line 4575)
+  - `is_file_processed` (function, line 4690)
+  - `mark_file_processed` (function, line 4750)
+  - `get_dir_from_path` (function, line 4861)
+  - `resolve_local_include` (function, line 5004)
+  - `read_include_file` (function, line 5452)
+  - `hash_name` (function, line 5658)
+  - `hash_init` (function, line 5716)
+  - `push_scope` (function, line 5755)
+  - `pop_scope` (function, line 5807)
+  - `truncate_symbols` (function, line 6003)
+  - `my_isspace` (function, line 6156)
+  - `my_isalpha` (function, line 6245)
+  - `my_isdigit` (function, line 6314)
+  - `my_isalnum` (function, line 6354)
+  - `lex_fail` (function, line 6399)
+  - `lex_kw_add` (function, line 6503)
+  - `lex_init_keywords` (function, line 6666)
+  - `lex_kw_lookup` (function, line 7179)
+  - `lex_match_op` (function, line 7272)
+  - `lex_hex_val` (function, line 7355)
+  - `lex_is_int_suffix` (function, line 7477)
+  - `lex_number` (function, line 7546)
+  - `next_token` (function, line 9073)
+  - `restart` (function, line 9077)
+  - `match` (function, line 15167)
+  - `emit` (function, line 15205)
+  - `emit_i` (function, line 15316)
+  - `emit_s` (function, line 15364)
+  - `emit_is` (function, line 15412)
+  - `emit_si` (function, line 15463)
+  - `emit_asciz_body` (function, line 15514)
+  - `emit_label` (function, line 15828)
+  - `find_symbol` (function, line 15857)
+  - `add_symbol` (function, line 15943)
+  - `arg_reg` (function, line 16343)
+  - `note_defined_func` (function, line 16419)
+  - `is_defined_func` (function, line 16542)
+  - `func_return_unsigned` (function, line 16601)
+  - `parse_fnptr_declarator` (function, line 16666)
+  - `peek_call_argc` (function, line 17037)
+  - `emit_spill_reverse` (function, line 17340)
+  - `parse_indirect_call` (function, line 17477)
+  - `libc_global_name` (function, line 17825)
+  - `typedef_name` (function, line 17953)
+  - `typedef_size` (function, line 18120)
+  - `typedef_uns` (function, line 18287)
+  - `unary` (function, line 18363)
+  - `parse_sync_call` (function, line 23176)
+  - `parse_va_start` (function, line 23498)
+  - `parse_va_arg` (function, line 23794)
+  - `parse_va_end` (function, line 24282)
+  - `lvalue_address` (function, line 24393)
+  - `postfix_member` (function, line 24972)
+  - `handle_postfix` (function, line 25589)
+  - `unary_expr` (function, line 26234)
+  - `multiplicative_expr` (function, line 26259)
+  - `additive_expr` (function, line 27045)
+  - `shift_expr` (function, line 27614)
+  - `relational_expr` (function, line 27816)
+  - `equality_expr` (function, line 28530)
+  - `bitwise_and_expr` (function, line 29018)
+  - `bitwise_xor_expr` (function, line 29145)
+  - `bitwise_or_expr` (function, line 29272)
+  - `logical_and_expr` (function, line 29399)
+  - `logical_or_expr` (function, line 29564)
+  - `conditional_expr` (function, line 29729)
+  - `emit_compound_op` (function, line 29869)
+  - `assignment_expr` (function, line 30462)
+  - `comma_expr` (function, line 34261)
+  - `asm_tmpl` (function, line 34301)
+  - `asm_text` (function, line 34305)
+  - `asm_mem` (function, line 34309)
+  - `asm_is_out` (function, line 34313)
+  - `asm_home` (function, line 34317)
+  - `asm_slot` (function, line 34321)
+  - `asm_size` (function, line 34325)
+  - `asm_nops` (function, line 34329)
+  - `asm_nslots` (function, line 34333)
+  - `asm_unique` (function, line 34337)
+  - `asm_scratch` (function, line 34341)
+  - `asm_home_text` (function, line 34417)
+  - `asm_reg_sized` (function, line 34632)
+  - `asm_fixed_home` (function, line 35612)
+  - `asm_emit_template` (function, line 35702)
+  - `asm_parse_mem` (function, line 35938)
+  - `asm_emit_ss` (function, line 36531)
+  - `asm_parse_one` (function, line 36582)
+  - `asm_assign_homes` (function, line 37653)
+  - `asm_emit_all` (function, line 38279)
+  - `skip_gcc_attribute` (function, line 38855)
+  - `parse_trailing_align` (function, line 39330)
+  - `parse_asm_block` (function, line 39372)
+  - `statement` (function, line 39937)
+  - `restart_typedef` (function, line 43883)
+  - `restart_int` (function, line 45108)
+  - `parse_function` (function, line 46662)
+  - `parse_enum` (function, line 48821)
+  - `skip_struct_fields` (function, line 49409)
+  - `skip_struct` (function, line 49995)
+  - `td_stash_valid` (function, line 50930)
+  - `td_stash_size` (function, line 50934)
+  - `td_stash_uns` (function, line 50938)
+  - `td_stash_fnptr` (function, line 50942)
+  - `record_typedef_alias` (function, line 50946)
+  - `skip_typedef` (function, line 51143)
+  - `data_directive` (function, line 52331)
+  - `emit_global_bss` (function, line 52381)
+  - `emit_global_data_head` (function, line 52491)
+  - `parse_const_int` (function, line 52566)
+  - `intern_string` (function, line 52729)
+  - `emit_global_initializer` (function, line 52822)
+  - `parse_program` (function, line 53533)
+  - `emit_float_consts` (function, line 56071)
+  - `emit_string_pool` (function, line 56168)
+  - `main` (function, line 56269)
+  - `_start` (function, line 61452)
 
 ## my_library.h
 - Layer: utility
