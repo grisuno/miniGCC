@@ -2350,6 +2350,7 @@ static void unary(void) {
         int cast_stars = 0;
         next_token();
         int is_cast = 0;
+        int cast_target = 0;
         if (tok == T_ID) {
             int ti = find_symbol(token);
             if (ti >= 0 && symbols[ti].is_const) {
@@ -2363,7 +2364,7 @@ static void unary(void) {
             cast_uns = unsigned_type;
             next_token();
             while (tok == '*') { cast_stars++; next_token(); }
-            if (tok == ')') is_cast = 1;
+            if (tok == ')') { is_cast = 1; cast_target = saved; }
             if (!is_cast) tok = saved;
         }
         if (is_cast) {
@@ -2371,6 +2372,35 @@ static void unary(void) {
             next_token();
             unary();
             expr_fnptr = 0;
+            if (cast_stars == 0 && cast_target != 0) {
+                if ((cast_target == T_INT || cast_target == T_CHAR) && expr_type == T_DOUBLE) {
+                    emit("    movq %%rax, %%xmm0");
+                    emit("    cvttsd2si %%xmm0, %%rax");
+                    expr_type = T_INT;
+                } else if ((cast_target == T_INT || cast_target == T_CHAR) && expr_type == T_FLOAT) {
+                    emit("    movd %%eax, %%xmm0");
+                    emit("    cvttss2si %%xmm0, %%rax");
+                    expr_type = T_INT;
+                } else if (cast_target == T_DOUBLE && expr_type != T_FLOAT && expr_type != T_DOUBLE) {
+                    emit("    cvtsi2sdq %%rax, %%xmm0");
+                    emit("    movq %%xmm0, %%rax");
+                    expr_type = T_DOUBLE;
+                } else if (cast_target == T_FLOAT && expr_type != T_FLOAT && expr_type != T_DOUBLE) {
+                    emit("    cvtsi2ssq %%rax, %%xmm0");
+                    emit("    movd %%xmm0, %%eax");
+                    expr_type = T_FLOAT;
+                } else if (cast_target == T_DOUBLE && expr_type == T_FLOAT) {
+                    emit("    movd %%eax, %%xmm0");
+                    emit("    cvtss2sd %%xmm0, %%xmm0");
+                    emit("    movq %%xmm0, %%rax");
+                    expr_type = T_DOUBLE;
+                } else if (cast_target == T_FLOAT && expr_type == T_DOUBLE) {
+                    emit("    movq %%rax, %%xmm0");
+                    emit("    cvtsd2ss %%xmm0, %%xmm0");
+                    emit("    movd %%xmm0, %%eax");
+                    expr_type = T_FLOAT;
+                }
+            }
             if (cast_stars > 0)
                 expr_unsigned = 0;
             else if (expr_type != T_FLOAT && expr_type != T_DOUBLE)
@@ -2480,9 +2510,10 @@ static void unary(void) {
         expr_unsigned = 0;
         if (expr_type == T_FLOAT)
             emit("    xorl $0x80000000, %%eax");
-        else if (expr_type == T_DOUBLE)
-            emit("    xorq $0x8000000000000000, %%rax");
-        else
+        else if (expr_type == T_DOUBLE) {
+            emit("    movabs $0x8000000000000000, %%rcx");
+            emit("    xorq %%rcx, %%rax");
+        } else
             emit("    negq %%rax");
     } else if (tok == '!') {
         next_token();
