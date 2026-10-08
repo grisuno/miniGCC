@@ -1,0 +1,692 @@
+{
+  "concepts": [
+    {
+      "name": "neg",
+      "files": [
+        "minigcc.c",
+        "test_all.sh",
+        "tests/neg_asm.c",
+        "tests/neg_asm2.c",
+        "tests/neg_asm3.c",
+        "tests/neg_asm_ds.c",
+        "tests/neg_attr.c",
+        "tests/neg_comment.c",
+        "tests/neg_error.c",
+        "tests/neg_float.c",
+        "tests/neg_fnptr.c",
+        "tests/neg_fnptr_call.c",
+        "tests/neg_fnptr_cmp.c",
+        "tests/neg_fnptr_cmp0.c",
+        "tests/neg_fnptr_globalinit.c",
+        "tests/neg_fnptr_tern.c",
+        "tests/neg_funmacro.c",
+        "tests/neg_hex.c",
+        "tests/neg_member.c",
+        "tests/neg_octal.c",
+        "tests/neg_typedef_arrcont.c",
+        "tests/neg_va.c"
+      ],
+      "mentions": 43,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "fnptr",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_fnptr.c",
+        "tests/neg_fnptr_call.c",
+        "tests/neg_fnptr_cmp.c",
+        "tests/neg_fnptr_cmp0.c",
+        "tests/neg_fnptr_globalinit.c",
+        "tests/neg_fnptr_tern.c",
+        "tests/t_fnptr.c"
+      ],
+      "mentions": 31,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "include",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_include.c",
+        "tests/neg_funmacro.c",
+        "tests/t_attr.c",
+        "tests/t_include.c",
+        "tests/t_longlong.c",
+        "tests/t_typedef.c",
+        "tests/t_unsigned.c"
+      ],
+      "mentions": 19,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "add",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_funmacro.c",
+        "tests/t_asm_ds.c",
+        "tests/t_comma.c",
+        "tests/t_inner_h.h",
+        "tests/t_stdint.c"
+      ],
+      "mentions": 22,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "asm",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_asm.c",
+        "tests/neg_asm_ds.c",
+        "tests/t_asm.c",
+        "tests/t_asm_ds.c"
+      ],
+      "mentions": 85,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "struct",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_struct.c",
+        "tests/t_struct_ul.c"
+      ],
+      "mentions": 62,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "typedef",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_typedef_arrcont.c",
+        "tests/t_typedef.c"
+      ],
+      "mentions": 42,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "float",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_float.c",
+        "tests/t_float.c"
+      ],
+      "mentions": 30,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "name",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh",
+        "tests/t_static.c"
+      ],
+      "mentions": 22,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "gcc",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh",
+        "test_ld_selfhost.sh"
+      ],
+      "mentions": 10,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "val",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_inner_h.h",
+        "tests/t_outer_h.h"
+      ],
+      "mentions": 10,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "fail",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh",
+        "test_ld_selfhost.sh"
+      ],
+      "mentions": 7,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "add2",
+      "files": [
+        "tests/neg_fnptr.c",
+        "tests/neg_fnptr_cmp.c",
+        "tests/neg_fnptr_cmp0.c",
+        "tests/neg_fnptr_globalinit.c",
+        "tests/neg_fnptr_tern.c",
+        "tests/t_fnptr.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "pass",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh",
+        "test_ld_selfhost.sh"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "member",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_member.c"
+      ],
+      "mentions": 33,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "unsigned",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_unsigned.c"
+      ],
+      "mentions": 22,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "scope",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_scope.c"
+      ],
+      "mentions": 21,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "switch",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_switch.c"
+      ],
+      "mentions": 18,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "file",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh"
+      ],
+      "mentions": 17,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "call",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_fnptr_call.c"
+      ],
+      "mentions": 15,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "static",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_static.c"
+      ],
+      "mentions": 15,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "function",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "my_library.h"
+      ],
+      "mentions": 11,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "hex",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_hex.c"
+      ],
+      "mentions": 10,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "all",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh"
+      ],
+      "mentions": 9,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "reg",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_unsigned.c"
+      ],
+      "mentions": 9,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "error",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_error.c"
+      ],
+      "mentions": 7,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "macros",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_macros.c"
+      ],
+      "mentions": 7,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "attribute",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_attr.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "build",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_all.sh"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "cmp",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/neg_fnptr_cmp.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "comma",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_comma.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "compound",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_compound.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "enum",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_enum.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "sync",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_sync.c"
+      ],
+      "mentions": 6,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "dir",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_ld_selfhost.sh"
+      ],
+      "mentions": 5,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "fixed",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_ld_selfhost.sh"
+      ],
+      "mentions": 5,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "out",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "tests/t_union.c"
+      ],
+      "mentions": 5,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "path",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s",
+        "test_ld_selfhost.sh"
+      ],
+      "mentions": 5,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "stdio",
+      "files": [
+        "tests/neg_funmacro.c",
+        "tests/t_attr.c",
+        "tests/t_longlong.c",
+        "tests/t_typedef.c",
+        "tests/t_unsigned.c"
+      ],
+      "mentions": 5,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "macro",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 87,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "emit",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 83,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "expr",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 75,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "parse",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 57,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "lex",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 47,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "count",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 41,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "size",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 32,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "label",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 28,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "func",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 27,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "const",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 23,
+      "confidence": "EXTRACTED"
+    },
+    {
+      "name": "global",
+      "files": [
+        "minigcc.c",
+        "minigccg2.s",
+        "minigccg3.s",
+        "minigccg4.s"
+      ],
+      "mentions": 23,
+      "confidence": "EXTRACTED"
+    }
+  ],
+  "relations": [
+    {
+      "source": "include",
+      "target": "function",
+      "verb": "consumes",
+      "strength": 1.0,
+      "confidence": "INFERRED",
+      "evidence": [
+        "test_include.c->my_library.h"
+      ]
+    },
+    {
+      "source": "include",
+      "target": "function",
+      "verb": "depends_on",
+      "strength": 1.0,
+      "confidence": "INFERRED",
+      "evidence": [
+        "test_include.c->my_library.h"
+      ]
+    },
+    {
+      "source": "include",
+      "target": "val",
+      "verb": "depends_on",
+      "strength": 1.0,
+      "confidence": "INFERRED",
+      "evidence": [
+        "tests/t_include.c->tests/t_outer_h.h"
+      ]
+    },
+    {
+      "source": "val",
+      "target": "add",
+      "verb": "depends_on",
+      "strength": 1.0,
+      "confidence": "INFERRED",
+      "evidence": [
+        "tests/t_outer_h.h->tests/t_inner_h.h"
+      ]
+    }
+  ],
+  "dialectic": [
+    "Thesis: `add` centralizes 9 files; Antithesis: `all` pulls 5 files with 4 shared (Jaccard 0.40); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `asm` pulls 8 files with 5 shared (Jaccard 0.42); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `attribute` pulls 5 files with 4 shared (Jaccard 0.40); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `build` pulls 5 files with 4 shared (Jaccard 0.40); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `call` pulls 5 files with 4 shared (Jaccard 0.40); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `cmp` pulls 5 files with 4 shared (Jaccard 0.40); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `comma` pulls 5 files with 5 shared (Jaccard 0.56); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `compound` pulls 5 files with 4 shared (Jaccard 0.40); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `const` pulls 4 files with 4 shared (Jaccard 0.44); Synthesis: should they merge, split by layer, or keep `bridges` explicit?",
+    "Thesis: `add` centralizes 9 files; Antithesis: `count` pulls 4 files with 4 shared (Jaccard 0.44); Synthesis: should they merge, split by layer, or keep `bridges` explicit?"
+  ]
+}
