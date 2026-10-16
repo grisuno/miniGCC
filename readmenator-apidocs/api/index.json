@@ -1,0 +1,115 @@
+{
+ "schema_version": 1,
+ "format": "jsonl",
+ "meta": {
+  "modules": 5,
+  "entities": 745,
+  "languages": {
+   "c": 1,
+   "h": 1,
+   "s": 3
+  },
+  "kinds": {
+   "function": 712,
+   "macro": 24,
+   "module": 5,
+   "struct": 4
+  },
+  "truncated": false,
+  "skipped_files": 76,
+  "privacy_mode": false
+ },
+ "coverage": {
+  "overall": {
+   "documented": 5,
+   "total": 745,
+   "percent": 0.7
+  },
+  "by_kind": {
+   "function": {
+    "documented": 1,
+    "total": 712,
+    "percent": 0.1
+   },
+   "macro": {
+    "documented": 4,
+    "total": 24,
+    "percent": 16.7
+   },
+   "module": {
+    "documented": 0,
+    "total": 5,
+    "percent": 0.0
+   },
+   "struct": {
+    "documented": 0,
+    "total": 4,
+    "percent": 0.0
+   }
+  },
+  "by_module": {
+   "minigcc.c": {
+    "documented": 4,
+    "total": 35,
+    "percent": 11.4
+   },
+   "minigccg2.s": {
+    "documented": 0,
+    "total": 236,
+    "percent": 0.0
+   },
+   "minigccg3.s": {
+    "documented": 0,
+    "total": 236,
+    "percent": 0.0
+   },
+   "minigccg4.s": {
+    "documented": 0,
+    "total": 236,
+    "percent": 0.0
+   },
+   "my_library.h": {
+    "documented": 1,
+    "total": 2,
+    "percent": 50.0
+   }
+  }
+ },
+ "modules": [
+  {
+   "uid": "minigcc.c",
+   "path": "modules/minigcc.c.jsonl",
+   "entities": 35
+  },
+  {
+   "uid": "minigccg2.s",
+   "path": "modules/minigccg2.s.jsonl",
+   "entities": 236
+  },
+  {
+   "uid": "minigccg3.s",
+   "path": "modules/minigccg3.s.jsonl",
+   "entities": 236
+  },
+  {
+   "uid": "minigccg4.s",
+   "path": "modules/minigccg4.s.jsonl",
+   "entities": 236
+  },
+  {
+   "uid": "my_library.h",
+   "path": "modules/my_library.h.jsonl",
+   "entities": 2
+  }
+ ],
+ "warnings": {
+  "path": "warnings.jsonl",
+  "total": 740
+ },
+ "usage": [
+  "grep -h '\"name\":\"<Name>\"' readmenator-apidocs/api/modules/*.jsonl",
+  "grep -h '\"qualname\":\"<Owner.method>\"' readmenator-apidocs/api/modules/*.jsonl",
+  "cat readmenator-apidocs/api/modules/<module-slug>.jsonl",
+  "grep -h '\"code\":\"DOC001\"' readmenator-apidocs/api/warnings.jsonl"
+ ]
+}

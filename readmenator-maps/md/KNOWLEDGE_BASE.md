@@ -12,30 +12,31 @@
 **Total Files Parsed:** 81 | **Total Symbols Extracted:** 1045 | **Total Imports:** 66
  | **Resolved Imports:** 4
 
-<!-- ranking_model: v1.0 | weights: {ppr:0.45,auth:0.2,test:0.15,doc:0.1,fresh:0.1} | alpha:0.85 | commit:c01ad22 | date:2026-07-18 -->
+<!-- ranking_model: v1.0 | weights: {ppr:0.45,auth:0.2,test:0.15,doc:0.1,fresh:0.1} | alpha:0.85 | commit:c57adfc | date:2026-07-18 -->
 
 
 ## Table of Contents
 
 1. [Statistics Dashboard](#statistics-dashboard)
 2. [Architectural Layers](#architectural-layers)
-3. [Ranked Context](#ranked-context)
-4. [God Nodes](#god-nodes)
-5. [Community Analysis](#community-analysis)
-6. [Suggested Questions](#suggested-questions)
-7. [Force-Graph Explorer](#force-graph-explorer)
-8. [Corpus Analytics](#corpus-analytics)
-9. [Hotspot Analysis](#hotspot-analysis)
-10. [Change Impact Analysis](#change-impact-analysis)
-11. [Suggested Linting Rules](#suggested-linting-rules)
-12. [Dataflow Analysis](#dataflow-analysis)
-13. [Concept Graph](#concept-graph)
-14. [Orphans](#orphans)
-15. [Query Recipes](#query-recipes)
-16. [Structural Knowledge Map](#structural-knowledge-map)
-17. [UML Class Diagram](#uml-class-diagram)
-18. [Code Property Graph](#code-property-graph)
-19. [Architecture Reference](#architecture-reference)
+3. [Architecture Overview](#architecture-overview)
+4. [Ranked Context](#ranked-context)
+5. [God Nodes](#god-nodes)
+6. [Community Analysis](#community-analysis)
+7. [Suggested Questions](#suggested-questions)
+8. [Force-Graph Explorer](#force-graph-explorer)
+9. [Corpus Analytics](#corpus-analytics)
+10. [Hotspot Analysis](#hotspot-analysis)
+11. [Change Impact Analysis](#change-impact-analysis)
+12. [Suggested Linting Rules](#suggested-linting-rules)
+13. [Dataflow Analysis](#dataflow-analysis)
+14. [Concept Graph](#concept-graph)
+15. [Orphans](#orphans)
+16. [Query Recipes](#query-recipes)
+17. [Structural Knowledge Map](#structural-knowledge-map)
+18. [UML Class Diagram](#uml-class-diagram)
+19. [Code Property Graph](#code-property-graph)
+20. [Architecture Reference](#architecture-reference)
     - [C (71 files)](#c-71-files)
     - [H (4 files)](#h-4-files)
     - [S (3 files)](#s-3-files)
@@ -120,6 +121,23 @@ Auto-detected from path patterns, naming conventions, and imported frameworks.
 ### business_logic
 
 - `t_logic.c` (c, 1 symbols)
+
+---
+
+## Architecture Overview
+
+3 components stacked in 1 dependency tiers (weighted Eades-Lin-Smyth ordering: arrows point from dependent to dependency, top to bottom). Labels are import counts, thick arrows the top quartile; 0 transitively implied edges are omitted. Dashed red arrows are upward dependencies: the smallest set of imports that closes every cycle and breaks the layering. Cyan components hold entry points. Interactive version: `readmenator-apidocs/index.html#/flows`.
+
+```mermaid
+flowchart TB
+    classDef default fill:#111827,stroke:#38bdf8,color:#e5e7eb;
+    subgraph lane_0["Tier 1"]
+        direction LR
+        n_d_tests["tests<br/>1 files, 1 symbols<br/>Business logic"]:::default
+        n_d__root_["(root)<br/>4 files, 866 symbols<br/>Core / utility"]:::default
+        n_c1["root<br/>1 files, 2 symbols<br/>Core / utility"]:::default
+    end
+```
 
 ---
 
@@ -429,7 +447,7 @@ Results include score decomposition and justification paths for each ranked item
 ## Structural Knowledge Map
 
 ```mermaid
-graph TD
+graph LR
     classDef mod fill:#1e1e1e,stroke:#ff6666,stroke-width:2px,color:#fff;
     classDef cls fill:#2d2d2d,stroke:#4ec9b0,stroke-width:2px,color:#fff;
     classDef fn fill:#333,stroke:#dcdcaa,stroke-width:1px,color:#dcdcaa;
@@ -617,6 +635,74 @@ graph TD
     test_sh["test.sh (sh)"]
     class test_sh mod;
     end
+    minigcc_c ~~~ tests_t_fnptr_c
+    tests_t_asm_ds_c ~~~ tests_t_longlong_c
+    tests_t_attr_c ~~~ tests_t_variadic_c
+    tests_t_stdint_c ~~~ tests_t_args7_c
+    tests_t_unsigned_c ~~~ tests_t_chained_c
+    tests_t_macros_c ~~~ tests_t_static_c
+    tests_t_fnptr_c ~~~ tests_t_union_c
+    tests_t_longlong_c ~~~ tests_neg_fnptr_cmp_c
+    tests_t_variadic_c ~~~ tests_t_enum_c
+    tests_t_args7_c ~~~ tests_t_enumtype_c
+    tests_t_chained_c ~~~ tests_t_recursion_c
+    tests_t_static_c ~~~ tests_t_struct_c
+    tests_t_union_c ~~~ tests_t_tagstruct_c
+    tests_neg_fnptr_cmp_c ~~~ tests_t_typedef_c
+    tests_t_enum_c ~~~ tests_neg_fnptr_c
+    tests_t_enumtype_c ~~~ tests_neg_fnptr_cmp0_c
+    tests_t_recursion_c ~~~ tests_neg_fnptr_tern_c
+    tests_t_struct_c ~~~ tests_neg_funmacro_c
+    tests_t_tagstruct_c ~~~ tests_t_comma_c
+    tests_t_typedef_c ~~~ tests_t_elif_c
+    tests_neg_fnptr_c ~~~ tests_t_if_c
+    tests_neg_fnptr_cmp0_c ~~~ tests_t_pointers_c
+    tests_neg_fnptr_tern_c ~~~ tests_t_scope_c
+    tests_neg_funmacro_c ~~~ tests_t_struct_ul_c
+    tests_t_comma_c ~~~ tests_t_switch_c
+    tests_t_elif_c ~~~ test_for_c
+    tests_t_if_c ~~~ tests_neg_fnptr_call_c
+    tests_t_pointers_c ~~~ tests_t_args_c
+    tests_t_scope_c ~~~ tests_t_arith_c
+    tests_t_struct_ul_c ~~~ tests_t_arrays_c
+    tests_t_switch_c ~~~ tests_t_asm_c
+    test_for_c ~~~ tests_t_asm3_c
+    tests_neg_fnptr_call_c ~~~ tests_t_compound_c
+    tests_t_args_c ~~~ tests_t_dowhile_c
+    tests_t_arith_c ~~~ tests_t_fcast_c
+    tests_t_arrays_c ~~~ tests_t_float_c
+    tests_t_asm_c ~~~ tests_t_for_c
+    tests_t_asm3_c ~~~ tests_t_globinit_c
+    tests_t_compound_c ~~~ tests_t_goto_c
+    tests_t_dowhile_c ~~~ tests_t_hexoct_c
+    tests_t_fcast_c ~~~ tests_t_logic_c
+    tests_t_float_c ~~~ tests_t_octesc_c
+    tests_t_for_c ~~~ tests_t_regauto_c
+    tests_t_globinit_c ~~~ tests_t_sizeof_c
+    tests_t_goto_c ~~~ tests_t_strings_c
+    tests_t_hexoct_c ~~~ tests_t_sync_c
+    tests_t_logic_c ~~~ tests_t_while_c
+    tests_t_octesc_c ~~~ minigccg2_s
+    tests_t_regauto_c ~~~ minigccg3_s
+    tests_t_sizeof_c ~~~ minigccg4_s
+    tests_t_strings_c ~~~ test_all_sh
+    tests_t_sync_c ~~~ test_ld_selfhost_sh
+    tests_t_while_c ~~~ tests_neg_asm_ds_c
+    minigccg2_s ~~~ tests_neg_fnptr_globalinit_c
+    minigccg3_s ~~~ tests_neg_member_c
+    minigccg4_s ~~~ tests_neg_typedef_arrcont_c
+    test_all_sh ~~~ test_c
+    test_ld_selfhost_sh ~~~ tests_neg_asm_c
+    tests_neg_asm_ds_c ~~~ tests_neg_asm2_c
+    tests_neg_fnptr_globalinit_c ~~~ tests_neg_asm3_c
+    tests_neg_member_c ~~~ tests_neg_attr_c
+    tests_neg_typedef_arrcont_c ~~~ tests_neg_comment_c
+    test_c ~~~ tests_neg_error_c
+    tests_neg_asm_c ~~~ tests_neg_float_c
+    tests_neg_asm2_c ~~~ tests_neg_hex_c
+    tests_neg_asm3_c ~~~ tests_neg_octal_c
+    tests_neg_attr_c ~~~ tests_neg_va_c
+    tests_neg_comment_c ~~~ test_sh
     test_include_c -- resolved_imports --> my_library_h
     tests_t_include_c -- resolved_imports --> tests_t_outer_h_h
     tests_t_inline_c -- resolved_imports --> tests_t_inline_h_h
@@ -711,10 +797,13 @@ graph TD
 
 ## UML Class Diagram
 
-Auto-generated Mermaid class diagram from parsed class-level symbols. Shows classes, structs, interfaces, traits, and their methods with inheritance and dependency relationships.
+Auto-generated Mermaid class diagrams from parsed class-level symbols, split into groups of at most 6 classes so each diagram stays readable. Per-module class diagrams with exact members live in `readmenator-apidocs/modules/`.
+
+#### `minigcc.c`, `tests/neg_member.c`
 
 ```mermaid
 classDiagram
+  direction LR
   class minigcc_c_FileContext {
     <<struct>>
     +sym_label(Symbol *s)
@@ -771,6 +860,13 @@ classDiagram
     <<struct>>
     +main(void)
   }
+```
+
+#### `tests/t_chained.c`, `tests/t_enum.c`, `tests/t_enumtype.c`
+
+```mermaid
+classDiagram
+  direction LR
   class t_chained_c_A {
     <<struct>>
     +main(void)
@@ -796,6 +892,13 @@ classDiagram
     +pick(enum E e)
     +main(void)
   }
+```
+
+#### `tests/t_fnptr.c`, `tests/t_stdint.c`, `tests/t_struct.c`, `tests/t_struct_ul.c`, `tests/t_tagstruct.c`, `tests/t_typedef.c`
+
+```mermaid
+classDiagram
+  direction LR
   class t_fnptr_c_ops_t {
     <<struct>>
     +add2(long a, long b)
@@ -830,6 +933,13 @@ classDiagram
     <<struct>>
     +main(void)
   }
+```
+
+#### `tests/t_union.c`, `tests/t_unsigned.c`
+
+```mermaid
+classDiagram
+  direction LR
   class t_union_c_In {
     <<struct>>
     +main(void)

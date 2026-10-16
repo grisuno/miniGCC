@@ -1,10 +1,10 @@
 {
   "tool": "readmenator",
   "schema_version": 2,
-  "generated_at": "2026-10-16T23:44:19Z",
+  "generated_at": "2026-10-16T23:54:43Z",
   "project_root": ".",
   "project_name": "miniGCC",
-  "git_commit": "c01ad221bd4e4214fe15baf97377a9337ce0ef9a",
+  "git_commit": "c57adfc955da2fb83759b7716e895e58de2a0840",
   "git_branch": "main",
   "source_fingerprint": "e8e7aeadfc1ad369ade9b3f150d3437dcb2c12674c06b242e22ddc7784d19d6a",
   "freshness_check": "readmenator . fresh  # exit 0 = docs match sources, exit 1 = run: readmenator . --rebuild",
@@ -96,6 +96,11 @@
       "path": "KB_tests_p2.md",
       "lines": 45,
       "approx_tokens": 366
+    },
+    {
+      "path": "MEMORY.md",
+      "lines": 82,
+      "approx_tokens": 1148
     },
     {
       "path": "SECURITY.md",

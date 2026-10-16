@@ -32,7 +32,7 @@ Generated offline by readmenator (zero LLM tokens). Start with the wiki index fo
 - [readmenator-agent/KB_root_p3.md](md/readmenator-agent/KB_root_p3.md): Doc: feature test suite for miniGCC.
 - [readmenator-agent/KB_tests.md](md/readmenator-agent/KB_tests.md): main (function, line 1) int main(void)
 - [readmenator-agent/KB_tests_p2.md](md/readmenator-agent/KB_tests_p2.md): main (function, line 23) int main(void)
-- [readmenator-agent/MEMORY.md](md/readmenator-agent/MEMORY.md): Generated from 81 files at commit c01ad221bd4e. Read this first, then readmenator-wiki/index.md, then readmenator . ask "<question>" for anything specific.
+- [readmenator-agent/MEMORY.md](md/readmenator-agent/MEMORY.md): Generated from 81 files at commit c57adfc955da. Read this first, then readmenator-wiki/index.md, then readmenator . ask "<question>" for anything specific.
 - [readmenator-agent/SECURITY.md](md/readmenator-agent/SECURITY.md)
 - [readmenator-agent/SYMBOLS.md](md/readmenator-agent/SYMBOLS.md)
 - [readmenator-agent/SYMBOLS_p2.md](md/readmenator-agent/SYMBOLS_p2.md)
@@ -48,6 +48,7 @@ Generated offline by readmenator (zero LLM tokens). Start with the wiki index fo
 - [KNOWLEDGE_BASE.md](md/KNOWLEDGE_BASE.md): Start here: Statistics Dashboard for scope, God Nodes for blast radius, Architecture Reference for per-file API. Agents: prefer readmenator-agent/INDEX.md +...
 - [README.md](md/README.md): !Shell Script ![License: AGPL v3](https://www.gnu.org/licenses/agpl-3.0)
 - [SECURITY.md](md/SECURITY.md): Use this section to tell people about which versions of your project are
+- [readmenator-diagrams/overview.md](md/readmenator-diagrams/overview.md): Static architecture map of 81 files (c, h, s, sh) in 3 components: tests: tinnerh, root, tests: tinline. Structure is extracted statically without LLM calls...
 
 ## Optional
 

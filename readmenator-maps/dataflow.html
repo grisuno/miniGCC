@@ -141,16 +141,34 @@ dialog kbd{border:1px solid var(--border);border-radius:6px;padding:1px 6px;font
 <script type="application/json" id="vis-meta">{"kind": "dataflow", "title": "Data Flow", "nodeCount": 81, "edgeCount": 4, "totalFiles": "81", "neighbors": 8, "communities": [{"id": 0, "label": "tests: t_inner_h", "color": "#22d3ee", "size": 3}, {"id": 1, "label": "root", "color": "#f472b6", "size": 2}, {"id": 2, "label": "tests: t_inline", "color": "#a3e635", "size": 2}], "labelTopN": 25}</script>
 <script type="application/json" id="vis-physics">{"enabled": true, "solver": "forceAtlas2Based", "forceAtlas2Based": {"gravitationalConstant": -90.0, "centralGravity": 0.012, "springLength": 120.0, "springConstant": 0.06, "damping": 0.55, "avoidOverlap": 0.6}, "stabilization": {"iterations": 250}}</script>
 <script type="application/json" id="vis-roles">{"frontend": "#22d3ee", "backend": "#34d399", "database": "#a78bfa", "cloud": "#fbbf24", "security": "#fb7185", "messagebus": "#fb923c", "external": "#94a3b8", "core": "#38bdf8", "test": "#64748b"}</script>
+<script>function readmenatorPayload(id,fallback){
+  var el=document.getElementById(id),text=el?el.textContent:"";
+  if(!text||!text.trim())return Promise.resolve(fallback===undefined?null:fallback);
+  if(el.getAttribute("data-encoding")!=="gzip+base64")return Promise.resolve(JSON.parse(text));
+  if(typeof DecompressionStream==="undefined")return Promise.reject(new Error("This browser cannot decompress the embedded data (DecompressionStream missing). Open the page in a current Chrome, Edge, Firefox or Safari."));
+  var bin=atob(text.replace(/\s+/g,"")),bytes=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text().then(JSON.parse);
+}
+function readmenatorPayloads(specs){
+  return Promise.all(specs.map(function(spec){return readmenatorPayload(spec[0],spec[1]);}));
+}
+function readmenatorPayloadError(err){
+  var box=document.createElement("pre");box.setAttribute("role","alert");
+  box.style.cssText="position:relative;z-index:9999;margin:24px;padding:16px;border:1px solid #f87171;border-radius:8px;background:#1f1115;color:#fecaca;white-space:pre-wrap";
+  box.textContent="Could not load the embedded data: "+(err&&err.message?err.message:String(err));
+  document.body.insertBefore(box,document.body.firstChild);
+}</script>
 <div class="peek" id="peek" role="tooltip"></div>
 <script>
-(function(){
+readmenatorPayloads([["vis-nodes",[]],["vis-edges",[]],["vis-views",[]],["vis-meta",{}],["vis-physics",{}],["vis-roles",{}]]).then(function(__rmPayload){
 "use strict";
-var rawNodes=JSON.parse(document.getElementById("vis-nodes").textContent||"[]");
-var rawEdges=JSON.parse(document.getElementById("vis-edges").textContent||"[]");
-var views=JSON.parse(document.getElementById("vis-views").textContent||"[]");
-var meta=JSON.parse(document.getElementById("vis-meta").textContent||"{}");
-var physics=JSON.parse(document.getElementById("vis-physics").textContent||"{}");
-var roleColors=JSON.parse(document.getElementById("vis-roles").textContent||"{}");
+var rawNodes=__rmPayload[0];
+var rawEdges=__rmPayload[1];
+var views=__rmPayload[2];
+var meta=__rmPayload[3];
+var physics=__rmPayload[4];
+var roleColors=__rmPayload[5];
 var root=document.documentElement;
 var container=document.getElementById("network");
 var search=document.getElementById("search");
@@ -567,7 +585,7 @@ else if(ev.key==="Escape"){showAll();state.focus=null;state.edge=null;detailHist
 passportMeta.textContent=(meta.nodeCount||rawNodes.length)+" of "+(meta.totalFiles||rawNodes.length)+" files | "+(meta.edgeCount||rawEdges.length)+" links | "+views.length+" chapters. Primary scope only; full listing lives in the knowledge base.";
 receipt.textContent="Live physics network. Drag nodes, search, focus, trace reach, probe routes, compare roles, or play chapters.";
 renderChapters();renderRoleCounts();readHash();
-})();
+},readmenatorPayloadError);
 </script>
 </body>
 </html>

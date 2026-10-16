@@ -47,9 +47,9 @@
         "id": 0,
         "label": "tests: t_inner_h",
         "file_ids": [
-          "tests/t_outer_h.h",
           "tests/t_include.c",
-          "tests/t_inner_h.h"
+          "tests/t_inner_h.h",
+          "tests/t_outer_h.h"
         ],
         "cohesion": 1.0,
         "size": 3
@@ -58,8 +58,8 @@
         "id": 1,
         "label": "root",
         "file_ids": [
-          "my_library.h",
-          "test_include.c"
+          "test_include.c",
+          "my_library.h"
         ],
         "cohesion": 1.0,
         "size": 2

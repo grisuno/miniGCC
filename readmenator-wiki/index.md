@@ -9,7 +9,7 @@
 
 The codebase centres on `minigccg2.s`, `minigccg3.s`, `minigccg4.s`. Architecturally it is 3 layers, dominant testing (75 files) across 4 import-based communities. Recorded risk surface: 0 security findings and 0 dependency cycles.
 
-Surprising tissue lives between tests: t_inner_h, root, tests: t_inline: 0 extracted cross-community imports and 5 inferred bridges. Follow `connections.json` sorted by strength before refactoring.
+Surprising tissue lives between tests: t_inner_h, root, tests: t_inline: 0 extracted cross-community imports and 6 inferred bridges. Follow `connections.json` sorted by strength before refactoring.
 
 Open work clusters around documentation (5% file coverage), 0 security findings, 0 taint paths, and 5 suggested exploration questions in `queries.md`.
 
@@ -24,7 +24,7 @@ Open work clusters around documentation (5% file coverage), 0 security findings,
 | Communities | 4 |
 | Doc coverage | 5% (4/81 files) |
 | Security findings | 0 |
-| Estimated read cost | ~5032 tokens (chars/4, offline so $0) |
+| Estimated read cost | ~5062 tokens (chars/4, offline so $0) |
 | Large files (>256KB, maybe generated) | 3: `minigccg2.s`, `minigccg3.s`, `minigccg4.s` |
 
 ## Reading Order
@@ -61,6 +61,7 @@ readmenator query "<question>" --target miniGCC
 - 0 -> 2: shares_context (strength 0.5, INFERRED)
 - 0 -> 3: shares_context (strength 0.5, INFERRED)
 - 1 -> 2: shares_context (strength 0.5, INFERRED)
+- 1 -> 3: shares_context (strength 0.5, INFERRED)
 - 2 -> 3: shares_context (strength 0.5, INFERRED)
 
 ## Navigation Tips
