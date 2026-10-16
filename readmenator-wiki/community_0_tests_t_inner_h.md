@@ -1,6 +1,6 @@
-# tests
+# tests: t_inner_h
 
-*Community 1 | 3 files | cohesion 1.00*
+*Community 0 | 3 files | cohesion 1.00*
 
 ## Definition
 
@@ -30,9 +30,9 @@ This community groups 3 file(s) rooted at `tests` with dominant language h (cohe
 
 ## Connections
 
-- [INFERRED] shares_context community 0 <-> 1 (strength 0.5): Inferred shared context (layer testing) with no import path between community 0 (root) and community 1 (tests).
-- [INFERRED] shares_context community 1 <-> 2 (strength 0.5): Inferred shared context (layer testing) with no import path between community 1 (tests) and community 2 (tests).
-- [INFERRED] shares_context community 1 <-> 3 (strength 0.5): Inferred shared context (layer testing) with no import path between community 1 (tests) and community 3 (orphans).
+- [INFERRED] shares_context community 0 <-> 1 (strength 0.5): Inferred shared context (language h) with no import path between community 0 (tests: t_inner_h) and community 1 (root).
+- [INFERRED] shares_context community 0 <-> 2 (strength 0.5): Inferred shared context (language h and layer testing) with no import path between community 0 (tests: t_inner_h) and community 2 (tests: t_inline).
+- [INFERRED] shares_context community 0 <-> 3 (strength 0.5): Inferred shared context (layer testing) with no import path between community 0 (tests: t_inner_h) and community 3 (orphans).
 
 ## Risks
 
@@ -41,8 +41,8 @@ This community groups 3 file(s) rooted at `tests` with dominant language h (cohe
 ## Open Questions
 
 - Why do 3 file(s) lack file-level docs (e.g. `tests/t_include.c`)? What purpose do they serve?
-- What would break if the most connected file in tests changed?
-- Should tests be split, given cohesion 1.00?
+- What would break if the most connected file in tests: t_inner_h changed?
+- Should tests: t_inner_h be split, given cohesion 1.00?
 
 ## Sources
 

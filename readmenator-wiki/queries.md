@@ -16,7 +16,7 @@ Log each answered question here so the wiki compounds. Format: question, answer,
 
 - Status: unanswered
 
-### Q: How are the 3 files in 'tests' related to each other?
+### Q: How are the 3 files in 'tests: t_inner_h' related to each other?
 
 - Status: unanswered
 

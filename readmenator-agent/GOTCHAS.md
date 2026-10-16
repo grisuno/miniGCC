@@ -8,25 +8,22 @@ These files have the most connections. Changes here have high blast radius.
 - `minigccg3.s` (score: 23.50)
 - `minigccg4.s` (score: 23.50)
 - `minigcc.c` (score: 16.10)
-- `tests/t_outer_h.h` (score: 4.20)
-- `tests/t_inline.c` (score: 2.40)
-- `tests/t_inner_h.h` (score: 2.30)
-- `my_library.h` (score: 2.20)
-- `test_include.c` (score: 2.20)
-- `tests/t_inline_h.h` (score: 2.20)
+- `my_library.h` (score: 2.20, imported by 1 files)
+
+## Blast Radius (change impact)
+
+Editing these files can break the listed number of dependents. Run their tests after any change.
+
+- `my_library.h` -- 1 direct, 1 total dependents
 
 ## Hotspots (complexity + centrality)
 
 - `minigcc.c` -- complexity: 0.7, centrality: 1.0, combined: 0.9
-- `tests/t_inline.c` -- complexity: 0.0, centrality: 0.8, combined: 0.5
-- `test_include.c` -- complexity: 0.0, centrality: 0.8, combined: 0.5
-- `tests/t_outer_h.h` -- complexity: 0.0, centrality: 0.8, combined: 0.5
-- `tests/t_include.c` -- complexity: 0.0, centrality: 0.8, combined: 0.5
 - `minigccg2.s` -- complexity: 1.0, centrality: 0.0, combined: 0.4
 - `minigccg3.s` -- complexity: 1.0, centrality: 0.0, combined: 0.4
 - `minigccg4.s` -- complexity: 1.0, centrality: 0.0, combined: 0.4
-- `tests/t_asm_ds.c` -- complexity: 0.0, centrality: 0.5, combined: 0.3
-- `tests/t_attr.c` -- complexity: 0.0, centrality: 0.5, combined: 0.3
+- `my_library.h` -- complexity: 0.0, centrality: 0.5, combined: 0.3
+- `tests/t_logic.c` -- complexity: 0.0, centrality: 0.2, combined: 0.2
 
 ## Dataflow Issues (INFERRED, review each lead)
 

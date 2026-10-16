@@ -45,31 +45,31 @@
     "communities": [
       {
         "id": 0,
-        "label": "root",
-        "file_ids": [
-          "test_include.c",
-          "my_library.h"
-        ],
-        "cohesion": 1.0,
-        "size": 2
-      },
-      {
-        "id": 1,
-        "label": "tests",
+        "label": "tests: t_inner_h",
         "file_ids": [
           "tests/t_outer_h.h",
-          "tests/t_inner_h.h",
-          "tests/t_include.c"
+          "tests/t_include.c",
+          "tests/t_inner_h.h"
         ],
         "cohesion": 1.0,
         "size": 3
       },
       {
-        "id": 2,
-        "label": "tests",
+        "id": 1,
+        "label": "root",
         "file_ids": [
-          "tests/t_inline.c",
-          "tests/t_inline_h.h"
+          "my_library.h",
+          "test_include.c"
+        ],
+        "cohesion": 1.0,
+        "size": 2
+      },
+      {
+        "id": 2,
+        "label": "tests: t_inline",
+        "file_ids": [
+          "tests/t_inline_h.h",
+          "tests/t_inline.c"
         ],
         "cohesion": 1.0,
         "size": 2
@@ -80,7 +80,7 @@
       "What does minigccg2.s depend on, and what depends on it? (0 connections)",
       "What does minigccg3.s depend on, and what depends on it? (0 connections)",
       "What does minigccg4.s depend on, and what depends on it? (0 connections)",
-      "How are the 3 files in 'tests' related to each other?",
+      "How are the 3 files in 'tests: t_inner_h' related to each other?",
       "What is FileContext in minigcc.c and how is it used?"
     ]
   },
@@ -154,7 +154,7 @@
     "tests/t_scope.c": "testing",
     "tests/t_sizeof.c": "testing",
     "tests/t_static.c": "testing",
-    "tests/t_stdint.c": "infrastructure",
+    "tests/t_stdint.c": "testing",
     "tests/t_strings.c": "testing",
     "tests/t_struct.c": "testing",
     "tests/t_struct_ul.c": "testing",
@@ -164,7 +164,7 @@
     "tests/t_typedef.c": "testing",
     "tests/t_union.c": "testing",
     "tests/t_unsigned.c": "testing",
-    "tests/t_variadic.c": "infrastructure",
+    "tests/t_variadic.c": "testing",
     "tests/t_while.c": "testing"
   },
   "security": {

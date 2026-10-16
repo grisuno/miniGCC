@@ -1,6 +1,6 @@
 # Audit Report
 
-*Project: miniGCC | 2026-09-18 | offline, deterministic*
+*Project: miniGCC | 2026-10-16 | offline, deterministic*
 
 ## Confidence Trail
 
@@ -18,7 +18,7 @@ Every edge is tagged. Extracted means parsed from source; inferred means derived
 - Files: 81, communities: 4
 - File doc coverage: 4/81
 - Orphans (no docs at any level): 70
-- Layers detected: 4
+- Layers detected: 3
 - Security findings: 0
 - Large files (>256KB, maybe generated): 3 (minigccg2.s, minigccg3.s, minigccg4.s)
 

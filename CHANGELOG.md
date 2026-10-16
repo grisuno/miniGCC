@@ -1,0 +1,75 @@
+# Changelog
+
+### Documentation
+
+  * docs: README documents lexer, asm, stdint, attributes, atomics, variadics and test_all suite (23d797d) by grisun0
+
+### Chores
+
+  * C5: union + enum,  #elif/#error/function-like macro, static locals persistence (c01ad22) by grisun0
+  * C89: scalar float/int casts + double negation fix (9f5e516) by grisun0
+  * C89: chained members, octal escapes, comma op, register/auto, struct-union-enum tags, elif/error/funmacro fail-closed (8883d8e) by grisun0
+  * Readmenator(Doc) Knowleadge base updated and graphs - commit automated by readmenator (pip install readmenator) (5a06345) by grisun0
+  * - Extended compound-assignment code to track unsignedness and use size-aware load/store (movsbq, movl, movq / movb, movw, movl, movq). - Extended peek save/restore to include saved_expr_unsigned / expr_unsigned and saved_expr_type / expr_type plus existing assign_size, expr_pointed, current_elem_size, current_elem_size2, current_elem_unsigned, deref_w, deref_u, no_postfix_deref. (26d6642) by grisun0
+  * new improvements (dbbd96f) by grisun0
+  * - unsigned/signed en toda posición, con sharing en multi-declaradores (unsigned char a=250, b=150, for-init, typedefs de bloque). - long long 8 bytes en toda posición. - typedef de usuario que registra tamaño/unsignedness (escalar, encadenado, fnptr) + miembros struct que capturan unsigned y long→8. (156595a) by grisun0
+  * Readmenator(Doc) Knowleadge base updated and graphs - commit automated by readmenator (pip install readmenator) (bdde8e5) by grisun0
+  * __attribute__ (79c180a) by grisun0
+  * Readmenator(Doc) Knowleadge base updated and graphs - commit automated by readmenator (pip install readmenator) (ef29201) by grisun0
+  * Readmenator(Doc) Knowleadge base updated and graphs - commit automated by readmenator (pip install readmenator) (7158b82) by grisun0
+  * extended asm con operandos (0c83af4) by grisun0
+  * Readmenator(Doc) Knowleadge base updated and graphs - commit automated by readmenator (pip install readmenator) (05e4348) by grisun0
+  * asm volatile (4e64840) by grisun0
+  * test suite more accurate and inline features (72ac246) by grisun0
+  * Readmenator(Doc) Knowleadge base updated and graphs - commit automated by readmenator (pip install readmenator) (95afb02) by grisun0
+  * minigcc bugfixing (f3d9c44) by grisun0
+  * documentation (2089405) by grisun0
+  * document the CVM v2 target: same assembly linked by ld -f cvm runs on the cvm2 interpreter and inside MiniOS (4e1668a) by grisun0
+  *  bugfixing (9a172ad) by grisun0
+  *  self hosting using mini ld https://github.com/grisuno/ld (7f4bfcf) by grisun0
+  * Update README.md (a700a54) by Grisuno
+  *  some bug fixing (e11b058) by grisun0
+  * Doc(creation documentation) a brand new KNOWLEDGE_BASE.md (fa2f977) by grisun0
+  * cada vez mas cerca de C99 :D (70318aa) by grisun0
+  * Doc(creation documentation) a brand new README.md (cd022f4) by grisun0
+  * #define (9995f92) by grisun0
+  * Doc(creation documentation) a brand new SKILL.md and includes we now support includes :D (f4bd8a0) by grisun0
+  * Doc(creation documentation) a brand new KNOWLEDGE_BASE.md (78a12da) by grisun0
+  * Doc(creation documentation) a brand new KNOWLEDGE_BASE.md (cbed019) by grisun0
+  * some love to the proyect (2da2204) by grisun0
+  * float we have support floats :D (76c087b) by grisun0
+  * Merge branch 'main' of https://github.com/grisuno/miniGCC (2c5a4b8) by grisun0
+  * float we have support floats :D (0294342) by grisun0
+  * Update README.md (a8df38e) by Grisuno
+  * Update README.md (e15d986) by Grisuno
+  * Update README.md (caf9929) by Grisuno
+  * updating test.sh (9dc6451) by grisun0
+  * updating test.sh (aad593e) by grisun0
+  * updating test.sh (e396418) by grisun0
+  * deleting testing files (fbbec0f) by grisun0
+  *  peek_mode reemplazado por emit_enabled=0 (616107b) by grisun0
+  * Merge branch 'main' of https://github.com/grisuno/miniGCC (f484c50) by grisun0
+  * Tabla de símbolos hash (O(1) lookup) con push_scope/pop_scope, shadowing correcto, y gestión de stack_size integrada. (bcb25ba) by grisun0
+  * Update test.sh (112b864) by Grisuno
+  * Delete README.txt (5871505) by Grisuno
+  * Update README.md (ba94bcb) by Grisuno
+  * Update README.md (2c57d74) by Grisuno
+  * Update README.txt (9bac561) by Grisuno
+  * Add files via upload (310ce1e) by Grisuno
+  * Update README.md (fe52c04) by Grisuno
+  * Add files via upload (272d9cb) by Grisuno
+  * Update minigcc.c (e78159d) by Grisuno
+  * Add files via upload (5bf87cc) by Grisuno
+  * Update test.sh (7f33b4a) by Grisuno
+  * Add files via upload (5cede2e) by Grisuno
+  * Add files via upload (36bd0c1) by Grisuno
+  * Add files via upload (9983466) by Grisuno
+  * Update README.md (b95ce10) by Grisuno
+  * Update README.md (313a39b) by Grisuno
+  * Create test.sh (2e093fc) by Grisuno
+  * Add files via upload (87c6c8c) by Grisuno
+  * Delete install.sh (56764ba) by Grisuno
+  * Delete app.py (cf6a01d) by Grisuno
+
+
+_Generated by [deploynator](https://github.com/grisuno/deploynator)_

@@ -1,15 +1,15 @@
 # Second Brain
 
-*Last synthesized: 2026-09-18 | 81 files | 4 concept pages | offline, zero tokens*
+*Last synthesized: 2026-10-16 | 81 files | 4 concept pages | offline, zero tokens*
 
 > Raw sources -> readmenator wiki -> links (Karpathy LLM Wiki Pattern, deterministic).
 > Start here, then open one community page. Prefer grep over full reads.
 
 ## Vault Overview
 
-The codebase centres on `minigccg2.s`, `minigccg3.s`, `minigccg4.s`. Architecturally it is 4 layers, dominant testing (73 files) across 4 import-based communities. Recorded risk surface: 0 security findings and 0 dependency cycles.
+The codebase centres on `minigccg2.s`, `minigccg3.s`, `minigccg4.s`. Architecturally it is 3 layers, dominant testing (75 files) across 4 import-based communities. Recorded risk surface: 0 security findings and 0 dependency cycles.
 
-Surprising tissue lives between root, tests (community 1), tests (community 2): 0 extracted cross-community imports and 6 inferred bridges. Follow `connections.json` sorted by strength before refactoring.
+Surprising tissue lives between tests: t_inner_h, root, tests: t_inline: 0 extracted cross-community imports and 5 inferred bridges. Follow `connections.json` sorted by strength before refactoring.
 
 Open work clusters around documentation (5% file coverage), 0 security findings, 0 taint paths, and 5 suggested exploration questions in `queries.md`.
 
@@ -24,7 +24,7 @@ Open work clusters around documentation (5% file coverage), 0 security findings,
 | Communities | 4 |
 | Doc coverage | 5% (4/81 files) |
 | Security findings | 0 |
-| Estimated read cost | ~5062 tokens (chars/4, offline so $0) |
+| Estimated read cost | ~5032 tokens (chars/4, offline so $0) |
 | Large files (>256KB, maybe generated) | 3: `minigccg2.s`, `minigccg3.s`, `minigccg4.s` |
 
 ## Reading Order
@@ -40,9 +40,9 @@ readmenator query "<question>" --target miniGCC
 
 ## Concept Wiki
 
-- [root (2 files, cohesion 1.00)](./community_0_root.md)
-- [tests (community 1) (3 files, cohesion 1.00)](./community_1_tests.md)
-- [tests (community 2) (2 files, cohesion 1.00)](./community_2_tests.md)
+- [tests: t_inner_h (3 files, cohesion 1.00)](./community_0_tests_t_inner_h.md)
+- [root (2 files, cohesion 1.00)](./community_1_root.md)
+- [tests: t_inline (2 files, cohesion 1.00)](./community_2_tests_t_inline.md)
 - [orphans (74 files, cohesion 0.00)](./community_3_orphans.md)
 
 ## God Nodes
@@ -61,7 +61,6 @@ readmenator query "<question>" --target miniGCC
 - 0 -> 2: shares_context (strength 0.5, INFERRED)
 - 0 -> 3: shares_context (strength 0.5, INFERRED)
 - 1 -> 2: shares_context (strength 0.5, INFERRED)
-- 1 -> 3: shares_context (strength 0.5, INFERRED)
 - 2 -> 3: shares_context (strength 0.5, INFERRED)
 
 ## Navigation Tips

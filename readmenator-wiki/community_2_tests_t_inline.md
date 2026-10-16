@@ -1,4 +1,4 @@
-# tests
+# tests: t_inline
 
 *Community 2 | 2 files | cohesion 1.00*
 
@@ -29,9 +29,9 @@ This community groups 2 file(s) rooted at `tests` with dominant language c (cohe
 
 ## Connections
 
-- [INFERRED] shares_context community 0 <-> 2 (strength 0.5): Inferred shared context (language c and layer testing) with no import path between community 0 (root) and community 2 (tests).
-- [INFERRED] shares_context community 1 <-> 2 (strength 0.5): Inferred shared context (layer testing) with no import path between community 1 (tests) and community 2 (tests).
-- [INFERRED] shares_context community 2 <-> 3 (strength 0.5): Inferred shared context (language c and layer testing) with no import path between community 2 (tests) and community 3 (orphans).
+- [INFERRED] shares_context community 0 <-> 2 (strength 0.5): Inferred shared context (language h and layer testing) with no import path between community 0 (tests: t_inner_h) and community 2 (tests: t_inline).
+- [INFERRED] shares_context community 1 <-> 2 (strength 0.5): Inferred shared context (language h) with no import path between community 1 (root) and community 2 (tests: t_inline).
+- [INFERRED] shares_context community 2 <-> 3 (strength 0.5): Inferred shared context (layer testing) with no import path between community 2 (tests: t_inline) and community 3 (orphans).
 
 ## Risks
 
@@ -40,8 +40,8 @@ This community groups 2 file(s) rooted at `tests` with dominant language c (cohe
 ## Open Questions
 
 - Why do 2 file(s) lack file-level docs (e.g. `tests/t_inline.c`)? What purpose do they serve?
-- What would break if the most connected file in tests changed?
-- Should tests be split, given cohesion 1.00?
+- What would break if the most connected file in tests: t_inline changed?
+- Should tests: t_inline be split, given cohesion 1.00?
 
 ## Sources
 
